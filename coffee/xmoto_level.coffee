@@ -8,7 +8,7 @@ class window.XmotoLevel
   load_from_file: (file_name) ->
     $.ajax({
       type:     "GET",
-      url:      "/xmoto_data/Levels/#{file_name}",
+      url:      "data/Levels/#{file_name}",
       dataType: "xml",
       success:  @xml_parser
       async:    false

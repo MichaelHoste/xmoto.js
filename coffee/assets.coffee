@@ -48,12 +48,12 @@ class window.Assets
     for item in @textures
       items.push(
         id:  item
-        src: "/xmoto_data/Textures/Textures/#{item}.jpg"
+        src: "/data/Textures/Textures/#{item}.jpg"
       )
     for item in @anims
       items.push(
         id:  item
-        src: "/xmoto_data/Textures/Anims/#{item}.png"
+        src: "/data/Textures/Anims/#{item}.png"
       )
 
     @queue.addEventListener("complete", callback)
