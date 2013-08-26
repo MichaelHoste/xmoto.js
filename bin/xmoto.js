@@ -60,7 +60,7 @@
         item = _ref4[_m];
         items.push({
           id: item,
-          src: "/data/Textures/Textures/" + item + ".jpg"
+          src: "data/Textures/Textures/" + item + ".jpg"
         });
       }
       _ref5 = this.anims;
@@ -68,7 +68,7 @@
         item = _ref5[_n];
         items.push({
           id: item,
-          src: "/data/Textures/Anims/" + item + ".png"
+          src: "data/Textures/Anims/" + item + ".png"
         });
       }
       this.queue.addEventListener("complete", callback);
