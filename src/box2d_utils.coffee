@@ -93,25 +93,6 @@ $ ->
 
       this.createBody('ball', world, x, y, dimensions, fixed, userData)
 
-    addTriangle: (world) ->
-      bodyDef = new b2BodyDef
-      fixDef = new b2FixtureDef
-      fixDef.density = Math.random()
-      fixDef.friction = Math.random()
-      fixDef.restitution = 0.2
-
-      bodyDef.type = b2Body.b2_dynamicBody
-      fixDef.shape = new b2PolygonShape
-      scale = Math.random() * 60;
-      fixDef.shape.SetAsArray([
-        new b2Vec2(scale*0.866 , scale*0.5),
-        new b2Vec2(scale*-0.866, scale*0.5),
-        new b2Vec2(0, scale*-1) ])
-
-      bodyDef.position.x = 0#(1000-scale*2)*Math.random()+scale*2
-      bodyDef.position.y = 0#400 - (scale*Math.random() +scale)
-      world.CreateBody(bodyDef).CreateFixture(fixDef)
-
     createTriangle: (world, vertices, fixed, userData) ->
       # by default, static object
       fixed = true if typeof(fixed) == 'undefined'

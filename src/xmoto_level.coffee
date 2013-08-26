@@ -286,8 +286,6 @@ class window.XmotoLevel
       triangulation.triangulate()
       set_of_triangles = triangulation.getTriangles()
 
-      console.log(set_of_triangles)
-
       for triangle in set_of_triangles
         @triangles.push([ { x: triangle.points_[0].x, y: triangle.points_[0].y },
                           { x: triangle.points_[1].x, y: triangle.points_[1].y },
@@ -304,7 +302,6 @@ $ ->
     world = box2dUtils.createWorld(xmoto_level.ctx)
 
     ball   = box2dUtils.createBall(world, 1, 7, 1, false, 'ball'+i)
-    ground = box2dUtils.createBox(world, -10, -10, 20, 2, true, 'ground')
     for triangle in xmoto_level.triangles
       box2dUtils.createTriangle(world, triangle, true, [])
 

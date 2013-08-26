@@ -161,22 +161,6 @@
         return this.createBody('ball', world, x, y, dimensions, fixed, userData);
       };
 
-      Box2dUtils.prototype.addTriangle = function(world) {
-        var bodyDef, fixDef, scale;
-        bodyDef = new b2BodyDef;
-        fixDef = new b2FixtureDef;
-        fixDef.density = Math.random();
-        fixDef.friction = Math.random();
-        fixDef.restitution = 0.2;
-        bodyDef.type = b2Body.b2_dynamicBody;
-        fixDef.shape = new b2PolygonShape;
-        scale = Math.random() * 60;
-        fixDef.shape.SetAsArray([new b2Vec2(scale * 0.866, scale * 0.5), new b2Vec2(scale * -0.866, scale * 0.5), new b2Vec2(0, scale * -1)]);
-        bodyDef.position.x = 0;
-        bodyDef.position.y = 0;
-        return world.CreateBody(bodyDef).CreateFixture(fixDef);
-      };
-
       Box2dUtils.prototype.createTriangle = function(world, vertices, fixed, userData) {
         var bodyDef, fixDef;
         if (typeof fixed === 'undefined') {
@@ -202,50 +186,6 @@
       return Box2dUtils;
 
     })();
-  });
-
-  $(function() {
-    var SCALE, init_game, update, world;
-    SCALE = 30;
-    world = null;
-    init_game = function() {
-      var box2dUtils, canvas, canvasHeight, canvasWidth, context, ground, i, length, radius, staticBall, staticBall2, staticBox, staticBox2, _i, _j;
-      box2dUtils = new window.Box2dUtils(SCALE);
-      canvas = $('#game').get(0);
-      canvasWidth = parseInt(canvas.width);
-      canvasHeight = parseInt(canvas.height);
-      context = canvas.getContext('2d');
-      world = box2dUtils.createWorld(context);
-      ground = box2dUtils.createBox(world, canvasWidth / 2, canvasHeight - 10, canvasWidth / 2, 10, true, 'ground');
-      staticBox = box2dUtils.createBox(world, 600, 450, 50, 50, true, 'staticBox');
-      staticBox2 = box2dUtils.createBox(world, 200, 250, 80, 30, true, 'staticBox2');
-      staticBall = box2dUtils.createBall(world, 50, 400, 50, true, 'staticBall');
-      staticBall2 = box2dUtils.createBall(world, 500, 150, 60, true, 'staticBall2');
-      for (i = _i = 0; _i <= 29; i = ++_i) {
-        radius = 45;
-        if (i < 10) {
-          radius = 15;
-        } else if (i < 20) {
-          radius = 30;
-        }
-        box2dUtils.createBall(world, Math.random() * canvasWidth, Math.random() * canvasHeight - 400, radius, false, 'ball' + i);
-      }
-      for (i = _j = 0; _j <= 29; i = ++_j) {
-        length = 45;
-        if (i < 10) {
-          length = 15;
-        } else if (i < 20) {
-          length = 30;
-        }
-        box2dUtils.createBox(world, Math.random() * canvasWidth, Math.random() * canvasHeight - 400, length, length, false, 'ball' + i);
-      }
-      return window.setInterval(update, 1000 / 60);
-    };
-    return update = function() {
-      world.Step(1 / 60, 10, 10);
-      world.DrawDebugData();
-      return world.ClearForces();
-    };
   });
 
   window.XmotoLevel = (function() {
@@ -577,7 +517,6 @@
         });
         triangulation.triangulate();
         set_of_triangles = triangulation.getTriangles();
-        console.log(set_of_triangles);
         _results.push((function() {
           var _k, _len2, _results1;
           _results1 = [];
@@ -611,13 +550,12 @@
     xmoto_level = new window.XmotoLevel();
     xmoto_level.load_from_file('l1038.lvl');
     return xmoto_level.load_assets(function() {
-      var ball, box2dUtils, ground, triangle, update, world, _i, _len, _ref;
+      var ball, box2dUtils, triangle, update, world, _i, _len, _ref;
       xmoto_level.triangulate();
       xmoto_level.draw();
       box2dUtils = new window.Box2dUtils(30);
       world = box2dUtils.createWorld(xmoto_level.ctx);
       ball = box2dUtils.createBall(world, 1, 7, 1, false, 'ball' + i);
-      ground = box2dUtils.createBox(world, -10, -10, 20, 2, true, 'ground');
       _ref = xmoto_level.triangles;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         triangle = _ref[_i];
