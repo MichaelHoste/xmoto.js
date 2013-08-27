@@ -41,7 +41,7 @@ class window.XmotoLevel
       author:      xml_infos.find('author').text()
       date:        xml_infos.find('date').text()
       sky:
-        name:    xml_sky.text()
+        name:    xml_sky.text().toLowerCase()
         color_r: parseInt(xml_sky.attr('color_r'))
         color_g: parseInt(xml_sky.attr('color_g'))
         color_b: parseInt(xml_sky.attr('color_b'))
@@ -104,7 +104,7 @@ class window.XmotoLevel
           dynamic:    $(xml_block).find('position').attr('dynamic')
           background: $(xml_block).find('position').attr('background')
         usetexture:
-          id:    $(xml_block).find('usetexture').attr('id')
+          id:    $(xml_block).find('usetexture').attr('id').toLowerCase()
           scale: parseFloat($(xml_block).find('usetexture').attr('scale'))
         physics:
           grip:  parseFloat($(xml_block).find('physics').attr('grip'))
@@ -161,7 +161,7 @@ class window.XmotoLevel
       for xml_param in xml_params
         param =
           name:  $(xml_param).attr('name')
-          value: $(xml_param).attr('value')
+          value: $(xml_param).attr('value').toLowerCase()
         entity.params.push(param)
 
       @entities.push(entity)
@@ -203,7 +203,7 @@ class window.XmotoLevel
 
     @ctx.save()
     @ctx.scale(1.0/scale.x, 1.0/scale.y)
-    @ctx.fillStyle = @ctx.createPattern(@assets.get('Dirt'), "repeat")
+    @ctx.fillStyle = @ctx.createPattern(@assets.get('dirt'), "repeat")
     @ctx.fill()
     @ctx.restore()
 
@@ -216,7 +216,7 @@ class window.XmotoLevel
 
     @ctx.save()
     @ctx.scale(1.0/scale.x, 1.0/scale.y)
-    @ctx.fillStyle = @ctx.createPattern(@assets.get('Dirt'), "repeat")
+    @ctx.fillStyle = @ctx.createPattern(@assets.get('dirt'), "repeat")
     @ctx.fill()
     @ctx.restore()
 
@@ -229,7 +229,7 @@ class window.XmotoLevel
 
     @ctx.save()
     @ctx.scale(1.0/scale.x, 1.0/scale.y)
-    @ctx.fillStyle = @ctx.createPattern(@assets.get('Dirt'), "repeat")
+    @ctx.fillStyle = @ctx.createPattern(@assets.get('dirt'), "repeat")
     @ctx.fill()
     @ctx.restore()
 
@@ -272,7 +272,7 @@ class window.XmotoLevel
         @ctx.save()
         @ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r)
         @ctx.scale(1, -1)
-        @ctx.drawImage(@assets.get('checkball_235_00'), 0, 0, entity.size.r*2, -entity.size.r*2)
+        @ctx.drawImage(@assets.get('checkball_00'), 0, 0, entity.size.r*2, -entity.size.r*2)
         @ctx.restore()
 
   triangulate: ->

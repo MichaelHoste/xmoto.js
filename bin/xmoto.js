@@ -24,8 +24,8 @@
       var block, entity, item, items, param, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
       this.list.push(xmoto_level.infos.sky.name);
       this.textures.push(xmoto_level.infos.sky.name);
-      this.list.push('Dirt');
-      this.textures.push('Dirt');
+      this.list.push('dirt');
+      this.textures.push('dirt');
       _ref = xmoto_level.blocks;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
@@ -50,8 +50,8 @@
       for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
         entity = _ref3[_l];
         if (entity.type_id === 'EndOfLevel') {
-          this.list.push('checkball_235_00');
-          this.anims.push('checkball_235_00');
+          this.list.push('checkball_00');
+          this.anims.push('checkball_00');
         }
       }
       items = [];
@@ -236,7 +236,7 @@
         author: xml_infos.find('author').text(),
         date: xml_infos.find('date').text(),
         sky: {
-          name: xml_sky.text(),
+          name: xml_sky.text().toLowerCase(),
           color_r: parseInt(xml_sky.attr('color_r')),
           color_g: parseInt(xml_sky.attr('color_g')),
           color_b: parseInt(xml_sky.attr('color_b')),
@@ -309,7 +309,7 @@
             background: $(xml_block).find('position').attr('background')
           },
           usetexture: {
-            id: $(xml_block).find('usetexture').attr('id'),
+            id: $(xml_block).find('usetexture').attr('id').toLowerCase(),
             scale: parseFloat($(xml_block).find('usetexture').attr('scale'))
           },
           physics: {
@@ -378,7 +378,7 @@
           xml_param = xml_params[_j];
           param = {
             name: $(xml_param).attr('name'),
-            value: $(xml_param).attr('value')
+            value: $(xml_param).attr('value').toLowerCase()
           };
           entity.params.push(param);
         }
@@ -419,7 +419,7 @@
       this.ctx.closePath();
       this.ctx.save();
       this.ctx.scale(1.0 / scale.x, 1.0 / scale.y);
-      this.ctx.fillStyle = this.ctx.createPattern(this.assets.get('Dirt'), "repeat");
+      this.ctx.fillStyle = this.ctx.createPattern(this.assets.get('dirt'), "repeat");
       this.ctx.fill();
       this.ctx.restore();
       this.ctx.beginPath();
@@ -430,7 +430,7 @@
       this.ctx.closePath();
       this.ctx.save();
       this.ctx.scale(1.0 / scale.x, 1.0 / scale.y);
-      this.ctx.fillStyle = this.ctx.createPattern(this.assets.get('Dirt'), "repeat");
+      this.ctx.fillStyle = this.ctx.createPattern(this.assets.get('dirt'), "repeat");
       this.ctx.fill();
       this.ctx.restore();
       this.ctx.beginPath();
@@ -441,7 +441,7 @@
       this.ctx.closePath();
       this.ctx.save();
       this.ctx.scale(1.0 / scale.x, 1.0 / scale.y);
-      this.ctx.fillStyle = this.ctx.createPattern(this.assets.get('Dirt'), "repeat");
+      this.ctx.fillStyle = this.ctx.createPattern(this.assets.get('dirt'), "repeat");
       this.ctx.fill();
       this.ctx.restore();
       _ref = this.blocks;
@@ -490,7 +490,7 @@
           this.ctx.save();
           this.ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r);
           this.ctx.scale(1, -1);
-          this.ctx.drawImage(this.assets.get('checkball_235_00'), 0, 0, entity.size.r * 2, -entity.size.r * 2);
+          this.ctx.drawImage(this.assets.get('checkball_00'), 0, 0, entity.size.r * 2, -entity.size.r * 2);
           _results.push(this.ctx.restore());
         } else {
           _results.push(void 0);

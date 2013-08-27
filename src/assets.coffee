@@ -21,8 +21,8 @@ class window.Assets
     @textures.push(xmoto_level.infos.sky.name)
 
     # Borders
-    @list    .push('Dirt')
-    @textures.push('Dirt')
+    @list    .push('dirt')
+    @textures.push('dirt')
 
     # Blocks (Textures)
     for block in xmoto_level.blocks
@@ -40,8 +40,8 @@ class window.Assets
     # End of level
     for entity in xmoto_level.entities
       if entity.type_id == 'EndOfLevel'
-        @list .push('checkball_235_00')
-        @anims.push('checkball_235_00')
+        @list .push('checkball_00')
+        @anims.push('checkball_00')
 
     # Format list for loading
     items = []
