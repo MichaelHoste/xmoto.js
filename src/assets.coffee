@@ -15,22 +15,22 @@ class window.Assets
     @queue.loadManifest(items)
 
   # Load textures for a specific level
-  load_for_level: (xmoto_level, callback) ->
+  load_for_level: (level, callback) ->
     # Sky (Textures)
-    @list    .push(xmoto_level.infos.sky.name)
-    @textures.push(xmoto_level.infos.sky.name)
+    @list    .push(level.sky.name)
+    @textures.push(level.sky.name)
 
     # Borders
     @list    .push('dirt')
     @textures.push('dirt')
 
     # Blocks (Textures)
-    for block in xmoto_level.blocks
+    for block in level.blocks
       @list    .push(block.usetexture.id)
       @textures.push(block.usetexture.id)
 
     # Sprites (Anims)
-    for entity in xmoto_level.entities
+    for entity in level.entities
       if entity.type_id == 'Sprite'
         for param in entity.params
           if param.name == 'name'
@@ -38,7 +38,7 @@ class window.Assets
             @anims.push(param.value)
 
     # End of level
-    for entity in xmoto_level.entities
+    for entity in level.entities
       if entity.type_id == 'EndOfLevel'
         @list .push('checkball_00')
         @anims.push('checkball_00')

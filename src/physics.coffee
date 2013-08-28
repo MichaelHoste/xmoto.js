@@ -12,14 +12,12 @@ $ ->
   b2DebugDraw     = Box2D.Dynamics.b2DebugDraw
   b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
 
-  class window.Box2dUtils
+  class window.Physics
 
     constructor: (scale) ->
-      this.SCALE = scale # Définir l'échelle
+      this.SCALE = scale # Define the scale
 
     # Create the 2d world
-    # @param context 2D context
-    # @return b2World
     createWorld: (context) ->
       world = new b2World(new b2Vec2(0, -10), true) # gravity vector, and doSleep
 

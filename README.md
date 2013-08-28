@@ -16,7 +16,8 @@ HTML5 Version of XMOTO (2D Canvas + Box2D)
  * ```coffee -j bin/xmoto.js -wc src/*``` to compile to JavaScript on each change.
  * ```node server.js``` to launch HTTP Server (http://localhost:3000).
 
+Don't forget to restart the coffee command if you create new JS files.
+
 ## For production
 
 Just upload the files on a static web server (you can remove the "src" folder if you want)
-g

@@ -1,10 +1,11 @@
-class window.XmotoLevel
+class window.Level
 
   constructor: ->
+    @assets = new window.Assets()
 
-  ###
-    Load a specific level
-  ###
+    @infos = new window.Infos()
+    @sky   = new window.Sky(this, @assets)
+
   load_from_file: (file_name) ->
     $.ajax({
       type:     "GET",
@@ -16,40 +17,14 @@ class window.XmotoLevel
     })
 
   xml_parser: (xml) ->
-    @xml_parse_infos(xml)
+    @infos.parse(xml)
+    @sky.parse(xml)
+
     @xml_parse_layer_offsets(xml)
     @xml_parse_limits(xml)
     @xml_parse_script(xml)
     @xml_parse_blocks(xml)
     @xml_parse_entities(xml)
-
-  xml_parse_infos: (xml) ->
-    xml_level = $(xml).find('level')
-    @level =
-      identifier: xml_level.attr('id')
-      pack_name:  xml_level.attr('levelpack')
-      pack_id:    xml_level.attr('levelpackNum')
-      r_version:  xml_level.attr('rversion')
-
-    xml_infos  = $(xml).find('level').find('info')
-    xml_sky    = xml_infos.find('sky')
-    xml_border = xml_infos.find('border')
-    xml_music  = xml_infos.find('music')
-    @infos =
-      name:        xml_infos.find('name').text()
-      description: xml_infos.find('description').text()
-      author:      xml_infos.find('author').text()
-      date:        xml_infos.find('date').text()
-      sky:
-        name:    xml_sky.text().toLowerCase()
-        color_r: parseInt(xml_sky.attr('color_r'))
-        color_g: parseInt(xml_sky.attr('color_g'))
-        color_b: parseInt(xml_sky.attr('color_b'))
-        color_a: parseInt(xml_sky.attr('color_a'))
-        zoom:    parseFloat(xml_sky.attr('zoom'))
-        offset:  parseFloat(xml_sky.attr('offset'))
-      border: xml_border.attr('texture')
-      music: xml_music.attr('name')
 
   xml_parse_layer_offsets: (xml) ->
     xml_layer_offsets = $(xml).find('layeroffsets layeroffset')
@@ -167,7 +142,6 @@ class window.XmotoLevel
       @entities.push(entity)
 
   load_assets: (callback) ->
-    @assets = new window.Assets()
     @assets.load_for_level(this, callback)
 
   draw: ->
@@ -190,8 +164,7 @@ class window.XmotoLevel
     @ctx.translate(translate.x, translate.y)
     @ctx.lineWidth = 0.1
 
-    # Sky
-    @ctx.drawImage(@assets.get(@infos.sky.name), @screen_limits.left, @screen_limits.bottom, @size.x, @size.y)
+    @sky.display(@ctx)
 
     # Limits
     @ctx.beginPath()
@@ -292,23 +265,23 @@ class window.XmotoLevel
                           { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
 
 $ ->
-  xmoto_level = new window.XmotoLevel()
-  xmoto_level.load_from_file('l1038.lvl') # l9562.lvl  # l1287.lvl (snake) # l1038
-  xmoto_level.load_assets( ->
-    xmoto_level.triangulate()
-    xmoto_level.draw()
+  level = new window.Level()
+  level.load_from_file('l1038.lvl') # l9562.lvl  # l1287.lvl (snake) # l1038
+  level.load_assets( ->
+    level.triangulate()
+    level.draw()
 
-    box2dUtils = new window.Box2dUtils(30)
-    world = box2dUtils.createWorld(xmoto_level.ctx)
+    physics = new window.Physics(30)
+    world = physics.createWorld(level.ctx)
 
-    ball   = box2dUtils.createBall(world, 1, 7, 1, false, 'ball'+i)
-    for triangle in xmoto_level.triangles
-      box2dUtils.createTriangle(world, triangle, true, [])
+    ball   = physics.createBall(world, 1, 7, 1, false, 'ball'+i)
+    for triangle in level.triangles
+      physics.createTriangle(world, triangle, true, [])
 
     # Mettre à jour le rendu de l'environnement 2d
     update = ->
       # update physics and canvas
-      xmoto_level.draw()
+      level.draw()
       world.Step(1 / 60,  10, 10)
       world.DrawDebugData()
       world.ClearForces()
