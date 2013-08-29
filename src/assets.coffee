@@ -25,21 +25,21 @@ class Assets
     @textures.push('dirt')
 
     # Blocks (Textures)
-    for block in level.blocks
+    for block in level.blocks.list
       @list    .push(block.usetexture.id)
       @textures.push(block.usetexture.id)
 
-    # Sprites (Anims)
-    for entity in level.entities
+    for entity in level.entities.list
+
+      # Sprites (Anims)
       if entity.type_id == 'Sprite'
         for param in entity.params
           if param.name == 'name'
             @list .push(param.value)
             @anims.push(param.value)
 
-    # End of level
-    for entity in level.entities
-      if entity.type_id == 'EndOfLevel'
+      # End of level
+      else if entity.type_id == 'EndOfLevel'
         @list .push('flower00')
         @anims.push('flower00')
 

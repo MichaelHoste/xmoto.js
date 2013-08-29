@@ -5,5 +5,7 @@ class Script
     @assets = level.assets
 
   parse: (xml) ->
+    xml_script = $(xml).find('script')
+    @code = xml_script.text()
 
   display: (ctx) ->

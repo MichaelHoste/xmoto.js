@@ -3,10 +3,13 @@ class Level
   constructor: ->
     @assets = new Assets()
 
-    @infos  = new Infos(this)
-    @sky    = new Sky(this)
-    @blocks = new Blocks(this)
-    @limits = new Limits(this)
+    @infos         = new Infos(this)
+    @sky           = new Sky(this)
+    @blocks        = new Blocks(this)
+    @limits        = new Limits(this)
+    @layer_offsets = new LayerOffsets(this)
+    @script        = new Script(this)
+    @entities      = new Entities(this)
 
   load_from_file: (file_name) ->
     $.ajax({
@@ -19,59 +22,13 @@ class Level
     })
 
   xml_parser: (xml) ->
-    @infos .parse(xml)
-    @sky   .parse(xml)
-    @blocks.parse(xml)
-    @limits.parse(xml)
-
-    @xml_parse_layer_offsets(xml)
-    @xml_parse_script(xml)
-    @xml_parse_entities(xml)
-
-  xml_parse_layer_offsets: (xml) ->
-    xml_layer_offsets = $(xml).find('layeroffsets layeroffset')
-
-    @layer_offsets = []
-
-    for xml_layer_offset in xml_layer_offsets
-      layer_offset =
-        x:           parseFloat($(xml_layer_offset).attr('x'))
-        y:           parseFloat($(xml_layer_offset).attr('y'))
-        front_layer: $(xml_layer_offset).attr('frontlayer')
-
-      @layer_offsets.push(layer_offset)
-
-  xml_parse_script: (xml) ->
-    xml_script = $(xml).find('script')
-    @script = xml_script.text()
-
-  xml_parse_entities: (xml) ->
-    xml_entities = $(xml).find('entity')
-
-    @entities = []
-
-    for xml_entity in xml_entities
-      entity =
-        id: $(xml_entity).attr('id')
-        type_id: $(xml_entity).attr('typeid')
-        size:
-          r:      parseFloat($(xml_entity).find('size').attr('r'))
-          width:  parseFloat($(xml_entity).find('size').attr('width'))
-          height: parseFloat($(xml_entity).find('size').attr('height'))
-        position:
-          x:     parseFloat($(xml_entity).find('position').attr('x'))
-          y:     parseFloat($(xml_entity).find('position').attr('y'))
-          angle: parseFloat($(xml_entity).find('position').attr('angle'))
-        params: []
-
-      xml_params = $(xml_entity).find('param')
-      for xml_param in xml_params
-        param =
-          name:  $(xml_param).attr('name')
-          value: $(xml_param).attr('value').toLowerCase()
-        entity.params.push(param)
-
-      @entities.push(entity)
+    @infos        .parse(xml)
+    @sky          .parse(xml)
+    @blocks       .parse(xml)
+    @limits       .parse(xml)
+    @layer_offsets.parse(xml)
+    @script       .parse(xml)
+    @entities     .parse(xml)
 
   load_assets: (callback) ->
     @assets.load_for_level(this, callback)
@@ -96,33 +53,10 @@ class Level
     @ctx.translate(translate.x, translate.y)
     @ctx.lineWidth = 0.1
 
-    @sky   .display(@ctx)
-    @limits.display(@ctx)
-    @blocks.display(@ctx)
-
-    # Sprites
-    for entity in @entities
-      if entity.type_id == 'Sprite'
-
-        for param in entity.params
-          if param.name == 'name'
-            image = param.value
-
-        @ctx.save()
-        @ctx.translate(entity.position.x, entity.position.y)
-        @ctx.scale(1, -1)
-        @ctx.drawImage(@assets.get(image), 0, 0, entity.size.r*4, -entity.size.r*4)
-        @ctx.restore()
-
-    # End of level
-    for entity in @entities
-      if entity.type_id == 'EndOfLevel'
-
-        @ctx.save()
-        @ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r)
-        @ctx.scale(1, -1)
-        @ctx.drawImage(@assets.get('flower00'), 0, 0, entity.size.r*4, -entity.size.r*4)
-        @ctx.restore()
+    @sky     .display(@ctx)
+    @limits  .display(@ctx)
+    @blocks  .display(@ctx)
+    @entities.display(@ctx)
 
   triangulate: ->
     @triangles = []
