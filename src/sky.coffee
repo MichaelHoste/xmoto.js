@@ -1,4 +1,4 @@
-class window.Sky
+class Sky
 
   constructor: (level) ->
     @level  = level

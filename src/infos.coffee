@@ -1,6 +1,8 @@
-class window.Infos
+class Infos
 
-  constructor: ->
+  constructor: (level) ->
+    @level  = level
+    @assets = level.assets
 
   parse: (xml) ->
     xml_level   = $(xml).find('level')
@@ -21,4 +23,4 @@ class window.Infos
     xml_music = xml_infos.find('music')
     @music    = xml_music.attr('name')
 
-  display: ->
+  display: (ctx) ->

@@ -1,10 +1,11 @@
-class window.Level
+class Level
 
   constructor: ->
-    @assets = new window.Assets()
+    @assets = new Assets()
 
-    @infos = new window.Infos()
-    @sky   = new window.Sky(this, @assets)
+    @infos  = new Infos(this)
+    @sky    = new Sky(this)
+    @blocks = new Blocks(this)
 
   load_from_file: (file_name) ->
     $.ajax({
@@ -17,13 +18,13 @@ class window.Level
     })
 
   xml_parser: (xml) ->
-    @infos.parse(xml)
-    @sky.parse(xml)
+    @infos .parse(xml)
+    @sky   .parse(xml)
+    @blocks.parse(xml)
 
     @xml_parse_layer_offsets(xml)
     @xml_parse_limits(xml)
     @xml_parse_script(xml)
-    @xml_parse_blocks(xml)
     @xml_parse_entities(xml)
 
   xml_parse_layer_offsets: (xml) ->
@@ -65,54 +66,6 @@ class window.Level
     xml_script = $(xml).find('script')
     @script = xml_script.text()
 
-  xml_parse_blocks: (xml) ->
-    xml_blocks = $(xml).find('block')
-
-    @blocks = []
-
-    for xml_block in xml_blocks
-      block =
-        id: $(xml_block).attr('id')
-        position:
-          x:          parseFloat($(xml_block).find('position').attr('x'))
-          y:          parseFloat($(xml_block).find('position').attr('y'))
-          dynamic:    $(xml_block).find('position').attr('dynamic')
-          background: $(xml_block).find('position').attr('background')
-        usetexture:
-          id:    $(xml_block).find('usetexture').attr('id').toLowerCase()
-          scale: parseFloat($(xml_block).find('usetexture').attr('scale'))
-        physics:
-          grip:  parseFloat($(xml_block).find('physics').attr('grip'))
-        edges:
-          angle:     parseFloat($(xml_block).find('edges').attr('angle'))
-          materials: []
-        vertices: []
-
-      xml_materials = $(xml_block).find('edges material')
-      for xml_material in xml_materials
-        material =
-          name:    $(xml_material).attr('name')
-          edge:    $(xml_material).attr('edge')
-          color_r: parseInt($(xml_material).attr('color_r'))
-          color_g: parseInt($(xml_material).attr('color_g'))
-          color_b: parseInt($(xml_material).attr('color_b'))
-          color_a: parseInt($(xml_material).attr('color_a'))
-          scale:   parseFloat($(xml_material).attr('scale'))
-          depth:   parseFloat($(xml_material).attr('depth'))
-
-        block.edges.materials.push(material)
-
-      xml_vertices = $(xml_block).find('vertex')
-      for xml_vertex in xml_vertices
-        vertex =
-          x:     parseFloat($(xml_vertex).attr('x'))
-          y:     parseFloat($(xml_vertex).attr('y'))
-          edge : $(xml_vertex).attr('edge')
-
-        block.vertices.push(vertex)
-
-      @blocks.push(block)
-
   xml_parse_entities: (xml) ->
     xml_entities = $(xml).find('entity')
 
@@ -152,7 +105,7 @@ class window.Level
 
     @ctx = canvas.getContext('2d')
 
-    scale =
+    @scale =
       x:   canvas_width  / @size.x
       y: - canvas_height / @size.y
 
@@ -160,7 +113,7 @@ class window.Level
       x: - @screen_limits.left
       y: - @screen_limits.top
 
-    @ctx.scale(scale.x, scale.y)
+    @ctx.scale(@scale.x, @scale.y)
     @ctx.translate(translate.x, translate.y)
     @ctx.lineWidth = 0.1
 
@@ -175,7 +128,7 @@ class window.Level
     @ctx.closePath()
 
     @ctx.save()
-    @ctx.scale(1.0/scale.x, 1.0/scale.y)
+    @ctx.scale(1.0 / @scale.x, 1.0 / @scale.y)
     @ctx.fillStyle = @ctx.createPattern(@assets.get('dirt'), "repeat")
     @ctx.fill()
     @ctx.restore()
@@ -188,7 +141,7 @@ class window.Level
     @ctx.closePath()
 
     @ctx.save()
-    @ctx.scale(1.0/scale.x, 1.0/scale.y)
+    @ctx.scale(1.0 / @scale.x, 1.0 / @scale.y)
     @ctx.fillStyle = @ctx.createPattern(@assets.get('dirt'), "repeat")
     @ctx.fill()
     @ctx.restore()
@@ -201,28 +154,12 @@ class window.Level
     @ctx.closePath()
 
     @ctx.save()
-    @ctx.scale(1.0/scale.x, 1.0/scale.y)
+    @ctx.scale(1.0 / @scale.x, 1.0 / @scale.y)
     @ctx.fillStyle = @ctx.createPattern(@assets.get('dirt'), "repeat")
     @ctx.fill()
     @ctx.restore()
 
-    # Blocks
-    for block in @blocks
-      @ctx.beginPath()
-
-      for vertex, i in block.vertices
-        if i == 0
-          @ctx.moveTo(block.position.x + vertex.x, block.position.y + vertex.y)
-        else
-          @ctx.lineTo(block.position.x + vertex.x, block.position.y + vertex.y)
-
-      @ctx.closePath()
-
-      @ctx.save()
-      @ctx.scale(1.0/scale.x, 1.0/scale.y)
-      @ctx.fillStyle = @ctx.createPattern(@assets.get(block.usetexture.id), "repeat")
-      @ctx.fill()
-      @ctx.restore()
+    @blocks.display(@ctx)
 
     # Sprites
     for entity in @entities
@@ -250,7 +187,7 @@ class window.Level
 
   triangulate: ->
     @triangles = []
-    for block in @blocks
+    for block in @blocks.list
       vertices = []
       for vertex in block.vertices
         vertices.push( new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y ))
@@ -265,13 +202,13 @@ class window.Level
                           { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
 
 $ ->
-  level = new window.Level()
+  level = new Level()
   level.load_from_file('l1038.lvl') # l9562.lvl  # l1287.lvl (snake) # l1038
   level.load_assets( ->
     level.triangulate()
     level.draw()
 
-    physics = new window.Physics(30)
+    physics = new Physics(30)
     world = physics.createWorld(level.ctx)
 
     ball   = physics.createBall(world, 1, 7, 1, false, 'ball'+i)
@@ -287,6 +224,6 @@ $ ->
       world.ClearForces()
 
     # Render 2D environment
-    window.setInterval(update, 1000 / 60)
+    setInterval(update, 1000 / 60)
   )
 

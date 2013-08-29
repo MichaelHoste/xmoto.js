@@ -1,4 +1,4 @@
-class window.Assets
+class Assets
 
   constructor: ->
     @queue = new createjs.LoadQueue()
