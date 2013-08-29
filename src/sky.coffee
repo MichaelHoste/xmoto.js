@@ -16,7 +16,7 @@ class Sky
 
   display: (ctx) ->
     ctx.drawImage(@assets.get(@name),
-                  @level.screen_limits.left,
-                  @level.screen_limits.bottom,
-                  @level.size.x,
-                  @level.size.y)
+                  @level.limits.screen.left,
+                  @level.limits.screen.bottom,
+                  @level.limits.size.x,
+                  @level.limits.size.y)

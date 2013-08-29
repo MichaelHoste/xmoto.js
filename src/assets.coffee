@@ -40,8 +40,8 @@ class Assets
     # End of level
     for entity in level.entities
       if entity.type_id == 'EndOfLevel'
-        @list .push('checkball_00')
-        @anims.push('checkball_00')
+        @list .push('flower00')
+        @anims.push('flower00')
 
     # Format list for loading
     items = []

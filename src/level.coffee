@@ -6,6 +6,7 @@ class Level
     @infos  = new Infos(this)
     @sky    = new Sky(this)
     @blocks = new Blocks(this)
+    @limits = new Limits(this)
 
   load_from_file: (file_name) ->
     $.ajax({
@@ -21,9 +22,9 @@ class Level
     @infos .parse(xml)
     @sky   .parse(xml)
     @blocks.parse(xml)
+    @limits.parse(xml)
 
     @xml_parse_layer_offsets(xml)
-    @xml_parse_limits(xml)
     @xml_parse_script(xml)
     @xml_parse_entities(xml)
 
@@ -39,28 +40,6 @@ class Level
         front_layer: $(xml_layer_offset).attr('frontlayer')
 
       @layer_offsets.push(layer_offset)
-
-  xml_parse_limits: (xml) ->
-    xml_limits = $(xml).find('limits')
-
-    # CAREFUL ! The limits on files are not real, some polygons could
-    # be in the limits (maybe it's the limits where the player can go)
-
-    @screen_limits =
-      left:   parseFloat(xml_limits.attr('left'))   * 1.15
-      right:  parseFloat(xml_limits.attr('right'))  * 1.15
-      top:    parseFloat(xml_limits.attr('top'))    * 1.15
-      bottom: parseFloat(xml_limits.attr('bottom')) * 1.15
-
-    @player_limits =
-      left:   parseFloat(xml_limits.attr('left'))
-      right:  parseFloat(xml_limits.attr('right'))
-      top:    parseFloat(xml_limits.attr('top'))
-      bottom: parseFloat(xml_limits.attr('bottom'))
-
-    @size =
-      x: @screen_limits.right - @screen_limits.left
-      y: @screen_limits.top   - @screen_limits.bottom
 
   xml_parse_script: (xml) ->
     xml_script = $(xml).find('script')
@@ -100,65 +79,25 @@ class Level
   draw: ->
     canvas  = $('#game').get(0)
     canvas_width  = parseFloat(canvas.width)
-    canvas_height = canvas.width * (@size.y / @size.x)
+    canvas_height = canvas.width * (@limits.size.y / @limits.size.x)
     $('#game').attr('height', canvas_height)
 
     @ctx = canvas.getContext('2d')
 
     @scale =
-      x:   canvas_width  / @size.x
-      y: - canvas_height / @size.y
+      x:   canvas_width  / @limits.size.x
+      y: - canvas_height / @limits.size.y
 
     translate =
-      x: - @screen_limits.left
-      y: - @screen_limits.top
+      x: - @limits.screen.left
+      y: - @limits.screen.top
 
     @ctx.scale(@scale.x, @scale.y)
     @ctx.translate(translate.x, translate.y)
     @ctx.lineWidth = 0.1
 
-    @sky.display(@ctx)
-
-    # Limits
-    @ctx.beginPath()
-    @ctx.moveTo(@screen_limits.left, @screen_limits.top   )
-    @ctx.lineTo(@screen_limits.left, @screen_limits.bottom)
-    @ctx.lineTo(@player_limits.left, @screen_limits.bottom)
-    @ctx.lineTo(@player_limits.left, @screen_limits.top   )
-    @ctx.closePath()
-
-    @ctx.save()
-    @ctx.scale(1.0 / @scale.x, 1.0 / @scale.y)
-    @ctx.fillStyle = @ctx.createPattern(@assets.get('dirt'), "repeat")
-    @ctx.fill()
-    @ctx.restore()
-
-    @ctx.beginPath()
-    @ctx.moveTo(@screen_limits.right, @screen_limits.top   )
-    @ctx.lineTo(@screen_limits.right, @screen_limits.bottom)
-    @ctx.lineTo(@player_limits.right, @screen_limits.bottom)
-    @ctx.lineTo(@player_limits.right, @screen_limits.top   )
-    @ctx.closePath()
-
-    @ctx.save()
-    @ctx.scale(1.0 / @scale.x, 1.0 / @scale.y)
-    @ctx.fillStyle = @ctx.createPattern(@assets.get('dirt'), "repeat")
-    @ctx.fill()
-    @ctx.restore()
-
-    @ctx.beginPath()
-    @ctx.moveTo(@player_limits.right, @player_limits.bottom)
-    @ctx.lineTo(@player_limits.left,  @player_limits.bottom)
-    @ctx.lineTo(@player_limits.left,  @screen_limits.bottom)
-    @ctx.lineTo(@player_limits.right, @screen_limits.bottom)
-    @ctx.closePath()
-
-    @ctx.save()
-    @ctx.scale(1.0 / @scale.x, 1.0 / @scale.y)
-    @ctx.fillStyle = @ctx.createPattern(@assets.get('dirt'), "repeat")
-    @ctx.fill()
-    @ctx.restore()
-
+    @sky   .display(@ctx)
+    @limits.display(@ctx)
     @blocks.display(@ctx)
 
     # Sprites
@@ -182,7 +121,7 @@ class Level
         @ctx.save()
         @ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r)
         @ctx.scale(1, -1)
-        @ctx.drawImage(@assets.get('checkball_00'), 0, 0, entity.size.r*2, -entity.size.r*2)
+        @ctx.drawImage(@assets.get('flower00'), 0, 0, entity.size.r*4, -entity.size.r*4)
         @ctx.restore()
 
   triangulate: ->
