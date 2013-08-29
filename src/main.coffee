@@ -19,6 +19,17 @@ $ ->
       world.DrawDebugData()
       world.ClearForces()
 
+      # Initialize keyboard
+      $(document).off('keydown')
+      $(document).on('keydown', (event) =>
+        force = 0.3
+        switch(event.which || event.keyCode)
+          when 38 then ball.GetBody().ApplyForce(new b2Vec2( 0,     force), ball.GetBody().GetWorldCenter()) # up
+          when 40 then ball.GetBody().ApplyForce(new b2Vec2( 0,    -force), ball.GetBody().GetWorldCenter()) # down
+          when 37 then ball.GetBody().ApplyForce(new b2Vec2(-force, 0),     ball.GetBody().GetWorldCenter()) # left
+          when 39 then ball.GetBody().ApplyForce(new b2Vec2( force, 0),     ball.GetBody().GetWorldCenter()) # right
+      )
+
     # Render 2D environment
     setInterval(update, 1000 / 60)
   )

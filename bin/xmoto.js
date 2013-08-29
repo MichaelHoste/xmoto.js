@@ -500,10 +500,26 @@
         physics.createTriangle(world, triangle, true, []);
       }
       update = function() {
+        var _this = this;
         level.display();
         world.Step(1 / 60, 10, 10);
         world.DrawDebugData();
-        return world.ClearForces();
+        world.ClearForces();
+        $(document).off('keydown');
+        return $(document).on('keydown', function(event) {
+          var force;
+          force = 0.3;
+          switch (event.which || event.keyCode) {
+            case 38:
+              return ball.GetBody().ApplyForce(new b2Vec2(0, force), ball.GetBody().GetWorldCenter());
+            case 40:
+              return ball.GetBody().ApplyForce(new b2Vec2(0, -force), ball.GetBody().GetWorldCenter());
+            case 37:
+              return ball.GetBody().ApplyForce(new b2Vec2(-force, 0), ball.GetBody().GetWorldCenter());
+            case 39:
+              return ball.GetBody().ApplyForce(new b2Vec2(force, 0), ball.GetBody().GetWorldCenter());
+          }
+        });
       };
       return setInterval(update, 1000 / 60);
     });
