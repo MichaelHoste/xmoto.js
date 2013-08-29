@@ -25,6 +25,6 @@ class Infos
 
     return this
 
-  init_assets: ->
+  init: ->
 
   display: (ctx) ->

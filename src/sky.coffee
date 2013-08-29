@@ -16,7 +16,7 @@ class Sky
 
     return this
 
-  init_assets: ->
+  init: ->
     @assets.textures.push(@name)
 
   display: (ctx) ->

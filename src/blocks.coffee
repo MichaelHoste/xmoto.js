@@ -55,7 +55,11 @@ class Blocks
 
     return this
 
-  init_assets: ->
+  init: ->
+    # Triangulation (for collisions in box2D)
+    @triangles = triangulate(@list)
+
+    # Assets
     for block in @list
       @assets.textures.push(block.usetexture.id)
 
@@ -76,4 +80,22 @@ class Blocks
       ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), "repeat")
       ctx.fill()
       ctx.restore()
+
+# Out of class methods
+triangulate = (blocks) ->
+  triangles = []
+  for block in blocks
+    vertices = []
+    for vertex in block.vertices
+      vertices.push( new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y ))
+
+    triangulation = new poly2tri.SweepContext(vertices, { cloneArrays: true })
+    triangulation.triangulate()
+    set_of_triangles = triangulation.getTriangles()
+
+    for triangle in set_of_triangles
+      triangles.push([ { x: triangle.points_[0].x, y: triangle.points_[0].y },
+                       { x: triangle.points_[1].x, y: triangle.points_[1].y },
+                       { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
+  triangles
 

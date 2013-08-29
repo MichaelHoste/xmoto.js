@@ -18,6 +18,6 @@ class LayerOffsets
 
     return this
 
-  init_assets: ->
+  init: ->
 
   display: (ctx) ->

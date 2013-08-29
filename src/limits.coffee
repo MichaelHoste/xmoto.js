@@ -28,7 +28,7 @@ class Limits
 
     return this
 
-  init_assets: ->
+  init: ->
     @assets.textures.push('dirt')
 
   display: (ctx) ->

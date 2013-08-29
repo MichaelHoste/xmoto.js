@@ -10,6 +10,6 @@ class Script
 
     return this
 
-  init_assets: ->
+  init: ->
 
   display: (ctx) ->

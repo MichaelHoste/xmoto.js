@@ -33,7 +33,7 @@ class Entities
 
     return this
 
-  init_assets: ->
+  init: ->
     for entity in @list
 
       # Sprites (Anims)
