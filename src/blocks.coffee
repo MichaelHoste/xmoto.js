@@ -53,8 +53,14 @@ class Blocks
 
       @list.push(block)
 
+    return this
+
+  load_assets: ->
+    for block in @list
+      @assets.list    .push(block.usetexture.id)
+      @assets.textures.push(block.usetexture.id)
+
   display: (ctx) ->
-    # Blocks
     for block in @list
       ctx.beginPath()
 

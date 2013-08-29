@@ -14,6 +14,12 @@ class Sky
     @zoom      = parseFloat(xml_sky.attr('zoom'))
     @offset    = parseFloat(xml_sky.attr('offset'))
 
+    return this
+
+  load_assets: ->
+    @assets.list    .push(@name)
+    @assets.textures.push(@name)
+
   display: (ctx) ->
     ctx.drawImage(@assets.get(@name),
                   @level.limits.screen.left,

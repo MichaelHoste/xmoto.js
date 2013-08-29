@@ -10,57 +10,20 @@
       this.anims = [];
     }
 
-    Assets.prototype.load = function(items, callback) {
-      var item, _i, _len;
-      for (_i = 0, _len = items.length; _i < _len; _i++) {
-        item = items[_i];
-        this.list.push(item.id);
-      }
-      this.queue.addEventListener("complete", callback);
-      return this.queue.loadManifest(items);
-    };
-
     Assets.prototype.load_for_level = function(level, callback) {
-      var block, entity, item, items, param, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4;
-      this.list.push(level.sky.name);
-      this.textures.push(level.sky.name);
-      this.list.push('dirt');
-      this.textures.push('dirt');
-      _ref = level.blocks.list;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        block = _ref[_i];
-        this.list.push(block.usetexture.id);
-        this.textures.push(block.usetexture.id);
-      }
-      _ref1 = level.entities.list;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        entity = _ref1[_j];
-        if (entity.type_id === 'Sprite') {
-          _ref2 = entity.params;
-          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-            param = _ref2[_k];
-            if (param.name === 'name') {
-              this.list.push(param.value);
-              this.anims.push(param.value);
-            }
-          }
-        } else if (entity.type_id === 'EndOfLevel') {
-          this.list.push('flower00');
-          this.anims.push('flower00');
-        }
-      }
+      var item, items, _i, _j, _len, _len1, _ref, _ref1;
       items = [];
-      _ref3 = this.textures;
-      for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-        item = _ref3[_l];
+      _ref = this.textures;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
         items.push({
           id: item,
           src: "data/Textures/Textures/" + item + ".jpg"
         });
       }
-      _ref4 = this.anims;
-      for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
-        item = _ref4[_m];
+      _ref1 = this.anims;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        item = _ref1[_j];
         items.push({
           id: item,
           src: "data/Textures/Anims/" + item + ".png"
@@ -86,10 +49,9 @@
     }
 
     Blocks.prototype.parse = function(xml) {
-      var block, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices, _i, _j, _k, _len, _len1, _len2, _results;
+      var block, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices, _i, _j, _k, _len, _len1, _len2;
       xml_blocks = $(xml).find('block');
       this.list = [];
-      _results = [];
       for (_i = 0, _len = xml_blocks.length; _i < _len; _i++) {
         xml_block = xml_blocks[_i];
         block = {
@@ -138,7 +100,19 @@
           };
           block.vertices.push(vertex);
         }
-        _results.push(this.list.push(block));
+        this.list.push(block);
+      }
+      return this;
+    };
+
+    Blocks.prototype.load_assets = function() {
+      var block, _i, _len, _ref, _results;
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        block = _ref[_i];
+        this.assets.list.push(block.usetexture.id);
+        _results.push(this.assets.textures.push(block.usetexture.id));
       }
       return _results;
     };
@@ -181,9 +155,8 @@
     }
 
     Entities.prototype.parse = function(xml) {
-      var entity, param, xml_entities, xml_entity, xml_param, xml_params, _i, _j, _len, _len1, _results;
+      var entity, param, xml_entities, xml_entity, xml_param, xml_params, _i, _j, _len, _len1;
       xml_entities = $(xml).find('entity');
-      _results = [];
       for (_i = 0, _len = xml_entities.length; _i < _len; _i++) {
         xml_entity = xml_entities[_i];
         entity = {
@@ -210,7 +183,39 @@
           };
           entity.params.push(param);
         }
-        _results.push(this.list.push(entity));
+        this.list.push(entity);
+      }
+      return this;
+    };
+
+    Entities.prototype.load_assets = function() {
+      var entity, param, _i, _len, _ref, _results;
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        entity = _ref[_i];
+        if (entity.type_id === 'Sprite') {
+          _results.push((function() {
+            var _j, _len1, _ref1, _results1;
+            _ref1 = entity.params;
+            _results1 = [];
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              param = _ref1[_j];
+              if (param.name === 'name') {
+                this.assets.list.push(param.value);
+                _results1.push(this.assets.anims.push(param.value));
+              } else {
+                _results1.push(void 0);
+              }
+            }
+            return _results1;
+          }).call(this));
+        } else if (entity.type_id === 'EndOfLevel') {
+          this.assets.list.push('flower00');
+          _results.push(this.assets.anims.push('flower00'));
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     };
@@ -272,8 +277,11 @@
       xml_border = xml_infos.find('border');
       this.border = xml_border.attr('texture');
       xml_music = xml_infos.find('music');
-      return this.music = xml_music.attr('name');
+      this.music = xml_music.attr('name');
+      return this;
     };
+
+    Infos.prototype.load_assets = function() {};
 
     Infos.prototype.display = function(ctx) {};
 
@@ -289,9 +297,8 @@
     }
 
     LayerOffsets.prototype.parse = function(xml) {
-      var layer_offset, xml_layer_offset, xml_layer_offsets, _i, _len, _results;
+      var layer_offset, xml_layer_offset, xml_layer_offsets, _i, _len;
       xml_layer_offsets = $(xml).find('layeroffsets layeroffset');
-      _results = [];
       for (_i = 0, _len = xml_layer_offsets.length; _i < _len; _i++) {
         xml_layer_offset = xml_layer_offsets[_i];
         layer_offset = {
@@ -299,10 +306,12 @@
           y: parseFloat($(xml_layer_offset).attr('y')),
           front_layer: $(xml_layer_offset).attr('frontlayer')
         };
-        _results.push(this.list.push(layer_offset));
+        this.list.push(layer_offset);
       }
-      return _results;
+      return this;
     };
+
+    LayerOffsets.prototype.load_assets = function() {};
 
     LayerOffsets.prototype.display = function(ctx) {};
 
@@ -327,20 +336,20 @@
         type: "GET",
         url: "data/Levels/" + file_name,
         dataType: "xml",
-        success: this.xml_parser,
+        success: this.load_level,
         async: false,
         context: this
       });
     };
 
-    Level.prototype.xml_parser = function(xml) {
-      this.infos.parse(xml);
-      this.sky.parse(xml);
-      this.blocks.parse(xml);
-      this.limits.parse(xml);
-      this.layer_offsets.parse(xml);
-      this.script.parse(xml);
-      return this.entities.parse(xml);
+    Level.prototype.load_level = function(xml) {
+      this.infos.parse(xml).load_assets();
+      this.sky.parse(xml).load_assets();
+      this.blocks.parse(xml).load_assets();
+      this.limits.parse(xml).load_assets();
+      this.layer_offsets.parse(xml).load_assets();
+      this.script.parse(xml).load_assets();
+      return this.entities.parse(xml).load_assets();
     };
 
     Level.prototype.load_assets = function(callback) {
@@ -464,10 +473,16 @@
         top: parseFloat(xml_limits.attr('top')),
         bottom: parseFloat(xml_limits.attr('bottom'))
       };
-      return this.size = {
+      this.size = {
         x: this.screen.right - this.screen.left,
         y: this.screen.top - this.screen.bottom
       };
+      return this;
+    };
+
+    Limits.prototype.load_assets = function() {
+      this.assets.list.push('dirt');
+      return this.assets.textures.push('dirt');
     };
 
     Limits.prototype.display = function(ctx) {
@@ -632,8 +647,11 @@
     Script.prototype.parse = function(xml) {
       var xml_script;
       xml_script = $(xml).find('script');
-      return this.code = xml_script.text();
+      this.code = xml_script.text();
+      return this;
     };
+
+    Script.prototype.load_assets = function() {};
 
     Script.prototype.display = function(ctx) {};
 
@@ -656,7 +674,13 @@
       this.color_b = parseInt(xml_sky.attr('color_b'));
       this.color_a = parseInt(xml_sky.attr('color_a'));
       this.zoom = parseFloat(xml_sky.attr('zoom'));
-      return this.offset = parseFloat(xml_sky.attr('offset'));
+      this.offset = parseFloat(xml_sky.attr('offset'));
+      return this;
+    };
+
+    Sky.prototype.load_assets = function() {
+      this.assets.list.push(this.name);
+      return this.assets.textures.push(this.name);
     };
 
     Sky.prototype.display = function(ctx) {

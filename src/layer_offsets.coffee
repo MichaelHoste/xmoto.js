@@ -16,4 +16,8 @@ class LayerOffsets
 
       @list.push(layer_offset)
 
+    return this
+
+  load_assets: ->
+
   display: (ctx) ->

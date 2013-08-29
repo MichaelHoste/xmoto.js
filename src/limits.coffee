@@ -26,6 +26,12 @@ class Limits
       x: @screen.right - @screen.left
       y: @screen.top   - @screen.bottom
 
+    return this
+
+  load_assets: ->
+    @assets.list    .push('dirt')
+    @assets.textures.push('dirt')
+
   display: (ctx) ->
     ctx.beginPath()
     ctx.moveTo(@screen.left, @screen.top   )

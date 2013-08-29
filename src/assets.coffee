@@ -6,43 +6,8 @@ class Assets
     @textures = [] # texture list
     @anims    = [] # anim lists
 
-  # Load a batch of textures in this format [{ id: "", src: ""}, {...}]
-  load: (items, callback) ->
-    for item in items
-      @list.push(item.id)
-
-    @queue.addEventListener("complete", callback)
-    @queue.loadManifest(items)
-
   # Load textures for a specific level
   load_for_level: (level, callback) ->
-    # Sky (Textures)
-    @list    .push(level.sky.name)
-    @textures.push(level.sky.name)
-
-    # Borders
-    @list    .push('dirt')
-    @textures.push('dirt')
-
-    # Blocks (Textures)
-    for block in level.blocks.list
-      @list    .push(block.usetexture.id)
-      @textures.push(block.usetexture.id)
-
-    for entity in level.entities.list
-
-      # Sprites (Anims)
-      if entity.type_id == 'Sprite'
-        for param in entity.params
-          if param.name == 'name'
-            @list .push(param.value)
-            @anims.push(param.value)
-
-      # End of level
-      else if entity.type_id == 'EndOfLevel'
-        @list .push('flower00')
-        @anims.push('flower00')
-
     # Format list for loading
     items = []
     for item in @textures

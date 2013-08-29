@@ -23,4 +23,8 @@ class Infos
     xml_music = xml_infos.find('music')
     @music    = xml_music.attr('name')
 
+    return this
+
+  load_assets: ->
+
   display: (ctx) ->

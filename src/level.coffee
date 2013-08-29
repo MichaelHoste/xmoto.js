@@ -16,19 +16,19 @@ class Level
       type:     "GET",
       url:      "data/Levels/#{file_name}",
       dataType: "xml",
-      success:  @xml_parser
+      success:  @load_level
       async:    false
       context:  @
     })
 
-  xml_parser: (xml) ->
-    @infos        .parse(xml)
-    @sky          .parse(xml)
-    @blocks       .parse(xml)
-    @limits       .parse(xml)
-    @layer_offsets.parse(xml)
-    @script       .parse(xml)
-    @entities     .parse(xml)
+  load_level: (xml) ->
+    @infos        .parse(xml).load_assets()
+    @sky          .parse(xml).load_assets()
+    @blocks       .parse(xml).load_assets()
+    @limits       .parse(xml).load_assets()
+    @layer_offsets.parse(xml).load_assets()
+    @script       .parse(xml).load_assets()
+    @entities     .parse(xml).load_assets()
 
   load_assets: (callback) ->
     @assets.load_for_level(this, callback)

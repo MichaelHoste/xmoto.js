@@ -8,4 +8,8 @@ class Script
     xml_script = $(xml).find('script')
     @code = xml_script.text()
 
+    return this
+
+  load_assets: ->
+
   display: (ctx) ->

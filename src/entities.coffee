@@ -31,6 +31,23 @@ class Entities
 
       @list.push(entity)
 
+    return this
+
+  load_assets: ->
+    for entity in @list
+
+      # Sprites (Anims)
+      if entity.type_id == 'Sprite'
+        for param in entity.params
+          if param.name == 'name'
+            @assets.list .push(param.value)
+            @assets.anims.push(param.value)
+
+      # End of level
+      else if entity.type_id == 'EndOfLevel'
+        @assets.list .push('flower00')
+        @assets.anims.push('flower00')
+
   display: (ctx) ->
     for entity in @list
 
