@@ -5,12 +5,11 @@
   Assets = (function() {
     function Assets() {
       this.queue = new createjs.LoadQueue();
-      this.list = [];
       this.textures = [];
       this.anims = [];
     }
 
-    Assets.prototype.load_for_level = function(level, callback) {
+    Assets.prototype.load = function(callback) {
       var item, items, _i, _j, _len, _len1, _ref, _ref1;
       items = [];
       _ref = this.textures;
@@ -105,13 +104,12 @@
       return this;
     };
 
-    Blocks.prototype.load_assets = function() {
+    Blocks.prototype.init_assets = function() {
       var block, _i, _len, _ref, _results;
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
-        this.assets.list.push(block.usetexture.id);
         _results.push(this.assets.textures.push(block.usetexture.id));
       }
       return _results;
@@ -188,7 +186,7 @@
       return this;
     };
 
-    Entities.prototype.load_assets = function() {
+    Entities.prototype.init_assets = function() {
       var entity, param, _i, _len, _ref, _results;
       _ref = this.list;
       _results = [];
@@ -202,7 +200,6 @@
             for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
               param = _ref1[_j];
               if (param.name === 'name') {
-                this.assets.list.push(param.value);
                 _results1.push(this.assets.anims.push(param.value));
               } else {
                 _results1.push(void 0);
@@ -211,7 +208,6 @@
             return _results1;
           }).call(this));
         } else if (entity.type_id === 'EndOfLevel') {
-          this.assets.list.push('flower00');
           _results.push(this.assets.anims.push('flower00'));
         } else {
           _results.push(void 0);
@@ -281,7 +277,7 @@
       return this;
     };
 
-    Infos.prototype.load_assets = function() {};
+    Infos.prototype.init_assets = function() {};
 
     Infos.prototype.display = function(ctx) {};
 
@@ -311,7 +307,7 @@
       return this;
     };
 
-    LayerOffsets.prototype.load_assets = function() {};
+    LayerOffsets.prototype.init_assets = function() {};
 
     LayerOffsets.prototype.display = function(ctx) {};
 
@@ -343,17 +339,13 @@
     };
 
     Level.prototype.load_level = function(xml) {
-      this.infos.parse(xml).load_assets();
-      this.sky.parse(xml).load_assets();
-      this.blocks.parse(xml).load_assets();
-      this.limits.parse(xml).load_assets();
-      this.layer_offsets.parse(xml).load_assets();
-      this.script.parse(xml).load_assets();
-      return this.entities.parse(xml).load_assets();
-    };
-
-    Level.prototype.load_assets = function(callback) {
-      return this.assets.load_for_level(this, callback);
+      this.infos.parse(xml).init_assets();
+      this.sky.parse(xml).init_assets();
+      this.blocks.parse(xml).init_assets();
+      this.limits.parse(xml).init_assets();
+      this.layer_offsets.parse(xml).init_assets();
+      this.script.parse(xml).init_assets();
+      return this.entities.parse(xml).init_assets();
     };
 
     Level.prototype.draw = function() {
@@ -430,7 +422,7 @@
     var level;
     level = new Level();
     level.load_from_file('l1038.lvl');
-    return level.load_assets(function() {
+    return level.assets.load(function() {
       var ball, physics, triangle, update, world, _i, _len, _ref;
       level.triangulate();
       level.draw();
@@ -480,8 +472,7 @@
       return this;
     };
 
-    Limits.prototype.load_assets = function() {
-      this.assets.list.push('dirt');
+    Limits.prototype.init_assets = function() {
       return this.assets.textures.push('dirt');
     };
 
@@ -651,7 +642,7 @@
       return this;
     };
 
-    Script.prototype.load_assets = function() {};
+    Script.prototype.init_assets = function() {};
 
     Script.prototype.display = function(ctx) {};
 
@@ -678,8 +669,7 @@
       return this;
     };
 
-    Sky.prototype.load_assets = function() {
-      this.assets.list.push(this.name);
+    Sky.prototype.init_assets = function() {
       return this.assets.textures.push(this.name);
     };
 

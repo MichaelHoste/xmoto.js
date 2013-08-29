@@ -55,9 +55,8 @@ class Blocks
 
     return this
 
-  load_assets: ->
+  init_assets: ->
     for block in @list
-      @assets.list    .push(block.usetexture.id)
       @assets.textures.push(block.usetexture.id)
 
   display: (ctx) ->

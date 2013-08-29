@@ -2,12 +2,10 @@ class Assets
 
   constructor: ->
     @queue = new createjs.LoadQueue()
-    @list     = [] # complete list of assets
     @textures = [] # texture list
     @anims    = [] # anim lists
 
-  # Load textures for a specific level
-  load_for_level: (level, callback) ->
+  load: (callback) ->
     # Format list for loading
     items = []
     for item in @textures

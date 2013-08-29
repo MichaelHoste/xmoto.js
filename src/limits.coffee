@@ -28,8 +28,7 @@ class Limits
 
     return this
 
-  load_assets: ->
-    @assets.list    .push('dirt')
+  init_assets: ->
     @assets.textures.push('dirt')
 
   display: (ctx) ->

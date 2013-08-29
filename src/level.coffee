@@ -22,16 +22,13 @@ class Level
     })
 
   load_level: (xml) ->
-    @infos        .parse(xml).load_assets()
-    @sky          .parse(xml).load_assets()
-    @blocks       .parse(xml).load_assets()
-    @limits       .parse(xml).load_assets()
-    @layer_offsets.parse(xml).load_assets()
-    @script       .parse(xml).load_assets()
-    @entities     .parse(xml).load_assets()
-
-  load_assets: (callback) ->
-    @assets.load_for_level(this, callback)
+    @infos        .parse(xml).init_assets()
+    @sky          .parse(xml).init_assets()
+    @blocks       .parse(xml).init_assets()
+    @limits       .parse(xml).init_assets()
+    @layer_offsets.parse(xml).init_assets()
+    @script       .parse(xml).init_assets()
+    @entities     .parse(xml).init_assets()
 
   draw: ->
     canvas  = $('#game').get(0)
@@ -77,7 +74,7 @@ class Level
 $ ->
   level = new Level()
   level.load_from_file('l1038.lvl') # l9562.lvl  # l1287.lvl (snake) # l1038
-  level.load_assets( ->
+  level.assets.load( ->
     level.triangulate()
     level.draw()
 
