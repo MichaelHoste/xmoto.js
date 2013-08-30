@@ -90,17 +90,18 @@ class Blocks
 triangulate = (blocks) ->
   triangles = []
   for block in blocks
-    vertices = []
-    for vertex in block.vertices
-      vertices.push( new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y ))
+    if block.position.background != "true"
+      vertices = []
+      for vertex in block.vertices
+        vertices.push( new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y ))
 
-    triangulation = new poly2tri.SweepContext(vertices, { cloneArrays: true })
-    triangulation.triangulate()
-    set_of_triangles = triangulation.getTriangles()
+      triangulation = new poly2tri.SweepContext(vertices, { cloneArrays: true })
+      triangulation.triangulate()
+      set_of_triangles = triangulation.getTriangles()
 
-    for triangle in set_of_triangles
-      triangles.push([ { x: triangle.points_[0].x, y: triangle.points_[0].y },
-                       { x: triangle.points_[1].x, y: triangle.points_[1].y },
-                       { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
+      for triangle in set_of_triangles
+        triangles.push([ { x: triangle.points_[0].x, y: triangle.points_[0].y },
+                         { x: triangle.points_[1].x, y: triangle.points_[1].y },
+                         { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
   triangles
 

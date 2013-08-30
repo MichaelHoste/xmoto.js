@@ -165,31 +165,33 @@
     triangles = [];
     for (_i = 0, _len = blocks.length; _i < _len; _i++) {
       block = blocks[_i];
-      vertices = [];
-      _ref = block.vertices;
-      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-        vertex = _ref[_j];
-        vertices.push(new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y));
-      }
-      triangulation = new poly2tri.SweepContext(vertices, {
-        cloneArrays: true
-      });
-      triangulation.triangulate();
-      set_of_triangles = triangulation.getTriangles();
-      for (_k = 0, _len2 = set_of_triangles.length; _k < _len2; _k++) {
-        triangle = set_of_triangles[_k];
-        triangles.push([
-          {
-            x: triangle.points_[0].x,
-            y: triangle.points_[0].y
-          }, {
-            x: triangle.points_[1].x,
-            y: triangle.points_[1].y
-          }, {
-            x: triangle.points_[2].x,
-            y: triangle.points_[2].y
-          }
-        ]);
+      if (block.position.background !== "true") {
+        vertices = [];
+        _ref = block.vertices;
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          vertex = _ref[_j];
+          vertices.push(new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y));
+        }
+        triangulation = new poly2tri.SweepContext(vertices, {
+          cloneArrays: true
+        });
+        triangulation.triangulate();
+        set_of_triangles = triangulation.getTriangles();
+        for (_k = 0, _len2 = set_of_triangles.length; _k < _len2; _k++) {
+          triangle = set_of_triangles[_k];
+          triangles.push([
+            {
+              x: triangle.points_[0].x,
+              y: triangle.points_[0].y
+            }, {
+              x: triangle.points_[1].x,
+              y: triangle.points_[1].y
+            }, {
+              x: triangle.points_[2].x,
+              y: triangle.points_[2].y
+            }
+          ]);
+        }
       }
     }
     return triangles;
