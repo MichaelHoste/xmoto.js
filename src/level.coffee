@@ -1,8 +1,21 @@
 class Level
 
   constructor: ->
-    @assets = new Assets()
+    # Context
+    canvas  = $('#game').get(0)
+    @ctx = canvas.getContext('2d')
 
+    # Assets manager
+    @assets        = new Assets()
+
+    # Box2D World
+    @physics       = new Physics(this)
+    @world         = @physics.world
+
+    # Moto (level independant)
+    @moto          = new Moto(this)
+
+    # Level dependent objects
     @infos         = new Infos(this)
     @sky           = new Sky(this)
     @blocks        = new Blocks(this)
@@ -35,8 +48,6 @@ class Level
     canvas_width  = parseFloat(canvas.width)
     canvas_height = canvas.width * (@limits.size.y / @limits.size.x)
     $('#game').attr('height', canvas_height)
-
-    @ctx = canvas.getContext('2d')
 
     @scale =
       x:   canvas_width  / @limits.size.x

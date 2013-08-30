@@ -13,36 +13,27 @@ b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
 
 class Physics
 
-  constructor: (scale) ->
-    this.SCALE = scale # Define the scale
+  constructor: (level) ->
+    @scale = 30
+    @level = level
+    @world = new b2World(new b2Vec2(0, -10), true) # gravity vector, and doSleep
 
-  # Create the 2d world
-  createWorld: (context) ->
-    world = new b2World(new b2Vec2(0, -10), true) # gravity vector, and doSleep
+    context = @level.ctx
 
     # debug initialization
     debugDraw = new b2DebugDraw()
     debugDraw.SetSprite(context)    # context
     debugDraw.SetFillAlpha(0.3)     # transparency
     debugDraw.SetLineThickness(1.0) # thickness of line
-    debugDraw.SetDrawScale(this.SCALE)    # scale
+    debugDraw.SetDrawScale(@scale)    # scale
 
     # Assign debug to world
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit)
-    world.SetDebugDraw(debugDraw)
+    @world.SetDebugDraw(debugDraw)
 
-    world
+    @world
 
-  # Create an object
-  # @param type object type (string)
-  # @param b2World box2D world
-  # @param x x position of object
-  # @param y y position of object
-  # @param dimensions dimensions of object
-  # @param fixed static (true) or dynamic (false)
-  # @param userData custom values
-  # @return object in its 2D world
-  createBody: (type, world, x, y, dimensions, fixed, userData) ->
+  createBody: (type, x, y, dimensions, fixed, userData) ->
     # by default, static object
     fixed = true if typeof(fixed) == 'undefined'
 
@@ -54,16 +45,16 @@ class Physics
     switch (type)
       when 'box'
         fixDef.shape = new b2PolygonShape()
-        fixDef.shape.SetAsBox(dimensions.width/this.SCALE, dimensions.height/this.SCALE)
+        fixDef.shape.SetAsBox(dimensions.width / @scale, dimensions.height / @scale)
       when 'ball'
-        fixDef.shape = new b2CircleShape(dimensions.radius/this.SCALE)
+        fixDef.shape = new b2CircleShape(dimensions.radius / @scale)
 
     # Create body
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x/this.SCALE
-    bodyDef.position.y = y/this.SCALE
+    bodyDef.position.x = x / @scale
+    bodyDef.position.y = y / @scale
 
     if fixed
       bodyDef.type = b2Body.b2_staticBody
@@ -71,26 +62,27 @@ class Physics
       bodyDef.type = b2Body.b2_dynamicBody
       fixDef.density     = 1.0
       fixDef.restitution = 0.5
+    fixDef.friction    = 1.0
 
     # Assign fixture to body and add body to 2D world
-    world.CreateBody(bodyDef).CreateFixture(fixDef)
+    @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
   # Create "box" object
-  createBox: (world, x, y, width, height, fixed, userData) ->
+  createBox: (x, y, width, height, fixed, userData) ->
     dimensions =
       width:  width
       height: height
 
-    this.createBody('box', world, x, y, dimensions, fixed, userData)
+    this.createBody('box', x, y, dimensions, fixed, userData)
 
    # Create "ball" object
-  createBall: (world, x, y, radius, fixed, userData) ->
+  createBall: (x, y, radius, fixed, userData) ->
     dimensions =
       radius: radius
 
-    this.createBody('ball', world, x, y, dimensions, fixed, userData)
+    this.createBody('ball', x, y, dimensions, fixed, userData)
 
-  createTriangle: (world, vertices, fixed, userData) ->
+  createTriangle: (vertices, fixed, userData) ->
     # by default, static object
     fixed = true if typeof(fixed) == 'undefined'
 
@@ -101,9 +93,9 @@ class Physics
     fixDef.shape = new b2PolygonShape()
 
     fixDef.shape.SetAsArray( [
-      new b2Vec2(vertices[0].x/this.SCALE, vertices[0].y/this.SCALE),
-      new b2Vec2(vertices[1].x/this.SCALE, vertices[1].y/this.SCALE),
-      new b2Vec2(vertices[2].x/this.SCALE, vertices[2].y/this.SCALE) ])
+      new b2Vec2(vertices[0].x / @scale, vertices[0].y / @scale),
+      new b2Vec2(vertices[1].x / @scale, vertices[1].y / @scale),
+      new b2Vec2(vertices[2].x / @scale, vertices[2].y / @scale) ])
 
     # Create body
     bodyDef = new b2BodyDef()
@@ -120,4 +112,4 @@ class Physics
       fixDef.restitution = 0.5
 
     # Assign fixture to body and add body to 2D world
-    world.CreateBody(bodyDef).CreateFixture(fixDef)
+    @world.CreateBody(bodyDef).CreateFixture(fixDef)

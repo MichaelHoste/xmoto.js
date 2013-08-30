@@ -56,14 +56,19 @@ class Blocks
     return this
 
   init: ->
-    # Triangulation (for collisions in box2D)
-    @triangles = triangulate(@list)
-
     # Assets
     for block in @list
       @assets.textures.push(block.usetexture.id)
 
+    # Triangulation (for collisions in box2D)
+    @triangles = triangulate(@list)
+
+    # Create triangles in box2D
+    for triangle in @triangles
+      @level.physics.createTriangle(triangle, true, [])
+
   display: (ctx) ->
+    # Display
     for block in @list
       ctx.beginPath()
 
