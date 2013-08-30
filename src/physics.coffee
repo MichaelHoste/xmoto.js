@@ -75,13 +75,6 @@ class Physics
 
     this.createBody('box', x, y, dimensions, fixed, userData)
 
-   # Create "ball" object
-  createBall: (x, y, radius, fixed, userData) ->
-    dimensions =
-      radius: radius
-
-    this.createBody('ball', x, y, dimensions, fixed, userData)
-
   createTriangle: (vertices, fixed, userData) ->
     # by default, static object
     fixed = true if typeof(fixed) == 'undefined'

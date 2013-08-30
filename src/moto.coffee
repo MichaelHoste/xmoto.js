@@ -16,5 +16,29 @@ class Moto
   constructor: (level) ->
     @level  = level
     @assets = level.assets
+    @left_wheel = @create_wheel(1, 7, 1)
 
   display: ->
+    #@left_wheel.GetBody().GetPosition()
+
+  create_wheel: (x, y, radius) ->
+    # Create fixture
+    fixDef = new b2FixtureDef()
+
+    # draw the object
+    fixDef.shape = new b2CircleShape(radius / @level.physics.scale)
+
+    # Create body
+    bodyDef = new b2BodyDef()
+
+    # Assign body position
+    bodyDef.position.x = x / @level.physics.scale
+    bodyDef.position.y = y / @level.physics.scale
+
+    bodyDef.type = b2Body.b2_dynamicBody
+    fixDef.density     = 1.0
+    fixDef.restitution = 0.5
+    fixDef.friction    = 1.0
+
+    # Assign fixture to body and add body to 2D world
+    @level.world.CreateBody(bodyDef).CreateFixture(fixDef)

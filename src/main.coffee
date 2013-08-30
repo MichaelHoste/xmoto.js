@@ -4,8 +4,6 @@ $ ->
   level.assets.load( ->
     level.display()
 
-    ball = level.physics.createBall(1, 7, 1, false, 'wheel1')
-
     # Mettre à jour le rendu de l'environnement 2d
     update = ->
       # update physics and canvas
@@ -18,11 +16,12 @@ $ ->
       $(document).off('keydown')
       $(document).on('keydown', (event) =>
         force = 0.3
+        left_wheel = level.moto.left_wheel
         switch(event.which || event.keyCode)
-          when 38 then ball.GetBody().ApplyForce(new b2Vec2( 0,     force), ball.GetBody().GetWorldCenter()) # up
-          when 40 then ball.GetBody().ApplyForce(new b2Vec2( 0,    -force), ball.GetBody().GetWorldCenter()) # down
-          when 37 then ball.GetBody().ApplyTorque(0.01) # left
-          when 39 then ball.GetBody().ApplyTorque(- 0.01) # right
+          when 38 then left_wheel.GetBody().ApplyForce(new b2Vec2( 0,  force), left_wheel.GetBody().GetWorldCenter()) # up
+          when 40 then left_wheel.GetBody().ApplyForce(new b2Vec2( 0, -force), left_wheel.GetBody().GetWorldCenter()) # down
+          when 37 then left_wheel.GetBody().ApplyTorque(0.01) # left
+          when 39 then left_wheel.GetBody().ApplyTorque(- 0.01) # right
       )
 
     # Render 2D environment

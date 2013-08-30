@@ -65,3 +65,4 @@ class Level
     @limits  .display(@ctx)
     @blocks  .display(@ctx)
     @entities.display(@ctx)
+    @moto    .display(@ctx)

@@ -415,7 +415,8 @@
       this.sky.display(this.ctx);
       this.limits.display(this.ctx);
       this.blocks.display(this.ctx);
-      return this.entities.display(this.ctx);
+      this.entities.display(this.ctx);
+      return this.moto.display(this.ctx);
     };
 
     return Level;
@@ -499,9 +500,8 @@
     level = new Level();
     level.load_from_file('l1038.lvl');
     return level.assets.load(function() {
-      var ball, update;
+      var update;
       level.display();
-      ball = level.physics.createBall(1, 7, 1, false, 'wheel1');
       update = function() {
         var _this = this;
         level.display();
@@ -510,17 +510,18 @@
         level.world.ClearForces();
         $(document).off('keydown');
         return $(document).on('keydown', function(event) {
-          var force;
+          var force, left_wheel;
           force = 0.3;
+          left_wheel = level.moto.left_wheel;
           switch (event.which || event.keyCode) {
             case 38:
-              return ball.GetBody().ApplyForce(new b2Vec2(0, force), ball.GetBody().GetWorldCenter());
+              return left_wheel.GetBody().ApplyForce(new b2Vec2(0, force), left_wheel.GetBody().GetWorldCenter());
             case 40:
-              return ball.GetBody().ApplyForce(new b2Vec2(0, -force), ball.GetBody().GetWorldCenter());
+              return left_wheel.GetBody().ApplyForce(new b2Vec2(0, -force), left_wheel.GetBody().GetWorldCenter());
             case 37:
-              return ball.GetBody().ApplyTorque(0.01);
+              return left_wheel.GetBody().ApplyTorque(0.01);
             case 39:
-              return ball.GetBody().ApplyTorque(-0.01);
+              return left_wheel.GetBody().ApplyTorque(-0.01);
           }
         });
       };
@@ -556,9 +557,24 @@
     function Moto(level) {
       this.level = level;
       this.assets = level.assets;
+      this.left_wheel = this.create_wheel(1, 7, 1);
     }
 
     Moto.prototype.display = function() {};
+
+    Moto.prototype.create_wheel = function(x, y, radius) {
+      var bodyDef, fixDef;
+      fixDef = new b2FixtureDef();
+      fixDef.shape = new b2CircleShape(radius / this.level.physics.scale);
+      bodyDef = new b2BodyDef();
+      bodyDef.position.x = x / this.level.physics.scale;
+      bodyDef.position.y = y / this.level.physics.scale;
+      bodyDef.type = b2Body.b2_dynamicBody;
+      fixDef.density = 1.0;
+      fixDef.restitution = 0.5;
+      fixDef.friction = 1.0;
+      return this.level.world.CreateBody(bodyDef).CreateFixture(fixDef);
+    };
 
     return Moto;
 
@@ -641,14 +657,6 @@
         height: height
       };
       return this.createBody('box', x, y, dimensions, fixed, userData);
-    };
-
-    Physics.prototype.createBall = function(x, y, radius, fixed, userData) {
-      var dimensions;
-      dimensions = {
-        radius: radius
-      };
-      return this.createBody('ball', x, y, dimensions, fixed, userData);
     };
 
     Physics.prototype.createTriangle = function(vertices, fixed, userData) {
