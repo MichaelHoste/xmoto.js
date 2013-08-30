@@ -18,20 +18,7 @@ class Moto
     @assets = level.assets
 
   display: ->
-    position = @left_wheel.GetBody().GetPosition()
-    radius   = @left_wheel.GetShape().m_radius
-
-    @level.ctx.save()
-    @level.ctx.translate(position.x*@level.physics.scale,
-                         position.y*@level.physics.scale)
-    @level.ctx.rotate(@left_wheel.GetBody().GetAngle())
-    @level.ctx.drawImage(@assets.get('playerbikerwheel'),
-      -radius*@level.physics.scale,
-       radius*@level.physics.scale,
-       radius*@level.physics.scale*2,
-      -radius*@level.physics.scale*2)
-
-    @level.ctx.restore()
+    @display_left_wheel()
 
   init: ->
     # Assets
@@ -39,7 +26,6 @@ class Moto
                  'playerbikerwheel', 'playerlowerarm', 'playerlowerleg',
                  'playertorso', 'playerupperarm', 'playerupperleg', 'rear1',
                  'upperarm1', 'upperleg1' ]
-
     for texture in textures
       @assets.moto.push(texture)
 
@@ -50,7 +36,7 @@ class Moto
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    # draw the object
+    # Draw the object
     fixDef.shape = new b2CircleShape(radius / @level.physics.scale)
 
     # Create body
@@ -67,3 +53,33 @@ class Moto
 
     # Assign fixture to body and add body to 2D world
     @level.world.CreateBody(bodyDef).CreateFixture(fixDef)
+
+  display_left_wheel: ->
+    # Position
+    position = @left_wheel.GetBody().GetPosition()
+    scaled_position =
+      x: position.x*@level.physics.scale
+      y: position.y*@level.physics.scale
+
+    # Radius
+    radius = @left_wheel.GetShape().m_radius
+    scaled_radius = radius*@level.physics.scale
+
+    # Angle
+    angle = @left_wheel.GetBody().GetAngle()
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(scaled_position.x, scaled_position.y)
+    @level.ctx.rotate(angle)
+
+    @level.ctx.drawImage(
+      @assets.get('playerbikerwheel'), # texture
+      -scaled_radius,   # x
+       scaled_radius,   # y
+       scaled_radius*2, # size-x
+      -scaled_radius*2  # size-y
+    )
+
+    @level.ctx.restore()
+

@@ -65,7 +65,7 @@ class Blocks
 
     # Create triangles in box2D
     for triangle in @triangles
-      @level.physics.createTriangle(triangle, true, [])
+      @level.physics.createPolygon(triangle)
 
   display: (ctx) ->
     # Display

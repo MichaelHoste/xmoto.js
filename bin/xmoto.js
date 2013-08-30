@@ -125,7 +125,7 @@
       _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         triangle = _ref1[_j];
-        _results.push(this.level.physics.createTriangle(triangle, true, []));
+        _results.push(this.level.physics.createPolygon(triangle));
       }
       return _results;
     };
@@ -462,7 +462,62 @@
     };
 
     Limits.prototype.init = function() {
-      return this.assets.textures.push('dirt');
+      var vertices;
+      this.assets.textures.push('dirt');
+      vertices = [];
+      vertices.push({
+        x: this.screen.left,
+        y: this.screen.top * 5
+      });
+      vertices.push({
+        x: this.screen.left,
+        y: this.screen.bottom
+      });
+      vertices.push({
+        x: this.player.left,
+        y: this.screen.bottom
+      });
+      vertices.push({
+        x: this.player.left,
+        y: this.screen.top * 5
+      });
+      this.level.physics.createPolygon(vertices);
+      vertices = [];
+      vertices.push({
+        x: this.screen.right,
+        y: this.screen.top * 5
+      });
+      vertices.push({
+        x: this.screen.right,
+        y: this.screen.bottom
+      });
+      vertices.push({
+        x: this.player.right,
+        y: this.screen.bottom
+      });
+      vertices.push({
+        x: this.player.right,
+        y: this.screen.top * 5
+      });
+      this.level.physics.createPolygon(vertices);
+      vertices = [];
+      vertices.push({
+        x: this.player.right,
+        y: this.player.bottom
+      });
+      vertices.push({
+        x: this.player.left,
+        y: this.player.bottom
+      });
+      vertices.push({
+        x: this.player.left,
+        y: this.screen.bottom
+      });
+      vertices.push({
+        x: this.player.right,
+        y: this.screen.bottom
+      });
+      return this.level.physics.createPolygon(vertices);
     };
 
     Limits.prototype.display = function(ctx) {
@@ -507,7 +562,6 @@
     level.load_from_file('l1038.lvl');
     return level.assets.load(function() {
       var update;
-      level.display();
       update = function() {
         var _this = this;
         level.world.Step(1 / 60, 10, 10);
@@ -567,14 +621,7 @@
     }
 
     Moto.prototype.display = function() {
-      var position, radius;
-      position = this.left_wheel.GetBody().GetPosition();
-      radius = this.left_wheel.GetShape().m_radius;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x * this.level.physics.scale, position.y * this.level.physics.scale);
-      this.level.ctx.rotate(this.left_wheel.GetBody().GetAngle());
-      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius * this.level.physics.scale, radius * this.level.physics.scale, radius * this.level.physics.scale * 2, -radius * this.level.physics.scale * 2);
-      return this.level.ctx.restore();
+      return this.display_left_wheel();
     };
 
     Moto.prototype.init = function() {
@@ -599,6 +646,23 @@
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       return this.level.world.CreateBody(bodyDef).CreateFixture(fixDef);
+    };
+
+    Moto.prototype.display_left_wheel = function() {
+      var angle, position, radius, scaled_position, scaled_radius;
+      position = this.left_wheel.GetBody().GetPosition();
+      scaled_position = {
+        x: position.x * this.level.physics.scale,
+        y: position.y * this.level.physics.scale
+      };
+      radius = this.left_wheel.GetShape().m_radius;
+      scaled_radius = radius * this.level.physics.scale;
+      angle = this.left_wheel.GetBody().GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(scaled_position.x, scaled_position.y);
+      this.level.ctx.rotate(angle);
+      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -scaled_radius, scaled_radius, scaled_radius * 2, -scaled_radius * 2);
+      return this.level.ctx.restore();
     };
 
     return Moto;
@@ -646,63 +710,20 @@
       this.world;
     }
 
-    Physics.prototype.createBody = function(type, x, y, dimensions, fixed, userData) {
-      var bodyDef, fixDef;
-      if (typeof fixed === 'undefined') {
-        fixed = true;
-      }
+    Physics.prototype.createPolygon = function(vertices) {
+      var b2vertices, bodyDef, fixDef, vertex, _i, _len;
       fixDef = new b2FixtureDef();
-      fixDef.userData = userData;
-      switch (type) {
-        case 'box':
-          fixDef.shape = new b2PolygonShape();
-          fixDef.shape.SetAsBox(dimensions.width / this.scale, dimensions.height / this.scale);
-          break;
-        case 'ball':
-          fixDef.shape = new b2CircleShape(dimensions.radius / this.scale);
-      }
-      bodyDef = new b2BodyDef();
-      bodyDef.position.x = x / this.scale;
-      bodyDef.position.y = y / this.scale;
-      if (fixed) {
-        bodyDef.type = b2Body.b2_staticBody;
-      } else {
-        bodyDef.type = b2Body.b2_dynamicBody;
-        fixDef.density = 1.0;
-        fixDef.restitution = 0.5;
-      }
-      fixDef.friction = 1.0;
-      return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-    };
-
-    Physics.prototype.createBox = function(x, y, width, height, fixed, userData) {
-      var dimensions;
-      dimensions = {
-        width: width,
-        height: height
-      };
-      return this.createBody('box', x, y, dimensions, fixed, userData);
-    };
-
-    Physics.prototype.createTriangle = function(vertices, fixed, userData) {
-      var bodyDef, fixDef;
-      if (typeof fixed === 'undefined') {
-        fixed = true;
-      }
-      fixDef = new b2FixtureDef();
-      fixDef.userData = userData;
       fixDef.shape = new b2PolygonShape();
-      fixDef.shape.SetAsArray([new b2Vec2(vertices[0].x / this.scale, vertices[0].y / this.scale), new b2Vec2(vertices[1].x / this.scale, vertices[1].y / this.scale), new b2Vec2(vertices[2].x / this.scale, vertices[2].y / this.scale)]);
+      b2vertices = [];
+      for (_i = 0, _len = vertices.length; _i < _len; _i++) {
+        vertex = vertices[_i];
+        b2vertices.push(new b2Vec2(vertex.x / this.scale, vertex.y / this.scale));
+      }
+      fixDef.shape.SetAsArray(b2vertices);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = 0;
       bodyDef.position.y = 0;
-      if (fixed) {
-        bodyDef.type = b2Body.b2_staticBody;
-      } else {
-        bodyDef.type = b2Body.b2_dynamicBody;
-        fixDef.density = 1.0;
-        fixDef.restitution = 0.5;
-      }
+      bodyDef.type = b2Body.b2_staticBody;
       return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
     };
 
