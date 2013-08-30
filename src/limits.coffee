@@ -39,11 +39,7 @@ class Limits
     ctx.lineTo(@player.left, @screen.top   )
     ctx.closePath()
 
-    ctx.save()
-    ctx.scale(1.0 / @level.scale.x, 1.0 / @level.scale.y)
-    ctx.fillStyle = ctx.createPattern(@assets.get('dirt'), "repeat")
-    ctx.fill()
-    ctx.restore()
+    @save_apply_texture_and_restore(ctx)
 
     ctx.beginPath()
     ctx.moveTo(@screen.right, @screen.top   )
@@ -52,11 +48,7 @@ class Limits
     ctx.lineTo(@player.right, @screen.top   )
     ctx.closePath()
 
-    ctx.save()
-    ctx.scale(1.0 / @level.scale.x, 1.0 / @level.scale.y)
-    ctx.fillStyle = ctx.createPattern(@assets.get('dirt'), "repeat")
-    ctx.fill()
-    ctx.restore()
+    @save_apply_texture_and_restore(ctx)
 
     ctx.beginPath()
     ctx.moveTo(@player.right, @player.bottom)
@@ -65,8 +57,12 @@ class Limits
     ctx.lineTo(@player.right, @screen.bottom)
     ctx.closePath()
 
+    @save_apply_texture_and_restore(ctx)
+
+  save_apply_texture_and_restore: (ctx) ->
     ctx.save()
     ctx.scale(1.0 / @level.scale.x, 1.0 / @level.scale.y)
     ctx.fillStyle = ctx.createPattern(@assets.get('dirt'), "repeat")
     ctx.fill()
     ctx.restore()
+

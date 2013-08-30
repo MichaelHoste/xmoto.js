@@ -4,6 +4,7 @@ class Assets
     @queue = new createjs.LoadQueue()
     @textures = [] # texture list
     @anims    = [] # anim lists
+    @moto     = [] # moto list
 
   load: (callback) ->
     # Format list for loading
@@ -17,6 +18,11 @@ class Assets
       items.push(
         id:  item
         src: "data/Textures/Anims/#{item}.png"
+      )
+    for item in @moto
+      items.push(
+        id:  item
+        src: "data/Textures/Riders/#{item}.png"
       )
 
     @queue.addEventListener("complete", callback)

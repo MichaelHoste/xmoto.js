@@ -21,3 +21,8 @@ Don't forget to restart the coffee command if you create new JS files.
 ## For production
 
 Just upload the files on a static web server (you can remove the "src" folder if you want)
+
+## TODO
+
+ * Create collision boxes for borders
+ * Connect 2 wheels with the moto body (Prismatic Joints and Revolute Joints)

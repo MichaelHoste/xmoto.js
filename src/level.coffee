@@ -35,6 +35,10 @@ class Level
     })
 
   load_level: (xml) ->
+    # Moto (level independant)
+    @moto.init()
+
+    # Level dependent objects
     @infos        .parse(xml).init()
     @sky          .parse(xml).init()
     @blocks       .parse(xml).init()

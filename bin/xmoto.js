@@ -7,10 +7,11 @@
       this.queue = new createjs.LoadQueue();
       this.textures = [];
       this.anims = [];
+      this.moto = [];
     }
 
     Assets.prototype.load = function(callback) {
-      var item, items, _i, _j, _len, _len1, _ref, _ref1;
+      var item, items, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
       items = [];
       _ref = this.textures;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -26,6 +27,14 @@
         items.push({
           id: item,
           src: "data/Textures/Anims/" + item + ".png"
+        });
+      }
+      _ref2 = this.moto;
+      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+        item = _ref2[_k];
+        items.push({
+          id: item,
+          src: "data/Textures/Riders/" + item + ".png"
         });
       }
       this.queue.addEventListener("complete", callback);
@@ -386,6 +395,7 @@
     };
 
     Level.prototype.load_level = function(xml) {
+      this.moto.init();
       this.infos.parse(xml).init();
       this.sky.parse(xml).init();
       this.blocks.parse(xml).init();
@@ -462,28 +472,24 @@
       ctx.lineTo(this.player.left, this.screen.bottom);
       ctx.lineTo(this.player.left, this.screen.top);
       ctx.closePath();
-      ctx.save();
-      ctx.scale(1.0 / this.level.scale.x, 1.0 / this.level.scale.y);
-      ctx.fillStyle = ctx.createPattern(this.assets.get('dirt'), "repeat");
-      ctx.fill();
-      ctx.restore();
+      this.save_apply_texture_and_restore(ctx);
       ctx.beginPath();
       ctx.moveTo(this.screen.right, this.screen.top);
       ctx.lineTo(this.screen.right, this.screen.bottom);
       ctx.lineTo(this.player.right, this.screen.bottom);
       ctx.lineTo(this.player.right, this.screen.top);
       ctx.closePath();
-      ctx.save();
-      ctx.scale(1.0 / this.level.scale.x, 1.0 / this.level.scale.y);
-      ctx.fillStyle = ctx.createPattern(this.assets.get('dirt'), "repeat");
-      ctx.fill();
-      ctx.restore();
+      this.save_apply_texture_and_restore(ctx);
       ctx.beginPath();
       ctx.moveTo(this.player.right, this.player.bottom);
       ctx.lineTo(this.player.left, this.player.bottom);
       ctx.lineTo(this.player.left, this.screen.bottom);
       ctx.lineTo(this.player.right, this.screen.bottom);
       ctx.closePath();
+      return this.save_apply_texture_and_restore(ctx);
+    };
+
+    Limits.prototype.save_apply_texture_and_restore = function(ctx) {
       ctx.save();
       ctx.scale(1.0 / this.level.scale.x, 1.0 / this.level.scale.y);
       ctx.fillStyle = ctx.createPattern(this.assets.get('dirt'), "repeat");
@@ -504,24 +510,25 @@
       level.display();
       update = function() {
         var _this = this;
-        level.display();
         level.world.Step(1 / 60, 10, 10);
-        level.world.DrawDebugData();
         level.world.ClearForces();
+        level.display();
         $(document).off('keydown');
         return $(document).on('keydown', function(event) {
-          var force, left_wheel;
+          var force, left_wheel_body;
           force = 0.3;
-          left_wheel = level.moto.left_wheel;
+          left_wheel_body = level.moto.left_wheel.GetBody();
           switch (event.which || event.keyCode) {
             case 38:
-              return left_wheel.GetBody().ApplyForce(new b2Vec2(0, force), left_wheel.GetBody().GetWorldCenter());
+              return left_wheel_body.ApplyForce(new b2Vec2(0, force), left_wheel_body.GetWorldCenter());
             case 40:
-              return left_wheel.GetBody().ApplyForce(new b2Vec2(0, -force), left_wheel.GetBody().GetWorldCenter());
+              return left_wheel_body.ApplyForce(new b2Vec2(0, -force), left_wheel_body.GetWorldCenter());
             case 37:
-              return left_wheel.GetBody().ApplyTorque(0.01);
+              left_wheel_body.ApplyTorque(0.01);
+              return left_wheel_body.ApplyForce(new b2Vec2(-force / 2, 0), left_wheel_body.GetWorldCenter());
             case 39:
-              return left_wheel.GetBody().ApplyTorque(-0.01);
+              left_wheel_body.ApplyTorque(-0.01);
+              return left_wheel_body.ApplyForce(new b2Vec2(force / 2, 0), left_wheel_body.GetWorldCenter());
           }
         });
       };
@@ -557,10 +564,28 @@
     function Moto(level) {
       this.level = level;
       this.assets = level.assets;
-      this.left_wheel = this.create_wheel(1, 7, 1);
     }
 
-    Moto.prototype.display = function() {};
+    Moto.prototype.display = function() {
+      var position, radius;
+      position = this.left_wheel.GetBody().GetPosition();
+      radius = this.left_wheel.GetShape().m_radius;
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x * this.level.physics.scale, position.y * this.level.physics.scale);
+      this.level.ctx.rotate(this.left_wheel.GetBody().GetAngle());
+      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius * this.level.physics.scale, radius * this.level.physics.scale, radius * this.level.physics.scale * 2, -radius * this.level.physics.scale * 2);
+      return this.level.ctx.restore();
+    };
+
+    Moto.prototype.init = function() {
+      var texture, textures, _i, _len;
+      textures = ['front1', 'lowerarm1', 'lowerleg1', 'playerbikerbody', 'playerbikerwheel', 'playerlowerarm', 'playerlowerleg', 'playertorso', 'playerupperarm', 'playerupperleg', 'rear1', 'upperarm1', 'upperleg1'];
+      for (_i = 0, _len = textures.length; _i < _len; _i++) {
+        texture = textures[_i];
+        this.assets.moto.push(texture);
+      }
+      return this.left_wheel = this.create_wheel(1, 7, 1);
+    };
 
     Moto.prototype.create_wheel = function(x, y, radius) {
       var bodyDef, fixDef;

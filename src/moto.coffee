@@ -16,10 +16,35 @@ class Moto
   constructor: (level) ->
     @level  = level
     @assets = level.assets
-    @left_wheel = @create_wheel(1, 7, 1)
 
   display: ->
-    #@left_wheel.GetBody().GetPosition()
+    position = @left_wheel.GetBody().GetPosition()
+    radius   = @left_wheel.GetShape().m_radius
+
+    @level.ctx.save()
+    @level.ctx.translate(position.x*@level.physics.scale,
+                         position.y*@level.physics.scale)
+    @level.ctx.rotate(@left_wheel.GetBody().GetAngle())
+    @level.ctx.drawImage(@assets.get('playerbikerwheel'),
+      -radius*@level.physics.scale,
+       radius*@level.physics.scale,
+       radius*@level.physics.scale*2,
+      -radius*@level.physics.scale*2)
+
+    @level.ctx.restore()
+
+  init: ->
+    # Assets
+    textures = [ 'front1', 'lowerarm1', 'lowerleg1', 'playerbikerbody',
+                 'playerbikerwheel', 'playerlowerarm', 'playerlowerleg',
+                 'playertorso', 'playerupperarm', 'playerupperleg', 'rear1',
+                 'upperarm1', 'upperleg1' ]
+
+    for texture in textures
+      @assets.moto.push(texture)
+
+    # Creation of moto parts
+    @left_wheel = @create_wheel(1, 7, 1)
 
   create_wheel: (x, y, radius) ->
     # Create fixture
