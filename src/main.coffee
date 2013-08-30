@@ -1,6 +1,6 @@
 $ ->
   level = new Level()
-  level.load_from_file('l1038.lvl') # l9562.lvl  # l1287.lvl (snake) # l1038
+  level.load_from_file('l1287.lvl') # l9562.lvl  # l1287.lvl (snake) # l1038
 
   # Load assets for this level before doing anything else
   level.assets.load( ->

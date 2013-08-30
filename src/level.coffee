@@ -35,9 +35,6 @@ class Level
     })
 
   load_level: (xml) ->
-    # Moto (level independant)
-    @moto.init()
-
     # Level dependent objects
     @infos        .parse(xml).init()
     @sky          .parse(xml).init()
@@ -46,6 +43,9 @@ class Level
     @layer_offsets.parse(xml).init()
     @script       .parse(xml).init()
     @entities     .parse(xml).init()
+
+    # Moto (level independant)
+    @moto.init()
 
   display: ->
     canvas  = $('#game').get(0)

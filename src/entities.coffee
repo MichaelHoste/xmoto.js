@@ -46,6 +46,12 @@ class Entities
       else if entity.type_id == 'EndOfLevel'
         @assets.anims.push('flower00')
 
+      # Player start
+      else if entity.type_id == 'PlayerStart'
+        @player_start =
+          x: entity.position.x
+          y: entity.position.y
+
   display: (ctx) ->
     for entity in @list
 

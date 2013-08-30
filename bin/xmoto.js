@@ -259,6 +259,11 @@
           }).call(this));
         } else if (entity.type_id === 'EndOfLevel') {
           _results.push(this.assets.anims.push('flower00'));
+        } else if (entity.type_id === 'PlayerStart') {
+          _results.push(this.player_start = {
+            x: entity.position.x,
+            y: entity.position.y
+          });
         } else {
           _results.push(void 0);
         }
@@ -395,14 +400,14 @@
     };
 
     Level.prototype.load_level = function(xml) {
-      this.moto.init();
       this.infos.parse(xml).init();
       this.sky.parse(xml).init();
       this.blocks.parse(xml).init();
       this.limits.parse(xml).init();
       this.layer_offsets.parse(xml).init();
       this.script.parse(xml).init();
-      return this.entities.parse(xml).init();
+      this.entities.parse(xml).init();
+      return this.moto.init();
     };
 
     Level.prototype.display = function() {
@@ -559,7 +564,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l1038.lvl');
+    level.load_from_file('l1287.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
@@ -631,7 +636,7 @@
         texture = textures[_i];
         this.assets.moto.push(texture);
       }
-      return this.left_wheel = this.create_wheel(1, 7, 1);
+      return this.left_wheel = this.create_wheel(this.level.entities.player_start.x, this.level.entities.player_start.y, 1.0);
     };
 
     Moto.prototype.create_wheel = function(x, y, radius) {

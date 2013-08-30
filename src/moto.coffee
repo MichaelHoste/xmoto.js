@@ -30,7 +30,7 @@ class Moto
       @assets.moto.push(texture)
 
     # Creation of moto parts
-    @left_wheel = @create_wheel(1, 7, 1)
+    @left_wheel = @create_wheel(@level.entities.player_start.x, @level.entities.player_start.y, 1.0)
 
   create_wheel: (x, y, radius) ->
     # Create fixture
