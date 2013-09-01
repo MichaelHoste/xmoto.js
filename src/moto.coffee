@@ -37,19 +37,25 @@ class Moto
     # Creation of moto parts
     @player_start = @level.entities.player_start
     @bike_body    = @create_bike_body(@player_start.x, @player_start.y + 1.0)
+
     @left_wheel   = @create_wheel(@player_start.x - 0.7, @player_start.y + 0.45)
     @right_wheel  = @create_wheel(@player_start.x + 0.7, @player_start.y + 0.45)
-    @left_axle    = @create_left_axle(@player_start.x, @player_start.y + 1.0)
 
-    @create_left_revolute_joint()
-    @create_left_prismatic_joint()
+    @left_axle    = @create_left_axle( @player_start.x, @player_start.y + 1.0)
+    @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0)
+
+    @left_revolute_join  = @create_left_revolute_joint()
+    @left_pragmatic_join = @create_left_prismatic_joint()
+
+    @right_revolute_join  = @create_right_revolute_joint()
+    @right_pragmatic_join = @create_right_prismatic_joint()
 
   create_bike_body: (x, y)  ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 0.4
+    fixDef.density     = 0.1
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
@@ -136,24 +142,63 @@ class Moto
 
     body
 
+  create_right_axle: (x, y) ->
+    # Create fixture
+    fixDef = new b2FixtureDef()
+
+    fixDef.shape       = new b2PolygonShape()
+    fixDef.density     = 1.0
+    fixDef.restitution = 0.5
+    fixDef.friction    = 1.0
+    fixDef.filter.groupIndex = -1
+
+    b2vertices = [ new b2Vec2( 0.58 / @scale,  -0.02 / @scale),
+                   new b2Vec2( 0.48 / @scale,  -0.02 / @scale),
+                   new b2Vec2( 0.66 / @scale,  -0.58 / @scale),
+                   new b2Vec2( 0.76 / @scale,  -0.58 / @scale) ]
+
+    fixDef.shape.SetAsArray(b2vertices)
+
+    # Create body
+    bodyDef = new b2BodyDef()
+
+    # Assign body position
+    bodyDef.position.x = x / @scale
+    bodyDef.position.y = y / @scale
+
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
+
+    # Assign fixture to body and add body to 2D world
+    body = @level.world.CreateBody(bodyDef)
+    body.CreateFixture(fixDef)
+
+    body
+
   create_left_revolute_joint: ->
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@left_axle, @left_wheel, @left_wheel.GetWorldCenter())
-    #jointDef.maxMotorForce = 1.0
-    #jointDef.motorSpeed = 0.0
     jointDef.enableMotor = true;
     @level.world.CreateJoint(jointDef)
 
   create_left_prismatic_joint: ->
     jointDef = new b2PrismaticJointDef()
-    jointDef.Initialize(@bike_body, @left_axle, @bike_body.GetWorldCenter(), { x: 0.90, y: 0.90 } )
-    #jointDef.lowerTranslation = -0.002
-    #jointDef.upperTranslation =  0.002
+    jointDef.Initialize(@bike_body, @left_axle, @bike_body.GetWorldCenter(), { x: 0.50, y: 0.50 } )
     jointDef.enableLimit = true
     jointDef.collideConnected = false
-    #jointDef.maxMotorForce = 1.0
-    #jointDef.motorSpeed = 0.0
-    #jointDef.enableMotor = true
+    @level.world.CreateJoint(jointDef)
+
+  create_right_revolute_joint: ->
+    jointDef = new b2RevoluteJointDef()
+    jointDef.Initialize(@right_axle, @right_wheel, @right_wheel.GetWorldCenter())
+    jointDef.enableMotor = true;
+    @level.world.CreateJoint(jointDef)
+
+  create_right_prismatic_joint: ->
+    jointDef = new b2PrismaticJointDef()
+    jointDef.Initialize(@bike_body, @right_axle, @bike_body.GetWorldCenter(), { x: 0.50, y: 0.50 } )
+    jointDef.enableLimit = true
+    jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
   display_wheel: (wheel) ->

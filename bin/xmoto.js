@@ -444,12 +444,12 @@
       this.canvas_width = parseFloat(this.canvas.width);
       this.canvas_height = this.canvas.width * (this.limits.size.y / this.limits.size.x);
       this.scale = {
-        x: this.canvas_width / this.limits.size.x * 3,
-        y: -this.canvas_height / this.limits.size.y * 3
+        x: this.canvas_width / this.limits.size.x,
+        y: -this.canvas_height / this.limits.size.y
       };
       return this.translate = {
         x: -this.limits.screen.left,
-        y: -this.limits.screen.top + 10
+        y: -this.limits.screen.top
       };
     };
 
@@ -606,21 +606,21 @@
         level.world.Step(1 / 60, 10, 10);
         level.world.ClearForces();
         level.display();
-        level.world.DrawDebugData();
         $(document).off('keydown');
         return $(document).on('keydown', function(event) {
-          var force, left_wheel_body;
+          var force, left_wheel_body, right_wheel_body;
           force = 0.03;
           left_wheel_body = level.moto.left_wheel;
+          right_wheel_body = level.moto.right_wheel;
           switch (event.which || event.keyCode) {
             case 38:
-              return left_wheel_body.ApplyForce(new b2Vec2(0, force), left_wheel_body.GetWorldCenter());
-            case 40:
-              return left_wheel_body.ApplyForce(new b2Vec2(0, -force), left_wheel_body.GetWorldCenter());
-            case 37:
-              return left_wheel_body.ApplyTorque(0.001);
-            case 39:
               return left_wheel_body.ApplyTorque(-0.001);
+            case 40:
+              return left_wheel_body.ApplyTorque(0.001);
+            case 37:
+              return right_wheel_body.ApplyForce(new b2Vec2(0, -force), right_wheel_body.GetWorldCenter());
+            case 39:
+              return right_wheel_body.ApplyForce(new b2Vec2(0, force), right_wheel_body.GetWorldCenter());
           }
         });
       };
@@ -681,15 +681,18 @@
       this.left_wheel = this.create_wheel(this.player_start.x - 0.7, this.player_start.y + 0.45);
       this.right_wheel = this.create_wheel(this.player_start.x + 0.7, this.player_start.y + 0.45);
       this.left_axle = this.create_left_axle(this.player_start.x, this.player_start.y + 1.0);
-      this.create_left_revolute_joint();
-      return this.create_left_prismatic_joint();
+      this.right_axle = this.create_right_axle(this.player_start.x, this.player_start.y + 1.0);
+      this.left_revolute_join = this.create_left_revolute_joint();
+      this.left_pragmatic_join = this.create_left_prismatic_joint();
+      this.right_revolute_join = this.create_right_revolute_joint();
+      return this.right_pragmatic_join = this.create_right_prismatic_joint();
     };
 
     Moto.prototype.create_bike_body = function(x, y) {
       var b2vertices, body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = 0.4;
+      fixDef.density = 0.1;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
@@ -740,6 +743,25 @@
       return body;
     };
 
+    Moto.prototype.create_right_axle = function(x, y) {
+      var b2vertices, body, bodyDef, fixDef;
+      fixDef = new b2FixtureDef();
+      fixDef.shape = new b2PolygonShape();
+      fixDef.density = 1.0;
+      fixDef.restitution = 0.5;
+      fixDef.friction = 1.0;
+      fixDef.filter.groupIndex = -1;
+      b2vertices = [new b2Vec2(0.58 / this.scale, -0.02 / this.scale), new b2Vec2(0.48 / this.scale, -0.02 / this.scale), new b2Vec2(0.66 / this.scale, -0.58 / this.scale), new b2Vec2(0.76 / this.scale, -0.58 / this.scale)];
+      fixDef.shape.SetAsArray(b2vertices);
+      bodyDef = new b2BodyDef();
+      bodyDef.position.x = x / this.scale;
+      bodyDef.position.y = y / this.scale;
+      bodyDef.type = b2Body.b2_dynamicBody;
+      body = this.level.world.CreateBody(bodyDef);
+      body.CreateFixture(fixDef);
+      return body;
+    };
+
     Moto.prototype.create_left_revolute_joint = function() {
       var jointDef;
       jointDef = new b2RevoluteJointDef();
@@ -752,8 +774,28 @@
       var jointDef;
       jointDef = new b2PrismaticJointDef();
       jointDef.Initialize(this.bike_body, this.left_axle, this.bike_body.GetWorldCenter(), {
-        x: 0.90,
-        y: 0.90
+        x: 0.50,
+        y: 0.50
+      });
+      jointDef.enableLimit = true;
+      jointDef.collideConnected = false;
+      return this.level.world.CreateJoint(jointDef);
+    };
+
+    Moto.prototype.create_right_revolute_joint = function() {
+      var jointDef;
+      jointDef = new b2RevoluteJointDef();
+      jointDef.Initialize(this.right_axle, this.right_wheel, this.right_wheel.GetWorldCenter());
+      jointDef.enableMotor = true;
+      return this.level.world.CreateJoint(jointDef);
+    };
+
+    Moto.prototype.create_right_prismatic_joint = function() {
+      var jointDef;
+      jointDef = new b2PrismaticJointDef();
+      jointDef.Initialize(this.bike_body, this.right_axle, this.bike_body.GetWorldCenter(), {
+        x: 0.50,
+        y: 0.50
       });
       jointDef.enableLimit = true;
       jointDef.collideConnected = false;
