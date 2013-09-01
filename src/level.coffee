@@ -47,22 +47,27 @@ class Level
     # Moto (level independant)
     @moto.init()
 
-  display: ->
-    canvas  = $('#game').get(0)
-    canvas_width  = parseFloat(canvas.width)
-    canvas_height = canvas.width * (@limits.size.y / @limits.size.x)
-    $('#game').attr('height', canvas_height)
+  init_canvas: ->
+    @canvas  = $('#game').get(0)
+    @canvas_width  = parseFloat(@canvas.width)
+    @canvas_height = @canvas.width * (@limits.size.y / @limits.size.x)
 
     @scale =
-      x:   canvas_width  / @limits.size.x
-      y: - canvas_height / @limits.size.y
+      x:   @canvas_width  / @limits.size.x
+      y: - @canvas_height / @limits.size.y
 
-    translate =
+    @translate =
       x: - @limits.screen.left
       y: - @limits.screen.top
 
+  display: ->
+    @init_canvas() if not @canvas
+
+    $('#game').attr('height', @canvas_height)
+
     @ctx.scale(@scale.x, @scale.y)
-    @ctx.translate(translate.x, translate.y)
+    @ctx.translate(@translate.x, @translate.y)
+
     @ctx.lineWidth = 0.1
 
     @sky     .display(@ctx)

@@ -82,7 +82,7 @@ class Blocks
 
       ctx.save()
       ctx.scale(1.0 / @level.scale.x, 1.0 / @level.scale.y)
-      ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), "repeat")
+      ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), 'repeat')
       ctx.fill()
       ctx.restore()
 
@@ -90,7 +90,7 @@ class Blocks
 triangulate = (blocks) ->
   triangles = []
   for block in blocks
-    if block.position.background != "true"
+    if block.position.background != 'true'
       vertices = []
       for vertex in block.vertices
         vertices.push( new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y ))
