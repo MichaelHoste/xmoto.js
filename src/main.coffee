@@ -8,7 +8,7 @@ $ ->
       level.world.Step(1 / 60,  10, 10)
       level.world.ClearForces()
       level.display()
-      #level.world.DrawDebugData()
+      level.world.DrawDebugData()
 
       # Initialize keyboard
       $(document).off('keydown')

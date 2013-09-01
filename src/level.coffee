@@ -53,12 +53,12 @@ class Level
     @canvas_height = @canvas.width * (@limits.size.y / @limits.size.x)
 
     @scale =
-      x:   @canvas_width  / @limits.size.x
-      y: - @canvas_height / @limits.size.y
+      x:   @canvas_width  / @limits.size.x * 3
+      y: - @canvas_height / @limits.size.y * 3
 
     @translate =
       x: - @limits.screen.left
-      y: - @limits.screen.top
+      y: - @limits.screen.top + 10
 
   display: ->
     @init_canvas() if not @canvas
@@ -68,7 +68,7 @@ class Level
     @ctx.scale(@scale.x, @scale.y)
     @ctx.translate(@translate.x, @translate.y)
 
-    @ctx.lineWidth = 0.1
+    @ctx.lineWidth = 0.01
 
     @sky     .display(@ctx)
     @limits  .display(@ctx)

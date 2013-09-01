@@ -24,5 +24,5 @@ Just upload the files on a static web server (you can remove the "src" folder if
 
 ## TODO
 
- * Create collision boxes for borders
  * Connect 2 wheels with the moto body (Prismatic Joints and Revolute Joints)
+ * Optimization : create x bodies with y shapes for each polygon (set of triangles) instead of x*y bodies of 1 triangle
