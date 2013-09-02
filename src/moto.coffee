@@ -45,10 +45,10 @@ class Moto
     @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0)
 
     @left_revolute_join  = @create_left_revolute_joint()
-    @left_pragmatic_join = @create_left_prismatic_joint()
+    @left_prismatic_join = @create_left_prismatic_joint()
 
     @right_revolute_join  = @create_right_revolute_joint()
-    @right_pragmatic_join = @create_right_prismatic_joint()
+    @right_prismatic_join = @create_right_prismatic_joint()
 
   create_bike_body: (x, y)  ->
     # Create fixture
@@ -222,10 +222,10 @@ class Moto
 
     @level.ctx.drawImage(
       @assets.get('playerbikerwheel'), # texture
-      -scaled_radius,   # x
-       scaled_radius,   # y
+      -scaled_radius, # x
+      -scaled_radius, # y
        scaled_radius*2, # size-x
-      -scaled_radius*2  # size-y
+       scaled_radius*2  # size-y
     )
 
     @level.ctx.restore()
@@ -249,9 +249,9 @@ class Moto
     @level.ctx.drawImage(
       @assets.get('playerbikerbody'), # texture
       -1.0,   # x
-       0.5,   # y
+      -0.5,   # y
        2.0, # size-x
-      -1.0  # size-y
+       1.0  # size-y
     )
 
     @level.ctx.restore()

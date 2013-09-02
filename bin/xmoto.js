@@ -290,13 +290,13 @@
           ctx.save();
           ctx.translate(entity.position.x, entity.position.y);
           ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get(image), 0, 0, entity.size.r * 4, -entity.size.r * 4);
+          ctx.drawImage(this.assets.get(image), 0, -entity.size.r * 4, entity.size.r * 4, entity.size.r * 4);
           _results.push(ctx.restore());
         } else if (entity.type_id === 'EndOfLevel') {
           ctx.save();
           ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r);
           ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get('flower00'), 0, 0, entity.size.r * 4, -entity.size.r * 4);
+          ctx.drawImage(this.assets.get('flower00'), 0, -entity.size.r * 4, entity.size.r * 4, entity.size.r * 4);
           _results.push(ctx.restore());
         } else {
           _results.push(void 0);
@@ -683,9 +683,9 @@
       this.left_axle = this.create_left_axle(this.player_start.x, this.player_start.y + 1.0);
       this.right_axle = this.create_right_axle(this.player_start.x, this.player_start.y + 1.0);
       this.left_revolute_join = this.create_left_revolute_joint();
-      this.left_pragmatic_join = this.create_left_prismatic_joint();
+      this.left_prismatic_join = this.create_left_prismatic_joint();
       this.right_revolute_join = this.create_right_revolute_joint();
-      return this.right_pragmatic_join = this.create_right_prismatic_joint();
+      return this.right_prismatic_join = this.create_right_prismatic_joint();
     };
 
     Moto.prototype.create_bike_body = function(x, y) {
@@ -815,7 +815,7 @@
       this.level.ctx.save();
       this.level.ctx.translate(scaled_position.x, scaled_position.y);
       this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -scaled_radius, scaled_radius, scaled_radius * 2, -scaled_radius * 2);
+      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -scaled_radius, -scaled_radius, scaled_radius * 2, scaled_radius * 2);
       return this.level.ctx.restore();
     };
 
@@ -831,7 +831,7 @@
       this.level.ctx.translate(scaled_position.x, scaled_position.y);
       this.level.ctx.scale(1, -1);
       this.level.ctx.rotate(-angle);
-      this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, 0.5, 2.0, -1.0);
+      this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
       return this.level.ctx.restore();
     };
 
