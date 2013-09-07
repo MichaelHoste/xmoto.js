@@ -10,15 +10,16 @@ b2PolygonShape  = Box2D.Collision.Shapes.b2PolygonShape
 b2CircleShape   = Box2D.Collision.Shapes.b2CircleShape
 b2DebugDraw     = Box2D.Dynamics.b2DebugDraw
 b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
+b2Settings      = Box2D.Common.b2Settings
 
 class Physics
 
   constructor: (level) ->
-    @scale = 30
+    @scale = level.scale.x
     @level = level
     @world = new b2World(new b2Vec2(0, -10), true) # gravity vector, and doSleep
 
-    Box2D.Common.b2Settings.b2_linearSlop = 0.0005
+    b2Settings.b2_linearSlop = 0.0005
 
     context = @level.ctx
 

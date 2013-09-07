@@ -5,6 +5,11 @@ class Level
     canvas  = $('#game').get(0)
     @ctx = canvas.getContext('2d')
 
+    # level unities * scale = pixels
+    @scale =
+      x:  50
+      y: -50
+
     # Assets manager
     @assets        = new Assets()
 
@@ -55,10 +60,6 @@ class Level
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height) #@canvas.width * (@limits.size.y / @limits.size.x)
 
-    @scale =
-      x:  50
-      y: -50
-
   init_input: ->
     @input.init()
 
@@ -69,7 +70,7 @@ class Level
 
     @ctx.translate(400.0, 300.0)
     @ctx.scale(@scale.x, @scale.y)
-    @ctx.translate(-@moto.position().x/15.0*400.0, -@moto.position().y/15.0*400.0)
+    @ctx.translate(-@moto.position().x * @scale.x, @moto.position().y * @scale.y)
 
     @ctx.lineWidth = 0.01
 
