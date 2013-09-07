@@ -3,12 +3,12 @@ class Blocks
   constructor: (level) ->
     @level  = level
     @assets = level.assets
-    @list   = []
+    @list       = [] # total list
+    @back_list  = [] # background list
+    @front_list = [] # front list (collisions)
 
   parse: (xml) ->
     xml_blocks = $(xml).find('block')
-
-    @list = []
 
     for xml_block in xml_blocks
       block =
@@ -16,8 +16,8 @@ class Blocks
         position:
           x:          parseFloat($(xml_block).find('position').attr('x'))
           y:          parseFloat($(xml_block).find('position').attr('y'))
-          dynamic:    $(xml_block).find('position').attr('dynamic')
-          background: $(xml_block).find('position').attr('background')
+          dynamic:    $(xml_block).find('position').attr('dynamic')    == 'true'
+          background: $(xml_block).find('position').attr('background') == 'true'
         usetexture:
           id:    $(xml_block).find('usetexture').attr('id').toLowerCase()
           scale: parseFloat($(xml_block).find('usetexture').attr('scale'))
@@ -52,6 +52,13 @@ class Blocks
         block.vertices.push(vertex)
 
       @list.push(block)
+      if block.position.background
+        @back_list.push(block)
+      else
+        @front_list.push(block)
+
+    @back_list.reverse()
+    @front_list
 
     return this
 
@@ -61,15 +68,15 @@ class Blocks
       @assets.textures.push(block.usetexture.id)
 
     # Triangulation (for collisions in box2D)
-    @triangles = triangulate(@list)
+    @triangles = triangulate(@front_list)
 
     # Create triangles in box2D
     for triangle in @triangles
       @level.physics.createPolygon(triangle)
 
   display: (ctx) ->
-    # Display
-    for block in @list
+    # draw back blocks before front blocks
+    for block in @back_list.concat(@front_list)
       ctx.beginPath()
 
       for vertex, i in block.vertices
@@ -90,18 +97,17 @@ class Blocks
 triangulate = (blocks) ->
   triangles = []
   for block in blocks
-    if block.position.background != 'true'
-      vertices = []
-      for vertex in block.vertices
-        vertices.push( new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y ))
+    vertices = []
+    for vertex in block.vertices
+      vertices.push( new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y ))
 
-      triangulation = new poly2tri.SweepContext(vertices, { cloneArrays: true })
-      triangulation.triangulate()
-      set_of_triangles = triangulation.getTriangles()
+    triangulation = new poly2tri.SweepContext(vertices, { cloneArrays: true })
+    triangulation.triangulate()
+    set_of_triangles = triangulation.getTriangles()
 
-      for triangle in set_of_triangles
-        triangles.push([ { x: triangle.points_[0].x, y: triangle.points_[0].y },
-                         { x: triangle.points_[1].x, y: triangle.points_[1].y },
-                         { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
+    for triangle in set_of_triangles
+      triangles.push([ { x: triangle.points_[0].x, y: triangle.points_[0].y },
+                       { x: triangle.points_[1].x, y: triangle.points_[1].y },
+                       { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
   triangles
 

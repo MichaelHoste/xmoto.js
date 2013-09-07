@@ -12,6 +12,9 @@ class Level
     @physics       = new Physics(this)
     @world         = @physics.world
 
+    # Inputs
+    @input         = new Input(this)
+
     # Moto (level independant)
     @moto          = new Moto(this)
 
@@ -59,6 +62,9 @@ class Level
     @translate =
       x: - @limits.screen.left
       y: - @limits.screen.top
+
+  init_input: ->
+    @input.init()
 
   display: ->
     @init_canvas() if not @canvas
