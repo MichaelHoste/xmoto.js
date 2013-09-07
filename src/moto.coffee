@@ -181,7 +181,9 @@ class Moto
   create_left_revolute_joint: ->
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@left_axle, @left_wheel, @left_wheel.GetWorldCenter())
-    jointDef.enableMotor = true;
+    #jointDef.enableMotor = true
+    #jointDef.maxMotorTorque = 1
+    #jointDef.motorSpeed = -10
     @level.world.CreateJoint(jointDef)
 
   create_left_prismatic_joint: ->
@@ -194,7 +196,9 @@ class Moto
   create_right_revolute_joint: ->
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@right_axle, @right_wheel, @right_wheel.GetWorldCenter())
-    jointDef.enableMotor = true;
+    #jointDef.enableMotor = true
+    #jointDef.maxMotorTorque = 1
+    #jointDef.motorSpeed = -0.01
     @level.world.CreateJoint(jointDef)
 
   create_right_prismatic_joint: ->

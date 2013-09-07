@@ -31,18 +31,20 @@ class Input
     # Initialize keyboard
     $(document).off('keydown')
     $(document).on('keydown', (event) =>
-      force = 0.01
+      force = 0.1
       left_wheel_body = @level.moto.left_wheel
       right_wheel_body = @level.moto.right_wheel
       switch(event.which || event.keyCode)
         when 38 # up
-          left_wheel_body.ApplyTorque(- force/10)
+          left_wheel_body.ApplyTorque(- force/5000)
           #left_wheel_body.ApplyForce(new b2Vec2(  force/2, 0), left_wheel_body.GetWorldCenter())
         when 40 # down
-          left_wheel_body.ApplyTorque(force/10)
+          left_wheel_body.ApplyTorque(force/5000)
           #left_wheel_body.ApplyForce(new b2Vec2( -force/2, 0), left_wheel_body.GetWorldCenter())
         when 37 # left
-          right_wheel_body.ApplyForce(new b2Vec2( 0, -force), right_wheel_body.GetWorldCenter())
+          @level.moto.bike_body.ApplyTorque(force/500)
+          #@level.moto.bike_body.ApplyForce(new b2Vec2( 0, -force), right_wheel_body.GetWorldCenter())
         when 39 # right
-          right_wheel_body.ApplyForce(new b2Vec2( 0,  force), right_wheel_body.GetWorldCenter())
+          @level.moto.bike_body.ApplyTorque(-force/500)
+          #right_wheel_body.ApplyForce(new b2Vec2( 0,  force), right_wheel_body.GetWorldCenter())
     )

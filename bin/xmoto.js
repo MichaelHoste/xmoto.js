@@ -387,18 +387,18 @@
       $(document).off('keydown');
       return $(document).on('keydown', function(event) {
         var force, left_wheel_body, right_wheel_body;
-        force = 0.01;
+        force = 0.1;
         left_wheel_body = _this.level.moto.left_wheel;
         right_wheel_body = _this.level.moto.right_wheel;
         switch (event.which || event.keyCode) {
           case 38:
-            return left_wheel_body.ApplyTorque(-force / 10);
+            return left_wheel_body.ApplyTorque(-force / 5000);
           case 40:
-            return left_wheel_body.ApplyTorque(force / 10);
+            return left_wheel_body.ApplyTorque(force / 5000);
           case 37:
-            return right_wheel_body.ApplyForce(new b2Vec2(0, -force), right_wheel_body.GetWorldCenter());
+            return _this.level.moto.bike_body.ApplyTorque(force / 500);
           case 39:
-            return right_wheel_body.ApplyForce(new b2Vec2(0, force), right_wheel_body.GetWorldCenter());
+            return _this.level.moto.bike_body.ApplyTorque(-force / 500);
         }
       });
     };
@@ -793,7 +793,6 @@
       var jointDef;
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.left_axle, this.left_wheel, this.left_wheel.GetWorldCenter());
-      jointDef.enableMotor = true;
       return this.level.world.CreateJoint(jointDef);
     };
 
@@ -813,7 +812,6 @@
       var jointDef;
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.right_axle, this.right_wheel, this.right_wheel.GetWorldCenter());
-      jointDef.enableMotor = true;
       return this.level.world.CreateJoint(jointDef);
     };
 
