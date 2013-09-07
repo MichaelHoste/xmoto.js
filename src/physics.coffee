@@ -18,6 +18,8 @@ class Physics
     @level = level
     @world = new b2World(new b2Vec2(0, -10), true) # gravity vector, and doSleep
 
+    Box2D.Common.b2Settings.b2_linearSlop = 0.0005
+
     context = @level.ctx
 
     # debug initialization

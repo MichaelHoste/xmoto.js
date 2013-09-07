@@ -50,6 +50,9 @@ class Moto
     @right_revolute_join  = @create_right_revolute_joint()
     @right_prismatic_join = @create_right_prismatic_joint()
 
+  position: ->
+    @bike_body.GetPosition()
+
   create_bike_body: (x, y)  ->
     # Create fixture
     fixDef = new b2FixtureDef()

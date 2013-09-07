@@ -481,14 +481,10 @@
     Level.prototype.init_canvas = function() {
       this.canvas = $('#game').get(0);
       this.canvas_width = parseFloat(this.canvas.width);
-      this.canvas_height = this.canvas.width * (this.limits.size.y / this.limits.size.x);
-      this.scale = {
-        x: this.canvas_width / this.limits.size.x,
-        y: -this.canvas_height / this.limits.size.y
-      };
-      return this.translate = {
-        x: -this.limits.screen.left,
-        y: -this.limits.screen.top
+      this.canvas_height = parseFloat(this.canvas.height);
+      return this.scale = {
+        x: 50,
+        y: -50
       };
     };
 
@@ -501,8 +497,9 @@
         this.init_canvas();
       }
       $('#game').attr('height', this.canvas_height);
+      this.ctx.translate(400.0, 300.0);
       this.ctx.scale(this.scale.x, this.scale.y);
-      this.ctx.translate(this.translate.x, this.translate.y);
+      this.ctx.translate(-this.moto.position().x / 15.0 * 400.0, -this.moto.position().y / 15.0 * 400.0);
       this.ctx.lineWidth = 0.01;
       this.sky.display(this.ctx);
       this.limits.display(this.ctx);
@@ -648,8 +645,7 @@
       update = function() {
         level.world.Step(1 / 60, 10, 10);
         level.world.ClearForces();
-        level.display();
-        return l;
+        return level.display();
       };
       return setInterval(update, 1000 / 60);
     });
@@ -713,6 +709,10 @@
       this.left_prismatic_join = this.create_left_prismatic_joint();
       this.right_revolute_join = this.create_right_revolute_joint();
       return this.right_prismatic_join = this.create_right_prismatic_joint();
+    };
+
+    Moto.prototype.position = function() {
+      return this.bike_body.GetPosition();
     };
 
     Moto.prototype.create_bike_body = function(x, y) {
@@ -896,6 +896,7 @@
       this.scale = 30;
       this.level = level;
       this.world = new b2World(new b2Vec2(0, -10), true);
+      Box2D.Common.b2Settings.b2_linearSlop = 0.0005;
       context = this.level.ctx;
       debugDraw = new b2DebugDraw();
       debugDraw.SetSprite(context);

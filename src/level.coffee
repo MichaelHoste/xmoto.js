@@ -53,15 +53,11 @@ class Level
   init_canvas: ->
     @canvas  = $('#game').get(0)
     @canvas_width  = parseFloat(@canvas.width)
-    @canvas_height = @canvas.width * (@limits.size.y / @limits.size.x)
+    @canvas_height = parseFloat(@canvas.height) #@canvas.width * (@limits.size.y / @limits.size.x)
 
     @scale =
-      x:   @canvas_width  / @limits.size.x
-      y: - @canvas_height / @limits.size.y
-
-    @translate =
-      x: - @limits.screen.left
-      y: - @limits.screen.top
+      x:  50
+      y: -50
 
   init_input: ->
     @input.init()
@@ -71,8 +67,9 @@ class Level
 
     $('#game').attr('height', @canvas_height)
 
+    @ctx.translate(400.0, 300.0)
     @ctx.scale(@scale.x, @scale.y)
-    @ctx.translate(@translate.x, @translate.y)
+    @ctx.translate(-@moto.position().x/15.0*400.0, -@moto.position().y/15.0*400.0)
 
     @ctx.lineWidth = 0.01
 
