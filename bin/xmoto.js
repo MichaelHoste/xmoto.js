@@ -643,7 +643,7 @@
     return level.assets.load(function() {
       var update;
       update = function() {
-        level.world.Step(1 / 60, 10, 10);
+        level.world.Step(1 / 120, 10, 10);
         level.world.ClearForces();
         return level.display();
       };
@@ -874,12 +874,12 @@
         y: this.position().y - 0.30
       };
       distance = Math.sqrt(Math.pow(left_wheel_position.x - left_axle_position.x, 2), +Math.pow(left_wheel_position.y - left_axle_position.y, 2));
-      angle = 0.785;
+      angle = Math.asin((left_axle_position.y - left_wheel_position.y) / distance);
       this.level.ctx.save();
       this.level.ctx.translate(left_wheel_position.x, left_wheel_position.y);
       this.level.ctx.scale(1, -1);
       this.level.ctx.rotate(-angle);
-      this.level.ctx.drawImage(this.assets.get('front1'), 0.0, 0.0, distance, 0.2);
+      this.level.ctx.drawImage(this.assets.get('front1'), 0.0, 0.0, distance, 0.1);
       return this.level.ctx.restore();
     };
 

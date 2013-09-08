@@ -24,6 +24,6 @@ Just upload the files on a static web server (you can remove the "src" folder if
 
 ## TODO
 
- * Connect 2 wheels with the moto body (Prismatic Joints and Revolute Joints)
+ * Go back to step 1/60 instead of 1/120 with same behaviour (scale problem ?)
  * Optimization : create x bodies with y shapes for each polygon (set of triangles) instead of x*y bodies of 1 triangle
  * optimization : group the blocks by texture and fill the texture just once by group

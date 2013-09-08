@@ -273,7 +273,7 @@ class Moto
                          + Math.pow(left_wheel_position.y - left_axle_position.y, 2) )
 
     # Angle
-    angle = 0.785
+    angle = Math.asin( (left_axle_position.y - left_wheel_position.y) / distance )
 
     ## Draw texture
     @level.ctx.save()
@@ -286,7 +286,7 @@ class Moto
       0.0, # x
       0.0, # y
       distance, # size-x
-      0.2  # size-y
+      0.1  # size-y
     )
 
     @level.ctx.restore()
