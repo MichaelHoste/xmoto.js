@@ -24,6 +24,8 @@ class Moto
     @display_body()
     @display_wheel(@left_wheel)
     @display_wheel(@right_wheel)
+    @display_left_axle()
+    #@display_right_axle()
 
   init: ->
     # Assets
@@ -51,7 +53,8 @@ class Moto
     @right_prismatic_join = @create_right_prismatic_joint()
 
   position: ->
-    @bike_body.GetPosition()
+    position = @bike_body.GetPosition()
+    { x: position.x * @scale, y: position.y * @scale }
 
   create_bike_body: (x, y)  ->
     # Create fixture
@@ -181,9 +184,11 @@ class Moto
   create_left_revolute_joint: ->
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@left_axle, @left_wheel, @left_wheel.GetWorldCenter())
-    #jointDef.enableMotor = true
-    #jointDef.maxMotorTorque = 1
-    #jointDef.motorSpeed = -10
+    @level.world.CreateJoint(jointDef)
+
+  create_right_revolute_joint: ->
+    jointDef = new b2RevoluteJointDef()
+    jointDef.Initialize(@right_axle, @right_wheel, @right_wheel.GetWorldCenter())
     @level.world.CreateJoint(jointDef)
 
   create_left_prismatic_joint: ->
@@ -191,14 +196,6 @@ class Moto
     jointDef.Initialize(@bike_body, @left_axle, @bike_body.GetWorldCenter(), { x: 0.50, y: 0.50 } )
     jointDef.enableLimit = true
     jointDef.collideConnected = false
-    @level.world.CreateJoint(jointDef)
-
-  create_right_revolute_joint: ->
-    jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@right_axle, @right_wheel, @right_wheel.GetWorldCenter())
-    #jointDef.enableMotor = true
-    #jointDef.maxMotorTorque = 1
-    #jointDef.motorSpeed = -0.01
     @level.world.CreateJoint(jointDef)
 
   create_right_prismatic_joint: ->
@@ -239,17 +236,14 @@ class Moto
 
   display_body: ->
     # Position
-    position = @bike_body.GetPosition()
-    scaled_position =
-      x: position.x*@scale
-      y: position.y*@scale
+    position = @position()
 
     # Angle
     angle = @bike_body.GetAngle()
 
     # Draw texture
     @level.ctx.save()
-    @level.ctx.translate(scaled_position.x, scaled_position.y)
+    @level.ctx.translate(position.x, position.y)
     @level.ctx.scale(1, -1)
     @level.ctx.rotate(-angle)
 
@@ -259,6 +253,40 @@ class Moto
       -0.5,   # y
        2.0, # size-x
        1.0  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_left_axle: ->
+    # Position
+    left_wheel_position = @left_wheel.GetPosition()
+    left_wheel_position =
+      x: left_wheel_position.x * @scale
+      y: left_wheel_position.y * @scale
+
+    left_axle_position =
+      x: (@position().x - 0.17)
+      y: (@position().y - 0.30)
+
+    # Distance
+    distance = Math.sqrt(  Math.pow(left_wheel_position.x - left_axle_position.x, 2)
+                         + Math.pow(left_wheel_position.y - left_axle_position.y, 2) )
+
+    # Angle
+    angle = 0.785
+
+    ## Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(left_wheel_position.x, left_wheel_position.y)
+    @level.ctx.scale(1, -1)
+    @level.ctx.rotate(-angle)
+
+    @level.ctx.drawImage(
+      @assets.get('front1'), # texture
+      0.0, # x
+      0.0, # y
+      distance, # size-x
+      0.2  # size-y
     )
 
     @level.ctx.restore()

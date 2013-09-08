@@ -499,7 +499,7 @@
       $('#game').attr('height', this.canvas_height);
       this.ctx.translate(400.0, 300.0);
       this.ctx.scale(this.scale.x, this.scale.y);
-      this.ctx.translate(-this.moto.position().x * this.scale.x, this.moto.position().y * this.scale.y);
+      this.ctx.translate(-this.moto.position().x, -this.moto.position().y);
       this.ctx.lineWidth = 0.01;
       this.sky.display(this.ctx);
       this.limits.display(this.ctx);
@@ -689,7 +689,8 @@
     Moto.prototype.display = function() {
       this.display_body();
       this.display_wheel(this.left_wheel);
-      return this.display_wheel(this.right_wheel);
+      this.display_wheel(this.right_wheel);
+      return this.display_left_axle();
     };
 
     Moto.prototype.init = function() {
@@ -712,7 +713,12 @@
     };
 
     Moto.prototype.position = function() {
-      return this.bike_body.GetPosition();
+      var position;
+      position = this.bike_body.GetPosition();
+      return {
+        x: position.x * this.scale,
+        y: position.y * this.scale
+      };
     };
 
     Moto.prototype.create_bike_body = function(x, y) {
@@ -796,6 +802,13 @@
       return this.level.world.CreateJoint(jointDef);
     };
 
+    Moto.prototype.create_right_revolute_joint = function() {
+      var jointDef;
+      jointDef = new b2RevoluteJointDef();
+      jointDef.Initialize(this.right_axle, this.right_wheel, this.right_wheel.GetWorldCenter());
+      return this.level.world.CreateJoint(jointDef);
+    };
+
     Moto.prototype.create_left_prismatic_joint = function() {
       var jointDef;
       jointDef = new b2PrismaticJointDef();
@@ -805,13 +818,6 @@
       });
       jointDef.enableLimit = true;
       jointDef.collideConnected = false;
-      return this.level.world.CreateJoint(jointDef);
-    };
-
-    Moto.prototype.create_right_revolute_joint = function() {
-      var jointDef;
-      jointDef = new b2RevoluteJointDef();
-      jointDef.Initialize(this.right_axle, this.right_wheel, this.right_wheel.GetWorldCenter());
       return this.level.world.CreateJoint(jointDef);
     };
 
@@ -845,18 +851,35 @@
     };
 
     Moto.prototype.display_body = function() {
-      var angle, position, scaled_position;
-      position = this.bike_body.GetPosition();
-      scaled_position = {
-        x: position.x * this.scale,
-        y: position.y * this.scale
-      };
+      var angle, position;
+      position = this.position();
       angle = this.bike_body.GetAngle();
       this.level.ctx.save();
-      this.level.ctx.translate(scaled_position.x, scaled_position.y);
+      this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1, -1);
       this.level.ctx.rotate(-angle);
       this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
+      return this.level.ctx.restore();
+    };
+
+    Moto.prototype.display_left_axle = function() {
+      var angle, distance, left_axle_position, left_wheel_position;
+      left_wheel_position = this.left_wheel.GetPosition();
+      left_wheel_position = {
+        x: left_wheel_position.x * this.scale,
+        y: left_wheel_position.y * this.scale
+      };
+      left_axle_position = {
+        x: this.position().x - 0.17,
+        y: this.position().y - 0.30
+      };
+      distance = Math.sqrt(Math.pow(left_wheel_position.x - left_axle_position.x, 2), +Math.pow(left_wheel_position.y - left_axle_position.y, 2));
+      angle = 0.785;
+      this.level.ctx.save();
+      this.level.ctx.translate(left_wheel_position.x, left_wheel_position.y);
+      this.level.ctx.scale(1, -1);
+      this.level.ctx.rotate(-angle);
+      this.level.ctx.drawImage(this.assets.get('front1'), 0.0, 0.0, distance, 0.2);
       return this.level.ctx.restore();
     };
 

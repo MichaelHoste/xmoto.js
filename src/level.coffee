@@ -70,7 +70,7 @@ class Level
 
     @ctx.translate(400.0, 300.0)
     @ctx.scale(@scale.x, @scale.y)
-    @ctx.translate(-@moto.position().x * @scale.x, @moto.position().y * @scale.y)
+    @ctx.translate(-@moto.position().x, -@moto.position().y)
 
     @ctx.lineWidth = 0.01
 
