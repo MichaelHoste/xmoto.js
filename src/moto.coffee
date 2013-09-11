@@ -21,9 +21,9 @@ class Moto
     @scale  = @level.physics.scale
 
   display: ->
-    @display_body()
     @display_wheel(@left_wheel)
     @display_wheel(@right_wheel)
+    @display_body()
     @display_left_axle()
     #@display_right_axle()
 
@@ -265,15 +265,17 @@ class Moto
       y: left_wheel_position.y * @scale
 
     left_axle_position =
-      x: (@position().x - 0.17)
-      y: (@position().y - 0.30)
+      x: @position().x - 0.17
+      y: @position().y - 0.30
 
     # Distance
-    distance = Math.sqrt(  Math.pow(left_wheel_position.x - left_axle_position.x, 2)
-                         + Math.pow(left_wheel_position.y - left_axle_position.y, 2) )
+    a = Math.pow(left_wheel_position.x - left_axle_position.x, 2)
+    b = Math.pow(left_wheel_position.y - left_axle_position.y, 2)
+    distance = Math.sqrt(a+b)
 
     # Angle
-    angle = Math.asin( (left_axle_position.y - left_wheel_position.y) / distance )
+    angle = (getElementAngle(left_axle_position.x, left_axle_position.y,
+                             left_wheel_position.x, left_wheel_position.y) + 90) * Math.PI / 180.0
 
     ## Draw texture
     @level.ctx.save()
@@ -290,3 +292,21 @@ class Moto
     )
 
     @level.ctx.restore()
+
+
+getElementAngle = (x1, y1, x2, y2) ->
+  adj = x2 - x1
+  opp = y2 - y1
+
+  angle = Math.abs(Math.atan(opp/adj) * 180/Math.PI)
+
+  if adj > 0 && opp < 0
+    angle = 90 - angle
+  else if adj >= 0 && opp >= 0
+    angle += 90
+  else if adj < 0 && opp >= 0
+    angle = 180 + (90 - angle)
+  else
+    angle += 270
+
+  angle
