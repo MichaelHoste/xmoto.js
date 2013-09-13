@@ -23,8 +23,8 @@ class Moto
   display: ->
     @display_wheel(@left_wheel)
     @display_wheel(@right_wheel)
-    @display_body()
     @display_left_axle()
+    @display_body()
     #@display_right_axle()
 
   init: ->
@@ -258,24 +258,29 @@ class Moto
     @level.ctx.restore()
 
   display_left_axle: ->
+    axle_thickness = 0.09
+
     # Position
     left_wheel_position = @left_wheel.GetPosition()
     left_wheel_position =
-      x: left_wheel_position.x * @scale
-      y: left_wheel_position.y * @scale
+      x: left_wheel_position.x * @scale - axle_thickness/2.0
+      y: left_wheel_position.y * @scale - axle_thickness/2.0
 
+    # Position relative to center of body
     left_axle_position =
-      x: @position().x - 0.17
-      y: @position().y - 0.30
+      x: - 0.17
+      y: - 0.30
+
+    # Adjusted position depending of rotation of body
+    left_axle_adjusted_position = rotate_point(left_axle_position, @bike_body.GetAngle(), @position())
 
     # Distance
-    a = Math.pow(left_wheel_position.x - left_axle_position.x, 2)
-    b = Math.pow(left_wheel_position.y - left_axle_position.y, 2)
+    a = Math.pow(left_wheel_position.x - left_axle_adjusted_position.x, 2)
+    b = Math.pow(left_wheel_position.y - left_axle_adjusted_position.y, 2)
     distance = Math.sqrt(a+b)
 
     # Angle
-    angle = (getElementAngle(left_axle_position.x, left_axle_position.y,
-                             left_wheel_position.x, left_wheel_position.y) + 90) * Math.PI / 180.0
+    angle = angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI/2
 
     ## Draw texture
     @level.ctx.save()
@@ -285,18 +290,18 @@ class Moto
 
     @level.ctx.drawImage(
       @assets.get('front1'), # texture
-      0.0, # x
-      0.0, # y
-      distance, # size-x
-      0.1  # size-y
+      0.0,               # x
+      -axle_thickness/2, # y
+      distance,          # size-x
+      axle_thickness     # size-y
     )
 
     @level.ctx.restore()
 
 
-getElementAngle = (x1, y1, x2, y2) ->
-  adj = x2 - x1
-  opp = y2 - y1
+angle_between_points = (point1, point2) ->
+  adj = point2.x - point1.x
+  opp = point2.y - point1.y
 
   angle = Math.abs(Math.atan(opp/adj) * 180/Math.PI)
 
@@ -309,4 +314,13 @@ getElementAngle = (x1, y1, x2, y2) ->
   else
     angle += 270
 
-  angle
+  angle * Math.PI / 180.0 # radians
+
+# Rotate point from angle around axe
+rotate_point = (point, angle, rotation_axe) ->
+  new_point =
+    x: rotation_axe.x + point.x * Math.cos(angle) - point.y * Math.sin(angle)
+    y: rotation_axe.y + point.x * Math.sin(angle) + point.y * Math.cos(angle)
+
+
+
