@@ -690,6 +690,7 @@
       this.display_wheel(this.left_wheel);
       this.display_wheel(this.right_wheel);
       this.display_left_axle();
+      this.display_right_axle();
       return this.display_body();
     };
 
@@ -868,7 +869,7 @@
       left_wheel_position = this.left_wheel.GetPosition();
       left_wheel_position = {
         x: left_wheel_position.x * this.scale - axle_thickness / 2.0,
-        y: left_wheel_position.y * this.scale - axle_thickness / 2.0
+        y: left_wheel_position.y * this.scale - axle_thickness / 2.0 + 0.02
       };
       left_axle_position = {
         x: -0.17,
@@ -881,6 +882,31 @@
       angle = angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI / 2;
       this.level.ctx.save();
       this.level.ctx.translate(left_wheel_position.x, left_wheel_position.y);
+      this.level.ctx.scale(1, -1);
+      this.level.ctx.rotate(-angle);
+      this.level.ctx.drawImage(this.assets.get('front1'), 0.0, -axle_thickness / 2, distance, axle_thickness);
+      return this.level.ctx.restore();
+    };
+
+    Moto.prototype.display_right_axle = function() {
+      var a, angle, axle_thickness, b, distance, right_axle_adjusted_position, right_axle_position, right_wheel_position;
+      axle_thickness = 0.09;
+      right_wheel_position = this.right_wheel.GetPosition();
+      right_wheel_position = {
+        x: right_wheel_position.x * this.scale + axle_thickness / 2.0 - 0.03,
+        y: right_wheel_position.y * this.scale - axle_thickness / 2.0
+      };
+      right_axle_position = {
+        x: 0.54,
+        y: 0.025
+      };
+      right_axle_adjusted_position = rotate_point(right_axle_position, this.bike_body.GetAngle(), this.position());
+      a = Math.pow(right_wheel_position.x - right_axle_adjusted_position.x, 2);
+      b = Math.pow(right_wheel_position.y - right_axle_adjusted_position.y, 2);
+      distance = Math.sqrt(a + b);
+      angle = angle_between_points(right_axle_adjusted_position, right_wheel_position) + Math.PI / 2;
+      this.level.ctx.save();
+      this.level.ctx.translate(right_wheel_position.x, right_wheel_position.y);
       this.level.ctx.scale(1, -1);
       this.level.ctx.rotate(-angle);
       this.level.ctx.drawImage(this.assets.get('front1'), 0.0, -axle_thickness / 2, distance, axle_thickness);

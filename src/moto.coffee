@@ -24,8 +24,8 @@ class Moto
     @display_wheel(@left_wheel)
     @display_wheel(@right_wheel)
     @display_left_axle()
+    @display_right_axle()
     @display_body()
-    #@display_right_axle()
 
   init: ->
     # Assets
@@ -264,7 +264,7 @@ class Moto
     left_wheel_position = @left_wheel.GetPosition()
     left_wheel_position =
       x: left_wheel_position.x * @scale - axle_thickness/2.0
-      y: left_wheel_position.y * @scale - axle_thickness/2.0
+      y: left_wheel_position.y * @scale - axle_thickness/2.0 + 0.02
 
     # Position relative to center of body
     left_axle_position =
@@ -298,6 +298,46 @@ class Moto
 
     @level.ctx.restore()
 
+  display_right_axle: ->
+    axle_thickness = 0.09
+
+    # Position
+    right_wheel_position = @right_wheel.GetPosition()
+    right_wheel_position =
+      x: right_wheel_position.x * @scale + axle_thickness/2.0 - 0.03
+      y: right_wheel_position.y * @scale - axle_thickness/2.0
+
+    # Position relative to center of body
+    right_axle_position =
+      x: 0.54
+      y: 0.025
+
+    # Adjusted position depending of rotation of body
+    right_axle_adjusted_position = rotate_point(right_axle_position, @bike_body.GetAngle(), @position())
+
+    # Distance
+    a = Math.pow(right_wheel_position.x - right_axle_adjusted_position.x, 2)
+    b = Math.pow(right_wheel_position.y - right_axle_adjusted_position.y, 2)
+    distance = Math.sqrt(a+b)
+
+    # Angle
+    angle = angle_between_points(right_axle_adjusted_position, right_wheel_position) + Math.PI/2
+
+    ## Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(right_wheel_position.x, right_wheel_position.y)
+    @level.ctx.scale(1, -1)
+    @level.ctx.rotate(-angle)
+
+    @level.ctx.drawImage(
+      @assets.get('front1'), # texture
+      0.0,               # x
+      -axle_thickness/2, # y
+      distance,          # size-x
+      axle_thickness     # size-y
+    )
+
+    @level.ctx.restore()
 
 angle_between_points = (point1, point2) ->
   adj = point2.x - point1.x
