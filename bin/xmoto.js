@@ -385,22 +385,49 @@
     Input.prototype.init_keyboard = function() {
       var _this = this;
       $(document).off('keydown');
-      return $(document).on('keydown', function(event) {
-        var force, left_wheel_body, right_wheel_body;
-        force = 0.1;
-        left_wheel_body = _this.level.moto.left_wheel;
-        right_wheel_body = _this.level.moto.right_wheel;
+      $(document).on('keydown', function(event) {
         switch (event.which || event.keyCode) {
           case 38:
-            return left_wheel_body.ApplyTorque(-force / 5000);
+            return _this.up = true;
           case 40:
-            return left_wheel_body.ApplyTorque(force / 5000);
+            return _this.down = true;
           case 37:
-            return _this.level.moto.bike_body.ApplyTorque(force / 500);
+            return _this.left = true;
           case 39:
-            return _this.level.moto.bike_body.ApplyTorque(-force / 500);
+            return _this.right = true;
         }
       });
+      return $(document).on('keyup', function(event) {
+        switch (event.which || event.keyCode) {
+          case 38:
+            return _this.up = false;
+          case 40:
+            return _this.down = false;
+          case 37:
+            return _this.left = false;
+          case 39:
+            return _this.right = false;
+        }
+      });
+    };
+
+    Input.prototype.move_moto = function() {
+      var force, left_wheel_body, right_wheel_body;
+      force = 0.03;
+      left_wheel_body = this.level.moto.left_wheel;
+      right_wheel_body = this.level.moto.right_wheel;
+      if (this.up) {
+        left_wheel_body.ApplyTorque(-force / 5000);
+      }
+      if (this.down) {
+        left_wheel_body.ApplyTorque(force / 5000);
+      }
+      if (this.left) {
+        this.level.moto.bike_body.ApplyTorque(force / 500);
+      }
+      if (this.right) {
+        return this.level.moto.bike_body.ApplyTorque(-force / 500);
+      }
     };
 
     return Input;
@@ -643,6 +670,7 @@
     return level.assets.load(function() {
       var update;
       update = function() {
+        level.input.move_moto();
         level.world.Step(1 / 120, 10, 10);
         level.world.ClearForces();
         return level.display();

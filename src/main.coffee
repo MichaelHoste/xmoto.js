@@ -6,6 +6,7 @@ $ ->
   # Load assets for this level before doing anything else
   level.assets.load( ->
     update = ->
+      level.input.move_moto()
       level.world.Step(1 / 120,  10, 10)
       level.world.ClearForces()
       level.display()

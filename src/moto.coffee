@@ -282,7 +282,7 @@ class Moto
     # Angle
     angle = angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI/2
 
-    ## Draw texture
+    # Draw texture
     @level.ctx.save()
     @level.ctx.translate(left_wheel_position.x, left_wheel_position.y)
     @level.ctx.scale(1, -1)
@@ -323,7 +323,7 @@ class Moto
     # Angle
     angle = angle_between_points(right_axle_adjusted_position, right_wheel_position) + Math.PI/2
 
-    ## Draw texture
+    # Draw texture
     @level.ctx.save()
     @level.ctx.translate(right_wheel_position.x, right_wheel_position.y)
     @level.ctx.scale(1, -1)
