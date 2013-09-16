@@ -413,7 +413,7 @@
 
     Input.prototype.move_moto = function() {
       var force, left_wheel_body, right_wheel_body;
-      force = 0.03;
+      force = 0.028;
       left_wheel_body = this.level.moto.left_wheel;
       right_wheel_body = this.level.moto.right_wheel;
       if (this.up) {
@@ -426,7 +426,7 @@
         this.level.moto.bike_body.ApplyTorque(force / 500);
       }
       if (this.right) {
-        return this.level.moto.bike_body.ApplyTorque(-force / 500);
+        return this.level.moto.bike_body.ApplyTorque(-force / 550);
       }
     };
 
@@ -758,7 +758,7 @@
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [new b2Vec2(1 / this.scale, -0.5 / this.scale), new b2Vec2(1 / this.scale, 0.5 / this.scale), new b2Vec2(-1 / this.scale, 0.5 / this.scale), new b2Vec2(-1 / this.scale, -0.5 / this.scale)];
+      b2vertices = [new b2Vec2(0.6 / this.scale, -0.3 / this.scale), new b2Vec2(0.6 / this.scale, 0.4 / this.scale), new b2Vec2(-0.7 / this.scale, 0.4 / this.scale), new b2Vec2(-0.7 / this.scale, -0.3 / this.scale)];
       fixDef.shape.SetAsArray(b2vertices);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x / this.scale;

@@ -66,10 +66,10 @@ class Moto
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  1 / @scale, -0.5 / @scale),
-                   new b2Vec2(  1 / @scale,  0.5 / @scale),
-                   new b2Vec2( -1 / @scale,  0.5 / @scale),
-                   new b2Vec2( -1 / @scale, -0.5 / @scale) ]
+    b2vertices = [ new b2Vec2(  0.6 / @scale, -0.3 / @scale),
+                   new b2Vec2(  0.6 / @scale,  0.4 / @scale),
+                   new b2Vec2( -0.7 / @scale,  0.4 / @scale),
+                   new b2Vec2( -0.7 / @scale, -0.3 / @scale) ]
 
     fixDef.shape.SetAsArray(b2vertices)
 

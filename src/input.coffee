@@ -54,7 +54,7 @@ class Input
     )
 
   move_moto: ->
-    force = 0.03
+    force = 0.028
     left_wheel_body = @level.moto.left_wheel
     right_wheel_body = @level.moto.right_wheel
 
@@ -68,5 +68,5 @@ class Input
       @level.moto.bike_body.ApplyTorque(force/500)
       #@level.moto.bike_body.ApplyForce(new b2Vec2( 0, -force), right_wheel_body.GetWorldCenter())
     if @right
-      @level.moto.bike_body.ApplyTorque(-force/500)
+      @level.moto.bike_body.ApplyTorque(-force/550)
       #right_wheel_body.ApplyForce(new b2Vec2( 0,  force), right_wheel_body.GetWorldCenter())
