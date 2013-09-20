@@ -676,8 +676,7 @@
         level.input.move_moto();
         level.world.Step(1 / 60, 10, 10);
         level.world.ClearForces();
-        level.display();
-        return level.world.DrawDebugData();
+        return level.display();
       };
       return setInterval(update, 1000 / 60);
     });
