@@ -18,7 +18,6 @@ class Moto
   constructor: (level) ->
     @level  = level
     @assets = level.assets
-    @scale  = @level.physics.scale
 
   display: ->
     @display_wheel(@left_wheel)
@@ -37,14 +36,14 @@ class Moto
       @assets.moto.push(texture)
 
     # Creation of moto parts
-    @player_start = { x: @level.entities.player_start.x * @scale, y: @level.entities.player_start.y * @scale }
-    @bike_body    = @create_bike_body(@player_start.x, @player_start.y + 1.0*@scale)
+    @player_start = @level.entities.player_start
+    @bike_body    = @create_bike_body(@player_start.x, @player_start.y + 1.0)
 
-    @left_wheel   = @create_wheel(@player_start.x - 0.7*@scale, @player_start.y - 0.45*@scale + 1.0*@scale)
-    @right_wheel  = @create_wheel(@player_start.x + 0.7*@scale, @player_start.y - 0.45*@scale + 1.0*@scale)
+    @left_wheel   = @create_wheel(@player_start.x - 0.7, @player_start.y + 0.55)
+    @right_wheel  = @create_wheel(@player_start.x + 0.7, @player_start.y + 0.55)
 
-    @left_axle    = @create_left_axle( @player_start.x, @player_start.y + 1.0 * @scale)
-    @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0 * @scale)
+    @left_axle    = @create_left_axle( @player_start.x, @player_start.y + 1.0)
+    @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0)
 
     @left_revolute_join  = @create_left_revolute_joint()
     @left_prismatic_join = @create_left_prismatic_joint()
@@ -77,8 +76,8 @@ class Moto
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x / @scale
-    bodyDef.position.y = y / @scale
+    bodyDef.position.x = x
+    bodyDef.position.y = y
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -102,8 +101,8 @@ class Moto
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x / @scale
-    bodyDef.position.y = y / @scale
+    bodyDef.position.x = x
+    bodyDef.position.y = y
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -134,8 +133,8 @@ class Moto
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x / @scale
-    bodyDef.position.y = y / @scale
+    bodyDef.position.x = x
+    bodyDef.position.y = y
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -166,8 +165,8 @@ class Moto
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x / @scale
-    bodyDef.position.y = y / @scale
+    bodyDef.position.x = x
+    bodyDef.position.y = y
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -212,28 +211,24 @@ class Moto
   display_wheel: (wheel) ->
     # Position
     position = wheel.GetPosition()
-    scaled_position =
-      x: position.x
-      y: position.y
 
     # Radius
     radius = wheel.GetFixtureList().GetShape().m_radius
-    scaled_radius = radius
 
     # Angle
     angle = wheel.GetAngle()
 
     # Draw texture
     @level.ctx.save()
-    @level.ctx.translate(scaled_position.x, scaled_position.y)
+    @level.ctx.translate(position.x, position.y)
     @level.ctx.rotate(angle)
 
     @level.ctx.drawImage(
       @assets.get('playerbikerwheel'), # texture
-      -scaled_radius, # x
-      -scaled_radius, # y
-       scaled_radius*2, # size-x
-       scaled_radius*2  # size-y
+      -radius, # x
+      -radius, # y
+       radius*2, # size-x
+       radius*2  # size-y
     )
 
     @level.ctx.restore()

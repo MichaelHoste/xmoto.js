@@ -470,8 +470,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 50,
-        y: -50
+        x: 70,
+        y: -70
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -712,7 +712,6 @@
     function Moto(level) {
       this.level = level;
       this.assets = level.assets;
-      this.scale = this.level.physics.scale;
     }
 
     Moto.prototype.display = function() {
@@ -730,15 +729,12 @@
         texture = textures[_i];
         this.assets.moto.push(texture);
       }
-      this.player_start = {
-        x: this.level.entities.player_start.x * this.scale,
-        y: this.level.entities.player_start.y * this.scale
-      };
-      this.bike_body = this.create_bike_body(this.player_start.x, this.player_start.y + 1.0 * this.scale);
-      this.left_wheel = this.create_wheel(this.player_start.x - 0.7 * this.scale, this.player_start.y - 0.45 * this.scale + 1.0 * this.scale);
-      this.right_wheel = this.create_wheel(this.player_start.x + 0.7 * this.scale, this.player_start.y - 0.45 * this.scale + 1.0 * this.scale);
-      this.left_axle = this.create_left_axle(this.player_start.x, this.player_start.y + 1.0 * this.scale);
-      this.right_axle = this.create_right_axle(this.player_start.x, this.player_start.y + 1.0 * this.scale);
+      this.player_start = this.level.entities.player_start;
+      this.bike_body = this.create_bike_body(this.player_start.x, this.player_start.y + 1.0);
+      this.left_wheel = this.create_wheel(this.player_start.x - 0.7, this.player_start.y + 0.55);
+      this.right_wheel = this.create_wheel(this.player_start.x + 0.7, this.player_start.y + 0.55);
+      this.left_axle = this.create_left_axle(this.player_start.x, this.player_start.y + 1.0);
+      this.right_axle = this.create_right_axle(this.player_start.x, this.player_start.y + 1.0);
       this.left_revolute_join = this.create_left_revolute_joint();
       this.left_prismatic_join = this.create_left_prismatic_joint();
       this.right_revolute_join = this.create_right_revolute_joint();
@@ -765,8 +761,8 @@
       b2vertices = [new b2Vec2(0.6, -0.3), new b2Vec2(0.6, 0.4), new b2Vec2(-0.7, 0.4), new b2Vec2(-0.7, -0.3)];
       fixDef.shape.SetAsArray(b2vertices);
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = x / this.scale;
-      bodyDef.position.y = y / this.scale;
+      bodyDef.position.x = x;
+      bodyDef.position.y = y;
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -782,8 +778,8 @@
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = x / this.scale;
-      bodyDef.position.y = y / this.scale;
+      bodyDef.position.x = x;
+      bodyDef.position.y = y;
       bodyDef.type = b2Body.b2_dynamicBody;
       wheel = this.level.world.CreateBody(bodyDef);
       wheel.CreateFixture(fixDef);
@@ -801,8 +797,8 @@
       b2vertices = [new b2Vec2(-0.10, -0.30), new b2Vec2(-0.25, -0.30), new b2Vec2(-0.80, -0.58), new b2Vec2(-0.65, -0.58)];
       fixDef.shape.SetAsArray(b2vertices);
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = x / this.scale;
-      bodyDef.position.y = y / this.scale;
+      bodyDef.position.x = x;
+      bodyDef.position.y = y;
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -820,8 +816,8 @@
       b2vertices = [new b2Vec2(0.58, -0.02), new b2Vec2(0.48, -0.02), new b2Vec2(0.66, -0.58), new b2Vec2(0.76, -0.58)];
       fixDef.shape.SetAsArray(b2vertices);
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = x / this.scale;
-      bodyDef.position.y = y / this.scale;
+      bodyDef.position.x = x;
+      bodyDef.position.y = y;
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -869,19 +865,14 @@
     };
 
     Moto.prototype.display_wheel = function(wheel) {
-      var angle, position, radius, scaled_position, scaled_radius;
+      var angle, position, radius;
       position = wheel.GetPosition();
-      scaled_position = {
-        x: position.x,
-        y: position.y
-      };
       radius = wheel.GetFixtureList().GetShape().m_radius;
-      scaled_radius = radius;
       angle = wheel.GetAngle();
       this.level.ctx.save();
-      this.level.ctx.translate(scaled_position.x, scaled_position.y);
+      this.level.ctx.translate(position.x, position.y);
       this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -scaled_radius, -scaled_radius, scaled_radius * 2, scaled_radius * 2);
+      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
       return this.level.ctx.restore();
     };
 
