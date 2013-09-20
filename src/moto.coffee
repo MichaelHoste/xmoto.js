@@ -45,11 +45,11 @@ class Moto
     @left_axle    = @create_left_axle( @player_start.x, @player_start.y + 1.0)
     @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0)
 
-    @left_revolute_join  = @create_left_revolute_joint()
-    @left_prismatic_join = @create_left_prismatic_joint()
+    @left_revolute_joint  = @create_left_revolute_joint()
+    @left_prismatic_joint = @create_left_prismatic_joint()
 
-    @right_revolute_join  = @create_right_revolute_joint()
-    @right_prismatic_join = @create_right_prismatic_joint()
+    @right_revolute_joint  = @create_right_revolute_joint()
+    @right_prismatic_joint = @create_right_prismatic_joint()
 
   position: ->
     position = @bike_body.GetPosition()
@@ -188,10 +188,10 @@ class Moto
 
   create_left_prismatic_joint: ->
     jointDef = new b2PrismaticJointDef()
-    jointDef.Initialize(@bike_body, @left_axle, @left_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5) )
+    jointDef.Initialize(@bike_body, @left_axle, @left_axle.GetWorldCenter(), new b2Vec2(0.1, 1) )
     jointDef.enableLimit = true
-    jointDef.lowerTranslation = -0.05
-    jointDef.upperTranslation = 0.05
+    jointDef.lowerTranslation = -0.15
+    jointDef.upperTranslation = 0.15
     jointDef.enableMotor = true
     jointDef.maxMotorForce = 0.5
     jointDef.collideConnected = false
@@ -199,10 +199,10 @@ class Moto
 
   create_right_prismatic_joint: ->
     jointDef = new b2PrismaticJointDef()
-    jointDef.Initialize(@bike_body, @right_axle, @right_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5) )
+    jointDef.Initialize(@bike_body, @right_axle, @right_axle.GetWorldCenter(), new b2Vec2(-0.1, 1) )
     jointDef.enableLimit = true
-    jointDef.lowerTranslation = -0.05
-    jointDef.upperTranslation = 0.05
+    jointDef.lowerTranslation = -0.15
+    jointDef.upperTranslation = 0.15
     jointDef.enableMotor = true
     jointDef.maxMotorForce = 0.5
     jointDef.collideConnected = false

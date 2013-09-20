@@ -412,22 +412,25 @@
     };
 
     Input.prototype.move_moto = function() {
-      var force, left_wheel_body, right_wheel_body;
-      force = 10;
-      left_wheel_body = this.level.moto.left_wheel;
-      right_wheel_body = this.level.moto.right_wheel;
+      var force;
+      force = 13;
+      this.moto = this.level.moto;
       if (this.up) {
-        left_wheel_body.ApplyTorque(-force / 5);
+        this.level.moto.left_wheel.ApplyTorque(-force / 4);
       }
       if (this.down) {
-        left_wheel_body.ApplyTorque(force / 5);
+        this.level.moto.left_wheel.ApplyTorque(force / 7);
       }
       if (this.left) {
         this.level.moto.bike_body.ApplyTorque(force);
       }
       if (this.right) {
-        return this.level.moto.bike_body.ApplyTorque(-force);
+        this.level.moto.bike_body.ApplyTorque(-force);
       }
+      this.moto.right_prismatic_joint.SetMaxMotorForce(10 + Math.abs(800 * Math.pow(this.moto.right_prismatic_joint.GetJointTranslation(), 2)));
+      this.moto.right_prismatic_joint.SetMotorSpeed(-4 * Math.pow(this.moto.right_prismatic_joint.GetJointTranslation(), 1));
+      this.moto.left_prismatic_joint.SetMaxMotorForce(10 + Math.abs(800 * Math.pow(this.moto.left_prismatic_joint.GetJointTranslation(), 2)));
+      return this.moto.left_prismatic_joint.SetMotorSpeed(-4 * Math.pow(this.moto.left_prismatic_joint.GetJointTranslation(), 1));
     };
 
     return Input;
@@ -735,10 +738,10 @@
       this.right_wheel = this.create_wheel(this.player_start.x + 0.7, this.player_start.y + 0.55);
       this.left_axle = this.create_left_axle(this.player_start.x, this.player_start.y + 1.0);
       this.right_axle = this.create_right_axle(this.player_start.x, this.player_start.y + 1.0);
-      this.left_revolute_join = this.create_left_revolute_joint();
-      this.left_prismatic_join = this.create_left_prismatic_joint();
-      this.right_revolute_join = this.create_right_revolute_joint();
-      return this.right_prismatic_join = this.create_right_prismatic_joint();
+      this.left_revolute_joint = this.create_left_revolute_joint();
+      this.left_prismatic_joint = this.create_left_prismatic_joint();
+      this.right_revolute_joint = this.create_right_revolute_joint();
+      return this.right_prismatic_joint = this.create_right_prismatic_joint();
     };
 
     Moto.prototype.position = function() {
@@ -841,10 +844,10 @@
     Moto.prototype.create_left_prismatic_joint = function() {
       var jointDef;
       jointDef = new b2PrismaticJointDef();
-      jointDef.Initialize(this.bike_body, this.left_axle, this.left_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5));
+      jointDef.Initialize(this.bike_body, this.left_axle, this.left_axle.GetWorldCenter(), new b2Vec2(0.1, 1));
       jointDef.enableLimit = true;
-      jointDef.lowerTranslation = -0.05;
-      jointDef.upperTranslation = 0.05;
+      jointDef.lowerTranslation = -0.15;
+      jointDef.upperTranslation = 0.15;
       jointDef.enableMotor = true;
       jointDef.maxMotorForce = 0.5;
       jointDef.collideConnected = false;
@@ -854,10 +857,10 @@
     Moto.prototype.create_right_prismatic_joint = function() {
       var jointDef;
       jointDef = new b2PrismaticJointDef();
-      jointDef.Initialize(this.bike_body, this.right_axle, this.right_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5));
+      jointDef.Initialize(this.bike_body, this.right_axle, this.right_axle.GetWorldCenter(), new b2Vec2(-0.1, 1));
       jointDef.enableLimit = true;
-      jointDef.lowerTranslation = -0.05;
-      jointDef.upperTranslation = 0.05;
+      jointDef.lowerTranslation = -0.15;
+      jointDef.upperTranslation = 0.15;
       jointDef.enableMotor = true;
       jointDef.maxMotorForce = 0.5;
       jointDef.collideConnected = false;

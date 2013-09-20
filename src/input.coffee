@@ -54,15 +54,14 @@ class Input
     )
 
   move_moto: ->
-    force = 10
-    left_wheel_body = @level.moto.left_wheel
-    right_wheel_body = @level.moto.right_wheel
+    force = 13
+    @moto = @level.moto
 
     if @up
-      left_wheel_body.ApplyTorque(- force/5)
+      @level.moto.left_wheel.ApplyTorque(- force/4)
       #left_wheel_body.ApplyForce(new b2Vec2(  force/2, 0), left_wheel_body.GetWorldCenter())
     if @down
-      left_wheel_body.ApplyTorque(force/5)
+      @level.moto.left_wheel.ApplyTorque(force/7)
       #left_wheel_body.ApplyForce(new b2Vec2( -force/2, 0), left_wheel_body.GetWorldCenter())
     if @left
       @level.moto.bike_body.ApplyTorque(force)
@@ -70,3 +69,11 @@ class Input
     if @right
       @level.moto.bike_body.ApplyTorque(-force)
       #right_wheel_body.ApplyForce(new b2Vec2( 0,  force), right_wheel_body.GetWorldCenter())
+
+    @moto.right_prismatic_joint.SetMaxMotorForce(10+Math.abs(800*Math.pow(@moto.right_prismatic_joint.GetJointTranslation(), 2)))
+    @moto.right_prismatic_joint.SetMotorSpeed(-4*Math.pow(@moto.right_prismatic_joint.GetJointTranslation(), 1))
+
+    @moto.left_prismatic_joint.SetMaxMotorForce(10+Math.abs(800*Math.pow(@moto.left_prismatic_joint.GetJointTranslation(), 2)))
+    @moto.left_prismatic_joint.SetMotorSpeed(-4*Math.pow(@moto.left_prismatic_joint.GetJointTranslation(), 1))
+
+
