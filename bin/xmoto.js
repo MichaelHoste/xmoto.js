@@ -841,11 +841,12 @@
     Moto.prototype.create_left_prismatic_joint = function() {
       var jointDef;
       jointDef = new b2PrismaticJointDef();
-      jointDef.Initialize(this.bike_body, this.left_axle, this.bike_body.GetWorldCenter(), {
-        x: 0.50,
-        y: 0.50
-      });
+      jointDef.Initialize(this.bike_body, this.left_axle, this.left_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5));
       jointDef.enableLimit = true;
+      jointDef.lowerTranslation = -0.001;
+      jointDef.upperTranslation = 0.001;
+      jointDef.enableMotor = true;
+      jointDef.maxMotorForce = 0.005;
       jointDef.collideConnected = false;
       return this.level.world.CreateJoint(jointDef);
     };
@@ -853,11 +854,12 @@
     Moto.prototype.create_right_prismatic_joint = function() {
       var jointDef;
       jointDef = new b2PrismaticJointDef();
-      jointDef.Initialize(this.bike_body, this.right_axle, this.bike_body.GetWorldCenter(), {
-        x: 0.50,
-        y: 0.50
-      });
+      jointDef.Initialize(this.bike_body, this.right_axle, this.right_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5));
       jointDef.enableLimit = true;
+      jointDef.lowerTranslation = -0.001;
+      jointDef.upperTranslation = 0.001;
+      jointDef.enableMotor = true;
+      jointDef.maxMotorForce = 0.005;
       jointDef.collideConnected = false;
       return this.level.world.CreateJoint(jointDef);
     };

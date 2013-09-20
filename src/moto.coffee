@@ -81,7 +81,6 @@ class Moto
     bodyDef.position.y = y / @scale
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -106,7 +105,6 @@ class Moto
     bodyDef.position.x = x / @scale
     bodyDef.position.y = y / @scale
 
-    #bodyDef.type = b2Body.b2_staticBody
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
@@ -140,7 +138,6 @@ class Moto
     bodyDef.position.y = y / @scale
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -173,7 +170,6 @@ class Moto
     bodyDef.position.y = y / @scale
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -193,15 +189,23 @@ class Moto
 
   create_left_prismatic_joint: ->
     jointDef = new b2PrismaticJointDef()
-    jointDef.Initialize(@bike_body, @left_axle, @bike_body.GetWorldCenter(), { x: 0.50, y: 0.50 } )
+    jointDef.Initialize(@bike_body, @left_axle, @left_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5) )
     jointDef.enableLimit = true
+    jointDef.lowerTranslation = -0.001
+    jointDef.upperTranslation = 0.001
+    jointDef.enableMotor = true
+    jointDef.maxMotorForce = 0.005
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
   create_right_prismatic_joint: ->
     jointDef = new b2PrismaticJointDef()
-    jointDef.Initialize(@bike_body, @right_axle, @bike_body.GetWorldCenter(), { x: 0.50, y: 0.50 } )
+    jointDef.Initialize(@bike_body, @right_axle, @right_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5) )
     jointDef.enableLimit = true
+    jointDef.lowerTranslation = -0.001
+    jointDef.upperTranslation = 0.001
+    jointDef.enableMotor = true
+    jointDef.maxMotorForce = 0.005
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
