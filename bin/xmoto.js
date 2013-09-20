@@ -734,11 +734,11 @@
         x: this.level.entities.player_start.x * this.scale,
         y: this.level.entities.player_start.y * this.scale
       };
-      this.bike_body = this.create_bike_body(this.player_start.x, this.player_start.y + 1.0);
-      this.left_wheel = this.create_wheel(this.player_start.x - 0.7 * this.scale, this.player_start.y - 0.45 * this.scale);
-      this.right_wheel = this.create_wheel(this.player_start.x + 0.7 * this.scale, this.player_start.y - 0.45 * this.scale);
-      this.left_axle = this.create_left_axle(this.player_start.x, this.player_start.y + 1.0);
-      this.right_axle = this.create_right_axle(this.player_start.x, this.player_start.y + 1.0);
+      this.bike_body = this.create_bike_body(this.player_start.x, this.player_start.y + 1.0 * this.scale);
+      this.left_wheel = this.create_wheel(this.player_start.x - 0.7 * this.scale, this.player_start.y - 0.45 * this.scale + 1.0 * this.scale);
+      this.right_wheel = this.create_wheel(this.player_start.x + 0.7 * this.scale, this.player_start.y - 0.45 * this.scale + 1.0 * this.scale);
+      this.left_axle = this.create_left_axle(this.player_start.x, this.player_start.y + 1.0 * this.scale);
+      this.right_axle = this.create_right_axle(this.player_start.x, this.player_start.y + 1.0 * this.scale);
       this.left_revolute_join = this.create_left_revolute_joint();
       this.left_prismatic_join = this.create_left_prismatic_joint();
       this.right_revolute_join = this.create_right_revolute_joint();
@@ -1008,13 +1008,11 @@
       this.scale = level.scale.x;
       this.level = level;
       this.world = new b2World(new b2Vec2(0, -10), true);
-      b2Settings.b2_linearSlop = 0.005;
       context = this.level.ctx;
       debugDraw = new b2DebugDraw();
       debugDraw.SetSprite(context);
       debugDraw.SetFillAlpha(0.3);
       debugDraw.SetLineThickness(1.0);
-      debugDraw.SetDrawScale(1);
       debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
       this.world.SetDebugDraw(debugDraw);
       this.world;

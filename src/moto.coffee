@@ -38,13 +38,13 @@ class Moto
 
     # Creation of moto parts
     @player_start = { x: @level.entities.player_start.x * @scale, y: @level.entities.player_start.y * @scale }
-    @bike_body    = @create_bike_body(@player_start.x, @player_start.y + 1.0)
+    @bike_body    = @create_bike_body(@player_start.x, @player_start.y + 1.0*@scale)
 
-    @left_wheel   = @create_wheel(@player_start.x - 0.7*@scale, @player_start.y - 0.45*@scale)
-    @right_wheel  = @create_wheel(@player_start.x + 0.7*@scale, @player_start.y - 0.45*@scale)
+    @left_wheel   = @create_wheel(@player_start.x - 0.7*@scale, @player_start.y - 0.45*@scale + 1.0*@scale)
+    @right_wheel  = @create_wheel(@player_start.x + 0.7*@scale, @player_start.y - 0.45*@scale + 1.0*@scale)
 
-    @left_axle    = @create_left_axle( @player_start.x, @player_start.y + 1.0)
-    @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0)
+    @left_axle    = @create_left_axle( @player_start.x, @player_start.y + 1.0 * @scale)
+    @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0 * @scale)
 
     @left_revolute_join  = @create_left_revolute_joint()
     @left_prismatic_join = @create_left_prismatic_joint()
