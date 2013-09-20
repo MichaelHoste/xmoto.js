@@ -37,11 +37,11 @@ class Moto
       @assets.moto.push(texture)
 
     # Creation of moto parts
-    @player_start = @level.entities.player_start
+    @player_start = { x: @level.entities.player_start.x * @scale, y: @level.entities.player_start.y * @scale }
     @bike_body    = @create_bike_body(@player_start.x, @player_start.y + 1.0)
 
-    @left_wheel   = @create_wheel(@player_start.x - 0.7, @player_start.y + 0.45)
-    @right_wheel  = @create_wheel(@player_start.x + 0.7, @player_start.y + 0.45)
+    @left_wheel   = @create_wheel(@player_start.x - 0.7*@scale, @player_start.y - 0.45*@scale)
+    @right_wheel  = @create_wheel(@player_start.x + 0.7*@scale, @player_start.y - 0.45*@scale)
 
     @left_axle    = @create_left_axle( @player_start.x, @player_start.y + 1.0)
     @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0)
@@ -54,22 +54,22 @@ class Moto
 
   position: ->
     position = @bike_body.GetPosition()
-    { x: position.x * @scale, y: position.y * @scale }
+    { x: position.x, y: position.y }
 
   create_bike_body: (x, y)  ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 0.1
+    fixDef.density     = 1.0
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  0.6 / @scale, -0.3 / @scale),
-                   new b2Vec2(  0.6 / @scale,  0.4 / @scale),
-                   new b2Vec2( -0.7 / @scale,  0.4 / @scale),
-                   new b2Vec2( -0.7 / @scale, -0.3 / @scale) ]
+    b2vertices = [ new b2Vec2(  0.6, -0.3),
+                   new b2Vec2(  0.6,  0.4),
+                   new b2Vec2( -0.7,  0.4),
+                   new b2Vec2( -0.7, -0.3) ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -92,7 +92,7 @@ class Moto
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    fixDef.shape = new b2CircleShape(0.35 / @scale)
+    fixDef.shape = new b2CircleShape(0.35)
     fixDef.density     = 1.0
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
@@ -123,10 +123,10 @@ class Moto
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2( -0.10 / @scale,  -0.30 / @scale),
-                   new b2Vec2( -0.25 / @scale,  -0.30 / @scale),
-                   new b2Vec2( -0.80 / @scale,  -0.58 / @scale),
-                   new b2Vec2( -0.65 / @scale,  -0.58 / @scale) ]
+    b2vertices = [ new b2Vec2( -0.10,  -0.30),
+                   new b2Vec2( -0.25,  -0.30),
+                   new b2Vec2( -0.80,  -0.58),
+                   new b2Vec2( -0.65,  -0.58) ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -155,10 +155,10 @@ class Moto
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2( 0.58 / @scale,  -0.02 / @scale),
-                   new b2Vec2( 0.48 / @scale,  -0.02 / @scale),
-                   new b2Vec2( 0.66 / @scale,  -0.58 / @scale),
-                   new b2Vec2( 0.76 / @scale,  -0.58 / @scale) ]
+    b2vertices = [ new b2Vec2( 0.58,  -0.02),
+                   new b2Vec2( 0.48,  -0.02),
+                   new b2Vec2( 0.66,  -0.58),
+                   new b2Vec2( 0.76,  -0.58) ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -191,10 +191,10 @@ class Moto
     jointDef = new b2PrismaticJointDef()
     jointDef.Initialize(@bike_body, @left_axle, @left_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5) )
     jointDef.enableLimit = true
-    jointDef.lowerTranslation = -0.001
-    jointDef.upperTranslation = 0.001
+    jointDef.lowerTranslation = -0.05
+    jointDef.upperTranslation = 0.05
     jointDef.enableMotor = true
-    jointDef.maxMotorForce = 0.005
+    jointDef.maxMotorForce = 0.5
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
@@ -202,10 +202,10 @@ class Moto
     jointDef = new b2PrismaticJointDef()
     jointDef.Initialize(@bike_body, @right_axle, @right_axle.GetWorldCenter(), new b2Vec2(0.5, 0.5) )
     jointDef.enableLimit = true
-    jointDef.lowerTranslation = -0.001
-    jointDef.upperTranslation = 0.001
+    jointDef.lowerTranslation = -0.05
+    jointDef.upperTranslation = 0.05
     jointDef.enableMotor = true
-    jointDef.maxMotorForce = 0.005
+    jointDef.maxMotorForce = 0.5
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
@@ -213,12 +213,12 @@ class Moto
     # Position
     position = wheel.GetPosition()
     scaled_position =
-      x: position.x*@scale
-      y: position.y*@scale
+      x: position.x
+      y: position.y
 
     # Radius
     radius = wheel.GetFixtureList().GetShape().m_radius
-    scaled_radius = radius*@scale
+    scaled_radius = radius
 
     # Angle
     angle = wheel.GetAngle()
@@ -267,8 +267,8 @@ class Moto
     # Position
     left_wheel_position = @left_wheel.GetPosition()
     left_wheel_position =
-      x: left_wheel_position.x * @scale - axle_thickness/2.0
-      y: left_wheel_position.y * @scale - axle_thickness/2.0 + 0.02
+      x: left_wheel_position.x - axle_thickness/2.0
+      y: left_wheel_position.y - axle_thickness/2.0 + 0.02
 
     # Position relative to center of body
     left_axle_position =
@@ -308,8 +308,8 @@ class Moto
     # Position
     right_wheel_position = @right_wheel.GetPosition()
     right_wheel_position =
-      x: right_wheel_position.x * @scale + axle_thickness/2.0 - 0.03
-      y: right_wheel_position.y * @scale - axle_thickness/2.0
+      x: right_wheel_position.x + axle_thickness/2.0 - 0.03
+      y: right_wheel_position.y - axle_thickness/2.0
 
     # Position relative to center of body
     right_axle_position =

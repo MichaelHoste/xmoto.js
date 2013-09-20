@@ -19,7 +19,7 @@ class Physics
     @level = level
     @world = new b2World(new b2Vec2(0, -10), true) # gravity vector, and doSleep
 
-    b2Settings.b2_linearSlop = 0.0005
+    b2Settings.b2_linearSlop = 0.005
 
     context = @level.ctx
 
@@ -28,7 +28,7 @@ class Physics
     debugDraw.SetSprite(context)    # context
     debugDraw.SetFillAlpha(0.3)     # transparency
     debugDraw.SetLineThickness(1.0) # thickness of line
-    debugDraw.SetDrawScale(@scale)  # scale
+    debugDraw.SetDrawScale(1)  # scale
 
     # Assign debug to world
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit)
@@ -45,7 +45,7 @@ class Physics
     # Create polygon
     b2vertices = []
     for vertex in vertices
-      b2vertices.push(new b2Vec2(vertex.x / @scale, vertex.y / @scale))
+      b2vertices.push(new b2Vec2(vertex.x, vertex.y))
     fixDef.shape.SetAsArray(b2vertices)
 
     # Create body
