@@ -70,10 +70,10 @@ class Input
       @level.moto.bike_body.ApplyTorque(-force)
       #right_wheel_body.ApplyForce(new b2Vec2( 0,  force), right_wheel_body.GetWorldCenter())
 
-    @moto.right_prismatic_joint.SetMaxMotorForce(10+Math.abs(800*Math.pow(@moto.right_prismatic_joint.GetJointTranslation(), 2)))
-    @moto.right_prismatic_joint.SetMotorSpeed(-4*Math.pow(@moto.right_prismatic_joint.GetJointTranslation(), 1))
+    @moto.right_prismatic_joint.SetMaxMotorForce(4+Math.abs(800*Math.pow(@moto.right_prismatic_joint.GetJointTranslation(), 2)))
+    @moto.right_prismatic_joint.SetMotorSpeed(-3*@moto.right_prismatic_joint.GetJointTranslation())
 
-    @moto.left_prismatic_joint.SetMaxMotorForce(10+Math.abs(800*Math.pow(@moto.left_prismatic_joint.GetJointTranslation(), 2)))
-    @moto.left_prismatic_joint.SetMotorSpeed(-4*Math.pow(@moto.left_prismatic_joint.GetJointTranslation(), 1))
+    @moto.left_prismatic_joint.SetMaxMotorForce(8+Math.abs(800*Math.pow(@moto.left_prismatic_joint.GetJointTranslation(), 2)))
+    @moto.left_prismatic_joint.SetMotorSpeed(-3*@moto.left_prismatic_joint.GetJointTranslation())
 
 

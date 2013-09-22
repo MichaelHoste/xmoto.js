@@ -39,8 +39,8 @@ class Moto
     @player_start = @level.entities.player_start
     @bike_body    = @create_bike_body(@player_start.x, @player_start.y + 1.0)
 
-    @left_wheel   = @create_wheel(@player_start.x - 0.7, @player_start.y + 0.55)
-    @right_wheel  = @create_wheel(@player_start.x + 0.7, @player_start.y + 0.55)
+    @left_wheel   = @create_wheel(@player_start.x - 0.7, @player_start.y + 0.48)
+    @right_wheel  = @create_wheel(@player_start.x + 0.7, @player_start.y + 0.48)
 
     @left_axle    = @create_left_axle( @player_start.x, @player_start.y + 1.0)
     @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0)
@@ -190,10 +190,9 @@ class Moto
     jointDef = new b2PrismaticJointDef()
     jointDef.Initialize(@bike_body, @left_axle, @left_axle.GetWorldCenter(), new b2Vec2(0.1, 1) )
     jointDef.enableLimit = true
-    jointDef.lowerTranslation = -0.15
-    jointDef.upperTranslation = 0.15
+    jointDef.lowerTranslation = -0.10
+    jointDef.upperTranslation = 0.20
     jointDef.enableMotor = true
-    jointDef.maxMotorForce = 0.5
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
@@ -201,10 +200,9 @@ class Moto
     jointDef = new b2PrismaticJointDef()
     jointDef.Initialize(@bike_body, @right_axle, @right_axle.GetWorldCenter(), new b2Vec2(-0.1, 1) )
     jointDef.enableLimit = true
-    jointDef.lowerTranslation = -0.15
-    jointDef.upperTranslation = 0.15
+    jointDef.lowerTranslation = -0.0
+    jointDef.upperTranslation = 0.20
     jointDef.enableMotor = true
-    jointDef.maxMotorForce = 0.5
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
