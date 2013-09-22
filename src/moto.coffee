@@ -75,8 +75,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    #bodyDef.type = b2Body.b2_dynamicBody
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -101,8 +101,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    #bodyDef.type = b2Body.b2_dynamicBody
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     wheel = @level.world.CreateBody(bodyDef)
@@ -134,8 +134,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    #bodyDef.type = b2Body.b2_dynamicBody
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -167,8 +167,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    #bodyDef.type = b2Body.b2_dynamicBody
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)

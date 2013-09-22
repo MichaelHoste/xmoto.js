@@ -30,13 +30,19 @@ class Rider
       @assets.moto.push(texture)
 
     # Creation of moto parts
-    x = 0.07
     @player_start = @level.entities.player_start
-    @torso        = @create_torso(@player_start.x - 0.31 + x, @player_start.y + 1.87)
+    @torso        = @create_torso(@player_start.x - 0.38, @player_start.y + 1.87)
     @lower_leg    = @create_lower_leg(@player_start.x + 0.15, @player_start.y + 0.9)
     @upper_leg    = @create_upper_leg(@player_start.x - 0.09, @player_start.y + 1.27)
     @lower_arm    = @create_lower_arm(@player_start.x + 0.07, @player_start.y + 1.52)
-    @upper_arm    = @create_upper_arm(@player_start.x - 0.24 + x, @player_start.y + 1.83)
+    @upper_arm    = @create_upper_arm(@player_start.x - 0.31, @player_start.y + 1.83)
+
+    @foot_joint     = @create_foot_joint()
+    @hand_joint     = @create_hand_joint()
+    @knee_joint     = @create_knee_joint()
+    @elbow_joint    = @create_elbow_joint()
+    @shoulder_joint = @create_shoulder_joint()
+    @hip_joint      = @create_hip_joint()
 
   position: ->
     @moto.body.GetPosition()
@@ -68,8 +74,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = -Math.PI/20
 
-    #bodyDef.type = b2Body.b2_dynamicBody
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -104,8 +110,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = -Math.PI/6.0
 
-    #bodyDef.type = b2Body.b2_dynamicBody
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -140,8 +146,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = -Math.PI/12.0
 
-    #bodyDef.type = b2Body.b2_dynamicBody
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -176,8 +182,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = -Math.PI/10.0
 
-    #bodyDef.type = b2Body.b2_dynamicBody
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -212,14 +218,62 @@ class Rider
     # Assign body angle
     bodyDef.angle = Math.PI/9.0
 
-    #bodyDef.type = b2Body.b2_dynamicBody
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
     body.CreateFixture(fixDef)
 
     body
+
+  create_foot_joint: ->
+    position = @lower_leg.GetWorldCenter()
+    rotation_axe = { x: position.x - 0.2, y: position.y - 0.2 }
+
+    jointDef = new b2RevoluteJointDef()
+    jointDef.Initialize(@lower_leg, @moto.body, rotation_axe)
+    @level.world.CreateJoint(jointDef)
+
+  create_knee_joint: ->
+    position = @lower_leg.GetWorldCenter()
+    rotation_axe = { x: position.x + 0.07, y: position.y + 0.28 }
+
+    jointDef = new b2RevoluteJointDef()
+    jointDef.Initialize(@lower_leg, @upper_leg, rotation_axe)
+    @level.world.CreateJoint(jointDef)
+
+  create_hand_joint: ->
+    position = @lower_arm.GetWorldCenter()
+    rotation_axe = { x: position.x + 0.25, y: position.y - 0.07 }
+
+    jointDef = new b2RevoluteJointDef()
+    jointDef.Initialize(@lower_arm, @moto.body, rotation_axe)
+    @level.world.CreateJoint(jointDef)
+
+  create_elbow_joint: ->
+    position = @upper_arm.GetWorldCenter()
+    rotation_axe = { x: position.x + 0.05, y: position.y - 0.2 }
+
+    jointDef = new b2RevoluteJointDef()
+    jointDef.Initialize(@upper_arm, @lower_arm, rotation_axe)
+    @level.world.CreateJoint(jointDef)
+
+  create_shoulder_joint: ->
+    position = @upper_arm.GetWorldCenter()
+    rotation_axe = { x: position.x - 0.12, y: position.y + 0.22 }
+
+    jointDef = new b2RevoluteJointDef()
+    jointDef.Initialize(@torso, @upper_arm, rotation_axe)
+    @level.world.CreateJoint(jointDef)
+
+  create_hip_joint: ->
+    position = @upper_leg.GetWorldCenter()
+    rotation_axe = { x: position.x - 0.27, y: position.y + 0.1 }
+
+    jointDef = new b2RevoluteJointDef()
+    jointDef.Initialize(@torso, @upper_leg, rotation_axe)
+    @level.world.CreateJoint(jointDef)
 
   display_torso: ->
     # Position
