@@ -1073,7 +1073,7 @@
       this.torso = this.create_torso(this.player_start.x - 0.31 + x, this.player_start.y + 1.87);
       this.lower_leg = this.create_lower_leg(this.player_start.x + 0.15, this.player_start.y + 0.9);
       this.upper_leg = this.create_upper_leg(this.player_start.x - 0.09, this.player_start.y + 1.27);
-      this.lower_arm = this.create_lower_arm(this.player_start.x - 0.07, this.player_start.y + 1.78);
+      this.lower_arm = this.create_lower_arm(this.player_start.x + 0.07, this.player_start.y + 1.52);
       return this.upper_arm = this.create_upper_arm(this.player_start.x - 0.24 + x, this.player_start.y + 1.83);
     };
 
@@ -1149,7 +1149,7 @@
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [new b2Vec2(0.3, -0.1), new b2Vec2(0.3, 0.1), new b2Vec2(-0.3, 0.1), new b2Vec2(-0.3, -0.1)];
+      b2vertices = [new b2Vec2(0.28, -0.1), new b2Vec2(0.28, 0.1), new b2Vec2(-0.28, 0.1), new b2Vec2(-0.28, -0.1)];
       fixDef.shape.SetAsArray(b2vertices);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
@@ -1225,7 +1225,7 @@
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1, 1);
       this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.1, -0.3, 0.60, 0.20);
+      this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.28, -0.10, 0.56, 0.20);
       return this.level.ctx.restore();
     };
 

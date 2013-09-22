@@ -35,7 +35,7 @@ class Rider
     @torso        = @create_torso(@player_start.x - 0.31 + x, @player_start.y + 1.87)
     @lower_leg    = @create_lower_leg(@player_start.x + 0.15, @player_start.y + 0.9)
     @upper_leg    = @create_upper_leg(@player_start.x - 0.09, @player_start.y + 1.27)
-    @lower_arm    = @create_lower_arm(@player_start.x - 0.07, @player_start.y + 1.78)
+    @lower_arm    = @create_lower_arm(@player_start.x + 0.07, @player_start.y + 1.52)
     @upper_arm    = @create_upper_arm(@player_start.x - 0.24 + x, @player_start.y + 1.83)
 
   position: ->
@@ -159,10 +159,10 @@ class Rider
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  0.3, -0.1),
-                   new b2Vec2(  0.3,  0.1),
-                   new b2Vec2( -0.3,  0.1),
-                   new b2Vec2( -0.3, -0.1) ]
+    b2vertices = [ new b2Vec2(  0.28, -0.1),
+                   new b2Vec2(  0.28,  0.1),
+                   new b2Vec2( -0.28,  0.1),
+                   new b2Vec2( -0.28, -0.1) ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -305,9 +305,9 @@ class Rider
 
     @level.ctx.drawImage(
       @assets.get('playerlowerarm'), # texture
-      -0.1,  # x
-      -0.3, # y
-       0.60, # size-x
+      -0.28,  # x
+      -0.10, # y
+       0.56, # size-x
        0.20  # size-y
     )
 
