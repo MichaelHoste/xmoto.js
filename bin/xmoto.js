@@ -84,6 +84,9 @@
           },
           vertices: []
         };
+        if (block.usetexture.id === 'default') {
+          block.usetexture.id = 'Dirt';
+        }
         xml_materials = $(xml_block).find('edges material');
         for (_j = 0, _len1 = xml_materials.length; _j < _len1; _j++) {
           xml_material = xml_materials[_j];
@@ -419,10 +422,10 @@
       force = 13;
       moto = this.level.moto;
       if (this.up) {
-        this.level.moto.left_wheel.ApplyTorque(-force / 4);
+        this.level.moto.left_wheel.ApplyTorque(-force / 3);
       }
       if (this.down) {
-        this.level.moto.left_wheel.ApplyTorque(force / 7);
+        this.level.moto.left_wheel.ApplyTorque(force / 5);
       }
       if (this.left) {
         this.level.moto.body.ApplyTorque(force);
@@ -671,7 +674,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l1038.lvl');
+    level.load_from_file('l3.lvl');
     level.init_input();
     return level.assets.load(function() {
       var update;
@@ -1014,6 +1017,9 @@
       var b2vertices, bodyDef, fixDef, vertex, _i, _len;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
+      fixDef.density = 1.0;
+      fixDef.restitution = 0.5;
+      fixDef.friction = 1.0;
       b2vertices = [];
       for (_i = 0, _len = vertices.length; _i < _len; _i++) {
         vertex = vertices[_i];
@@ -1377,6 +1383,9 @@
       this.color_a = parseInt(xml_sky.attr('color_a'));
       this.zoom = parseFloat(xml_sky.attr('zoom'));
       this.offset = parseFloat(xml_sky.attr('offset'));
+      if (name === '') {
+        this.name = 'sky1';
+      }
       return this;
     };
 

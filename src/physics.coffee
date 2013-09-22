@@ -39,6 +39,9 @@ class Physics
     fixDef = new b2FixtureDef()
 
     fixDef.shape = new b2PolygonShape()
+    fixDef.density     = 1.0
+    fixDef.restitution = 0.5
+    fixDef.friction    = 1.0
 
     # Create polygon
     b2vertices = []

@@ -61,10 +61,10 @@ class Input
     moto = @level.moto
 
     if @up
-      @level.moto.left_wheel.ApplyTorque(- force/4)
+      @level.moto.left_wheel.ApplyTorque(- force/3)
       #left_wheel_body.ApplyForce(new b2Vec2(  force/2, 0), left_wheel_body.GetWorldCenter())
     if @down
-      @level.moto.left_wheel.ApplyTorque(force/7)
+      @level.moto.left_wheel.ApplyTorque(force/5)
       #left_wheel_body.ApplyForce(new b2Vec2( -force/2, 0), left_wheel_body.GetWorldCenter())
     if @left
       @level.moto.body.ApplyTorque(force)

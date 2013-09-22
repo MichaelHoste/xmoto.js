@@ -28,6 +28,8 @@ class Blocks
           materials: []
         vertices: []
 
+      block.usetexture.id = 'Dirt' if block.usetexture.id == 'default'
+
       xml_materials = $(xml_block).find('edges material')
       for xml_material in xml_materials
         material =

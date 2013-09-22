@@ -14,6 +14,8 @@ class Sky
     @zoom      = parseFloat(xml_sky.attr('zoom'))
     @offset    = parseFloat(xml_sky.attr('offset'))
 
+    @name = 'sky1' if name == ''
+
     return this
 
   init: ->
