@@ -274,9 +274,7 @@ class Moto
     left_axle_adjusted_position = rotate_point(left_axle_position, @bike_body.GetAngle(), @position())
 
     # Distance
-    a = Math.pow(left_wheel_position.x - left_axle_adjusted_position.x, 2)
-    b = Math.pow(left_wheel_position.y - left_axle_adjusted_position.y, 2)
-    distance = Math.sqrt(a+b)
+    distance = distance_between_points(left_wheel_position, left_axle_adjusted_position)
 
     # Angle
     angle = angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI/2
@@ -315,9 +313,7 @@ class Moto
     right_axle_adjusted_position = rotate_point(right_axle_position, @bike_body.GetAngle(), @position())
 
     # Distance
-    a = Math.pow(right_wheel_position.x - right_axle_adjusted_position.x, 2)
-    b = Math.pow(right_wheel_position.y - right_axle_adjusted_position.y, 2)
-    distance = Math.sqrt(a+b)
+    distance = distance_between_points(right_wheel_position, right_axle_adjusted_position)
 
     # Angle
     angle = angle_between_points(right_axle_adjusted_position, right_wheel_position) + Math.PI/2
@@ -337,6 +333,11 @@ class Moto
     )
 
     @level.ctx.restore()
+
+distance_between_points = (point1, point2) ->
+  a = Math.pow(point1.x - point2.x, 2)
+  b = Math.pow(point1.y - point2.y, 2)
+  Math.sqrt(a+b)
 
 angle_between_points = (point1, point2) ->
   adj = point2.x - point1.x
