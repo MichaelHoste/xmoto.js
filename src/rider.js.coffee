@@ -17,6 +17,7 @@ class Rider
 
   display: ->
     @display_torso()
+    @display_upper_leg()
     @display_lower_leg()
 
   init: ->
@@ -28,8 +29,10 @@ class Rider
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
-    @torso        = @create_torso(@player_start.x - 0.25, @player_start.y + 1.9)
+    x = -0.03
+    @torso        = @create_torso(@player_start.x - 0.31, @player_start.y + 1.9 + x)
     @lower_leg    = @create_lower_leg(@player_start.x + 0.15, @player_start.y + 0.9)
+    @upper_leg    = @create_upper_leg(@player_start.x - 0.09, @player_start.y + 1.30 + x)
 
   position: ->
     @moto.body.GetPosition()
@@ -103,6 +106,42 @@ class Rider
 
     body
 
+  create_upper_leg: (x, y) ->
+    # Create fixture
+    fixDef = new b2FixtureDef()
+
+    fixDef.shape       = new b2PolygonShape()
+    fixDef.density     = 1.0
+    fixDef.restitution = 0.5
+    fixDef.friction    = 1.0
+    fixDef.filter.groupIndex = -1
+
+    b2vertices = [ new b2Vec2(  0.4, -0.14),
+                   new b2Vec2(  0.4,  0.14),
+                   new b2Vec2( -0.4,  0.14),
+                   new b2Vec2( -0.4, -0.14) ]
+
+    fixDef.shape.SetAsArray(b2vertices)
+
+    # Create body
+    bodyDef = new b2BodyDef()
+
+    # Assign body position
+    bodyDef.position.x = x
+    bodyDef.position.y = y
+
+    # Assign body angle
+    bodyDef.angle = -Math.PI/12.0
+
+    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_staticBody
+
+    # Assign fixture to body and add body to 2D world
+    body = @level.world.CreateBody(bodyDef)
+    body.CreateFixture(fixDef)
+
+    body
+
   display_torso: ->
     # Position
     position = @torso.GetPosition()
@@ -145,6 +184,29 @@ class Rider
       -0.33, # y
        0.40, # size-x
        0.66  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_upper_leg: ->
+    # Position
+    position = @upper_leg.GetPosition()
+
+    # Angle
+    angle = @upper_leg.GetAngle()
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1, -1)
+    @level.ctx.rotate(-angle)
+
+    @level.ctx.drawImage(
+      @assets.get('playerupperleg'), # texture
+      -0.40, # x
+      -0.14, # y
+       0.80, # size-x
+       0.28  # size-y
     )
 
     @level.ctx.restore()
