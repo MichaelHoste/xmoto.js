@@ -13,7 +13,7 @@ class Moto
   constructor: (level) ->
     @level  = level
     @assets = level.assets
-#    @rider  = new Rider(level, this)
+    @rider  = new Rider(level, this)
 
   display: ->
     @display_wheel(@left_wheel)
@@ -21,6 +21,7 @@ class Moto
     @display_left_axle()
     @display_right_axle()
     @display_body()
+    @rider.display()
 
   init: ->
     # Assets
@@ -44,6 +45,8 @@ class Moto
 
     @right_revolute_joint  = @create_right_revolute_joint()
     @right_prismatic_joint = @create_right_prismatic_joint()
+
+    @rider.init()
 
   position: ->
     @body.GetPosition()
@@ -266,7 +269,6 @@ class Moto
       y: - 0.30
 
     # Adjusted position depending of rotation of body
-    console.log(Math2D)
     left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, @body.GetAngle(), @position())
 
     # Distance

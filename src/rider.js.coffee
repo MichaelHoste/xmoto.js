@@ -27,7 +27,7 @@ class Rider
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
-    @torso        = @create_torso(@player_start.x, @player_start.y + 1.0)
+    @torso        = @create_torso(@player_start.x - 0.25, @player_start.y + 1.0)
 
   position: ->
     @moto.body.GetPosition()
@@ -42,10 +42,10 @@ class Rider
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  0.6, -0.3),
-                   new b2Vec2(  0.6,  0.4),
-                   new b2Vec2( -0.7,  0.4),
-                   new b2Vec2( -0.7, -0.3) ]
+    b2vertices = [ new b2Vec2(  0.175, -0.35),
+                   new b2Vec2(  0.175,  0.25),
+                   new b2Vec2( -0.175,  0.35),
+                   new b2Vec2( -0.175, -0.35) ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -70,7 +70,7 @@ class Rider
     position = @position()
 
     # Angle
-    angle = @bike_body.GetAngle()
+    angle = @torso.GetAngle()
 
     # Draw texture
     @level.ctx.save()
@@ -79,11 +79,11 @@ class Rider
     @level.ctx.rotate(-angle)
 
     @level.ctx.drawImage(
-      @assets.get('playerbikerbody'), # texture
-      -1.0,   # x
-      -0.5,   # y
-       2.0, # size-x
-       1.0  # size-y
+      @assets.get('playertorso'), # texture
+      -0.175, # x
+      -0.35,  # y
+       0.35,  # size-x
+       0.7    # size-y
     )
 
     @level.ctx.restore()

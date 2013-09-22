@@ -743,6 +743,7 @@
     function Moto(level) {
       this.level = level;
       this.assets = level.assets;
+      this.rider = new Rider(level, this);
     }
 
     Moto.prototype.display = function() {
@@ -750,7 +751,8 @@
       this.display_wheel(this.right_wheel);
       this.display_left_axle();
       this.display_right_axle();
-      return this.display_body();
+      this.display_body();
+      return this.rider.display();
     };
 
     Moto.prototype.init = function() {
@@ -769,7 +771,8 @@
       this.left_revolute_joint = this.create_left_revolute_joint();
       this.left_prismatic_joint = this.create_left_prismatic_joint();
       this.right_revolute_joint = this.create_right_revolute_joint();
-      return this.right_prismatic_joint = this.create_right_prismatic_joint();
+      this.right_prismatic_joint = this.create_right_prismatic_joint();
+      return this.rider.init();
     };
 
     Moto.prototype.position = function() {
@@ -924,7 +927,6 @@
         x: -0.17,
         y: -0.30
       };
-      console.log(Math2D);
       left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, this.body.GetAngle(), this.position());
       distance = Math2D.distance_between_points(left_wheel_position, left_axle_adjusted_position);
       angle = Math2D.angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI / 2;
@@ -1063,7 +1065,7 @@
         this.assets.moto.push(texture);
       }
       this.player_start = this.level.entities.player_start;
-      return this.torso = this.create_torso(this.player_start.x, this.player_start.y + 1.0);
+      return this.torso = this.create_torso(this.player_start.x - 0.25, this.player_start.y + 1.0);
     };
 
     Rider.prototype.position = function() {
@@ -1078,7 +1080,7 @@
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [new b2Vec2(0.6, -0.3), new b2Vec2(0.6, 0.4), new b2Vec2(-0.7, 0.4), new b2Vec2(-0.7, -0.3)];
+      b2vertices = [new b2Vec2(0.175, -0.35), new b2Vec2(0.175, 0.25), new b2Vec2(-0.175, 0.35), new b2Vec2(-0.175, -0.35)];
       fixDef.shape.SetAsArray(b2vertices);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
@@ -1092,12 +1094,12 @@
     Rider.prototype.display_torso = function() {
       var angle, position;
       position = this.position();
-      angle = this.bike_body.GetAngle();
+      angle = this.torso.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1, -1);
       this.level.ctx.rotate(-angle);
-      this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
+      this.level.ctx.drawImage(this.assets.get('playertorso'), -0.175, -0.35, 0.35, 0.7);
       return this.level.ctx.restore();
     };
 
