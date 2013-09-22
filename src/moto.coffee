@@ -1,15 +1,10 @@
-b2World             = Box2D.Dynamics.b2World
 b2Vec2              = Box2D.Common.Math.b2Vec2
-b2AABB              = Box2D.Collision.b2AABB
 b2BodyDef           = Box2D.Dynamics.b2BodyDef
 b2Body              = Box2D.Dynamics.b2Body
 b2FixtureDef        = Box2D.Dynamics.b2FixtureDef
 b2Fixture           = Box2D.Dynamics.b2Fixture
-b2MassData          = Box2D.Collision.Shapes.b2MassData
 b2PolygonShape      = Box2D.Collision.Shapes.b2PolygonShape
 b2CircleShape       = Box2D.Collision.Shapes.b2CircleShape
-b2DebugDraw         = Box2D.Dynamics.b2DebugDraw
-b2MouseJointDef     = Box2D.Dynamics.Joints.b2MouseJointDef
 b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef
 b2RevoluteJointDef  = Box2D.Dynamics.Joints.b2RevoluteJointDef
 
@@ -18,6 +13,7 @@ class Moto
   constructor: (level) ->
     @level  = level
     @assets = level.assets
+#    @rider  = new Rider(level, this)
 
   display: ->
     @display_wheel(@left_wheel)
@@ -29,15 +25,13 @@ class Moto
   init: ->
     # Assets
     textures = [ 'front1', 'lowerarm1', 'lowerleg1', 'playerbikerbody',
-                 'playerbikerwheel', 'playerlowerarm', 'playerlowerleg',
-                 'playertorso', 'playerupperarm', 'playerupperleg', 'rear1',
-                 'upperarm1', 'upperleg1' ]
+                 'playerbikerwheel', 'rear1' ]
     for texture in textures
       @assets.moto.push(texture)
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
-    @bike_body    = @create_bike_body(@player_start.x, @player_start.y + 1.0)
+    @body         = @create_body(@player_start.x, @player_start.y + 1.0)
 
     @left_wheel   = @create_wheel(@player_start.x - 0.7, @player_start.y + 0.48)
     @right_wheel  = @create_wheel(@player_start.x + 0.7, @player_start.y + 0.48)
@@ -52,10 +46,9 @@ class Moto
     @right_prismatic_joint = @create_right_prismatic_joint()
 
   position: ->
-    position = @bike_body.GetPosition()
-    { x: position.x, y: position.y }
+    @body.GetPosition()
 
-  create_bike_body: (x, y)  ->
+  create_body: (x, y)  ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
@@ -79,7 +72,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -104,7 +98,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     wheel = @level.world.CreateBody(bodyDef)
@@ -136,7 +131,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -168,7 +164,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    bodyDef.type = b2Body.b2_dynamicBody
+    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -188,7 +185,7 @@ class Moto
 
   create_left_prismatic_joint: ->
     jointDef = new b2PrismaticJointDef()
-    jointDef.Initialize(@bike_body, @left_axle, @left_axle.GetWorldCenter(), new b2Vec2(0.1, 1) )
+    jointDef.Initialize(@body, @left_axle, @left_axle.GetWorldCenter(), new b2Vec2(0.1, 1) )
     jointDef.enableLimit = true
     jointDef.lowerTranslation = -0.10
     jointDef.upperTranslation = 0.20
@@ -198,7 +195,7 @@ class Moto
 
   create_right_prismatic_joint: ->
     jointDef = new b2PrismaticJointDef()
-    jointDef.Initialize(@bike_body, @right_axle, @right_axle.GetWorldCenter(), new b2Vec2(-0.1, 1) )
+    jointDef.Initialize(@body, @right_axle, @right_axle.GetWorldCenter(), new b2Vec2(-0.1, 1) )
     jointDef.enableLimit = true
     jointDef.lowerTranslation = -0.0
     jointDef.upperTranslation = 0.20
@@ -236,7 +233,7 @@ class Moto
     position = @position()
 
     # Angle
-    angle = @bike_body.GetAngle()
+    angle = @body.GetAngle()
 
     # Draw texture
     @level.ctx.save()
@@ -269,13 +266,14 @@ class Moto
       y: - 0.30
 
     # Adjusted position depending of rotation of body
-    left_axle_adjusted_position = rotate_point(left_axle_position, @bike_body.GetAngle(), @position())
+    console.log(Math2D)
+    left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, @body.GetAngle(), @position())
 
     # Distance
-    distance = distance_between_points(left_wheel_position, left_axle_adjusted_position)
+    distance = Math2D.distance_between_points(left_wheel_position, left_axle_adjusted_position)
 
     # Angle
-    angle = angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI/2
+    angle = Math2D.angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI/2
 
     # Draw texture
     @level.ctx.save()
@@ -308,13 +306,13 @@ class Moto
       y: 0.025
 
     # Adjusted position depending of rotation of body
-    right_axle_adjusted_position = rotate_point(right_axle_position, @bike_body.GetAngle(), @position())
+    right_axle_adjusted_position = Math2D.rotate_point(right_axle_position, @body.GetAngle(), @position())
 
     # Distance
-    distance = distance_between_points(right_wheel_position, right_axle_adjusted_position)
+    distance = Math2D.distance_between_points(right_wheel_position, right_axle_adjusted_position)
 
     # Angle
-    angle = angle_between_points(right_axle_adjusted_position, right_wheel_position) + Math.PI/2
+    angle = Math2D.angle_between_points(right_axle_adjusted_position, right_wheel_position) + Math.PI/2
 
     # Draw texture
     @level.ctx.save()
@@ -331,34 +329,4 @@ class Moto
     )
 
     @level.ctx.restore()
-
-distance_between_points = (point1, point2) ->
-  a = Math.pow(point1.x - point2.x, 2)
-  b = Math.pow(point1.y - point2.y, 2)
-  Math.sqrt(a+b)
-
-angle_between_points = (point1, point2) ->
-  adj = point2.x - point1.x
-  opp = point2.y - point1.y
-
-  angle = Math.abs(Math.atan(opp/adj) * 180/Math.PI)
-
-  if adj > 0 && opp < 0
-    angle = 90 - angle
-  else if adj >= 0 && opp >= 0
-    angle += 90
-  else if adj < 0 && opp >= 0
-    angle = 180 + (90 - angle)
-  else
-    angle += 270
-
-  angle * Math.PI / 180.0 # radians
-
-# Rotate point from angle around axe
-rotate_point = (point, angle, rotation_axe) ->
-  new_point =
-    x: rotation_axe.x + point.x * Math.cos(angle) - point.y * Math.sin(angle)
-    y: rotation_axe.y + point.x * Math.sin(angle) + point.y * Math.cos(angle)
-
-
 
