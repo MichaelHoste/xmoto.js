@@ -529,7 +529,7 @@
       $('#game').attr('height', this.canvas_height);
       this.ctx.translate(400.0, 300.0);
       this.ctx.scale(this.scale.x, this.scale.y);
-      this.ctx.translate(-this.moto.position().x, -this.moto.position().y);
+      this.ctx.translate(-this.moto.position().x, -this.moto.position().y - 0.25);
       this.ctx.lineWidth = 0.01;
       this.sky.display(this.ctx);
       this.limits.display(this.ctx);
@@ -1056,7 +1056,9 @@
     Rider.prototype.display = function() {
       this.display_torso();
       this.display_upper_leg();
-      return this.display_lower_leg();
+      this.display_lower_leg();
+      this.display_upper_arm();
+      return this.display_lower_arm();
     };
 
     Rider.prototype.init = function() {
@@ -1066,11 +1068,13 @@
         texture = textures[_i];
         this.assets.moto.push(texture);
       }
+      x = 0.07;
       this.player_start = this.level.entities.player_start;
-      x = -0.03;
-      this.torso = this.create_torso(this.player_start.x - 0.31, this.player_start.y + 1.9 + x);
+      this.torso = this.create_torso(this.player_start.x - 0.31 + x, this.player_start.y + 1.87);
       this.lower_leg = this.create_lower_leg(this.player_start.x + 0.15, this.player_start.y + 0.9);
-      return this.upper_leg = this.create_upper_leg(this.player_start.x - 0.09, this.player_start.y + 1.30 + x);
+      this.upper_leg = this.create_upper_leg(this.player_start.x - 0.09, this.player_start.y + 1.27);
+      this.lower_arm = this.create_lower_arm(this.player_start.x - 0.07, this.player_start.y + 1.78);
+      return this.upper_arm = this.create_upper_arm(this.player_start.x - 0.24 + x, this.player_start.y + 1.83);
     };
 
     Rider.prototype.position = function() {
@@ -1090,6 +1094,7 @@
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
+      bodyDef.angle = -Math.PI / 20;
       bodyDef.type = b2Body.b2_staticBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1136,6 +1141,46 @@
       return body;
     };
 
+    Rider.prototype.create_lower_arm = function(x, y) {
+      var b2vertices, body, bodyDef, fixDef;
+      fixDef = new b2FixtureDef();
+      fixDef.shape = new b2PolygonShape();
+      fixDef.density = 1.0;
+      fixDef.restitution = 0.5;
+      fixDef.friction = 1.0;
+      fixDef.filter.groupIndex = -1;
+      b2vertices = [new b2Vec2(0.3, -0.1), new b2Vec2(0.3, 0.1), new b2Vec2(-0.3, 0.1), new b2Vec2(-0.3, -0.1)];
+      fixDef.shape.SetAsArray(b2vertices);
+      bodyDef = new b2BodyDef();
+      bodyDef.position.x = x;
+      bodyDef.position.y = y;
+      bodyDef.angle = -Math.PI / 10.0;
+      bodyDef.type = b2Body.b2_staticBody;
+      body = this.level.world.CreateBody(bodyDef);
+      body.CreateFixture(fixDef);
+      return body;
+    };
+
+    Rider.prototype.create_upper_arm = function(x, y) {
+      var b2vertices, body, bodyDef, fixDef;
+      fixDef = new b2FixtureDef();
+      fixDef.shape = new b2PolygonShape();
+      fixDef.density = 1.0;
+      fixDef.restitution = 0.5;
+      fixDef.friction = 1.0;
+      fixDef.filter.groupIndex = -1;
+      b2vertices = [new b2Vec2(0.125, -0.28), new b2Vec2(0.125, 0.28), new b2Vec2(-0.125, 0.28), new b2Vec2(-0.125, -0.28)];
+      fixDef.shape.SetAsArray(b2vertices);
+      bodyDef = new b2BodyDef();
+      bodyDef.position.x = x;
+      bodyDef.position.y = y;
+      bodyDef.angle = Math.PI / 9.0;
+      bodyDef.type = b2Body.b2_staticBody;
+      body = this.level.world.CreateBody(bodyDef);
+      body.CreateFixture(fixDef);
+      return body;
+    };
+
     Rider.prototype.display_torso = function() {
       var angle, position;
       position = this.torso.GetPosition();
@@ -1169,6 +1214,30 @@
       this.level.ctx.scale(1, -1);
       this.level.ctx.rotate(-angle);
       this.level.ctx.drawImage(this.assets.get('playerupperleg'), -0.40, -0.14, 0.80, 0.28);
+      return this.level.ctx.restore();
+    };
+
+    Rider.prototype.display_lower_arm = function() {
+      var angle, position;
+      position = this.lower_arm.GetPosition();
+      angle = this.lower_arm.GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(1, 1);
+      this.level.ctx.rotate(angle);
+      this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.1, -0.3, 0.60, 0.20);
+      return this.level.ctx.restore();
+    };
+
+    Rider.prototype.display_upper_arm = function() {
+      var angle, position;
+      position = this.upper_arm.GetPosition();
+      angle = this.upper_arm.GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(1, -1);
+      this.level.ctx.rotate(-angle);
+      this.level.ctx.drawImage(this.assets.get('playerupperarm'), -0.125, -0.28, 0.25, 0.56);
       return this.level.ctx.restore();
     };
 
