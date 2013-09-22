@@ -1069,11 +1069,11 @@
         this.assets.moto.push(texture);
       }
       this.player_start = this.level.entities.player_start;
-      this.torso = this.create_torso(this.player_start.x - 0.38, this.player_start.y + 1.87);
+      this.torso = this.create_torso(this.player_start.x - 0.24, this.player_start.y + 1.87);
       this.lower_leg = this.create_lower_leg(this.player_start.x + 0.15, this.player_start.y + 0.9);
       this.upper_leg = this.create_upper_leg(this.player_start.x - 0.09, this.player_start.y + 1.27);
       this.lower_arm = this.create_lower_arm(this.player_start.x + 0.07, this.player_start.y + 1.52);
-      this.upper_arm = this.create_upper_arm(this.player_start.x - 0.31, this.player_start.y + 1.83);
+      this.upper_arm = this.create_upper_arm(this.player_start.x - 0.17, this.player_start.y + 1.83);
       this.foot_joint = this.create_foot_joint();
       this.hand_joint = this.create_hand_joint();
       this.knee_joint = this.create_knee_joint();
@@ -1090,7 +1090,7 @@
       var b2vertices, body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = 1.0;
+      fixDef.density = 0.2;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
@@ -1110,7 +1110,7 @@
       var b2vertices, body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = 1.0;
+      fixDef.density = 0.2;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
@@ -1130,7 +1130,7 @@
       var b2vertices, body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = 1.0;
+      fixDef.density = 0.2;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
@@ -1150,7 +1150,7 @@
       var b2vertices, body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = 1.0;
+      fixDef.density = 0.2;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
@@ -1170,7 +1170,7 @@
       var b2vertices, body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = 1.0;
+      fixDef.density = 0.2;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
@@ -1186,6 +1186,15 @@
       return body;
     };
 
+    Rider.prototype.set_joint_commons = function(joint) {
+      joint.lowerAngle = 0;
+      joint.upperAngle = 0;
+      joint.enableLimit = true;
+      joint.maxMotorTorque = 10.0;
+      joint.motorSpeed = 0.0;
+      return joint.enableMotor = true;
+    };
+
     Rider.prototype.create_foot_joint = function() {
       var jointDef, position, rotation_axe;
       position = this.lower_leg.GetWorldCenter();
@@ -1195,6 +1204,7 @@
       };
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.lower_leg, this.moto.body, rotation_axe);
+      this.set_joint_commons(jointDef);
       return this.level.world.CreateJoint(jointDef);
     };
 
@@ -1207,6 +1217,7 @@
       };
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.lower_leg, this.upper_leg, rotation_axe);
+      this.set_joint_commons(jointDef);
       return this.level.world.CreateJoint(jointDef);
     };
 
@@ -1219,6 +1230,7 @@
       };
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.lower_arm, this.moto.body, rotation_axe);
+      this.set_joint_commons(jointDef);
       return this.level.world.CreateJoint(jointDef);
     };
 
@@ -1231,6 +1243,7 @@
       };
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.upper_arm, this.lower_arm, rotation_axe);
+      this.set_joint_commons(jointDef);
       return this.level.world.CreateJoint(jointDef);
     };
 
@@ -1243,6 +1256,7 @@
       };
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.torso, this.upper_arm, rotation_axe);
+      this.set_joint_commons(jointDef);
       return this.level.world.CreateJoint(jointDef);
     };
 
@@ -1255,6 +1269,7 @@
       };
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.torso, this.upper_leg, rotation_axe);
+      this.set_joint_commons(jointDef);
       return this.level.world.CreateJoint(jointDef);
     };
 

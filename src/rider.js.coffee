@@ -31,11 +31,11 @@ class Rider
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
-    @torso        = @create_torso(@player_start.x - 0.38, @player_start.y + 1.87)
+    @torso        = @create_torso(@player_start.x - 0.24, @player_start.y + 1.87)
     @lower_leg    = @create_lower_leg(@player_start.x + 0.15, @player_start.y + 0.9)
     @upper_leg    = @create_upper_leg(@player_start.x - 0.09, @player_start.y + 1.27)
     @lower_arm    = @create_lower_arm(@player_start.x + 0.07, @player_start.y + 1.52)
-    @upper_arm    = @create_upper_arm(@player_start.x - 0.31, @player_start.y + 1.83)
+    @upper_arm    = @create_upper_arm(@player_start.x - 0.17, @player_start.y + 1.83)
 
     @foot_joint     = @create_foot_joint()
     @hand_joint     = @create_hand_joint()
@@ -52,7 +52,7 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.0
+    fixDef.density     = 0.2
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
@@ -88,7 +88,7 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.0
+    fixDef.density     = 0.2
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
@@ -124,7 +124,7 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.0
+    fixDef.density     = 0.2
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
@@ -160,7 +160,7 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.0
+    fixDef.density     = 0.2
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
@@ -196,7 +196,7 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.0
+    fixDef.density     = 0.2
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
@@ -227,12 +227,21 @@ class Rider
 
     body
 
+  set_joint_commons: (joint) ->
+    joint.lowerAngle = 0
+    joint.upperAngle = 0
+    joint.enableLimit = true
+    joint.maxMotorTorque = 10.0
+    joint.motorSpeed = 0.0
+    joint.enableMotor = true
+
   create_foot_joint: ->
     position = @lower_leg.GetWorldCenter()
     rotation_axe = { x: position.x - 0.2, y: position.y - 0.2 }
 
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@lower_leg, @moto.body, rotation_axe)
+    @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   create_knee_joint: ->
@@ -241,6 +250,7 @@ class Rider
 
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@lower_leg, @upper_leg, rotation_axe)
+    @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   create_hand_joint: ->
@@ -249,6 +259,7 @@ class Rider
 
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@lower_arm, @moto.body, rotation_axe)
+    @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   create_elbow_joint: ->
@@ -257,6 +268,7 @@ class Rider
 
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@upper_arm, @lower_arm, rotation_axe)
+    @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   create_shoulder_joint: ->
@@ -265,6 +277,7 @@ class Rider
 
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@torso, @upper_arm, rotation_axe)
+    @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   create_hip_joint: ->
@@ -273,6 +286,7 @@ class Rider
 
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@torso, @upper_leg, rotation_axe)
+    @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   display_torso: ->
