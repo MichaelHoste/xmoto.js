@@ -39,6 +39,9 @@ class Input
           @left = true
         when 39
           @right = true
+        when 13
+          @level.moto = new Moto(@level)
+          @level.moto.init()
     )
 
     $(document).on('keyup', (event) =>
@@ -55,7 +58,7 @@ class Input
 
   move_moto: ->
     force = 13
-    @moto = @level.moto
+    moto = @level.moto
 
     if @up
       @level.moto.left_wheel.ApplyTorque(- force/4)
@@ -70,10 +73,24 @@ class Input
       @level.moto.body.ApplyTorque(-force)
       #right_wheel_body.ApplyForce(new b2Vec2( 0,  force), right_wheel_body.GetWorldCenter())
 
-    @moto.right_prismatic_joint.SetMaxMotorForce(4+Math.abs(800*Math.pow(@moto.right_prismatic_joint.GetJointTranslation(), 2)))
-    @moto.right_prismatic_joint.SetMotorSpeed(-3*@moto.right_prismatic_joint.GetJointTranslation())
+    moto.right_prismatic_joint.SetMaxMotorForce(4+Math.abs(800*Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)))
+    moto.right_prismatic_joint.SetMotorSpeed(-3*moto.right_prismatic_joint.GetJointTranslation())
 
-    @moto.left_prismatic_joint.SetMaxMotorForce(8+Math.abs(800*Math.pow(@moto.left_prismatic_joint.GetJointTranslation(), 2)))
-    @moto.left_prismatic_joint.SetMotorSpeed(-3*@moto.left_prismatic_joint.GetJointTranslation())
+    moto.left_prismatic_joint.SetMaxMotorForce(8+Math.abs(800*Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)))
+    moto.left_prismatic_joint.SetMotorSpeed(-3*moto.left_prismatic_joint.GetJointTranslation())
 
 
+    #moto.rider.foot_joint    .SetMaxMotorTorque(8+Math.abs(800*Math.pow(moto.rider.foot_joint    .GetJointAngle(), 2)))
+    #moto.rider.hand_joint    .SetMaxMotorTorque(8+Math.abs(800*Math.pow(moto.rider.hand_joint    .GetJointAngle(), 2)))
+    #moto.rider.knee_joint    .SetMaxMotorTorque(8+Math.abs(800*Math.pow(moto.rider.knee_joint    .GetJointAngle(), 2)))
+    #moto.rider.elbow_joint   .SetMaxMotorTorque(8+Math.abs(800*Math.pow(moto.rider.elbow_joint   .GetJointAngle(), 2)))
+    #moto.rider.shoulder_joint.SetMaxMotorTorque(8+Math.abs(800*Math.pow(moto.rider.shoulder_joint.GetJointAngle(), 2)))
+    #moto.rider.hip_joint     .SetMaxMotorTorque(8+Math.abs(800*Math.pow(moto.rider.hip_joint     .GetJointAngle(), 2)))
+#
+    #moto.rider.foot_joint    .SetMotorSpeed(-3*moto.rider.foot_joint    .GetJointAngle())
+    #moto.rider.hand_joint    .SetMotorSpeed(-3*moto.rider.hand_joint    .GetJointAngle())
+    #moto.rider.knee_joint    .SetMotorSpeed(-3*moto.rider.knee_joint    .GetJointAngle())
+    #moto.rider.elbow_joint   .SetMotorSpeed(-3*moto.rider.elbow_joint   .GetJointAngle())
+    #moto.rider.shoulder_joint.SetMotorSpeed(-3*moto.rider.shoulder_joint.GetJointAngle())
+    #moto.rider.hip_joint     .SetMotorSpeed(-3*moto.rider.hip_joint     .GetJointAngle())
+#

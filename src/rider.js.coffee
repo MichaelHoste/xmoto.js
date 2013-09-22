@@ -228,10 +228,10 @@ class Rider
     body
 
   set_joint_commons: (joint) ->
-    joint.lowerAngle = 0
-    joint.upperAngle = 0
+    joint.lowerAngle = Math.PI/20
+    joint.upperAngle = Math.PI/20
     joint.enableLimit = true
-    joint.maxMotorTorque = 10.0
+    joint.maxMotorTorque = 1.0
     joint.motorSpeed = 0.0
     joint.enableMotor = true
 

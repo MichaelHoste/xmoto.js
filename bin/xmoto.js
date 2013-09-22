@@ -395,6 +395,9 @@
             return _this.left = true;
           case 39:
             return _this.right = true;
+          case 13:
+            _this.level.moto = new Moto(_this.level);
+            return _this.level.moto.init();
         }
       });
       return $(document).on('keyup', function(event) {
@@ -412,9 +415,9 @@
     };
 
     Input.prototype.move_moto = function() {
-      var force;
+      var force, moto;
       force = 13;
-      this.moto = this.level.moto;
+      moto = this.level.moto;
       if (this.up) {
         this.level.moto.left_wheel.ApplyTorque(-force / 4);
       }
@@ -427,10 +430,10 @@
       if (this.right) {
         this.level.moto.body.ApplyTorque(-force);
       }
-      this.moto.right_prismatic_joint.SetMaxMotorForce(4 + Math.abs(800 * Math.pow(this.moto.right_prismatic_joint.GetJointTranslation(), 2)));
-      this.moto.right_prismatic_joint.SetMotorSpeed(-3 * this.moto.right_prismatic_joint.GetJointTranslation());
-      this.moto.left_prismatic_joint.SetMaxMotorForce(8 + Math.abs(800 * Math.pow(this.moto.left_prismatic_joint.GetJointTranslation(), 2)));
-      return this.moto.left_prismatic_joint.SetMotorSpeed(-3 * this.moto.left_prismatic_joint.GetJointTranslation());
+      moto.right_prismatic_joint.SetMaxMotorForce(4 + Math.abs(800 * Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)));
+      moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
+      moto.left_prismatic_joint.SetMaxMotorForce(8 + Math.abs(800 * Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)));
+      return moto.left_prismatic_joint.SetMotorSpeed(-3 * moto.left_prismatic_joint.GetJointTranslation());
     };
 
     return Input;
@@ -1187,10 +1190,10 @@
     };
 
     Rider.prototype.set_joint_commons = function(joint) {
-      joint.lowerAngle = 0;
-      joint.upperAngle = 0;
+      joint.lowerAngle = Math.PI / 20;
+      joint.upperAngle = Math.PI / 20;
       joint.enableLimit = true;
-      joint.maxMotorTorque = 10.0;
+      joint.maxMotorTorque = 1.0;
       joint.motorSpeed = 0.0;
       return joint.enableMotor = true;
     };
