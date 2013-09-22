@@ -473,8 +473,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 70,
-        y: -70
+        x: 250,
+        y: -250
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -1054,7 +1054,8 @@
     }
 
     Rider.prototype.display = function() {
-      return this.display_torso();
+      this.display_torso();
+      return this.display_lower_leg();
     };
 
     Rider.prototype.init = function() {
@@ -1065,7 +1066,8 @@
         this.assets.moto.push(texture);
       }
       this.player_start = this.level.entities.player_start;
-      return this.torso = this.create_torso(this.player_start.x - 0.25, this.player_start.y + 1.0);
+      this.torso = this.create_torso(this.player_start.x - 0.25, this.player_start.y + 1.9);
+      return this.lower_leg = this.create_lower_leg(this.player_start.x + 0.15, this.player_start.y + 0.9);
     };
 
     Rider.prototype.position = function() {
@@ -1080,7 +1082,7 @@
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [new b2Vec2(0.175, -0.35), new b2Vec2(0.175, 0.25), new b2Vec2(-0.175, 0.35), new b2Vec2(-0.175, -0.35)];
+      b2vertices = [new b2Vec2(0.25, -0.575), new b2Vec2(0.25, 0.575), new b2Vec2(-0.25, 0.575), new b2Vec2(-0.25, -0.575)];
       fixDef.shape.SetAsArray(b2vertices);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
@@ -1091,15 +1093,47 @@
       return body;
     };
 
+    Rider.prototype.create_lower_leg = function(x, y) {
+      var b2vertices, body, bodyDef, fixDef;
+      fixDef = new b2FixtureDef();
+      fixDef.shape = new b2PolygonShape();
+      fixDef.density = 1.0;
+      fixDef.restitution = 0.5;
+      fixDef.friction = 1.0;
+      fixDef.filter.groupIndex = -1;
+      b2vertices = [new b2Vec2(0.2, -0.33), new b2Vec2(0.2, 0.33), new b2Vec2(-0.2, 0.33), new b2Vec2(-0.2, -0.33)];
+      fixDef.shape.SetAsArray(b2vertices);
+      bodyDef = new b2BodyDef();
+      bodyDef.position.x = x;
+      bodyDef.position.y = y;
+      bodyDef.angle = -Math.PI / 6.0;
+      bodyDef.type = b2Body.b2_staticBody;
+      body = this.level.world.CreateBody(bodyDef);
+      body.CreateFixture(fixDef);
+      return body;
+    };
+
     Rider.prototype.display_torso = function() {
       var angle, position;
-      position = this.position();
+      position = this.torso.GetPosition();
       angle = this.torso.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1, -1);
       this.level.ctx.rotate(-angle);
-      this.level.ctx.drawImage(this.assets.get('playertorso'), -0.175, -0.35, 0.35, 0.7);
+      this.level.ctx.drawImage(this.assets.get('playertorso'), -0.25, -0.575, 0.5, 1.15);
+      return this.level.ctx.restore();
+    };
+
+    Rider.prototype.display_lower_leg = function() {
+      var angle, position;
+      position = this.lower_leg.GetPosition();
+      angle = this.lower_leg.GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(1, -1);
+      this.level.ctx.rotate(-angle);
+      this.level.ctx.drawImage(this.assets.get('playerlowerleg'), -0.2, -0.33, 0.40, 0.66);
       return this.level.ctx.restore();
     };
 
