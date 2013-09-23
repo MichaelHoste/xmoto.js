@@ -85,7 +85,7 @@
           vertices: []
         };
         if (block.usetexture.id === 'default') {
-          block.usetexture.id = 'Dirt';
+          block.usetexture.id = 'dirt';
         }
         xml_materials = $(xml_block).find('edges material');
         for (_j = 0, _len1 = xml_materials.length; _j < _len1; _j++) {
