@@ -67,9 +67,9 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 0.2
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
+    fixDef.density     = Constants.torso.density
+    fixDef.restitution = Constants.torso.restitution
+    fixDef.friction    = Constants.torso.friction
     fixDef.filter.groupIndex = -1
 
     b2vertices = [ new b2Vec2(  0.25, -0.575),
@@ -102,9 +102,9 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 0.2
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
+    fixDef.density     = Constants.lower_leg.density
+    fixDef.restitution = Constants.lower_leg.restitution
+    fixDef.friction    = Constants.lower_leg.friction
     fixDef.filter.groupIndex = -1
 
     b2vertices = [ new b2Vec2(  0.2, -0.33),
@@ -137,9 +137,9 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 0.2
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
+    fixDef.density     = Constants.upper_leg.density
+    fixDef.restitution = Constants.upper_leg.restitution
+    fixDef.friction    = Constants.upper_leg.friction
     fixDef.filter.groupIndex = -1
 
     b2vertices = [ new b2Vec2(  0.4, -0.14),
@@ -172,9 +172,9 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 0.2
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
+    fixDef.density     = Constants.lower_arm.density
+    fixDef.restitution = Constants.lower_arm.restitution
+    fixDef.friction    = Constants.lower_arm.friction
     fixDef.filter.groupIndex = -1
 
     b2vertices = [ new b2Vec2(  0.28, -0.1),
@@ -207,9 +207,9 @@ class Rider
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 0.2
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
+    fixDef.density     = Constants.upper_arm.density
+    fixDef.restitution = Constants.upper_arm.restitution
+    fixDef.friction    = Constants.upper_arm.friction
     fixDef.filter.groupIndex = -1
 
     b2vertices = [ new b2Vec2(  0.125, -0.28),

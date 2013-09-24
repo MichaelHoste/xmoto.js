@@ -72,9 +72,9 @@ class Moto
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.5
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
+    fixDef.density     = Constants.body.density
+    fixDef.restitution = Constants.body.restitution
+    fixDef.friction    = Constants.body.friction
     fixDef.filter.groupIndex = -1
 
     b2vertices = [ new b2Vec2(  0.6, -0.3),
@@ -104,9 +104,9 @@ class Moto
     fixDef = new b2FixtureDef()
 
     fixDef.shape = new b2CircleShape(0.35)
-    fixDef.density     = 2.0
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.3
+    fixDef.density     = Constants.wheels.density
+    fixDef.restitution = Constants.wheels.restitution
+    fixDef.friction    = Constants.wheels.friction
     fixDef.filter.groupIndex = -1
 
     # Create body
@@ -129,9 +129,9 @@ class Moto
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.0
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
+    fixDef.density     = Constants.left_axle.density
+    fixDef.restitution = Constants.left_axle.restitution
+    fixDef.friction    = Constants.left_axle.friction
     fixDef.filter.groupIndex = -1
 
     b2vertices = [ new b2Vec2( -0.10,  -0.30),
@@ -161,9 +161,9 @@ class Moto
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.0
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
+    fixDef.density     = Constants.right_axle.density
+    fixDef.restitution = Constants.right_axle.restitution
+    fixDef.friction    = Constants.right_axle.friction
     fixDef.filter.groupIndex = -1
 
     b2vertices = [ new b2Vec2( 0.58,  -0.02),
