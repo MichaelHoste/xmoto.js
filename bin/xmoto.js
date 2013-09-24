@@ -418,25 +418,32 @@
     };
 
     Input.prototype.move_moto = function() {
-      var force, moto;
-      force = 13;
+      var force, moto, v, v_l, v_r;
+      force = 24.1;
       moto = this.level.moto;
       if (this.up) {
-        this.level.moto.left_wheel.ApplyTorque(-force / 3);
+        moto.left_wheel.ApplyTorque(-force / 3);
       }
       if (this.down) {
-        this.level.moto.left_wheel.ApplyTorque(force / 5);
+        v_r = moto.right_wheel.GetAngularVelocity();
+        moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.2 ? -v_r : void 0));
+        v_l = moto.left_wheel.GetAngularVelocity();
+        moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.2 ? -v_l : void 0));
       }
       if (this.left) {
-        this.level.moto.body.ApplyTorque(force);
+        moto.body.ApplyTorque(force);
       }
       if (this.right) {
-        this.level.moto.body.ApplyTorque(-force);
+        moto.body.ApplyTorque(-force);
       }
-      moto.right_prismatic_joint.SetMaxMotorForce(4 + Math.abs(800 * Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)));
-      moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
+      if (!this.up && !this.down) {
+        v = moto.left_wheel.GetAngularVelocity();
+        this.level.moto.left_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 10 : void 0));
+      }
       moto.left_prismatic_joint.SetMaxMotorForce(8 + Math.abs(800 * Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)));
-      return moto.left_prismatic_joint.SetMotorSpeed(-3 * moto.left_prismatic_joint.GetJointTranslation());
+      moto.left_prismatic_joint.SetMotorSpeed(-3 * moto.left_prismatic_joint.GetJointTranslation());
+      moto.right_prismatic_joint.SetMaxMotorForce(4 + Math.abs(800 * Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)));
+      return moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
     };
 
     return Input;
@@ -789,7 +796,7 @@
       var b2vertices, body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = 1.0;
+      fixDef.density = 1.5;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;
@@ -808,7 +815,7 @@
       var bodyDef, fixDef, wheel;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2CircleShape(0.35);
-      fixDef.density = 1.0;
+      fixDef.density = 2.0;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
       fixDef.filter.groupIndex = -1;

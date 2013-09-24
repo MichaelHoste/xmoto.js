@@ -56,7 +56,7 @@ class Moto
     fixDef = new b2FixtureDef()
 
     fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.0
+    fixDef.density     = 1.5
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
@@ -89,7 +89,7 @@ class Moto
     fixDef = new b2FixtureDef()
 
     fixDef.shape = new b2CircleShape(0.35)
-    fixDef.density     = 1.0
+    fixDef.density     = 2.0
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
     fixDef.filter.groupIndex = -1
@@ -179,6 +179,9 @@ class Moto
   create_left_revolute_joint: ->
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@left_axle, @left_wheel, @left_wheel.GetWorldCenter())
+    #jointDef.maxMotorTorque = 10.0
+    #jointDef.motorSpeed = 0
+    #jointDef.enableMotor = true
     @level.world.CreateJoint(jointDef)
 
   create_right_revolute_joint: ->
@@ -331,4 +334,3 @@ class Moto
     )
 
     @level.ctx.restore()
-
