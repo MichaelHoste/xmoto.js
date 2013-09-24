@@ -44,10 +44,10 @@ class Limits
 
     # Right
     vertices = []
-    vertices.push({ x: @screen.right, y: @screen.top * 5})
-    vertices.push({ x: @screen.right, y: @screen.bottom })
-    vertices.push({ x: @player.right, y: @screen.bottom })
     vertices.push({ x: @player.right, y: @screen.top * 5})
+    vertices.push({ x: @player.right, y: @screen.bottom })
+    vertices.push({ x: @screen.right, y: @screen.bottom })
+    vertices.push({ x: @screen.right, y: @screen.top * 5})
     @level.physics.createPolygon(vertices)
 
     # Bottom

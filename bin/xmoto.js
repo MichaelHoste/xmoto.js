@@ -608,19 +608,19 @@
       this.level.physics.createPolygon(vertices);
       vertices = [];
       vertices.push({
-        x: this.screen.right,
+        x: this.player.right,
         y: this.screen.top * 5
       });
       vertices.push({
+        x: this.player.right,
+        y: this.screen.bottom
+      });
+      vertices.push({
         x: this.screen.right,
         y: this.screen.bottom
       });
       vertices.push({
-        x: this.player.right,
-        y: this.screen.bottom
-      });
-      vertices.push({
-        x: this.player.right,
+        x: this.screen.right,
         y: this.screen.top * 5
       });
       this.level.physics.createPolygon(vertices);
