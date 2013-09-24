@@ -68,11 +68,11 @@ class Input
     if @down
       # block right wheel velocity
       v_r = moto.right_wheel.GetAngularVelocity()
-      moto.right_wheel.ApplyTorque((if Math.abs(v_r) >= 0.2 then -v_r))
+      moto.right_wheel.ApplyTorque((if Math.abs(v_r) >= 0.05 then -v_r))
 
       # block left wheel velocity
       v_l = moto.left_wheel.GetAngularVelocity()
-      moto.left_wheel.ApplyTorque((if Math.abs(v_l) >= 0.2 then -v_l))
+      moto.left_wheel.ApplyTorque((if Math.abs(v_l) >= 0.05 then -v_l))
 
     # Back wheeling
     if @left

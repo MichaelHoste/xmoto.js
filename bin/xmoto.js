@@ -426,9 +426,9 @@
       }
       if (this.down) {
         v_r = moto.right_wheel.GetAngularVelocity();
-        moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.2 ? -v_r : void 0));
+        moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.05 ? -v_r : void 0));
         v_l = moto.left_wheel.GetAngularVelocity();
-        moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.2 ? -v_l : void 0));
+        moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.05 ? -v_l : void 0));
       }
       if (this.left) {
         moto.body.ApplyTorque(force / 3);
@@ -488,8 +488,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 100,
-        y: -100
+        x: 250,
+        y: -250
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -689,9 +689,10 @@
       var update;
       update = function() {
         level.input.move_moto();
-        level.world.Step(1 / 60, 10, 10);
+        level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
-        return level.display();
+        level.display();
+        return level.world.DrawDebugData();
       };
       return setInterval(update, 1000 / 60);
     });
@@ -1208,9 +1209,7 @@
       joint.lowerAngle = Math.PI / 20;
       joint.upperAngle = Math.PI / 20;
       joint.enableLimit = true;
-      joint.maxMotorTorque = 1.0;
-      joint.motorSpeed = 0.0;
-      return joint.enableMotor = true;
+      return joint.maxMotorTorque = 1.0;
     };
 
     Rider.prototype.create_foot_joint = function() {

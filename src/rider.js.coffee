@@ -227,8 +227,6 @@ class Rider
     joint.upperAngle = Math.PI/20
     joint.enableLimit = true
     joint.maxMotorTorque = 1.0
-    joint.motorSpeed = 0.0
-    joint.enableMotor = true
 
   create_foot_joint: ->
     position = @lower_leg.GetWorldCenter()
