@@ -1,3 +1,5 @@
+b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+
 class Entities
 
   constructor: (level) ->
@@ -45,12 +47,36 @@ class Entities
       # End of level
       else if entity.type_id == 'EndOfLevel'
         @assets.anims.push('checkball_00')
+        @end_of_level = @create_end_of_level(entity)
 
       # Player start
       else if entity.type_id == 'PlayerStart'
         @player_start =
           x: entity.position.x
           y: entity.position.y
+
+  create_end_of_level: (entity) ->
+    # Create fixture
+    fixDef = new b2FixtureDef()
+    fixDef.shape = new b2CircleShape(entity.size.r)
+    fixDef.isSensor = true
+
+    # Create body
+    bodyDef = new b2BodyDef()
+
+    # Assign body position
+    bodyDef.position.x = entity.position.x
+    bodyDef.position.y = entity.position.y
+
+    bodyDef.userData = 'end_of_level'
+
+    bodyDef.type = b2Body.b2_staticBody
+
+    # Assign fixture to body and add body to 2D world
+    body = @level.world.CreateBody(bodyDef)
+    body.CreateFixture(fixDef)
+
+    body
 
   display: (ctx) ->
     for entity in @list

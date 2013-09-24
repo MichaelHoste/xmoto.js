@@ -41,6 +41,7 @@ If the computer is not able to run the game at 60FPS, we can change the display 
 (the behavior will be the same in those 4 examples !)
 
 A good idea would be to make an educated guess of the power of the computer and adapt the framerate.
+(check http://gafferongames.com/game-physics/fix-your-timestep/)
 
 ## TODO
 

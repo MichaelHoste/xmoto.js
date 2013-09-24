@@ -91,6 +91,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
+    bodyDef.userData = 'moto'
+
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
@@ -115,6 +117,8 @@ class Moto
     # Assign body position
     bodyDef.position.x = x
     bodyDef.position.y = y
+
+    bodyDef.userData = 'moto'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -148,6 +152,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
+    bodyDef.userData = 'moto'
+
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
@@ -179,6 +185,8 @@ class Moto
     # Assign body position
     bodyDef.position.x = x
     bodyDef.position.y = y
+
+    bodyDef.userData = 'moto'
 
     bodyDef.type = b2Body.b2_dynamicBody
 

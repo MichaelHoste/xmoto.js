@@ -89,6 +89,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = -Math.PI/20
 
+    bodyDef.userData = 'rider'
+
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
@@ -123,6 +125,8 @@ class Rider
 
     # Assign body angle
     bodyDef.angle = -Math.PI/6.0
+
+    bodyDef.userData = 'rider'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -159,6 +163,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = -Math.PI/12.0
 
+    bodyDef.userData = 'rider'
+
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
@@ -194,6 +200,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = -Math.PI/10.0
 
+    bodyDef.userData = 'rider'
+
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
@@ -228,6 +236,8 @@ class Rider
 
     # Assign body angle
     bodyDef.angle = Math.PI/9.0
+
+    bodyDef.userData = 'rider'
 
     bodyDef.type = b2Body.b2_dynamicBody
 

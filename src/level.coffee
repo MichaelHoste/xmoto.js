@@ -7,8 +7,8 @@ class Level
 
     # level unities * scale = pixels
     @scale =
-      x:  100
-      y: -100
+      x:  40
+      y: -40
 
     # Assets manager
     @assets        = new Assets()
@@ -19,6 +19,9 @@ class Level
 
     # Inputs
     @input         = new Input(this)
+
+    # Replay (for ghost)
+    @replay        = new Replay(this)
 
     # Moto (level independant)
     @moto          = new Moto(this)
@@ -55,6 +58,9 @@ class Level
     # Moto (level independant)
     @moto.init()
 
+    @init_input()
+    @init_sensors()
+
   init_canvas: ->
     @canvas  = $('#game').get(0)
     @canvas_width  = parseFloat(@canvas.width)
@@ -63,7 +69,23 @@ class Level
   init_input: ->
     @input.init()
 
+  init_sensors: ->
+    # Add listeners for end of level
+    listener = new Box2D.Dynamics.b2ContactListener
+
+    listener.BeginContact = (contact) =>
+      a = contact.GetFixtureA().GetBody().GetUserData()
+      b = contact.GetFixtureB().GetBody().GetUserData()
+      if (a == 'moto' and b == 'end_of_level') || (a == 'rider' and b == 'end_of_level')
+        @need_to_restart = true
+
+    @world.SetContactListener(listener)
+
   display: ->
+    if @need_to_restart
+      @need_to_restart = false
+      @restart()
+
     @init_canvas() if not @canvas
 
     $('#game').attr('height', @canvas_height)
@@ -79,3 +101,8 @@ class Level
     @blocks  .display(@ctx)
     @entities.display(@ctx)
     @moto    .display(@ctx)
+
+  restart: ->
+    @moto.destroy()
+    @moto = new Moto(this)
+    @moto.init()
