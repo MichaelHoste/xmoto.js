@@ -7,8 +7,8 @@ class Level
 
     # level unities * scale = pixels
     @scale =
-      x:  200
-      y: -200
+      x:  100
+      y: -100
 
     # Assets manager
     @assets        = new Assets()
@@ -22,6 +22,7 @@ class Level
 
     # Replay (for ghost)
     @replay        = new Replay(this)
+    @ghost         = new Ghost(this, null)
 
     # Moto (level independant)
     @moto          = new Moto(this)
@@ -55,8 +56,9 @@ class Level
     @script       .parse(xml).init()
     @entities     .parse(xml).init()
 
-    # Moto (level independant)
+    # Moto and ghosts (level independant)
     @moto.init()
+    @ghost.init()
 
     @init_input()
     @init_sensors()
@@ -64,7 +66,7 @@ class Level
   init_canvas: ->
     @canvas  = $('#game').get(0)
     @canvas_width  = parseFloat(@canvas.width)
-    @canvas_height = parseFloat(@canvas.height) #@canvas.width * (@limits.size.y / @limits.size.x)
+    @canvas_height = parseFloat(@canvas.height)
 
   init_input: ->
     @input.init()
@@ -84,16 +86,14 @@ class Level
   display: ->
     if @need_to_restart
       @need_to_restart = false
-      @restart()
+      @restart(true)
 
     @init_canvas() if not @canvas
-
     $('#game').attr('height', @canvas_height)
 
     @ctx.translate(400.0, 300.0)
     @ctx.scale(@scale.x, @scale.y)
     @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25)
-
     @ctx.lineWidth = 0.01
 
     @sky     .display(@ctx)
@@ -101,8 +101,17 @@ class Level
     @blocks  .display(@ctx)
     @entities.display(@ctx)
     @moto    .display(@ctx)
+    @ghost   .display(@ctx) if @ghost
 
-  restart: ->
+    # Save last step for replay
+    @replay.add_frame()
+
+  restart: (save_replay = false) ->
+    if save_replay
+      @ghost  = new Ghost(this, @replay.clone())
+    @ghost.current_frame = 0
+    @replay = new Replay(this)
+
     @moto.destroy()
     @moto = new Moto(this)
     @moto.init()

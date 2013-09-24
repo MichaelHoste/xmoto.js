@@ -9,7 +9,6 @@ $ ->
       level.world.Step(1.0 / 60.0, 10, 10)
       level.world.ClearForces()
       level.display()
-      level.replay.add_frame()
       #level.world.DrawDebugData()
 
     # Render 2D environment

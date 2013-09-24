@@ -3,54 +3,43 @@ class Ghost
   constructor: (level, replay) ->
     @level  = level
     @assets = level.assets
+    @replay = replay
+    @current_frame = 0
 
   display: ->
-    @display_wheel(@left_wheel)
-    @display_wheel(@right_wheel)
-    @display_left_axle()
-    @display_right_axle()
-    @display_body()
-    @rider.display()
+    if @replay and @current_frame < @replay.frames_count()
+      @frame = @replay.frame(@current_frame)
+
+      @display_left_wheel()
+      @display_right_wheel()
+      #@display_left_axle()
+      #@display_right_axle()
+      @display_body()
+      @display_torso()
+      @display_upper_leg()
+      @display_lower_leg()
+      @display_upper_arm()
+      @display_lower_arm()
+
+      @current_frame = @current_frame + 1
 
   init: ->
     # Assets
-    textures = [ 'front1', 'lowerarm1', 'lowerleg1', 'ghostbikerbody',
-                 'ghostbikerwheel', 'rear1',
+    textures = [ 'ghostbikerbody', 'ghostbikerwheel', 'front_ghost', 'rear_ghost'
                  'ghostlowerarm', 'ghostlowerleg', 'ghosttorso',
-                 'ghostupperarm', 'ghostupperleg', 'rear1' ]
+                 'ghostupperarm', 'ghostupperleg' ]
     for texture in textures
       @assets.moto.push(texture)
 
-    # Creation of moto parts
-    @player_start = @level.entities.player_start
-    @body         = @create_body(@player_start.x, @player_start.y + 1.0)
+  display_left_wheel: ->
+    radius = 0.35
+    left_wheel = @frame.left_wheel
 
-    @left_wheel   = @create_wheel(@player_start.x - 0.7, @player_start.y + 0.48)
-    @right_wheel  = @create_wheel(@player_start.x + 0.7, @player_start.y + 0.48)
-
-    @left_axle    = @create_left_axle( @player_start.x, @player_start.y + 1.0)
-    @right_axle   = @create_right_axle(@player_start.x, @player_start.y + 1.0)
-
-    @left_revolute_joint  = @create_left_revolute_joint()
-    @left_prismatic_joint = @create_left_prismatic_joint()
-
-    @right_revolute_joint  = @create_right_revolute_joint()
-    @right_prismatic_joint = @create_right_prismatic_joint()
-
-    @rider.init()
-
-  position: ->
-    @body.GetPosition()
-
-  display_wheel: (wheel) ->
     # Position
-    position = wheel.GetPosition()
-
-    # Radius
-    radius = wheel.GetFixtureList().GetShape().m_radius
+    position = left_wheel.position
 
     # Angle
-    angle = wheel.GetAngle()
+    angle = left_wheel.angle
 
     # Draw texture
     @level.ctx.save()
@@ -58,7 +47,32 @@ class Ghost
     @level.ctx.rotate(angle)
 
     @level.ctx.drawImage(
-      @assets.get('playerbikerwheel'), # texture
+      @assets.get('ghostbikerwheel'), # texture
+      -radius,   # x
+      -radius,   # y
+       radius*2, # size-x
+       radius*2  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_right_wheel: ->
+    radius = 0.35
+    right_wheel = @frame.right_wheel
+
+    # Position
+    position = right_wheel.position
+
+    # Angle
+    angle = right_wheel.angle
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.rotate(angle)
+
+    @level.ctx.drawImage(
+      @assets.get('ghostbikerwheel'), # texture
       -radius,   # x
       -radius,   # y
        radius*2, # size-x
@@ -68,11 +82,13 @@ class Ghost
     @level.ctx.restore()
 
   display_body: ->
+    body = @frame.body
+
     # Position
-    position = @position()
+    position = body.position
 
     # Angle
-    angle = @body.GetAngle()
+    angle = body.angle
 
     # Draw texture
     @level.ctx.save()
@@ -81,7 +97,7 @@ class Ghost
     @level.ctx.rotate(-angle)
 
     @level.ctx.drawImage(
-      @assets.get('playerbikerbody'), # texture
+      @assets.get('ghostbikerbody'), # texture
       -1.0, # x
       -0.5, # y
        2.0, # size-x
@@ -92,35 +108,22 @@ class Ghost
 
   display_left_axle: ->
     axle_thickness = 0.09
+    left_axle = @frame.left_axle
 
     # Position
-    left_wheel_position = @left_wheel.GetPosition()
-    left_wheel_position =
-      x: left_wheel_position.x - axle_thickness/2.0
-      y: left_wheel_position.y - axle_thickness/2.0 + 0.02
-
-    # Position relative to center of body
-    left_axle_position =
-      x: - 0.17
-      y: - 0.30
-
-    # Adjusted position depending of rotation of body
-    left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, @body.GetAngle(), @position())
-
-    # Distance
-    distance = Math2D.distance_between_points(left_wheel_position, left_axle_adjusted_position)
+    position = left_axle.position
 
     # Angle
-    angle = Math2D.angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI/2
+    angle = left_axle.angle
 
     # Draw texture
     @level.ctx.save()
-    @level.ctx.translate(left_wheel_position.x, left_wheel_position.y)
+    @level.ctx.translate(position.x, position.y)
     @level.ctx.scale(1, -1)
     @level.ctx.rotate(-angle)
 
     @level.ctx.drawImage(
-      @assets.get('front1'), # texture
+      @assets.get('rear_ghost'), # texture
       0.0,               # x
       -axle_thickness/2, # y
       distance,          # size-x
@@ -131,39 +134,151 @@ class Ghost
 
   display_right_axle: ->
     axle_thickness = 0.09
+    left_axle = @frame.right_axle
 
     # Position
-    right_wheel_position = @right_wheel.GetPosition()
-    right_wheel_position =
-      x: right_wheel_position.x + axle_thickness/2.0 - 0.03
-      y: right_wheel_position.y - axle_thickness/2.0
-
-    # Position relative to center of body
-    right_axle_position =
-      x: 0.54
-      y: 0.025
-
-    # Adjusted position depending of rotation of body
-    right_axle_adjusted_position = Math2D.rotate_point(right_axle_position, @body.GetAngle(), @position())
-
-    # Distance
-    distance = Math2D.distance_between_points(right_wheel_position, right_axle_adjusted_position)
+    position = right_axle.position
 
     # Angle
-    angle = Math2D.angle_between_points(right_axle_adjusted_position, right_wheel_position) + Math.PI/2
+    angle = right_axle.angle
 
     # Draw texture
     @level.ctx.save()
-    @level.ctx.translate(right_wheel_position.x, right_wheel_position.y)
+    @level.ctx.translate(position.x, position.y)
     @level.ctx.scale(1, -1)
     @level.ctx.rotate(-angle)
 
     @level.ctx.drawImage(
-      @assets.get('front1'), # texture
+      @assets.get('front_ghost'), # texture
       0.0,               # x
       -axle_thickness/2, # y
       distance,          # size-x
       axle_thickness     # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_torso: ->
+    torso = @frame.torso
+
+    # Position
+    position = torso.position
+
+    # Angle
+    angle = torso.angle
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1, -1)
+    @level.ctx.rotate(-angle)
+
+    @level.ctx.drawImage(
+      @assets.get('ghosttorso'), # texture
+      -0.25,  # x
+      -0.575, # y
+       0.5,   # size-x
+       1.15   # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_lower_leg: ->
+    lower_leg = @frame.lower_leg
+
+    # Position
+    position = lower_leg.position
+
+    # Angle
+    angle = lower_leg.angle
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1, -1)
+    @level.ctx.rotate(-angle)
+
+    @level.ctx.drawImage(
+      @assets.get('ghostlowerleg'), # texture
+      -0.2,  # x
+      -0.33, # y
+       0.40, # size-x
+       0.66  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_upper_leg: ->
+    upper_leg = @frame.upper_leg
+
+    # Position
+    position = upper_leg.position
+
+    # Angle
+    angle = upper_leg.angle
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1, -1)
+    @level.ctx.rotate(-angle)
+
+    @level.ctx.drawImage(
+      @assets.get('ghostupperleg'), # texture
+      -0.40, # x
+      -0.14, # y
+       0.80, # size-x
+       0.28  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_lower_arm: ->
+    lower_arm = @frame.lower_arm
+
+    # Position
+    position = lower_arm.position
+
+    # Angle
+    angle = lower_arm.angle
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1, 1)
+    @level.ctx.rotate(angle)
+
+    @level.ctx.drawImage(
+      @assets.get('ghostlowerarm'), # texture
+      -0.28,  # x
+      -0.10, # y
+       0.56, # size-x
+       0.20  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_upper_arm: ->
+    upper_arm = @frame.upper_arm
+
+    # Position
+    position = upper_arm.position
+
+    # Angle
+    angle = upper_arm.angle
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1, -1)
+    @level.ctx.rotate(-angle)
+
+    @level.ctx.drawImage(
+      @assets.get('ghostupperarm'), # texture
+      -0.125, # x
+      -0.28, # y
+       0.25, # size-x
+       0.56  # size-y
     )
 
     @level.ctx.restore()
