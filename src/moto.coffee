@@ -15,6 +15,22 @@ class Moto
     @assets = level.assets
     @rider  = new Rider(level, this)
 
+  destroy: ->
+    world = @level.world
+
+    @rider.destroy()
+
+    world.DestroyBody(@body)
+    world.DestroyBody(@left_wheel)
+    world.DestroyBody(@right_wheel)
+    world.DestroyBody(@left_axle)
+    world.DestroyBody(@right_axle)
+
+    world.DestroyJoint(@left_revolute_joint)
+    world.DestroyJoint(@left_prismatic_joint)
+    world.DestroyJoint(@right_revolute_joint)
+    world.DestroyJoint(@right_prismatic_joint)
+
   display: ->
     @display_wheel(@left_wheel)
     @display_wheel(@right_wheel)

@@ -399,6 +399,7 @@
           case 39:
             return _this.right = true;
           case 13:
+            _this.level.moto.destroy();
             _this.level.moto = new Moto(_this.level);
             return _this.level.moto.init();
         }
@@ -761,6 +762,21 @@
       this.rider = new Rider(level, this);
     }
 
+    Moto.prototype.destroy = function() {
+      var world;
+      world = this.level.world;
+      this.rider.destroy();
+      world.DestroyBody(this.body);
+      world.DestroyBody(this.left_wheel);
+      world.DestroyBody(this.right_wheel);
+      world.DestroyBody(this.left_axle);
+      world.DestroyBody(this.right_axle);
+      world.DestroyJoint(this.left_revolute_joint);
+      world.DestroyJoint(this.left_prismatic_joint);
+      world.DestroyJoint(this.right_revolute_joint);
+      return world.DestroyJoint(this.right_prismatic_joint);
+    };
+
     Moto.prototype.display = function() {
       this.display_wheel(this.left_wheel);
       this.display_wheel(this.right_wheel);
@@ -1071,6 +1087,22 @@
       this.assets = level.assets;
       this.moto = moto;
     }
+
+    Rider.prototype.destroy = function() {
+      var world;
+      world = this.level.world;
+      world.DestroyBody(this.torso);
+      world.DestroyBody(this.lower_leg);
+      world.DestroyBody(this.upper_leg);
+      world.DestroyBody(this.lower_arm);
+      world.DestroyBody(this.upper_arm);
+      world.DestroyJoint(this.foot_joint);
+      world.DestroyJoint(this.hand_joint);
+      world.DestroyJoint(this.knee_joint);
+      world.DestroyJoint(this.elbow_joint);
+      world.DestroyJoint(this.shoulder_joint);
+      return world.DestroyJoint(this.hip_joint);
+    };
 
     Rider.prototype.display = function() {
       this.display_torso();

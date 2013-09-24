@@ -40,6 +40,7 @@ class Input
         when 39
           @right = true
         when 13
+          @level.moto.destroy()
           @level.moto = new Moto(@level)
           @level.moto.init()
     )

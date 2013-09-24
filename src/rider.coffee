@@ -15,6 +15,21 @@ class Rider
     @assets = level.assets
     @moto   = moto
 
+  destroy: ->
+    world = @level.world
+    world.DestroyBody(@torso)
+    world.DestroyBody(@lower_leg)
+    world.DestroyBody(@upper_leg)
+    world.DestroyBody(@lower_arm)
+    world.DestroyBody(@upper_arm)
+
+    world.DestroyJoint(@foot_joint)
+    world.DestroyJoint(@hand_joint)
+    world.DestroyJoint(@knee_joint)
+    world.DestroyJoint(@elbow_joint)
+    world.DestroyJoint(@shoulder_joint)
+    world.DestroyJoint(@hip_joint)
+
   display: ->
     @display_torso()
     @display_upper_leg()
