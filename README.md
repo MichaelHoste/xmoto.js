@@ -44,8 +44,8 @@ A good idea would be to make an educated guess of the power of the computer and 
 
 ## TODO
 
+ * Increase precision (wheel) when big zoom (level.scale)
  * Optimization : create x bodies with y shapes for each polygon (set of triangles) instead of x*y bodies of 1 triangle
  * Optimization : group the blocks by texture and fill the texture just once by group
  * Optimization : only draw polygons that are on screen (and only collide with these polygons)
-
 

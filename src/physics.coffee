@@ -19,6 +19,9 @@ class Physics
     @level = level
     @world = new b2World(new b2Vec2(0, -10), true) # gravity vector, and doSleep
 
+    # Double default precision between wheel and ground
+    b2Settings.b2_linearSlop = 0.0025;
+
     context = @level.ctx
 
     # debug initialization
