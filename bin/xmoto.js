@@ -431,10 +431,12 @@
         moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.2 ? -v_l : void 0));
       }
       if (this.left) {
-        moto.body.ApplyTorque(force);
+        moto.body.ApplyTorque(force / 3);
+        moto.rider.torso.ApplyTorque(force / 3);
       }
       if (this.right) {
-        moto.body.ApplyTorque(-force);
+        moto.body.ApplyTorque(-force / 3);
+        moto.rider.torso.ApplyTorque(-force / 3);
       }
       if (!this.up && !this.down) {
         v = moto.left_wheel.GetAngularVelocity();
@@ -817,7 +819,7 @@
       fixDef.shape = new b2CircleShape(0.35);
       fixDef.density = 2.0;
       fixDef.restitution = 0.5;
-      fixDef.friction = 1.0;
+      fixDef.friction = 1.3;
       fixDef.filter.groupIndex = -1;
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;

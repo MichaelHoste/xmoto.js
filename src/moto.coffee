@@ -91,7 +91,7 @@ class Moto
     fixDef.shape = new b2CircleShape(0.35)
     fixDef.density     = 2.0
     fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
+    fixDef.friction    = 1.3
     fixDef.filter.groupIndex = -1
 
     # Create body

@@ -76,11 +76,13 @@ class Input
 
     # Back wheeling
     if @left
-      moto.body.ApplyTorque(force)
+      moto.body.ApplyTorque(force/3)
+      moto.rider.torso.ApplyTorque(force/3)
 
     # Front wheeling
     if @right
-      moto.body.ApplyTorque(-force)
+      moto.body.ApplyTorque(-force/3)
+      moto.rider.torso.ApplyTorque(-force/3)
 
     # Engine brake
     if not @up and not @down
