@@ -75,7 +75,6 @@ class Rider
     bodyDef.angle = -Math.PI/20
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -111,7 +110,6 @@ class Rider
     bodyDef.angle = -Math.PI/6.0
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -147,7 +145,6 @@ class Rider
     bodyDef.angle = -Math.PI/12.0
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -183,7 +180,6 @@ class Rider
     bodyDef.angle = -Math.PI/10.0
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -219,7 +215,6 @@ class Rider
     bodyDef.angle = Math.PI/9.0
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)

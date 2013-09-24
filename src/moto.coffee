@@ -76,7 +76,6 @@ class Moto
     bodyDef.position.y = y
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -102,7 +101,6 @@ class Moto
     bodyDef.position.y = y
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     wheel = @level.world.CreateBody(bodyDef)
@@ -135,7 +133,6 @@ class Moto
     bodyDef.position.y = y
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -168,7 +165,6 @@ class Moto
     bodyDef.position.y = y
 
     bodyDef.type = b2Body.b2_dynamicBody
-    #bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -179,9 +175,6 @@ class Moto
   create_left_revolute_joint: ->
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@left_axle, @left_wheel, @left_wheel.GetWorldCenter())
-    #jointDef.maxMotorTorque = 10.0
-    #jointDef.motorSpeed = 0
-    #jointDef.enableMotor = true
     @level.world.CreateJoint(jointDef)
 
   create_right_revolute_joint: ->
