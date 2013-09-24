@@ -77,8 +77,8 @@ class Input
 
     # Back wheeling
     if @left
-      moto.body.ApplyTorque(force/3)
-      moto.rider.torso.ApplyTorque(force/3)
+      moto.body.ApplyTorque(force/2.5)
+      moto.rider.torso.ApplyTorque(force/2.5)
 
     # Front wheeling
     if @right

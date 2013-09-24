@@ -44,7 +44,7 @@ class Entities
 
       # End of level
       else if entity.type_id == 'EndOfLevel'
-        @assets.anims.push('flower00')
+        @assets.anims.push('checkball_00')
 
       # Player start
       else if entity.type_id == 'PlayerStart'
@@ -65,7 +65,7 @@ class Entities
         ctx.save()
         ctx.translate(entity.position.x, entity.position.y)
         ctx.scale(1, -1)
-        ctx.drawImage(@assets.get(image), 0, -entity.size.r*4, entity.size.r*4, entity.size.r*4)
+        ctx.drawImage(@assets.get(image), 0, -entity.size.r*3, entity.size.r*3, entity.size.r*3)
         ctx.restore()
 
       # End of Level
@@ -73,5 +73,5 @@ class Entities
         ctx.save()
         ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r)
         ctx.scale(1, -1)
-        ctx.drawImage(@assets.get('flower00'), 0, -entity.size.r*4, entity.size.r*4, entity.size.r*4)
+        ctx.drawImage(@assets.get('checkball_00'), 0, -entity.size.r*2, entity.size.r*2, entity.size.r*2)
         ctx.restore()

@@ -330,7 +330,7 @@
             return _results1;
           }).call(this));
         } else if (entity.type_id === 'EndOfLevel') {
-          _results.push(this.assets.anims.push('flower00'));
+          _results.push(this.assets.anims.push('checkball_00'));
         } else if (entity.type_id === 'PlayerStart') {
           _results.push(this.player_start = {
             x: entity.position.x,
@@ -360,13 +360,13 @@
           ctx.save();
           ctx.translate(entity.position.x, entity.position.y);
           ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get(image), 0, -entity.size.r * 4, entity.size.r * 4, entity.size.r * 4);
+          ctx.drawImage(this.assets.get(image), 0, -entity.size.r * 3, entity.size.r * 3, entity.size.r * 3);
           _results.push(ctx.restore());
         } else if (entity.type_id === 'EndOfLevel') {
           ctx.save();
           ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r);
           ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get('flower00'), 0, -entity.size.r * 4, entity.size.r * 4, entity.size.r * 4);
+          ctx.drawImage(this.assets.get('checkball_00'), 0, -entity.size.r * 2, entity.size.r * 2, entity.size.r * 2);
           _results.push(ctx.restore());
         } else {
           _results.push(void 0);
@@ -493,8 +493,8 @@
         moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.05 ? -v_l : void 0));
       }
       if (this.left) {
-        moto.body.ApplyTorque(force / 3);
-        moto.rider.torso.ApplyTorque(force / 3);
+        moto.body.ApplyTorque(force / 2.5);
+        moto.rider.torso.ApplyTorque(force / 2.5);
       }
       if (this.right) {
         moto.body.ApplyTorque(-force / 3);
