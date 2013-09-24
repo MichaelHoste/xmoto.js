@@ -41,8 +41,7 @@ class Moto
 
   init: ->
     # Assets
-    textures = [ 'front1', 'lowerarm1', 'lowerleg1', 'playerbikerbody',
-                 'playerbikerwheel', 'rear1' ]
+    textures = [ 'playerbikerbody', 'playerbikerwheel', 'front1', 'rear1' ]
     for texture in textures
       @assets.moto.push(texture)
 
@@ -243,8 +242,8 @@ class Moto
 
     @level.ctx.drawImage(
       @assets.get('playerbikerwheel'), # texture
-      -radius, # x
-      -radius, # y
+      -radius,   # x
+      -radius,   # y
        radius*2, # size-x
        radius*2  # size-y
     )
@@ -266,8 +265,8 @@ class Moto
 
     @level.ctx.drawImage(
       @assets.get('playerbikerbody'), # texture
-      -1.0,   # x
-      -0.5,   # y
+      -1.0, # x
+      -0.5, # y
        2.0, # size-x
        1.0  # size-y
     )
@@ -280,7 +279,7 @@ class Moto
     # Position
     left_wheel_position = @left_wheel.GetPosition()
     left_wheel_position =
-      x: left_wheel_position.x - axle_thickness/2.0
+      x: left_wheel_position.x - axle_thickness/2.0 - 0.00
       y: left_wheel_position.y - axle_thickness/2.0 + 0.02
 
     # Position relative to center of body
@@ -304,7 +303,7 @@ class Moto
     @level.ctx.rotate(-angle)
 
     @level.ctx.drawImage(
-      @assets.get('front1'), # texture
+      @assets.get('rear1'), # texture
       0.0,               # x
       -axle_thickness/2, # y
       distance,          # size-x

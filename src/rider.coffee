@@ -40,7 +40,7 @@ class Rider
   init: ->
     # Assets
     textures = [ 'playerlowerarm', 'playerlowerleg', 'playertorso',
-                 'playerupperarm', 'playerupperleg', 'rear1' ]
+                 'playerupperarm', 'playerupperleg' ]
     for texture in textures
       @assets.moto.push(texture)
 

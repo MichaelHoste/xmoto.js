@@ -1,8 +1,8 @@
 class Replay
 
   constructor: (level) ->
-    @level  = level
-    @replay = []
+    @level         = level
+    @frames        = []
 
   add_frame: ->
     moto   = @level.moto
@@ -13,6 +13,7 @@ class Replay
         position: moto.body.GetPosition()
         angle:    moto.body.GetAngle()
 
-    @replay.push(frame)
+    @frames.push(frame)
 
-#    console.log(@replay.length)
+  frame: (number) ->
+    @frames[number]

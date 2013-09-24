@@ -566,8 +566,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 40,
-        y: -40
+        x: 200,
+        y: -200
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -893,7 +893,7 @@
 
     Moto.prototype.init = function() {
       var texture, textures, _i, _len;
-      textures = ['front1', 'lowerarm1', 'lowerleg1', 'playerbikerbody', 'playerbikerwheel', 'rear1'];
+      textures = ['playerbikerbody', 'playerbikerwheel', 'front1', 'rear1'];
       for (_i = 0, _len = textures.length; _i < _len; _i++) {
         texture = textures[_i];
         this.assets.moto.push(texture);
@@ -1060,7 +1060,7 @@
       axle_thickness = 0.09;
       left_wheel_position = this.left_wheel.GetPosition();
       left_wheel_position = {
-        x: left_wheel_position.x - axle_thickness / 2.0,
+        x: left_wheel_position.x - axle_thickness / 2.0 - 0.00,
         y: left_wheel_position.y - axle_thickness / 2.0 + 0.02
       };
       left_axle_position = {
@@ -1074,7 +1074,7 @@
       this.level.ctx.translate(left_wheel_position.x, left_wheel_position.y);
       this.level.ctx.scale(1, -1);
       this.level.ctx.rotate(-angle);
-      this.level.ctx.drawImage(this.assets.get('front1'), 0.0, -axle_thickness / 2, distance, axle_thickness);
+      this.level.ctx.drawImage(this.assets.get('rear1'), 0.0, -axle_thickness / 2, distance, axle_thickness);
       return this.level.ctx.restore();
     };
 
@@ -1175,7 +1175,7 @@
   Replay = (function() {
     function Replay(level) {
       this.level = level;
-      this.replay = [];
+      this.frames = [];
     }
 
     Replay.prototype.add_frame = function() {
@@ -1188,7 +1188,11 @@
           angle: moto.body.GetAngle()
         }
       };
-      return this.replay.push(frame);
+      return this.frames.push(frame);
+    };
+
+    Replay.prototype.frame = function(number) {
+      return this.frames[number];
     };
 
     return Replay;
@@ -1246,7 +1250,7 @@
 
     Rider.prototype.init = function() {
       var texture, textures, _i, _len;
-      textures = ['playerlowerarm', 'playerlowerleg', 'playertorso', 'playerupperarm', 'playerupperleg', 'rear1'];
+      textures = ['playerlowerarm', 'playerlowerleg', 'playertorso', 'playerupperarm', 'playerupperleg'];
       for (_i = 0, _len = textures.length; _i < _len; _i++) {
         texture = textures[_i];
         this.assets.moto.push(texture);
