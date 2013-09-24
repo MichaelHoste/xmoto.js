@@ -488,8 +488,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 250,
-        y: -250
+        x: 100,
+        y: -100
       };
       this.assets = new Assets();
       this.physics = new Physics(this);

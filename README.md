@@ -22,8 +22,30 @@ Don't forget to restart the coffee command if you create new JS files.
 
 Just upload the files on a static web server (you can remove the "src" folder if you want)
 
+## timestep issue
+
+If the computer is not able to run the game at 60FPS, we can change the display interval like this :
+
+60FPS :
+```setInterval(update, 1000 / 60)```
+```level.world.Step(1.0 / 60.0, 10, 10)```
+
+30FPS :
+```setInterval(update, 1000 / 30)```
+```level.world.Step(1.0 / 30.0, 20, 20)```
+
+15FPS :
+```setInterval(update, 1000 / 60)```
+```level.world.Step(1.0 / 15.0, 40, 40)```
+
+(the behavior will be the same in those 4 examples !)
+
+A good idea would be to make an educated guess of the power of the computer and adapt the framerate.
+
 ## TODO
 
  * Optimization : create x bodies with y shapes for each polygon (set of triangles) instead of x*y bodies of 1 triangle
  * Optimization : group the blocks by texture and fill the texture just once by group
  * Optimization : only draw polygons that are on screen (and only collide with these polygons)
+
+

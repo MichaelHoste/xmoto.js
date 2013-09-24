@@ -7,7 +7,7 @@ $ ->
   level.assets.load( ->
     update = ->
       level.input.move_moto()
-      level.world.Step(1.0 / 60.0,  10, 10)
+      level.world.Step(1.0 / 60.0, 10, 10)
       level.world.ClearForces()
       level.display()
       level.world.DrawDebugData()
