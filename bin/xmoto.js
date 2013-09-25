@@ -834,7 +834,9 @@
         save_replay = false;
       }
       if (save_replay) {
-        this.ghost = new Ghost(this, this.replay.clone());
+        if ((!this.ghost.replay) || this.ghost.replay.frames_count > this.replay.frames_count) {
+          this.ghost = new Ghost(this, this.replay.clone());
+        }
       }
       this.ghost.current_frame = 0;
       this.replay = new Replay(this);
