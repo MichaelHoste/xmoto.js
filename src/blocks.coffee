@@ -19,14 +19,14 @@ class Blocks
           dynamic:    $(xml_block).find('position').attr('dynamic')    == 'true'
           background: $(xml_block).find('position').attr('background') == 'true'
         usetexture:
-          id:    $(xml_block).find('usetexture').attr('id').toLowerCase()
-          scale: parseFloat($(xml_block).find('usetexture').attr('scale'))
+          id:         $(xml_block).find('usetexture').attr('id').toLowerCase()
+          scale:      parseFloat($(xml_block).find('usetexture').attr('scale'))
         physics:
-          grip:  parseFloat($(xml_block).find('physics').attr('grip'))
+          grip:       parseFloat($(xml_block).find('physics').attr('grip'))
         edges:
-          angle:     parseFloat($(xml_block).find('edges').attr('angle'))
-          materials: []
-        vertices: []
+          angle:      parseFloat($(xml_block).find('edges').attr('angle'))
+          materials:  []
+        vertices:     []
 
       block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
 

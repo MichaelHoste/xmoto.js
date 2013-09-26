@@ -37,12 +37,32 @@
           src: "data/Textures/Riders/" + item + ".png"
         });
       }
+      items = this.remove_duplicate_textures(items);
       this.queue.addEventListener("complete", callback);
       return this.queue.loadManifest(items);
     };
 
     Assets.prototype.get = function(name) {
       return this.queue.getResult(name);
+    };
+
+    Assets.prototype.remove_duplicate_textures = function(array) {
+      var found, image, unique, unique_image, _i, _j, _len, _len1;
+      unique = [];
+      for (_i = 0, _len = array.length; _i < _len; _i++) {
+        image = array[_i];
+        found = false;
+        for (_j = 0, _len1 = unique.length; _j < _len1; _j++) {
+          unique_image = unique[_j];
+          if (image.id === unique_image.id) {
+            found = true;
+          }
+        }
+        if (!found) {
+          unique.push(image);
+        }
+      }
+      return unique;
     };
 
     return Assets;

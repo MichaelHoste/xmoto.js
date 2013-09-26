@@ -25,9 +25,22 @@ class Assets
         src: "data/Textures/Riders/#{item}.png"
       )
 
+    items = @remove_duplicate_textures(items)
+
     @queue.addEventListener("complete", callback)
     @queue.loadManifest(items)
 
   # Get an asset by its name ("id")
   get: (name) ->
     @queue.getResult(name)
+
+  remove_duplicate_textures: (array) ->
+    unique = []
+    for image in array
+      found = false
+      for unique_image in unique
+        found = true if image.id == unique_image.id
+      unique.push(image) if not found
+
+    unique
+
