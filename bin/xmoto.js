@@ -755,7 +755,8 @@
     Level.prototype.init_canvas = function() {
       this.canvas = $('#game').get(0);
       this.canvas_width = parseFloat(this.canvas.width);
-      return this.canvas_height = parseFloat(this.canvas.height);
+      this.canvas_height = parseFloat(this.canvas.height);
+      return this.ctx.lineWidth = 0.01;
     };
 
     Level.prototype.init_input = function() {
@@ -777,7 +778,10 @@
       return this.world.SetContactListener(listener);
     };
 
-    Level.prototype.display = function() {
+    Level.prototype.display = function(debug) {
+      if (debug == null) {
+        debug = false;
+      }
       if (this.need_to_restart) {
         this.need_to_restart = false;
         this.restart(true);
@@ -785,11 +789,10 @@
       if (!this.canvas) {
         this.init_canvas();
       }
-      $('#game').attr('height', this.canvas_height);
-      this.ctx.translate(400.0, 300.0);
+      this.ctx.save();
+      this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(this.scale.x, this.scale.y);
       this.ctx.translate(-this.moto.position().x, -this.moto.position().y - 0.25);
-      this.ctx.lineWidth = 0.01;
       this.sky.display(this.ctx);
       this.limits.display(this.ctx);
       this.blocks.display(this.ctx);
@@ -798,6 +801,10 @@
       if (this.ghost) {
         this.ghost.display(this.ctx);
       }
+      if (debug) {
+        this.world.DrawDebugData();
+      }
+      this.ctx.restore();
       return this.replay.add_frame();
     };
 
@@ -954,7 +961,7 @@
         level.input.move_moto();
         level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
-        return level.display();
+        return level.display(false);
       };
       return setInterval(update, 1000 / 60);
     });

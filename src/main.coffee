@@ -8,8 +8,7 @@ $ ->
       level.input.move_moto()
       level.world.Step(1.0 / 60.0, 10, 10)
       level.world.ClearForces()
-      level.display()
-      #level.world.DrawDebugData()
+      level.display(false)
 
     # Render 2D environment
     setInterval(update, 1000 / 60)

@@ -67,6 +67,7 @@ class Level
     @canvas  = $('#game').get(0)
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height)
+    @ctx.lineWidth = 0.01
 
   init_input: ->
     @input.init()
@@ -83,18 +84,18 @@ class Level
 
     @world.SetContactListener(listener)
 
-  display: ->
+  display: (debug = false) ->
     if @need_to_restart
       @need_to_restart = false
       @restart(true)
 
     @init_canvas() if not @canvas
-    $('#game').attr('height', @canvas_height)
 
-    @ctx.translate(400.0, 300.0)
-    @ctx.scale(@scale.x, @scale.y)
-    @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25)
-    @ctx.lineWidth = 0.01
+    # initialize position of camera
+    @ctx.save()
+    @ctx.translate(@canvas_width/2, @canvas_height/2)                 # Center of canvas
+    @ctx.scale(@scale.x, @scale.y)                                    # Scale (zoom)
+    @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25)   # Camera on moto
 
     @sky     .display(@ctx)
     @limits  .display(@ctx)
@@ -102,6 +103,10 @@ class Level
     @entities.display(@ctx)
     @moto    .display(@ctx)
     @ghost   .display(@ctx) if @ghost
+
+    @world.DrawDebugData() if debug
+
+    @ctx.restore()
 
     # Save last step for replay
     @replay.add_frame()
