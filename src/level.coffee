@@ -108,7 +108,7 @@ class Level
 
   restart: (save_replay = false) ->
     if save_replay
-      if (not @ghost.replay) or @ghost.replay.frames_count > @replay.frames_count
+      if (not @ghost.replay) or @ghost.replay.frames_count() > @replay.frames_count()
         @ghost  = new Ghost(this, @replay.clone())
     @ghost.current_frame = 0
     @replay = new Replay(this)

@@ -17,8 +17,6 @@ class Replay
     frame =
       left_wheel:  position_2d(moto.left_wheel)
       right_wheel: position_2d(moto.right_wheel)
-      left_axle:   position_2d(moto.left_axle)
-      right_axle:  position_2d(moto.right_axle)
       body:        position_2d(moto.body)
       torso:       position_2d(moto.rider.torso)
       upper_leg:   position_2d(moto.rider.upper_leg)

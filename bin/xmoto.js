@@ -470,34 +470,6 @@
       return this.level.ctx.restore();
     };
 
-    Ghost.prototype.display_left_axle = function() {
-      var angle, axle_thickness, left_axle, position;
-      axle_thickness = 0.09;
-      left_axle = this.frame.left_axle;
-      position = left_axle.position;
-      angle = left_axle.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1, -1);
-      this.level.ctx.rotate(-angle);
-      this.level.ctx.drawImage(this.assets.get('rear_ghost'), 0.0, -axle_thickness / 2, distance, axle_thickness);
-      return this.level.ctx.restore();
-    };
-
-    Ghost.prototype.display_right_axle = function() {
-      var angle, axle_thickness, left_axle, position;
-      axle_thickness = 0.09;
-      left_axle = this.frame.right_axle;
-      position = right_axle.position;
-      angle = right_axle.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1, -1);
-      this.level.ctx.rotate(-angle);
-      this.level.ctx.drawImage(this.assets.get('front_ghost'), 0.0, -axle_thickness / 2, distance, axle_thickness);
-      return this.level.ctx.restore();
-    };
-
     Ghost.prototype.display_torso = function() {
       var angle, position, torso;
       torso = this.frame.torso;
@@ -834,7 +806,7 @@
         save_replay = false;
       }
       if (save_replay) {
-        if ((!this.ghost.replay) || this.ghost.replay.frames_count > this.replay.frames_count) {
+        if ((!this.ghost.replay) || this.ghost.replay.frames_count() > this.replay.frames_count()) {
           this.ghost = new Ghost(this, this.replay.clone());
         }
       }
@@ -1381,8 +1353,6 @@
       frame = {
         left_wheel: position_2d(moto.left_wheel),
         right_wheel: position_2d(moto.right_wheel),
-        left_axle: position_2d(moto.left_axle),
-        right_axle: position_2d(moto.right_axle),
         body: position_2d(moto.body),
         torso: position_2d(moto.rider.torso),
         upper_leg: position_2d(moto.rider.upper_leg),

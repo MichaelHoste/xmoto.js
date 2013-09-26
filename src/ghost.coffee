@@ -12,8 +12,6 @@ class Ghost
 
       @display_left_wheel()
       @display_right_wheel()
-      #@display_left_axle()
-      #@display_right_axle()
       @display_body()
       @display_torso()
       @display_upper_leg()
@@ -102,58 +100,6 @@ class Ghost
       -0.5, # y
        2.0, # size-x
        1.0  # size-y
-    )
-
-    @level.ctx.restore()
-
-  display_left_axle: ->
-    axle_thickness = 0.09
-    left_axle = @frame.left_axle
-
-    # Position
-    position = left_axle.position
-
-    # Angle
-    angle = left_axle.angle
-
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
-    @level.ctx.rotate(-angle)
-
-    @level.ctx.drawImage(
-      @assets.get('rear_ghost'), # texture
-      0.0,               # x
-      -axle_thickness/2, # y
-      distance,          # size-x
-      axle_thickness     # size-y
-    )
-
-    @level.ctx.restore()
-
-  display_right_axle: ->
-    axle_thickness = 0.09
-    left_axle = @frame.right_axle
-
-    # Position
-    position = right_axle.position
-
-    # Angle
-    angle = right_axle.angle
-
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
-    @level.ctx.rotate(-angle)
-
-    @level.ctx.drawImage(
-      @assets.get('front_ghost'), # texture
-      0.0,               # x
-      -axle_thickness/2, # y
-      distance,          # size-x
-      axle_thickness     # size-y
     )
 
     @level.ctx.restore()
