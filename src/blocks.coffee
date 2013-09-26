@@ -59,8 +59,9 @@ class Blocks
       else
         @front_list.push(block)
 
-    @back_list.reverse()
-    @front_list
+    @list      .sort( sort_blocks_by_texture )
+    @back_list .sort( sort_blocks_by_texture )
+    @front_list.sort( sort_blocks_by_texture )
 
     return this
 
@@ -113,3 +114,8 @@ triangulate = (blocks) ->
                        { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
   triangles
 
+# http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
+sort_blocks_by_texture = (a, b) ->
+  return 1  if a.usetexture.id > b.usetexture.id
+  return -1 if a.usetexture.id <= b.usetexture.id
+  return 0

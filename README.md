@@ -49,4 +49,4 @@ A good idea would be to make an educated guess of the power of the computer and 
  * Optimization : create x bodies with y shapes for each polygon (set of triangles) instead of x*y bodies of 1 triangle
  * Optimization : group the blocks by texture and fill the texture just once by group
  * Optimization : only draw polygons that are on screen (and only collide with these polygons)
-
+ * Optimization : group triangles polygons (collision blocks) by pairs to get convex polygons with max 8 sides (less complexity, less clipping)

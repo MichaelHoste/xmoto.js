@@ -90,9 +90,11 @@ class Level
       @restart(true)
 
     @init_canvas() if not @canvas
+    @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
+
+    @ctx.save()
 
     # initialize position of camera
-    @ctx.save()
     @ctx.translate(@canvas_width/2, @canvas_height/2)                 # Center of canvas
     @ctx.scale(@scale.x, @scale.y)                                    # Scale (zoom)
     @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25)   # Camera on moto
