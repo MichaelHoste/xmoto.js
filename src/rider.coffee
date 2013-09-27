@@ -23,8 +23,8 @@ class Rider
     world.DestroyBody(@lower_arm)
     world.DestroyBody(@upper_arm)
 
-    world.DestroyJoint(@foot_joint)
-    world.DestroyJoint(@hand_joint)
+    world.DestroyJoint(@ankle_joint)
+    world.DestroyJoint(@wrist_joint)
     world.DestroyJoint(@knee_joint)
     world.DestroyJoint(@elbow_joint)
     world.DestroyJoint(@shoulder_joint)
@@ -52,8 +52,8 @@ class Rider
     @lower_arm    = @create_lower_arm(@player_start.x + 0.07, @player_start.y + 1.52)
     @upper_arm    = @create_upper_arm(@player_start.x - 0.17, @player_start.y + 1.83)
 
-    @foot_joint     = @create_foot_joint()
-    @hand_joint     = @create_hand_joint()
+    @ankle_joint    = @create_ankle_joint()
+    @wrist_joint    = @create_wrist_joint()
     @knee_joint     = @create_knee_joint()
     @elbow_joint    = @create_elbow_joint()
     @shoulder_joint = @create_shoulder_joint()
@@ -72,10 +72,10 @@ class Rider
     fixDef.friction    = Constants.torso.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  0.25, -0.575),
-                   new b2Vec2(  0.25,  0.575),
-                   new b2Vec2( -0.25,  0.575),
-                   new b2Vec2( -0.25, -0.575) ]
+    b2vertices = [ Constants.torso.collision_box.v1,
+                   Constants.torso.collision_box.v2,
+                   Constants.torso.collision_box.v3,
+                   Constants.torso.collision_box.v4 ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -87,7 +87,7 @@ class Rider
     bodyDef.position.y = y
 
     # Assign body angle
-    bodyDef.angle = -Math.PI/20
+    bodyDef.angle = Constants.torso.angle
 
     bodyDef.userData = 'rider'
 
@@ -109,10 +109,10 @@ class Rider
     fixDef.friction    = Constants.lower_leg.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  0.2, -0.33),
-                   new b2Vec2(  0.2,  0.33),
-                   new b2Vec2( -0.2,  0.33),
-                   new b2Vec2( -0.2, -0.33) ]
+    b2vertices = [ Constants.lower_leg.collision_box.v1,
+                   Constants.lower_leg.collision_box.v2,
+                   Constants.lower_leg.collision_box.v3,
+                   Constants.lower_leg.collision_box.v4 ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -124,7 +124,7 @@ class Rider
     bodyDef.position.y = y
 
     # Assign body angle
-    bodyDef.angle = -Math.PI/6.0
+    bodyDef.angle = Constants.lower_leg.angle
 
     bodyDef.userData = 'rider'
 
@@ -146,10 +146,10 @@ class Rider
     fixDef.friction    = Constants.upper_leg.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  0.4, -0.14),
-                   new b2Vec2(  0.4,  0.14),
-                   new b2Vec2( -0.4,  0.14),
-                   new b2Vec2( -0.4, -0.14) ]
+    b2vertices = [ Constants.upper_leg.collision_box.v1,
+                   Constants.upper_leg.collision_box.v2,
+                   Constants.upper_leg.collision_box.v3,
+                   Constants.upper_leg.collision_box.v4 ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -161,7 +161,7 @@ class Rider
     bodyDef.position.y = y
 
     # Assign body angle
-    bodyDef.angle = -Math.PI/12.0
+    bodyDef.angle = Constants.upper_leg.angle
 
     bodyDef.userData = 'rider'
 
@@ -183,10 +183,10 @@ class Rider
     fixDef.friction    = Constants.lower_arm.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  0.28, -0.1),
-                   new b2Vec2(  0.28,  0.1),
-                   new b2Vec2( -0.28,  0.1),
-                   new b2Vec2( -0.28, -0.1) ]
+    b2vertices = [ Constants.lower_arm.collision_box.v1,
+                   Constants.lower_arm.collision_box.v2,
+                   Constants.lower_arm.collision_box.v3,
+                   Constants.lower_arm.collision_box.v4 ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -198,7 +198,7 @@ class Rider
     bodyDef.position.y = y
 
     # Assign body angle
-    bodyDef.angle = -Math.PI/10.0
+    bodyDef.angle = Constants.lower_arm.angle
 
     bodyDef.userData = 'rider'
 
@@ -220,10 +220,10 @@ class Rider
     fixDef.friction    = Constants.upper_arm.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  0.125, -0.28),
-                   new b2Vec2(  0.125,  0.28),
-                   new b2Vec2( -0.125,  0.28),
-                   new b2Vec2( -0.125, -0.28) ]
+    b2vertices = [ Constants.upper_arm.collision_box.v1,
+                   Constants.upper_arm.collision_box.v2,
+                   Constants.upper_arm.collision_box.v3,
+                   Constants.upper_arm.collision_box.v4 ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -235,7 +235,7 @@ class Rider
     bodyDef.position.y = y
 
     # Assign body angle
-    bodyDef.angle = Math.PI/9.0
+    bodyDef.angle = Constants.upper_arm.angle
 
     bodyDef.userData = 'rider'
 
@@ -248,62 +248,74 @@ class Rider
     body
 
   set_joint_commons: (joint) ->
-    joint.lowerAngle = Math.PI/20
-    joint.upperAngle = Math.PI/20
+    joint.lowerAngle = -Math.PI/10
+    joint.upperAngle =  Math.PI/10
     joint.enableLimit = true
-    joint.maxMotorTorque = 1.0
+    joint.maxMotorTorque = 0
 
-  create_foot_joint: ->
+  create_ankle_joint: ->
     position = @lower_leg.GetWorldCenter()
-    rotation_axe = { x: position.x - 0.2, y: position.y - 0.2 }
+    axe =
+      x: position.x + Constants.ankle.axe_position.x
+      y: position.y + Constants.ankle.axe_position.y
 
     jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@lower_leg, @moto.body, rotation_axe)
+    jointDef.Initialize(@lower_leg, @moto.body, axe)
     @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   create_knee_joint: ->
     position = @lower_leg.GetWorldCenter()
-    rotation_axe = { x: position.x + 0.07, y: position.y + 0.28 }
+    axe =
+      x: position.x + Constants.knee.axe_position.x
+      y: position.y + Constants.knee.axe_position.y
 
     jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@lower_leg, @upper_leg, rotation_axe)
+    jointDef.Initialize(@lower_leg, @upper_leg, axe)
     @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
-  create_hand_joint: ->
+  create_wrist_joint: ->
     position = @lower_arm.GetWorldCenter()
-    rotation_axe = { x: position.x + 0.25, y: position.y - 0.07 }
+    axe =
+      x: position.x + Constants.wrist.axe_position.x
+      y: position.y + Constants.wrist.axe_position.y
 
     jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@lower_arm, @moto.body, rotation_axe)
+    jointDef.Initialize(@lower_arm, @moto.body, axe)
     @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   create_elbow_joint: ->
     position = @upper_arm.GetWorldCenter()
-    rotation_axe = { x: position.x + 0.05, y: position.y - 0.2 }
+    axe =
+      x: position.x + Constants.elbow.axe_position.x
+      y: position.y + Constants.elbow.axe_position.y
 
     jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@upper_arm, @lower_arm, rotation_axe)
+    jointDef.Initialize(@upper_arm, @lower_arm, axe)
     @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   create_shoulder_joint: ->
     position = @upper_arm.GetWorldCenter()
-    rotation_axe = { x: position.x - 0.12, y: position.y + 0.22 }
+    axe =
+      x: position.x + Constants.shoulder.axe_position.x
+      y: position.y + Constants.shoulder.axe_position.y
 
     jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@torso, @upper_arm, rotation_axe)
+    jointDef.Initialize(@torso, @upper_arm, axe)
     @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
   create_hip_joint: ->
     position = @upper_leg.GetWorldCenter()
-    rotation_axe = { x: position.x - 0.27, y: position.y + 0.1 }
+    axe =
+      x: position.x + Constants.hip.axe_position.x
+      y: position.y + Constants.hip.axe_position.y
 
     jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@torso, @upper_leg, rotation_axe)
+    jointDef.Initialize(@torso, @upper_leg, axe)
     @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 

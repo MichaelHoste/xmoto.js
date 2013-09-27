@@ -76,10 +76,10 @@ class Moto
     fixDef.friction    = Constants.body.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2(  0.6, -0.3),
-                   new b2Vec2(  0.6,  0.4),
-                   new b2Vec2( -0.7,  0.4),
-                   new b2Vec2( -0.7, -0.3) ]
+    b2vertices = [ Constants.body.collision_box.v1,
+                   Constants.body.collision_box.v2,
+                   Constants.body.collision_box.v3,
+                   Constants.body.collision_box.v4 ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -137,10 +137,10 @@ class Moto
     fixDef.friction    = Constants.left_axle.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2( -0.10,  -0.30),
-                   new b2Vec2( -0.25,  -0.30),
-                   new b2Vec2( -0.80,  -0.58),
-                   new b2Vec2( -0.65,  -0.58) ]
+    b2vertices = [ Constants.left_axle.collision_box.v1,
+                   Constants.left_axle.collision_box.v2,
+                   Constants.left_axle.collision_box.v3,
+                   Constants.left_axle.collision_box.v4 ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -171,10 +171,10 @@ class Moto
     fixDef.friction    = Constants.right_axle.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ new b2Vec2( 0.58,  -0.02),
-                   new b2Vec2( 0.48,  -0.02),
-                   new b2Vec2( 0.66,  -0.58),
-                   new b2Vec2( 0.76,  -0.58) ]
+    b2vertices = [ Constants.right_axle.collision_box.v1,
+                   Constants.right_axle.collision_box.v2,
+                   Constants.right_axle.collision_box.v3,
+                   Constants.right_axle.collision_box.v4 ]
 
     fixDef.shape.SetAsArray(b2vertices)
 
@@ -207,21 +207,21 @@ class Moto
 
   create_left_prismatic_joint: ->
     jointDef = new b2PrismaticJointDef()
-    jointDef.Initialize(@body, @left_axle, @left_axle.GetWorldCenter(), new b2Vec2(0.1, 1) )
-    jointDef.enableLimit = true
-    jointDef.lowerTranslation = -0.10
-    jointDef.upperTranslation = 0.20
-    jointDef.enableMotor = true
+    jointDef.Initialize(@body, @left_axle, @left_axle.GetWorldCenter(), Constants.left_suspension.angle )
+    jointDef.enableLimit      = true
+    jointDef.lowerTranslation = Constants.left_suspension.lower_translation
+    jointDef.upperTranslation = Constants.left_suspension.upper_translation
+    jointDef.enableMotor      = true
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
   create_right_prismatic_joint: ->
     jointDef = new b2PrismaticJointDef()
-    jointDef.Initialize(@body, @right_axle, @right_axle.GetWorldCenter(), new b2Vec2(-0.1, 1) )
-    jointDef.enableLimit = true
-    jointDef.lowerTranslation = -0.0
-    jointDef.upperTranslation = 0.20
-    jointDef.enableMotor = true
+    jointDef.Initialize(@body, @right_axle, @right_axle.GetWorldCenter(), Constants.right_suspension.angle )
+    jointDef.enableLimit      = true
+    jointDef.lowerTranslation = Constants.right_suspension.lower_translation
+    jointDef.upperTranslation = Constants.right_suspension.upper_translation
+    jointDef.enableMotor      = true
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
