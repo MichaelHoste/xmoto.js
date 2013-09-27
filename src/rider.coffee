@@ -248,10 +248,11 @@ class Rider
     body
 
   set_joint_commons: (joint) ->
-    joint.lowerAngle = -Math.PI/10
-    joint.upperAngle =  Math.PI/10
+    joint.lowerAngle = -Math.PI/15
+    joint.upperAngle =  Math.PI/180
     joint.enableLimit = true
     joint.maxMotorTorque = 0
+    joint.enableMotor = true
 
   create_ankle_joint: ->
     position = @lower_leg.GetWorldCenter()

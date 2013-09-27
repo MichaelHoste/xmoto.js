@@ -57,7 +57,8 @@ class Input
 
   move_moto: ->
     force = 24.1
-    moto = @level.moto
+    moto  = @level.moto
+    rider = moto.rider
 
     # Accelerate
     if @up
@@ -75,13 +76,13 @@ class Input
 
     # Back wheeling
     if @left
-      moto.body.ApplyTorque(force/2.5)
-      moto.rider.torso.ApplyTorque(force/2.5)
+      moto.body.ApplyTorque(force/3.0)
+      moto.rider.torso.ApplyTorque(force/3.0)
 
     # Front wheeling
     if @right
-      moto.body.ApplyTorque(-force/3)
-      moto.rider.torso.ApplyTorque(-force/3)
+      moto.body.ApplyTorque(-force/3.0)
+      moto.rider.torso.ApplyTorque(-force/3.0)
 
     # Engine brake
     if not @up and not @down
@@ -95,4 +96,15 @@ class Input
     # Right wheel suspension
     moto.right_prismatic_joint.SetMaxMotorForce(4+Math.abs(800*Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)))
     moto.right_prismatic_joint.SetMotorSpeed(-3*moto.right_prismatic_joint.GetJointTranslation())
+
+    articulations = [ rider.ankle_joint, rider.wrist_joint, rider.knee_joint,
+                      rider.elbow_joint, rider.shoulder_joint, rider.hip_joint ]
+
+    if not @left and not @right
+      for articulation in articulations
+        angle = articulation.GetJointAngle()
+        torque = angle - Math.PI/180
+
+        articulation.SetMaxMotorTorque(torque/2)
+        articulation.SetMotorSpeed(torque/2)
 

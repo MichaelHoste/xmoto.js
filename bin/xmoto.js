@@ -778,9 +778,10 @@
     };
 
     Input.prototype.move_moto = function() {
-      var force, moto, v, v_l, v_r;
+      var angle, articulation, articulations, force, moto, rider, torque, v, v_l, v_r, _i, _len, _results;
       force = 24.1;
       moto = this.level.moto;
+      rider = moto.rider;
       if (this.up) {
         moto.left_wheel.ApplyTorque(-force / 3);
       }
@@ -791,12 +792,12 @@
         moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.05 ? -v_l : void 0));
       }
       if (this.left) {
-        moto.body.ApplyTorque(force / 2.5);
-        moto.rider.torso.ApplyTorque(force / 2.5);
+        moto.body.ApplyTorque(force / 3.0);
+        moto.rider.torso.ApplyTorque(force / 3.0);
       }
       if (this.right) {
-        moto.body.ApplyTorque(-force / 3);
-        moto.rider.torso.ApplyTorque(-force / 3);
+        moto.body.ApplyTorque(-force / 3.0);
+        moto.rider.torso.ApplyTorque(-force / 3.0);
       }
       if (!this.up && !this.down) {
         v = moto.left_wheel.GetAngularVelocity();
@@ -805,7 +806,19 @@
       moto.left_prismatic_joint.SetMaxMotorForce(8 + Math.abs(800 * Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)));
       moto.left_prismatic_joint.SetMotorSpeed(-3 * moto.left_prismatic_joint.GetJointTranslation());
       moto.right_prismatic_joint.SetMaxMotorForce(4 + Math.abs(800 * Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)));
-      return moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
+      moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
+      articulations = [rider.ankle_joint, rider.wrist_joint, rider.knee_joint, rider.elbow_joint, rider.shoulder_joint, rider.hip_joint];
+      if (!this.left && !this.right) {
+        _results = [];
+        for (_i = 0, _len = articulations.length; _i < _len; _i++) {
+          articulation = articulations[_i];
+          angle = articulation.GetJointAngle();
+          torque = angle - Math.PI / 180;
+          articulation.SetMaxMotorTorque(torque / 2);
+          _results.push(articulation.SetMotorSpeed(torque / 2));
+        }
+        return _results;
+      }
     };
 
     return Input;
@@ -1102,7 +1115,7 @@
         level.input.move_moto();
         level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
-        return level.display(true);
+        return level.display(false);
       };
       return setInterval(update, 1000 / 60);
     });
@@ -1713,10 +1726,11 @@
     };
 
     Rider.prototype.set_joint_commons = function(joint) {
-      joint.lowerAngle = -Math.PI / 10;
-      joint.upperAngle = Math.PI / 10;
+      joint.lowerAngle = -Math.PI / 15;
+      joint.upperAngle = Math.PI / 180;
       joint.enableLimit = true;
-      return joint.maxMotorTorque = 0;
+      joint.maxMotorTorque = 0;
+      return joint.enableMotor = true;
     };
 
     Rider.prototype.create_ankle_joint = function() {
