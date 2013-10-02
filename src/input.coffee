@@ -55,6 +55,16 @@ class Input
           @right = false
     )
 
+    $('#left') .on('mousedown', => @left  = true )
+    $('#right').on('mousedown', => @right = true )
+    $('#up')   .on('mousedown', => @up    = true )
+    $('#down') .on('mousedown', => @down  = true )
+
+    $('#left') .on('mouseup', => @left  = false )
+    $('#right').on('mouseup', => @right = false )
+    $('#up')   .on('mouseup', => @up    = false )
+    $('#down') .on('mouseup', => @down  = false )
+
   move_moto: ->
     force = 24.1
     moto  = @level.moto
