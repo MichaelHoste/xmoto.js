@@ -763,7 +763,7 @@
             return _this.level.restart();
         }
       });
-      $(document).on('keyup', function(event) {
+      return $(document).on('keyup', function(event) {
         switch (event.which || event.keyCode) {
           case 38:
             return _this.up = false;
@@ -774,30 +774,6 @@
           case 39:
             return _this.right = false;
         }
-      });
-      $('#left').on('mousedown', function() {
-        return _this.left = true;
-      });
-      $('#right').on('mousedown', function() {
-        return _this.right = true;
-      });
-      $('#up').on('mousedown', function() {
-        return _this.up = true;
-      });
-      $('#down').on('mousedown', function() {
-        return _this.down = true;
-      });
-      $('#left').on('mouseup', function() {
-        return _this.left = false;
-      });
-      $('#right').on('mouseup', function() {
-        return _this.right = false;
-      });
-      $('#up').on('mouseup', function() {
-        return _this.up = false;
-      });
-      return $('#down').on('mouseup', function() {
-        return _this.down = false;
       });
     };
 
