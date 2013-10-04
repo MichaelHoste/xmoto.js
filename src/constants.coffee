@@ -8,6 +8,9 @@ class Constants
     density:     1.5
     restitution: 0.5
     friction:    1.0
+    position:
+      x: 0.0
+      y: 1.0
     collision_box:
       v1: new b2Vec2( 0.6, -0.3)
       v2: new b2Vec2( 0.6,  0.4)
@@ -18,11 +21,17 @@ class Constants
     density:     2.0
     restitution: 0.5
     friction:    1.3
+    position:
+      x: 0.70
+      y: 0.48
 
   @left_axle =
     density:     1.0
     restitution: 0.5
     friction:    1.0
+    position:
+      x: 0.0
+      y: 1.0
     collision_box:
       v1: new b2Vec2(-0.10, -0.30)
       v2: new b2Vec2(-0.25, -0.30)
@@ -33,6 +42,9 @@ class Constants
     density:     1.5
     restitution: 0.5
     friction:    1.0
+    position:
+      x: 0.0
+      y: 1.0
     collision_box:
       v1: new b2Vec2(0.58, -0.02)
       v2: new b2Vec2(0.48, -0.02)
@@ -57,6 +69,9 @@ class Constants
     density:     0.2
     restitution: 0.5
     friction:    1.0
+    position:
+      x: -0.24
+      y:  1.87
     collision_box:
       v1: new b2Vec2( 0.25, -0.575)
       v2: new b2Vec2( 0.25,  0.575)
@@ -68,6 +83,9 @@ class Constants
     density:     0.2
     restitution: 0.5
     friction:    1.0
+    position:
+      x: 0.15
+      y: 0.90
     collision_box:
       v1: new b2Vec2( 0.2, -0.33)
       v2: new b2Vec2( 0.2,  0.33)
@@ -79,6 +97,9 @@ class Constants
     density:     0.2
     restitution: 0.5
     friction:    1.0
+    position:
+      x: - 0.09
+      y:   1.27
     collision_box:
       v1: new b2Vec2( 0.4, -0.14)
       v2: new b2Vec2( 0.4,  0.14)
@@ -90,6 +111,9 @@ class Constants
     density:     0.2
     restitution: 0.5
     friction:    1.0
+    position:
+      x: 0.07
+      y: 1.52
     collision_box:
       v1: new b2Vec2( 0.28, -0.1)
       v2: new b2Vec2( 0.28,  0.1)
@@ -101,6 +125,9 @@ class Constants
     density:     0.2
     restitution: 0.5
     friction:    1.0
+    position:
+      x: -0.17
+      y:  1.83
     collision_box:
       v1: new b2Vec2( 0.125, -0.28)
       v2: new b2Vec2( 0.125,  0.28)

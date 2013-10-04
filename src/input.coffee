@@ -41,6 +41,8 @@ class Input
           @right = true
         when 13
           @level.restart()
+        when 32
+          @level.moto.flip()
     )
 
     $(document).on('keyup', (event) =>
@@ -100,6 +102,7 @@ class Input
     articulations = [ rider.ankle_joint, rider.wrist_joint, rider.knee_joint,
                       rider.elbow_joint, rider.shoulder_joint, rider.hip_joint ]
 
+    # Articulations of the rider ("suspension")
     if not @left and not @right
       for articulation in articulations
         angle = articulation.GetJointAngle()

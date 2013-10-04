@@ -246,6 +246,10 @@
       density: 1.5,
       restitution: 0.5,
       friction: 1.0,
+      position: {
+        x: 0.0,
+        y: 1.0
+      },
       collision_box: {
         v1: new b2Vec2(0.6, -0.3),
         v2: new b2Vec2(0.6, 0.4),
@@ -257,13 +261,21 @@
     Constants.wheels = {
       density: 2.0,
       restitution: 0.5,
-      friction: 1.3
+      friction: 1.3,
+      position: {
+        x: 0.70,
+        y: 0.48
+      }
     };
 
     Constants.left_axle = {
       density: 1.0,
       restitution: 0.5,
       friction: 1.0,
+      position: {
+        x: 0.0,
+        y: 1.0
+      },
       collision_box: {
         v1: new b2Vec2(-0.10, -0.30),
         v2: new b2Vec2(-0.25, -0.30),
@@ -276,6 +288,10 @@
       density: 1.5,
       restitution: 0.5,
       friction: 1.0,
+      position: {
+        x: 0.0,
+        y: 1.0
+      },
       collision_box: {
         v1: new b2Vec2(0.58, -0.02),
         v2: new b2Vec2(0.48, -0.02),
@@ -300,6 +316,10 @@
       density: 0.2,
       restitution: 0.5,
       friction: 1.0,
+      position: {
+        x: -0.24,
+        y: 1.87
+      },
       collision_box: {
         v1: new b2Vec2(0.25, -0.575),
         v2: new b2Vec2(0.25, 0.575),
@@ -313,6 +333,10 @@
       density: 0.2,
       restitution: 0.5,
       friction: 1.0,
+      position: {
+        x: 0.15,
+        y: 0.90
+      },
       collision_box: {
         v1: new b2Vec2(0.2, -0.33),
         v2: new b2Vec2(0.2, 0.33),
@@ -326,6 +350,10 @@
       density: 0.2,
       restitution: 0.5,
       friction: 1.0,
+      position: {
+        x: -0.09,
+        y: 1.27
+      },
       collision_box: {
         v1: new b2Vec2(0.4, -0.14),
         v2: new b2Vec2(0.4, 0.14),
@@ -339,6 +367,10 @@
       density: 0.2,
       restitution: 0.5,
       friction: 1.0,
+      position: {
+        x: 0.07,
+        y: 1.52
+      },
       collision_box: {
         v1: new b2Vec2(0.28, -0.1),
         v2: new b2Vec2(0.28, 0.1),
@@ -352,6 +384,10 @@
       density: 0.2,
       restitution: 0.5,
       friction: 1.0,
+      position: {
+        x: -0.17,
+        y: 1.83
+      },
       collision_box: {
         v1: new b2Vec2(0.125, -0.28),
         v2: new b2Vec2(0.125, 0.28),
@@ -761,6 +797,8 @@
             return _this.right = true;
           case 13:
             return _this.level.restart();
+          case 32:
+            return _this.level.moto.flip();
         }
       });
       return $(document).on('keyup', function(event) {
@@ -1115,7 +1153,7 @@
         level.input.move_moto();
         level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
-        return level.display(false);
+        return level.display(true);
       };
       return setInterval(update, 1000 / 60);
     });
@@ -1183,6 +1221,7 @@
       this.level = level;
       this.assets = level.assets;
       this.rider = new Rider(level, this);
+      this.reversed = 1;
     }
 
     Moto.prototype.destroy = function() {
@@ -1217,11 +1256,11 @@
         this.assets.moto.push(texture);
       }
       this.player_start = this.level.entities.player_start;
-      this.body = this.create_body(this.player_start.x, this.player_start.y + 1.0);
-      this.left_wheel = this.create_wheel(this.player_start.x - 0.7, this.player_start.y + 0.48);
-      this.right_wheel = this.create_wheel(this.player_start.x + 0.7, this.player_start.y + 0.48);
-      this.left_axle = this.create_left_axle(this.player_start.x, this.player_start.y + 1.0);
-      this.right_axle = this.create_right_axle(this.player_start.x, this.player_start.y + 1.0);
+      this.body = this.create_body(this.player_start.x + Constants.body.position.x, this.player_start.y + Constants.body.position.y);
+      this.left_wheel = this.create_wheel(this.player_start.x - Constants.wheels.position.x, this.player_start.y + Constants.wheels.position.y);
+      this.right_wheel = this.create_wheel(this.player_start.x + Constants.wheels.position.x, this.player_start.y + Constants.wheels.position.y);
+      this.left_axle = this.create_left_axle(this.player_start.x + Constants.left_axle.position.x, this.player_start.y + Constants.left_axle.position.y);
+      this.right_axle = this.create_right_axle(this.player_start.x + Constants.right_axle.position.x, this.player_start.y + Constants.right_axle.position.y);
       this.left_revolute_joint = this.create_left_revolute_joint();
       this.left_prismatic_joint = this.create_left_prismatic_joint();
       this.right_revolute_joint = this.create_right_revolute_joint();
@@ -1231,6 +1270,59 @@
 
     Moto.prototype.position = function() {
       return this.body.GetPosition();
+    };
+
+    Moto.prototype.flip = function() {
+      var angle, position;
+      this.reversed = -this.reversed;
+      Physics.flip_collisions(this.body);
+      Physics.flip_collisions(this.left_axle);
+      Physics.flip_collisions(this.right_axle);
+      Physics.flip_collisions(this.rider.torso);
+      Physics.flip_collisions(this.rider.lower_leg);
+      Physics.flip_collisions(this.rider.upper_leg);
+      Physics.flip_collisions(this.rider.lower_arm);
+      Physics.flip_collisions(this.rider.upper_arm);
+      position = this.body.GetPosition();
+      angle = this.body.GetAngle();
+      this.body.SetPosition(new b2Vec2(position.x + 2 * this.reversed * Constants.body.position.x, position.y));
+      this.body.SetAngle(-angle);
+      position = this.left_axle.GetPosition();
+      angle = this.left_axle.GetAngle();
+      this.left_axle.SetPosition(new b2Vec2(position.x + 2 * this.reversed * Constants.left_axle.position.x, position.y));
+      this.left_axle.SetAngle(-angle);
+      position = this.right_axle.GetPosition();
+      angle = this.right_axle.GetAngle();
+      this.right_axle.SetPosition(new b2Vec2(position.x + 2 * this.reversed * Constants.right_axle.position.x, position.y));
+      this.right_axle.SetAngle(-angle);
+      position = this.left_wheel.GetPosition();
+      angle = this.left_wheel.GetAngle();
+      this.left_wheel.SetPosition(new b2Vec2(position.x - 2 * this.reversed * Constants.wheels.position.x, position.y));
+      this.left_wheel.SetAngle(-angle);
+      position = this.right_wheel.GetPosition();
+      angle = this.right_wheel.GetAngle();
+      this.right_wheel.SetPosition(new b2Vec2(position.x + 2 * this.reversed * Constants.wheels.position.x, position.y));
+      this.right_wheel.SetAngle(-angle);
+      position = this.rider.torso.GetPosition();
+      angle = this.rider.torso.GetAngle();
+      this.rider.torso.SetPosition(new b2Vec2(position.x + 2 * this.reversed * Constants.torso.position.x, position.y));
+      this.rider.torso.SetAngle(-angle);
+      position = this.rider.lower_leg.GetPosition();
+      angle = this.rider.lower_leg.GetAngle();
+      this.rider.lower_leg.SetPosition(new b2Vec2(position.x + 2 * this.reversed * Constants.lower_leg.position.x, position.y));
+      this.rider.lower_leg.SetAngle(-angle);
+      position = this.rider.upper_leg.GetPosition();
+      angle = this.rider.upper_leg.GetAngle();
+      this.rider.upper_leg.SetPosition(new b2Vec2(position.x + 2 * this.reversed * Constants.upper_leg.position.x, position.y));
+      this.rider.upper_leg.SetAngle(-angle);
+      position = this.rider.lower_arm.GetPosition();
+      angle = this.rider.lower_arm.GetAngle();
+      this.rider.lower_arm.SetPosition(new b2Vec2(position.x + 2 * this.reversed * Constants.lower_arm.position.x, position.y));
+      this.rider.lower_arm.SetAngle(-angle);
+      position = this.rider.upper_arm.GetPosition();
+      angle = this.rider.upper_arm.GetAngle();
+      this.rider.upper_arm.SetPosition(new b2Vec2(position.x + 2 * this.reversed * Constants.upper_arm.position.x, position.y));
+      return this.rider.upper_arm.SetAngle(-angle);
     };
 
     Moto.prototype.create_body = function(x, y) {
@@ -1356,7 +1448,7 @@
       angle = wheel.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.rotate(angle);
+      this.level.ctx.rotate(this.reversed * angle);
       this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
       return this.level.ctx.restore();
     };
@@ -1367,8 +1459,8 @@
       angle = this.body.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1, -1);
-      this.level.ctx.rotate(-angle);
+      this.level.ctx.scale(1 * this.reversed, -1);
+      this.level.ctx.rotate(this.reversed * (-angle));
       this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
       return this.level.ctx.restore();
     };
@@ -1390,8 +1482,8 @@
       angle = Math2D.angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI / 2;
       this.level.ctx.save();
       this.level.ctx.translate(left_wheel_position.x, left_wheel_position.y);
-      this.level.ctx.scale(1, -1);
-      this.level.ctx.rotate(-angle);
+      this.level.ctx.scale(1 * this.reversed, -1);
+      this.level.ctx.rotate(this.reversed * (-angle));
       this.level.ctx.drawImage(this.assets.get('rear1'), 0.0, -axle_thickness / 2, distance, axle_thickness);
       return this.level.ctx.restore();
     };
@@ -1413,8 +1505,8 @@
       angle = Math2D.angle_between_points(right_axle_adjusted_position, right_wheel_position) + Math.PI / 2;
       this.level.ctx.save();
       this.level.ctx.translate(right_wheel_position.x, right_wheel_position.y);
-      this.level.ctx.scale(1, -1);
-      this.level.ctx.rotate(-angle);
+      this.level.ctx.scale(1 * this.reversed, -1);
+      this.level.ctx.rotate(this.reversed * (-angle));
       this.level.ctx.drawImage(this.assets.get('front1'), 0.0, -axle_thickness / 2, distance, axle_thickness);
       return this.level.ctx.restore();
     };
@@ -1484,6 +1576,13 @@
       bodyDef.position.y = 0;
       bodyDef.type = b2Body.b2_staticBody;
       return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+    };
+
+    Physics.flip_collisions = function(body) {
+      var new_vertices, vertices;
+      vertices = body.GetFixtureList().GetShape().GetVertices();
+      new_vertices = [new b2Vec2(-vertices[3].x, vertices[3].y), new b2Vec2(-vertices[2].x, vertices[2].y), new b2Vec2(-vertices[1].x, vertices[1].y), new b2Vec2(-vertices[0].x, vertices[0].y)];
+      return body.GetFixtureList().GetShape().SetAsArray(new_vertices);
     };
 
     return Physics;
@@ -1603,11 +1702,11 @@
         this.assets.moto.push(texture);
       }
       this.player_start = this.level.entities.player_start;
-      this.torso = this.create_torso(this.player_start.x - 0.24, this.player_start.y + 1.87);
-      this.lower_leg = this.create_lower_leg(this.player_start.x + 0.15, this.player_start.y + 0.9);
-      this.upper_leg = this.create_upper_leg(this.player_start.x - 0.09, this.player_start.y + 1.27);
-      this.lower_arm = this.create_lower_arm(this.player_start.x + 0.07, this.player_start.y + 1.52);
-      this.upper_arm = this.create_upper_arm(this.player_start.x - 0.17, this.player_start.y + 1.83);
+      this.torso = this.create_torso(this.player_start.x + Constants.torso.position.x, this.player_start.y + Constants.torso.position.y);
+      this.lower_leg = this.create_lower_leg(this.player_start.x + Constants.lower_leg.position.x, this.player_start.y + Constants.lower_leg.position.y);
+      this.upper_leg = this.create_upper_leg(this.player_start.x + Constants.upper_leg.position.x, this.player_start.y + Constants.upper_leg.position.y);
+      this.lower_arm = this.create_lower_arm(this.player_start.x + Constants.lower_arm.position.x, this.player_start.y + Constants.lower_arm.position.y);
+      this.upper_arm = this.create_upper_arm(this.player_start.x + Constants.upper_arm.position.x, this.player_start.y + Constants.upper_arm.position.y);
       this.ankle_joint = this.create_ankle_joint();
       this.wrist_joint = this.create_wrist_joint();
       this.knee_joint = this.create_knee_joint();
@@ -1817,7 +1916,7 @@
       angle = this.torso.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1, -1);
+      this.level.ctx.scale(1 * this.moto.reversed, -1);
       this.level.ctx.rotate(-angle);
       this.level.ctx.drawImage(this.assets.get('playertorso'), -0.25, -0.575, 0.5, 1.15);
       return this.level.ctx.restore();
@@ -1829,7 +1928,7 @@
       angle = this.lower_leg.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1, -1);
+      this.level.ctx.scale(1 * this.moto.reversed, -1);
       this.level.ctx.rotate(-angle);
       this.level.ctx.drawImage(this.assets.get('playerlowerleg'), -0.2, -0.33, 0.40, 0.66);
       return this.level.ctx.restore();
@@ -1841,7 +1940,7 @@
       angle = this.upper_leg.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1, -1);
+      this.level.ctx.scale(1 * this.moto.reversed, -1);
       this.level.ctx.rotate(-angle);
       this.level.ctx.drawImage(this.assets.get('playerupperleg'), -0.40, -0.14, 0.80, 0.28);
       return this.level.ctx.restore();

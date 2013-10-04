@@ -46,11 +46,20 @@ class Rider
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
-    @torso        = @create_torso(@player_start.x - 0.24, @player_start.y + 1.87)
-    @lower_leg    = @create_lower_leg(@player_start.x + 0.15, @player_start.y + 0.9)
-    @upper_leg    = @create_upper_leg(@player_start.x - 0.09, @player_start.y + 1.27)
-    @lower_arm    = @create_lower_arm(@player_start.x + 0.07, @player_start.y + 1.52)
-    @upper_arm    = @create_upper_arm(@player_start.x - 0.17, @player_start.y + 1.83)
+    @torso        = @create_torso(@player_start.x + Constants.torso.position.x,
+                                  @player_start.y + Constants.torso.position.y)
+
+    @lower_leg    = @create_lower_leg(@player_start.x + Constants.lower_leg.position.x,
+                                      @player_start.y + Constants.lower_leg.position.y)
+
+    @upper_leg    = @create_upper_leg(@player_start.x + Constants.upper_leg.position.x,
+                                      @player_start.y + Constants.upper_leg.position.y)
+
+    @lower_arm    = @create_lower_arm(@player_start.x + Constants.lower_arm.position.x,
+                                      @player_start.y + Constants.lower_arm.position.y)
+
+    @upper_arm    = @create_upper_arm(@player_start.x + Constants.upper_arm.position.x,
+                                      @player_start.y + Constants.upper_arm.position.y)
 
     @ankle_joint    = @create_ankle_joint()
     @wrist_joint    = @create_wrist_joint()
@@ -330,7 +339,7 @@ class Rider
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
+    @level.ctx.scale(1*@moto.reversed, -1)
     @level.ctx.rotate(-angle)
 
     @level.ctx.drawImage(
@@ -353,7 +362,7 @@ class Rider
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
+    @level.ctx.scale(1*@moto.reversed, -1)
     @level.ctx.rotate(-angle)
 
     @level.ctx.drawImage(
@@ -376,7 +385,7 @@ class Rider
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
+    @level.ctx.scale(1*@moto.reversed, -1)
     @level.ctx.rotate(-angle)
 
     @level.ctx.drawImage(
