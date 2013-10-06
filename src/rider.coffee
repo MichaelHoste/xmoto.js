@@ -82,12 +82,7 @@ class Rider
     fixDef.friction    = Constants.torso.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ Constants.torso.collision_box.v1,
-                   Constants.torso.collision_box.v2,
-                   Constants.torso.collision_box.v3,
-                   Constants.torso.collision_box.v4 ]
-
-    fixDef.shape.SetAsArray(b2vertices)
+    Physics.create_shape(fixDef, Constants.torso.collision_box, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
@@ -101,7 +96,7 @@ class Rider
 
     bodyDef.userData = 'rider'
 
-    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -119,12 +114,7 @@ class Rider
     fixDef.friction    = Constants.lower_leg.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ Constants.lower_leg.collision_box.v1,
-                   Constants.lower_leg.collision_box.v2,
-                   Constants.lower_leg.collision_box.v3,
-                   Constants.lower_leg.collision_box.v4 ]
-
-    fixDef.shape.SetAsArray(b2vertices)
+    Physics.create_shape(fixDef, Constants.lower_leg.collision_box, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
@@ -138,7 +128,7 @@ class Rider
 
     bodyDef.userData = 'rider'
 
-    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -156,12 +146,7 @@ class Rider
     fixDef.friction    = Constants.upper_leg.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ Constants.upper_leg.collision_box.v1,
-                   Constants.upper_leg.collision_box.v2,
-                   Constants.upper_leg.collision_box.v3,
-                   Constants.upper_leg.collision_box.v4 ]
-
-    fixDef.shape.SetAsArray(b2vertices)
+    Physics.create_shape(fixDef, Constants.upper_leg.collision_box, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
@@ -175,7 +160,7 @@ class Rider
 
     bodyDef.userData = 'rider'
 
-    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -193,12 +178,7 @@ class Rider
     fixDef.friction    = Constants.lower_arm.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ Constants.lower_arm.collision_box.v1,
-                   Constants.lower_arm.collision_box.v2,
-                   Constants.lower_arm.collision_box.v3,
-                   Constants.lower_arm.collision_box.v4 ]
-
-    fixDef.shape.SetAsArray(b2vertices)
+    Physics.create_shape(fixDef, Constants.lower_arm.collision_box, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
@@ -212,7 +192,7 @@ class Rider
 
     bodyDef.userData = 'rider'
 
-    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -230,12 +210,7 @@ class Rider
     fixDef.friction    = Constants.upper_arm.friction
     fixDef.filter.groupIndex = -1
 
-    b2vertices = [ Constants.upper_arm.collision_box.v1,
-                   Constants.upper_arm.collision_box.v2,
-                   Constants.upper_arm.collision_box.v3,
-                   Constants.upper_arm.collision_box.v4 ]
-
-    fixDef.shape.SetAsArray(b2vertices)
+    Physics.create_shape(fixDef, Constants.upper_arm.collision_box, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
@@ -249,7 +224,7 @@ class Rider
 
     bodyDef.userData = 'rider'
 
-    #bodyDef.type = b2Body.b2_dynamicBody
+    bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
@@ -258,11 +233,15 @@ class Rider
     body
 
   set_joint_commons: (joint) ->
-    joint.lowerAngle = -Math.PI/15
-    joint.upperAngle =  Math.PI/180
-    joint.enableLimit = true
+    if @mirror == 1
+      joint.lowerAngle     = - Math.PI/15
+      joint.upperAngle     =   Math.PI/180
+    else if @mirror == -1
+      joint.lowerAngle     = - Math.PI/180
+      joint.upperAngle     =   Math.PI/15
+    joint.enableLimit    = true
     joint.maxMotorTorque = 0
-    joint.enableMotor = true
+    joint.enableMotor    = true
 
   create_ankle_joint: ->
     position = @lower_leg.GetWorldCenter()

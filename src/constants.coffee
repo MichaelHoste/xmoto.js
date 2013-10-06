@@ -54,12 +54,12 @@ class Constants
   # MOTO JOINTS
 
   @left_suspension =
-    angle: new b2Vec2(0.1, 1)
+    angle: new b2Vec2(0.2, 1)
     lower_translation: -0.10
     upper_translation:  0.20
 
   @right_suspension =
-    angle: new b2Vec2(-0.1, 1)
+    angle: new b2Vec2(-0.2, 1)
     lower_translation: 0.00
     upper_translation: 0.20
 

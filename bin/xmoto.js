@@ -301,13 +301,13 @@
     };
 
     Constants.left_suspension = {
-      angle: new b2Vec2(0.1, 1),
+      angle: new b2Vec2(0.2, 1),
       lower_translation: -0.10,
       upper_translation: 0.20
     };
 
     Constants.right_suspension = {
-      angle: new b2Vec2(-0.1, 1),
+      angle: new b2Vec2(-0.2, 1),
       lower_translation: 0.00,
       upper_translation: 0.20
     };
@@ -816,18 +816,18 @@
     };
 
     Input.prototype.move_moto = function() {
-      var angle, articulation, articulations, force, moto, rider, torque, v, v_l, v_r, _i, _len, _results;
+      var force, moto, rider, v, v_l, v_r;
       force = 24.1;
       moto = this.level.moto;
       rider = moto.rider;
       if (this.up) {
-        moto.left_wheel.ApplyTorque(-force / 3);
+        moto.left_wheel.ApplyTorque(-moto.mirror * force / 3);
       }
       if (this.down) {
         v_r = moto.right_wheel.GetAngularVelocity();
-        moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.05 ? -v_r : void 0));
+        moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.001 ? -2 * v_r : void 0));
         v_l = moto.left_wheel.GetAngularVelocity();
-        moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.05 ? -v_l : void 0));
+        moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.001 ? -v_l : void 0));
       }
       if (this.left) {
         moto.body.ApplyTorque(force / 3.0);
@@ -844,19 +844,7 @@
       moto.left_prismatic_joint.SetMaxMotorForce(8 + Math.abs(800 * Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)));
       moto.left_prismatic_joint.SetMotorSpeed(-3 * moto.left_prismatic_joint.GetJointTranslation());
       moto.right_prismatic_joint.SetMaxMotorForce(4 + Math.abs(800 * Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)));
-      moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
-      articulations = [rider.ankle_joint, rider.wrist_joint, rider.knee_joint, rider.elbow_joint, rider.shoulder_joint, rider.hip_joint];
-      if (!this.left && !this.right) {
-        _results = [];
-        for (_i = 0, _len = articulations.length; _i < _len; _i++) {
-          articulation = articulations[_i];
-          angle = articulation.GetJointAngle();
-          torque = angle - Math.PI / 180;
-          articulation.SetMaxMotorTorque(torque / 2);
-          _results.push(articulation.SetMotorSpeed(torque / 2));
-        }
-        return _results;
-      }
+      return moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
     };
 
     return Input;
@@ -908,7 +896,7 @@
       this.input = new Input(this);
       this.replay = new Replay(this);
       this.ghost = new Ghost(this, null);
-      this.moto = new Moto(this, true);
+      this.moto = new Moto(this);
       this.infos = new Infos(this);
       this.sky = new Sky(this);
       this.blocks = new Blocks(this);
@@ -1012,7 +1000,7 @@
       this.ghost.current_frame = 0;
       this.replay = new Replay(this);
       this.moto.destroy();
-      this.moto = new Moto(this);
+      this.moto = new Moto(this, false);
       return this.moto.init();
     };
 
@@ -1153,7 +1141,7 @@
         level.input.move_moto();
         level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
-        return level.display(true);
+        return level.display(false);
       };
       return setInterval(update, 1000 / 60);
     });
@@ -1280,19 +1268,19 @@
     };
 
     Moto.prototype.create_body = function(x, y) {
-      var b2vertices, body, bodyDef, fixDef;
+      var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
       fixDef.density = Constants.body.density;
       fixDef.restitution = Constants.body.restitution;
       fixDef.friction = Constants.body.friction;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [Constants.body.collision_box.v1, Constants.body.collision_box.v2, Constants.body.collision_box.v3, Constants.body.collision_box.v4];
-      fixDef.shape.SetAsArray(b2vertices);
+      Physics.create_shape(fixDef, Constants.body.collision_box, this.mirror === -1);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.userData = 'moto';
+      bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
@@ -1310,44 +1298,45 @@
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.userData = 'moto';
+      bodyDef.type = b2Body.b2_dynamicBody;
       wheel = this.level.world.CreateBody(bodyDef);
       wheel.CreateFixture(fixDef);
       return wheel;
     };
 
     Moto.prototype.create_left_axle = function(x, y) {
-      var b2vertices, body, bodyDef, fixDef;
+      var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
       fixDef.density = Constants.left_axle.density;
       fixDef.restitution = Constants.left_axle.restitution;
       fixDef.friction = Constants.left_axle.friction;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [Constants.left_axle.collision_box.v1, Constants.left_axle.collision_box.v2, Constants.left_axle.collision_box.v3, Constants.left_axle.collision_box.v4];
-      fixDef.shape.SetAsArray(b2vertices);
+      Physics.create_shape(fixDef, Constants.left_axle.collision_box, this.mirror === -1);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.userData = 'moto';
+      bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
 
     Moto.prototype.create_right_axle = function(x, y) {
-      var b2vertices, body, bodyDef, fixDef;
+      var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
       fixDef.density = Constants.right_axle.density;
       fixDef.restitution = Constants.right_axle.restitution;
       fixDef.friction = Constants.right_axle.friction;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [Constants.right_axle.collision_box.v1, Constants.right_axle.collision_box.v2, Constants.right_axle.collision_box.v3, Constants.right_axle.collision_box.v4];
-      fixDef.shape.SetAsArray(b2vertices);
+      Physics.create_shape(fixDef, Constants.right_axle.collision_box, this.mirror === -1);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.userData = 'moto';
+      bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
@@ -1368,9 +1357,10 @@
     };
 
     Moto.prototype.create_left_prismatic_joint = function() {
-      var jointDef;
+      var angle, jointDef;
       jointDef = new b2PrismaticJointDef();
-      jointDef.Initialize(this.body, this.left_axle, this.left_axle.GetWorldCenter(), Constants.left_suspension.angle);
+      angle = Constants.left_suspension.angle;
+      jointDef.Initialize(this.body, this.left_axle, this.left_axle.GetWorldCenter(), new b2Vec2(this.mirror * angle.x, angle.y));
       jointDef.enableLimit = true;
       jointDef.lowerTranslation = Constants.left_suspension.lower_translation;
       jointDef.upperTranslation = Constants.left_suspension.upper_translation;
@@ -1380,9 +1370,10 @@
     };
 
     Moto.prototype.create_right_prismatic_joint = function() {
-      var jointDef;
+      var angle, jointDef;
       jointDef = new b2PrismaticJointDef();
-      jointDef.Initialize(this.body, this.right_axle, this.right_axle.GetWorldCenter(), Constants.right_suspension.angle);
+      angle = Constants.right_suspension.angle;
+      jointDef.Initialize(this.body, this.right_axle, this.right_axle.GetWorldCenter(), new b2Vec2(this.mirror * angle.x, angle.y));
       jointDef.enableLimit = true;
       jointDef.lowerTranslation = Constants.right_suspension.lower_translation;
       jointDef.upperTranslation = Constants.right_suspension.upper_translation;
@@ -1417,19 +1408,19 @@
 
     Moto.prototype.display_left_axle = function() {
       var angle, axle_thickness, distance, left_axle_adjusted_position, left_axle_position, left_wheel_position;
-      axle_thickness = 0.09;
+      axle_thickness = this.mirror * 0.09;
       left_wheel_position = this.left_wheel.GetPosition();
       left_wheel_position = {
-        x: left_wheel_position.x - axle_thickness / 2.0 - 0.00,
-        y: left_wheel_position.y - axle_thickness / 2.0 + 0.02
+        x: left_wheel_position.x - axle_thickness / 2.0,
+        y: left_wheel_position.y - 0.025
       };
       left_axle_position = {
-        x: -0.17,
+        x: -0.17 * this.mirror,
         y: -0.30
       };
       left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, this.body.GetAngle(), this.position());
       distance = Math2D.distance_between_points(left_wheel_position, left_axle_adjusted_position);
-      angle = Math2D.angle_between_points(left_axle_adjusted_position, left_wheel_position) + Math.PI / 2;
+      angle = Math2D.angle_between_points(left_axle_adjusted_position, left_wheel_position) + this.mirror * Math.PI / 2;
       this.level.ctx.save();
       this.level.ctx.translate(left_wheel_position.x, left_wheel_position.y);
       this.level.ctx.scale(1 * this.mirror, -1);
@@ -1440,19 +1431,19 @@
 
     Moto.prototype.display_right_axle = function() {
       var angle, axle_thickness, distance, right_axle_adjusted_position, right_axle_position, right_wheel_position;
-      axle_thickness = 0.09;
+      axle_thickness = this.mirror * 0.09;
       right_wheel_position = this.right_wheel.GetPosition();
       right_wheel_position = {
-        x: right_wheel_position.x + axle_thickness / 2.0 - 0.03,
-        y: right_wheel_position.y - axle_thickness / 2.0
+        x: right_wheel_position.x + axle_thickness / 2.0 - this.mirror * 0.03,
+        y: right_wheel_position.y - 0.045
       };
       right_axle_position = {
-        x: 0.54,
+        x: 0.54 * this.mirror,
         y: 0.025
       };
       right_axle_adjusted_position = Math2D.rotate_point(right_axle_position, this.body.GetAngle(), this.position());
       distance = Math2D.distance_between_points(right_wheel_position, right_axle_adjusted_position);
-      angle = Math2D.angle_between_points(right_axle_adjusted_position, right_wheel_position) + Math.PI / 2;
+      angle = Math2D.angle_between_points(right_axle_adjusted_position, right_wheel_position) + this.mirror * Math.PI / 2;
       this.level.ctx.save();
       this.level.ctx.translate(right_wheel_position.x, right_wheel_position.y);
       this.level.ctx.scale(1 * this.mirror, -1);
@@ -1528,11 +1519,17 @@
       return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
     };
 
-    Physics.flip_collisions = function(body) {
-      var new_vertices, vertices;
-      vertices = body.GetFixtureList().GetShape().GetVertices();
-      new_vertices = [new b2Vec2(-vertices[3].x, vertices[3].y), new b2Vec2(-vertices[2].x, vertices[2].y), new b2Vec2(-vertices[1].x, vertices[1].y), new b2Vec2(-vertices[0].x, vertices[0].y)];
-      return body.GetFixtureList().GetShape().SetAsArray(new_vertices);
+    Physics.create_shape = function(fix_def, collision_box, mirror) {
+      var b2vertices;
+      if (mirror == null) {
+        mirror = false;
+      }
+      if (mirror === false) {
+        b2vertices = [collision_box.v1, collision_box.v2, collision_box.v3, collision_box.v4];
+      } else {
+        b2vertices = [new b2Vec2(-collision_box.v4.x, collision_box.v4.y), new b2Vec2(-collision_box.v3.x, collision_box.v3.y), new b2Vec2(-collision_box.v2.x, collision_box.v2.y), new b2Vec2(-collision_box.v1.x, collision_box.v1.y)];
+      }
+      return fix_def.shape.SetAsArray(b2vertices);
     };
 
     return Physics;
@@ -1671,108 +1668,113 @@
     };
 
     Rider.prototype.create_torso = function(x, y) {
-      var b2vertices, body, bodyDef, fixDef;
+      var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
       fixDef.density = Constants.torso.density;
       fixDef.restitution = Constants.torso.restitution;
       fixDef.friction = Constants.torso.friction;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [Constants.torso.collision_box.v1, Constants.torso.collision_box.v2, Constants.torso.collision_box.v3, Constants.torso.collision_box.v4];
-      fixDef.shape.SetAsArray(b2vertices);
+      Physics.create_shape(fixDef, Constants.torso.collision_box, this.mirror === -1);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.torso.angle;
       bodyDef.userData = 'rider';
+      bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
 
     Rider.prototype.create_lower_leg = function(x, y) {
-      var b2vertices, body, bodyDef, fixDef;
+      var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
       fixDef.density = Constants.lower_leg.density;
       fixDef.restitution = Constants.lower_leg.restitution;
       fixDef.friction = Constants.lower_leg.friction;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [Constants.lower_leg.collision_box.v1, Constants.lower_leg.collision_box.v2, Constants.lower_leg.collision_box.v3, Constants.lower_leg.collision_box.v4];
-      fixDef.shape.SetAsArray(b2vertices);
+      Physics.create_shape(fixDef, Constants.lower_leg.collision_box, this.mirror === -1);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_leg.angle;
       bodyDef.userData = 'rider';
+      bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
 
     Rider.prototype.create_upper_leg = function(x, y) {
-      var b2vertices, body, bodyDef, fixDef;
+      var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
       fixDef.density = Constants.upper_leg.density;
       fixDef.restitution = Constants.upper_leg.restitution;
       fixDef.friction = Constants.upper_leg.friction;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [Constants.upper_leg.collision_box.v1, Constants.upper_leg.collision_box.v2, Constants.upper_leg.collision_box.v3, Constants.upper_leg.collision_box.v4];
-      fixDef.shape.SetAsArray(b2vertices);
+      Physics.create_shape(fixDef, Constants.upper_leg.collision_box, this.mirror === -1);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.upper_leg.angle;
       bodyDef.userData = 'rider';
+      bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
 
     Rider.prototype.create_lower_arm = function(x, y) {
-      var b2vertices, body, bodyDef, fixDef;
+      var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
       fixDef.density = Constants.lower_arm.density;
       fixDef.restitution = Constants.lower_arm.restitution;
       fixDef.friction = Constants.lower_arm.friction;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [Constants.lower_arm.collision_box.v1, Constants.lower_arm.collision_box.v2, Constants.lower_arm.collision_box.v3, Constants.lower_arm.collision_box.v4];
-      fixDef.shape.SetAsArray(b2vertices);
+      Physics.create_shape(fixDef, Constants.lower_arm.collision_box, this.mirror === -1);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_arm.angle;
       bodyDef.userData = 'rider';
+      bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
 
     Rider.prototype.create_upper_arm = function(x, y) {
-      var b2vertices, body, bodyDef, fixDef;
+      var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
       fixDef.density = Constants.upper_arm.density;
       fixDef.restitution = Constants.upper_arm.restitution;
       fixDef.friction = Constants.upper_arm.friction;
       fixDef.filter.groupIndex = -1;
-      b2vertices = [Constants.upper_arm.collision_box.v1, Constants.upper_arm.collision_box.v2, Constants.upper_arm.collision_box.v3, Constants.upper_arm.collision_box.v4];
-      fixDef.shape.SetAsArray(b2vertices);
+      Physics.create_shape(fixDef, Constants.upper_arm.collision_box, this.mirror === -1);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.upper_arm.angle;
       bodyDef.userData = 'rider';
+      bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
 
     Rider.prototype.set_joint_commons = function(joint) {
-      joint.lowerAngle = -Math.PI / 15;
-      joint.upperAngle = Math.PI / 180;
+      if (this.mirror === 1) {
+        joint.lowerAngle = -Math.PI / 15;
+        joint.upperAngle = Math.PI / 180;
+      } else if (this.mirror === -1) {
+        joint.lowerAngle = -Math.PI / 180;
+        joint.upperAngle = Math.PI / 15;
+      }
       joint.enableLimit = true;
       joint.maxMotorTorque = 0;
       return joint.enableMotor = true;

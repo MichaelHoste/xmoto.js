@@ -64,10 +64,14 @@ class Physics
     # Assign fixture to body and add body to 2D world
     @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
-  @flip_collisions: (body) ->
-    vertices = body.GetFixtureList().GetShape().GetVertices()
-    new_vertices = [ new b2Vec2(-vertices[3].x, vertices[3].y),
-                     new b2Vec2(-vertices[2].x, vertices[2].y),
-                     new b2Vec2(-vertices[1].x, vertices[1].y),
-                     new b2Vec2(-vertices[0].x, vertices[0].y) ]
-    body.GetFixtureList().GetShape().SetAsArray(new_vertices)
+  @create_shape: (fix_def, collision_box, mirror = false) ->
+    if mirror == false
+      b2vertices = [ collision_box.v1, collision_box.v2,
+                     collision_box.v3, collision_box.v4 ]
+    else
+      b2vertices = [ new b2Vec2(-collision_box.v4.x, collision_box.v4.y),
+                     new b2Vec2(-collision_box.v3.x, collision_box.v3.y),
+                     new b2Vec2(-collision_box.v2.x, collision_box.v2.y),
+                     new b2Vec2(-collision_box.v1.x, collision_box.v1.y) ]
+
+    fix_def.shape.SetAsArray(b2vertices)

@@ -25,7 +25,7 @@ class Level
     @ghost         = new Ghost(this, null)
 
     # Moto (level independant)
-    @moto          = new Moto(this, true)
+    @moto          = new Moto(this)
 
     # Level dependent objects
     @infos         = new Infos(this)
@@ -121,5 +121,5 @@ class Level
     @replay = new Replay(this)
 
     @moto.destroy()
-    @moto = new Moto(this)
+    @moto = new Moto(this, false)
     @moto.init()
