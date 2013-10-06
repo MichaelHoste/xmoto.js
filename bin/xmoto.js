@@ -798,7 +798,7 @@
           case 13:
             return _this.level.restart();
           case 32:
-            return _this.level.moto.flip();
+            return _this.level.flip_moto();
         }
       });
       return $(document).on('keyup', function(event) {
@@ -988,6 +988,114 @@
       return this.replay.add_frame();
     };
 
+    Level.prototype.flip_moto = function() {
+      var body, left_axle, left_wheel, lower_arm, lower_leg, mirror, right_axle, right_wheel, torso, upper_arm, upper_leg;
+      body = {
+        position: this.moto.body.GetPosition(),
+        angle: this.moto.body.GetAngle(),
+        linear: this.moto.body.GetLinearVelocity(),
+        angular: this.moto.body.GetAngularVelocity()
+      };
+      left_wheel = {
+        position: this.moto.left_wheel.GetPosition(),
+        angle: this.moto.left_wheel.GetAngle(),
+        linear: this.moto.left_wheel.GetLinearVelocity(),
+        angular: this.moto.left_wheel.GetAngularVelocity()
+      };
+      right_wheel = {
+        position: this.moto.right_wheel.GetPosition(),
+        angle: this.moto.right_wheel.GetAngle(),
+        linear: this.moto.right_wheel.GetLinearVelocity(),
+        angular: this.moto.right_wheel.GetAngularVelocity()
+      };
+      left_axle = {
+        position: this.moto.left_axle.GetPosition(),
+        angle: this.moto.left_axle.GetAngle(),
+        linear: this.moto.left_axle.GetLinearVelocity(),
+        angular: this.moto.left_axle.GetAngularVelocity()
+      };
+      right_axle = {
+        position: this.moto.right_axle.GetPosition(),
+        angle: this.moto.right_axle.GetAngle(),
+        linear: this.moto.right_axle.GetLinearVelocity(),
+        angular: this.moto.right_axle.GetAngularVelocity()
+      };
+      torso = {
+        position: this.moto.rider.torso.GetPosition(),
+        angle: this.moto.rider.torso.GetAngle(),
+        linear: this.moto.rider.torso.GetLinearVelocity(),
+        angular: this.moto.rider.torso.GetAngularVelocity()
+      };
+      lower_leg = {
+        position: this.moto.rider.lower_leg.GetPosition(),
+        angle: this.moto.rider.lower_leg.GetAngle(),
+        linear: this.moto.rider.lower_leg.GetLinearVelocity(),
+        angular: this.moto.rider.lower_leg.GetAngularVelocity()
+      };
+      upper_leg = {
+        position: this.moto.rider.upper_leg.GetPosition(),
+        angle: this.moto.rider.upper_leg.GetAngle(),
+        linear: this.moto.rider.upper_leg.GetLinearVelocity(),
+        angular: this.moto.rider.upper_leg.GetAngularVelocity()
+      };
+      lower_arm = {
+        position: this.moto.rider.lower_arm.GetPosition(),
+        angle: this.moto.rider.lower_arm.GetAngle(),
+        linear: this.moto.rider.lower_arm.GetLinearVelocity(),
+        angular: this.moto.rider.lower_arm.GetAngularVelocity()
+      };
+      upper_arm = {
+        position: this.moto.rider.upper_arm.GetPosition(),
+        angle: this.moto.rider.upper_arm.GetAngle(),
+        linear: this.moto.rider.upper_arm.GetLinearVelocity(),
+        angular: this.moto.rider.upper_arm.GetAngularVelocity()
+      };
+      mirror = this.moto.mirror === 1;
+      this.moto.destroy();
+      this.moto = new Moto(this, mirror);
+      this.moto.init();
+      this.moto.body.SetPosition(body.position);
+      this.moto.body.SetAngle(body.angle);
+      this.moto.body.SetLinearVelocity(body.linear);
+      this.moto.body.SetAngularVelocity(body.angular);
+      this.moto.left_wheel.SetPosition(right_wheel.position);
+      this.moto.left_wheel.SetAngle(left_wheel.angle);
+      this.moto.left_wheel.SetLinearVelocity(left_wheel.linear);
+      this.moto.left_wheel.SetAngularVelocity(left_wheel.angular);
+      this.moto.right_wheel.SetPosition(left_wheel.position);
+      this.moto.right_wheel.SetAngle(right_wheel.angle);
+      this.moto.right_wheel.SetLinearVelocity(right_wheel.linear);
+      this.moto.right_wheel.SetAngularVelocity(right_wheel.angular);
+      this.moto.left_axle.SetPosition(left_axle.position);
+      this.moto.left_axle.SetAngle(left_axle.angle);
+      this.moto.left_axle.SetLinearVelocity(left_axle.linear);
+      this.moto.left_axle.SetAngularVelocity(left_axle.angular);
+      this.moto.right_axle.SetPosition(right_axle.position);
+      this.moto.right_axle.SetAngle(right_axle.angle);
+      this.moto.right_axle.SetLinearVelocity(right_axle.linear);
+      this.moto.right_axle.SetAngularVelocity(right_axle.angular);
+      this.moto.rider.torso.SetPosition(torso.position);
+      this.moto.rider.torso.SetAngle(torso.angle);
+      this.moto.rider.torso.SetLinearVelocity(torso.linear);
+      this.moto.rider.torso.SetAngularVelocity(torso.angular);
+      this.moto.rider.lower_leg.SetPosition(lower_leg.position);
+      this.moto.rider.lower_leg.SetAngle(lower_leg.angle);
+      this.moto.rider.lower_leg.SetLinearVelocity(lower_leg.linear);
+      this.moto.rider.lower_leg.SetAngularVelocity(lower_leg.angular);
+      this.moto.rider.upper_leg.SetPosition(upper_leg.position);
+      this.moto.rider.upper_leg.SetAngle(upper_leg.angle);
+      this.moto.rider.upper_leg.SetLinearVelocity(upper_leg.linear);
+      this.moto.rider.upper_leg.SetAngularVelocity(upper_leg.angular);
+      this.moto.rider.lower_arm.SetPosition(lower_arm.position);
+      this.moto.rider.lower_arm.SetAngle(lower_arm.angle);
+      this.moto.rider.lower_arm.SetLinearVelocity(lower_arm.linear);
+      this.moto.rider.lower_arm.SetAngularVelocity(lower_arm.angular);
+      this.moto.rider.upper_arm.SetPosition(upper_arm.position);
+      this.moto.rider.upper_arm.SetAngle(upper_arm.angle);
+      this.moto.rider.upper_arm.SetLinearVelocity(upper_arm.linear);
+      return this.moto.rider.upper_arm.SetAngularVelocity(upper_arm.angular);
+    };
+
     Level.prototype.restart = function(save_replay) {
       if (save_replay == null) {
         save_replay = false;
@@ -1134,7 +1242,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l3.lvl');
+    level.load_from_file('l1038.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
