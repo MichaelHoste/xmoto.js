@@ -1076,7 +1076,7 @@
       this.moto.right_axle.SetAngle(right_axle.angle);
       this.moto.right_axle.SetLinearVelocity(right_axle.linear);
       this.moto.right_axle.SetAngularVelocity(right_axle.angular);
-      this.moto.rider.torso.SetPosition(new b2Vec2(torso.position.x + this.moto.mirror * 2 * Constants.torso.position.x, torso.position.y));
+      this.moto.rider.torso.SetPosition(torso.position);
       this.moto.rider.torso.SetAngle(torso.angle);
       this.moto.rider.torso.SetLinearVelocity(torso.linear);
       this.moto.rider.torso.SetAngularVelocity(torso.angular);
@@ -1244,7 +1244,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l1287.lvl');
+    level.load_from_file('l1041.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {

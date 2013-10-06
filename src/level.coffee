@@ -206,7 +206,7 @@ class Level
     @moto.right_axle     .SetLinearVelocity(right_axle.linear)
     @moto.right_axle     .SetAngularVelocity(right_axle.angular)
 
-    @moto.rider.torso    .SetPosition(new b2Vec2(torso.position.x + @moto.mirror * 2 * Constants.torso.position.x, torso.position.y))
+    @moto.rider.torso    .SetPosition(torso.position)
     @moto.rider.torso    .SetAngle(torso.angle)
     @moto.rider.torso    .SetLinearVelocity(torso.linear)
     @moto.rider.torso    .SetAngularVelocity(torso.angular)
