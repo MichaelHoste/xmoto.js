@@ -1,3 +1,5 @@
+b2Vec2 = Box2D.Common.Math.b2Vec2
+
 class Level
 
   constructor: ->
@@ -95,9 +97,9 @@ class Level
     @ctx.save()
 
     # initialize position of camera
-    @ctx.translate(@canvas_width/2, @canvas_height/2)                 # Center of canvas
-    @ctx.scale(@scale.x, @scale.y)                                    # Scale (zoom)
-    @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25)   # Camera on moto
+    @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
+    @ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
+    @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
 
     @sky     .display(@ctx)
     @limits  .display(@ctx)
@@ -204,27 +206,27 @@ class Level
     @moto.right_axle     .SetLinearVelocity(right_axle.linear)
     @moto.right_axle     .SetAngularVelocity(right_axle.angular)
 
-    @moto.rider.torso    .SetPosition(torso.position)
+    @moto.rider.torso    .SetPosition(new b2Vec2(torso.position.x + @moto.mirror * 2 * Constants.torso.position.x, torso.position.y))
     @moto.rider.torso    .SetAngle(torso.angle)
     @moto.rider.torso    .SetLinearVelocity(torso.linear)
     @moto.rider.torso    .SetAngularVelocity(torso.angular)
 
-    @moto.rider.lower_leg.SetPosition(lower_leg.position  )
+    @moto.rider.lower_leg.SetPosition(lower_leg.position)
     @moto.rider.lower_leg.SetAngle(lower_leg.angle)
     @moto.rider.lower_leg.SetLinearVelocity(lower_leg.linear)
     @moto.rider.lower_leg.SetAngularVelocity(lower_leg.angular)
 
-    @moto.rider.upper_leg.SetPosition(upper_leg.position  )
+    @moto.rider.upper_leg.SetPosition(upper_leg.position)
     @moto.rider.upper_leg.SetAngle(upper_leg.angle)
     @moto.rider.upper_leg.SetLinearVelocity(upper_leg.linear)
     @moto.rider.upper_leg.SetAngularVelocity(upper_leg.angular)
 
-    @moto.rider.lower_arm.SetPosition(lower_arm.position  )
+    @moto.rider.lower_arm.SetPosition(lower_arm.position)
     @moto.rider.lower_arm.SetAngle(lower_arm.angle)
     @moto.rider.lower_arm.SetLinearVelocity(lower_arm.linear)
     @moto.rider.lower_arm.SetAngularVelocity(lower_arm.angular)
 
-    @moto.rider.upper_arm.SetPosition(upper_arm.position  )
+    @moto.rider.upper_arm.SetPosition(upper_arm.position)
     @moto.rider.upper_arm.SetAngle(upper_arm.angle)
     @moto.rider.upper_arm.SetLinearVelocity(upper_arm.linear)
     @moto.rider.upper_arm.SetAngularVelocity(upper_arm.angular)

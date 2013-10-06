@@ -99,6 +99,8 @@ class Input
     moto.right_prismatic_joint.SetMaxMotorForce(4+Math.abs(800*Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)))
     moto.right_prismatic_joint.SetMotorSpeed(-3*moto.right_prismatic_joint.GetJointTranslation())
 
+    # No more articulation feedback, gravity does its job !
+
     #articulations = [ rider.ankle_joint, rider.wrist_joint, rider.knee_joint,
     #                  rider.elbow_joint, rider.shoulder_joint, rider.hip_joint ]
     #
