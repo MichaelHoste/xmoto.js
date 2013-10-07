@@ -83,6 +83,9 @@ class Level
       b = contact.GetFixtureB().GetBody().GetUserData()
       if (a == 'moto' and b == 'end_of_level') || (a == 'rider' and b == 'end_of_level')
         @need_to_restart = true
+      else if a == 'rider' and b == 'ground'
+        @world.DestroyJoint(@moto.rider.ankle_joint)
+        @world.DestroyJoint(@moto.rider.wrist_joint)
 
     @world.SetContactListener(listener)
 

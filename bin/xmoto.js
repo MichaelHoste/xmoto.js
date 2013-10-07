@@ -384,6 +384,9 @@
         b = contact.GetFixtureB().GetBody().GetUserData();
         if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
           return _this.need_to_restart = true;
+        } else if (a === 'rider' && b === 'ground') {
+          _this.world.DestroyJoint(_this.moto.rider.ankle_joint);
+          return _this.world.DestroyJoint(_this.moto.rider.wrist_joint);
         }
       };
       return this.world.SetContactListener(listener);
@@ -532,7 +535,7 @@
       _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         triangle = _ref1[_j];
-        _results.push(this.level.physics.createPolygon(triangle));
+        _results.push(this.level.physics.createPolygon(triangle, 'ground'));
       }
       return _results;
     };
@@ -872,7 +875,7 @@
         x: this.player.left,
         y: this.screen.top * 5
       });
-      this.level.physics.createPolygon(vertices);
+      this.level.physics.createPolygon(vertices, 'ground');
       vertices = [];
       vertices.push({
         x: this.player.right,
@@ -890,7 +893,7 @@
         x: this.screen.right,
         y: this.screen.top * 5
       });
-      this.level.physics.createPolygon(vertices);
+      this.level.physics.createPolygon(vertices, 'ground');
       vertices = [];
       vertices.push({
         x: this.player.right,
@@ -908,7 +911,7 @@
         x: this.player.right,
         y: this.screen.bottom
       });
-      return this.level.physics.createPolygon(vertices);
+      return this.level.physics.createPolygon(vertices, 'ground');
     };
 
     Limits.prototype.display = function(ctx) {
@@ -1596,7 +1599,7 @@
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_leg.angle;
-      bodyDef.userData = 'rider';
+      bodyDef.userData = 'rider-lower_leg';
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1861,7 +1864,7 @@
       this.world;
     }
 
-    Physics.prototype.createPolygon = function(vertices) {
+    Physics.prototype.createPolygon = function(vertices, name) {
       var b2vertices, bodyDef, fixDef, vertex, _i, _len;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
@@ -1877,6 +1880,7 @@
       bodyDef = new b2BodyDef();
       bodyDef.position.x = 0;
       bodyDef.position.y = 0;
+      bodyDef.userData = name;
       bodyDef.type = b2Body.b2_staticBody;
       return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
     };

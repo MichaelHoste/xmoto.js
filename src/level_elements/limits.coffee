@@ -40,7 +40,7 @@ class Limits
     vertices.push({ x: @screen.left, y: @screen.bottom })
     vertices.push({ x: @player.left, y: @screen.bottom })
     vertices.push({ x: @player.left, y: @screen.top * 5})
-    @level.physics.createPolygon(vertices)
+    @level.physics.createPolygon(vertices, 'ground')
 
     # Right
     vertices = []
@@ -48,7 +48,7 @@ class Limits
     vertices.push({ x: @player.right, y: @screen.bottom })
     vertices.push({ x: @screen.right, y: @screen.bottom })
     vertices.push({ x: @screen.right, y: @screen.top * 5})
-    @level.physics.createPolygon(vertices)
+    @level.physics.createPolygon(vertices, 'ground')
 
     # Bottom
     vertices = []
@@ -56,7 +56,7 @@ class Limits
     vertices.push({ x: @player.left,  y: @player.bottom })
     vertices.push({ x: @player.left,  y: @screen.bottom })
     vertices.push({ x: @player.right, y: @screen.bottom })
-    @level.physics.createPolygon(vertices)
+    @level.physics.createPolygon(vertices, 'ground')
 
   display: (ctx) ->
     # Left border

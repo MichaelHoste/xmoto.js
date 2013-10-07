@@ -37,7 +37,7 @@ class Physics
 
     @world
 
-  createPolygon: (vertices) ->
+  createPolygon: (vertices, name) ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
@@ -58,6 +58,8 @@ class Physics
     # Assign body position
     bodyDef.position.x = 0
     bodyDef.position.y = 0
+
+    bodyDef.userData = name
 
     bodyDef.type = b2Body.b2_staticBody
 
