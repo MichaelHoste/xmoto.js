@@ -270,12 +270,12 @@ class Moto
     @level.ctx.restore()
 
   display_left_axle: ->
-    axle_thickness = @mirror * 0.09
+    axle_thickness = 0.09
 
     # Position
     left_wheel_position = @left_wheel.GetPosition()
     left_wheel_position =
-      x: left_wheel_position.x - axle_thickness/2.0
+      x: left_wheel_position.x - @mirror * axle_thickness/2.0
       y: left_wheel_position.y - 0.025
 
     # Position relative to center of body
@@ -309,12 +309,12 @@ class Moto
     @level.ctx.restore()
 
   display_right_axle: ->
-    axle_thickness = @mirror * 0.09
+    axle_thickness = 0.09
 
     # Position
     right_wheel_position = @right_wheel.GetPosition()
     right_wheel_position =
-      x: right_wheel_position.x + axle_thickness/2.0 - @mirror * 0.03
+      x: right_wheel_position.x + @mirror * axle_thickness/2.0 - @mirror * 0.03
       y: right_wheel_position.y - 0.045
 
     # Position relative to center of body

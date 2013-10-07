@@ -131,7 +131,7 @@
 		<position x="-71.449043" y="11.940540"/>
 		<param name="z" value="-1"/>
 		<param name="name" value="Tree1"/>
-	</entity>	
+	</entity>
 	<zone id="FirstZone">
 		<box left="36.000000" right="41.000000" top="36.000000" bottom="-20.000000"/>
 	</zone>
