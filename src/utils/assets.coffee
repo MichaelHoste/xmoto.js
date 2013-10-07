@@ -2,7 +2,7 @@ class Assets
 
   constructor: ->
     @queue = new createjs.LoadQueue()
-    #@theme = new Theme('modern.xml')
+    @theme = new Theme('modern.xml')
     @textures = [] # texture list
     @anims    = [] # anim lists
     @moto     = [] # moto list
@@ -19,7 +19,6 @@ class Assets
       items.push(
         id:   item
         src:  "data/Textures/Anims/#{item}.png"
-#        data: @theme.sprite_params(item)
       )
     for item in @moto
       items.push(

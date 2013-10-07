@@ -407,8 +407,8 @@
       this.ctx.translate(-this.moto.position().x, -this.moto.position().y - 0.25);
       this.sky.display(this.ctx);
       this.limits.display(this.ctx);
-      this.blocks.display(this.ctx);
       this.entities.display(this.ctx);
+      this.blocks.display(this.ctx);
       this.moto.display(this.ctx);
       if (this.ghost) {
         this.ghost.display(this.ctx);
@@ -622,7 +622,7 @@
     }
 
     Entities.prototype.parse = function(xml) {
-      var entity, param, xml_entities, xml_entity, xml_param, xml_params, _i, _j, _len, _len1;
+      var entity, param, sprite, xml_entities, xml_entity, xml_param, xml_params, _i, _j, _k, _len, _len1, _len2, _ref;
       xml_entities = $(xml).find('entity');
       for (_i = 0, _len = xml_entities.length; _i < _len; _i++) {
         xml_entity = xml_entities[_i];
@@ -649,6 +649,25 @@
             value: $(xml_param).attr('value').toLowerCase()
           };
           entity.params.push(param);
+        }
+        if (entity.type_id === 'Sprite') {
+          _ref = entity.params;
+          for (_k = 0, _len2 = _ref.length; _k < _len2; _k++) {
+            param = _ref[_k];
+            if (param.name === 'name') {
+              sprite = this.assets.theme.sprite_params(param.value);
+              entity['center'] = {
+                x: sprite ? sprite.center.x : void 0,
+                y: sprite ? sprite.center.y : void 0
+              };
+              if (!entity.size.width) {
+                entity.size.width = sprite.size.width;
+              }
+              if (!entity.size.height) {
+                entity.size.height = sprite.size.height;
+              }
+            }
+          }
         }
         this.list.push(entity);
       }
@@ -677,7 +696,7 @@
             return _results1;
           }).call(this));
         } else if (entity.type_id === 'EndOfLevel') {
-          this.assets.anims.push('checkball_00');
+          this.assets.anims.push('checkball');
           _results.push(this.end_of_level = this.create_end_of_level(entity));
         } else if (entity.type_id === 'PlayerStart') {
           _results.push(this.player_start = {
@@ -723,13 +742,13 @@
           ctx.save();
           ctx.translate(entity.position.x, entity.position.y);
           ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get(image), 0, -entity.size.r * 3, entity.size.r * 3, entity.size.r * 3);
+          ctx.drawImage(this.assets.get(image), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
           _results.push(ctx.restore());
         } else if (entity.type_id === 'EndOfLevel') {
           ctx.save();
           ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r);
           ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get('checkball_00'), 0, -entity.size.r * 2, entity.size.r * 2, entity.size.r * 2);
+          ctx.drawImage(this.assets.get('checkball'), 0, -entity.size.r * 2, entity.size.r * 2, entity.size.r * 2);
           _results.push(ctx.restore());
         } else {
           _results.push(void 0);
@@ -986,7 +1005,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l1041.lvl');
+    level.load_from_file('l74.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
@@ -1882,6 +1901,7 @@
   Assets = (function() {
     function Assets() {
       this.queue = new createjs.LoadQueue();
+      this.theme = new Theme('modern.xml');
       this.textures = [];
       this.anims = [];
       this.moto = [];
@@ -2103,9 +2123,45 @@
   })();
 
   Theme = (function() {
-    function Theme() {}
+    function Theme(file_name) {
+      this.sprites = [];
+      $.ajax({
+        type: "GET",
+        url: "data/Themes/" + file_name,
+        dataType: "xml",
+        success: this.load_theme,
+        async: false,
+        context: this
+      });
+    }
 
-    Theme.prototype.sprite_params = function(sprite) {};
+    Theme.prototype.load_theme = function(xml) {
+      var xml_sprite, xml_sprites, _i, _len, _results;
+      xml_sprites = $(xml).find('sprite');
+      _results = [];
+      for (_i = 0, _len = xml_sprites.length; _i < _len; _i++) {
+        xml_sprite = xml_sprites[_i];
+        if ($(xml_sprite).attr('type') === 'Entity') {
+          _results.push(this.sprites[$(xml_sprite).attr('name').toLowerCase()] = {
+            size: {
+              width: parseFloat($(xml_sprite).attr('width')),
+              height: parseFloat($(xml_sprite).attr('height'))
+            },
+            center: {
+              x: parseFloat($(xml_sprite).attr('centerX')),
+              y: parseFloat($(xml_sprite).attr('centerY'))
+            }
+          });
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Theme.prototype.sprite_params = function(name) {
+      return this.sprites[name];
+    };
 
     return Theme;
 
