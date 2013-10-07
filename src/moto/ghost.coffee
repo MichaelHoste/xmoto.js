@@ -9,6 +9,7 @@ class Ghost
   display: ->
     if @replay and @current_frame < @replay.frames_count()
       @frame = @replay.frame(@current_frame)
+      @mirror = if @frame.mirror then -1 else 1
 
       @display_left_wheel()
       @display_right_wheel()
@@ -91,8 +92,8 @@ class Ghost
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
-    @level.ctx.rotate(-angle)
+    @level.ctx.scale(1*@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
       @assets.get('ghostbikerbody'), # texture
@@ -116,8 +117,8 @@ class Ghost
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
-    @level.ctx.rotate(-angle)
+    @level.ctx.scale(1*@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
       @assets.get('ghosttorso'), # texture
@@ -141,8 +142,8 @@ class Ghost
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
-    @level.ctx.rotate(-angle)
+    @level.ctx.scale(1*@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
       @assets.get('ghostlowerleg'), # texture
@@ -166,8 +167,8 @@ class Ghost
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
-    @level.ctx.rotate(-angle)
+    @level.ctx.scale(1*@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
       @assets.get('ghostupperleg'), # texture
@@ -191,8 +192,8 @@ class Ghost
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, 1)
-    @level.ctx.rotate(angle)
+    @level.ctx.scale(1*@mirror, 1)
+    @level.ctx.rotate(@mirror * angle)
 
     @level.ctx.drawImage(
       @assets.get('ghostlowerarm'), # texture
@@ -216,8 +217,8 @@ class Ghost
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1, -1)
-    @level.ctx.rotate(-angle)
+    @level.ctx.scale(1*@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
       @assets.get('ghostupperarm'), # texture

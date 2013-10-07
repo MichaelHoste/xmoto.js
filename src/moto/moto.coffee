@@ -234,7 +234,7 @@ class Moto
     # Draw texture
     @level.ctx.save()
     @level.ctx.translate(position.x, position.y)
-    @level.ctx.rotate(@mirror*angle)
+    @level.ctx.rotate(angle)
 
     @level.ctx.drawImage(
       @assets.get('playerbikerwheel'), # texture
