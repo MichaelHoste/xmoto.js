@@ -10,6 +10,7 @@ class Entities
   parse: (xml) ->
     xml_entities = $(xml).find('entity')
 
+    # parse entity xml
     for xml_entity in xml_entities
       entity =
         id:      $(xml_entity).attr('id')
@@ -24,6 +25,7 @@ class Entities
           angle: parseFloat($(xml_entity).find('position').attr('angle'))
         params: []
 
+      # parse params xml
       xml_params = $(xml_entity).find('param')
       for xml_param in xml_params
         param =
@@ -41,6 +43,11 @@ class Entities
               y: sprite.center.y if sprite
             entity.size.width  = sprite.size.width  if not entity.size.width
             entity.size.height = sprite.size.height if not entity.size.height
+
+      else if entity.type_id == 'EndOfLevel'
+        sprite = @assets.theme.sprite_params('checkball')
+        entity.size.width  = sprite.size.width  if not entity.size.width
+        entity.size.height = sprite.size.height if not entity.size.height
 
       @list.push(entity)
 
@@ -94,15 +101,12 @@ class Entities
 
       # Sprites
       if entity.type_id == 'Sprite'
-
-        for param in entity.params
-          if param.name == 'name'
-            image = param.value
+        texture_name = Entities.texture_name(entity)
 
         ctx.save()
         ctx.translate(entity.position.x, entity.position.y)
         ctx.scale(1, -1)
-        ctx.drawImage(@assets.get(image),
+        ctx.drawImage(@assets.get(texture_name),
                       -entity.size.width  + entity.center.x,
                       -entity.size.height + entity.center.y,
                       entity.size.width,
@@ -111,8 +115,19 @@ class Entities
 
       # End of Level
       else if entity.type_id == 'EndOfLevel'
+        texture_name = 'checkball'
+
         ctx.save()
-        ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r)
+        ctx.translate(entity.position.x, entity.position.y)
         ctx.scale(1, -1)
-        ctx.drawImage(@assets.get('checkball'), 0, -entity.size.r*2, entity.size.r*2, entity.size.r*2)
+        ctx.drawImage(@assets.get(texture_name),
+                      -entity.size.width/2,
+                      -entity.size.height/2,
+                      entity.size.width,
+                      entity.size.height)
         ctx.restore()
+
+  @texture_name = (entity) ->
+    for param in entity.params
+      if param.name == 'name'
+        return param.value

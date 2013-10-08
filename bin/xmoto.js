@@ -671,6 +671,14 @@
               }
             }
           }
+        } else if (entity.type_id === 'EndOfLevel') {
+          sprite = this.assets.theme.sprite_params('checkball');
+          if (!entity.size.width) {
+            entity.size.width = sprite.size.width;
+          }
+          if (!entity.size.height) {
+            entity.size.height = sprite.size.height;
+          }
         }
         this.list.push(entity);
       }
@@ -729,35 +737,41 @@
     };
 
     Entities.prototype.display = function(ctx) {
-      var entity, image, param, _i, _j, _len, _len1, _ref, _ref1, _results;
+      var entity, texture_name, _i, _len, _ref, _results;
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
         if (entity.type_id === 'Sprite') {
-          _ref1 = entity.params;
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            param = _ref1[_j];
-            if (param.name === 'name') {
-              image = param.value;
-            }
-          }
+          texture_name = Entities.texture_name(entity);
           ctx.save();
           ctx.translate(entity.position.x, entity.position.y);
           ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get(image), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
+          ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
           _results.push(ctx.restore());
         } else if (entity.type_id === 'EndOfLevel') {
+          texture_name = 'checkball';
           ctx.save();
-          ctx.translate(entity.position.x - entity.size.r, entity.position.y - entity.size.r);
+          ctx.translate(entity.position.x, entity.position.y);
           ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get('checkball'), 0, -entity.size.r * 2, entity.size.r * 2, entity.size.r * 2);
+          ctx.drawImage(this.assets.get(texture_name), -entity.size.width / 2, -entity.size.height / 2, entity.size.width, entity.size.height);
           _results.push(ctx.restore());
         } else {
           _results.push(void 0);
         }
       }
       return _results;
+    };
+
+    Entities.texture_name = function(entity) {
+      var param, _i, _len, _ref;
+      _ref = entity.params;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        param = _ref[_i];
+        if (param.name === 'name') {
+          return param.value;
+        }
+      }
     };
 
     return Entities;
@@ -1008,7 +1022,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l74.lvl');
+    level.load_from_file('l3.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
