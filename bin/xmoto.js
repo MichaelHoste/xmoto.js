@@ -553,27 +553,26 @@
         vertex = _ref[_j];
         vertices.push(new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y));
       }
-      if (!Math2D.invalid_shape(vertices)) {
-        triangulation = new poly2tri.SweepContext(vertices, {
-          cloneArrays: true
-        });
-        triangulation.triangulate();
-        set_of_triangles = triangulation.getTriangles();
-        for (_k = 0, _len2 = set_of_triangles.length; _k < _len2; _k++) {
-          triangle = set_of_triangles[_k];
-          triangles.push([
-            {
-              x: triangle.points_[0].x,
-              y: triangle.points_[0].y
-            }, {
-              x: triangle.points_[1].x,
-              y: triangle.points_[1].y
-            }, {
-              x: triangle.points_[2].x,
-              y: triangle.points_[2].y
-            }
-          ]);
-        }
+      Math2D.not_collinear_vertices(vertices);
+      triangulation = new poly2tri.SweepContext(vertices, {
+        cloneArrays: true
+      });
+      triangulation.triangulate();
+      set_of_triangles = triangulation.getTriangles();
+      for (_k = 0, _len2 = set_of_triangles.length; _k < _len2; _k++) {
+        triangle = set_of_triangles[_k];
+        triangles.push([
+          {
+            x: triangle.points_[0].x,
+            y: triangle.points_[0].y
+          }, {
+            x: triangle.points_[1].x,
+            y: triangle.points_[1].y
+          }, {
+            x: triangle.points_[2].x,
+            y: triangle.points_[2].y
+          }
+        ]);
       }
     }
     return triangles;
@@ -1076,7 +1075,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l1043.lvl');
+    level.load_from_file('l374.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
@@ -2083,12 +2082,19 @@
       };
     };
 
-    Math2D.invalid_shape = function(vertices) {
-      var vertex, _i, _len;
-      for (_i = 0, _len = vertices.length; _i < _len; _i++) {
-        vertex = vertices[_i];
-        vertex.x = vertex.x + 0.5 / 100 - Math.random() / 100;
-        vertex.y = vertex.y + 0.5 / 100 - Math.random() / 100;
+    Math2D.not_collinear_vertices = function(vertices) {
+      var i, size, vertex, _i, _len;
+      size = vertices.length;
+      for (i = _i = 0, _len = vertices.length; _i < _len; i = ++_i) {
+        vertex = vertices[i];
+        if (vertex.x === vertices[(i + 1) % size].x && vertices[(i + 2) % size].x) {
+          vertex.x = vertex.x + 0.001;
+          vertices[(i + 1) % size].x = vertex.x - 0.001;
+        }
+        if (vertex.y === vertices[(i + 1) % size].y && vertices[(i + 2) % size].y) {
+          vertex.y = vertex.y + 0.001;
+          vertices[(i + 1) % size].y = vertex.y - 0.001;
+        }
       }
       return false;
     };
