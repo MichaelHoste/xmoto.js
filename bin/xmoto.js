@@ -348,16 +348,18 @@
         var a, b;
         a = contact.GetFixtureA().GetBody().GetUserData();
         b = contact.GetFixtureB().GetBody().GetUserData();
-        if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
-          return _this.need_to_restart = true;
-        } else if (a === 'rider' && b === 'ground') {
-          _this.moto.dead = true;
-          _this.world.DestroyJoint(_this.moto.rider.ankle_joint);
-          _this.world.DestroyJoint(_this.moto.rider.wrist_joint);
-          _this.moto.rider.knee_joint.m_lowerAngle = _this.moto.rider.knee_joint.m_lowerAngle * 1.5;
-          _this.moto.rider.elbow_joint.m_upperAngle = _this.moto.rider.elbow_joint.m_upperAngle * 1.5;
-          _this.moto.rider.shoulder_joint.m_upperAngle = _this.moto.rider.shoulder_joint.m_upperAngle * 1.5;
-          return _this.moto.rider.hip_joint.m_lowerAngle = _this.moto.rider.hip_joint.m_lowerAngle * 1.5;
+        if (!_this.moto.dead) {
+          if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
+            return _this.need_to_restart = true;
+          } else if (a === 'rider' && b === 'ground') {
+            _this.moto.dead = true;
+            _this.world.DestroyJoint(_this.moto.rider.ankle_joint);
+            _this.world.DestroyJoint(_this.moto.rider.wrist_joint);
+            _this.moto.rider.knee_joint.m_lowerAngle = _this.moto.rider.knee_joint.m_lowerAngle * 1.5;
+            _this.moto.rider.elbow_joint.m_upperAngle = _this.moto.rider.elbow_joint.m_upperAngle * 1.5;
+            _this.moto.rider.shoulder_joint.m_upperAngle = _this.moto.rider.shoulder_joint.m_upperAngle * 1.5;
+            return _this.moto.rider.hip_joint.m_lowerAngle = _this.moto.rider.hip_joint.m_lowerAngle * 1.5;
+          }
         }
       };
       return this.world.SetContactListener(listener);
@@ -551,25 +553,27 @@
         vertex = _ref[_j];
         vertices.push(new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y));
       }
-      triangulation = new poly2tri.SweepContext(vertices, {
-        cloneArrays: true
-      });
-      triangulation.triangulate();
-      set_of_triangles = triangulation.getTriangles();
-      for (_k = 0, _len2 = set_of_triangles.length; _k < _len2; _k++) {
-        triangle = set_of_triangles[_k];
-        triangles.push([
-          {
-            x: triangle.points_[0].x,
-            y: triangle.points_[0].y
-          }, {
-            x: triangle.points_[1].x,
-            y: triangle.points_[1].y
-          }, {
-            x: triangle.points_[2].x,
-            y: triangle.points_[2].y
-          }
-        ]);
+      if (!Math2D.invalid_shape(vertices)) {
+        triangulation = new poly2tri.SweepContext(vertices, {
+          cloneArrays: true
+        });
+        triangulation.triangulate();
+        set_of_triangles = triangulation.getTriangles();
+        for (_k = 0, _len2 = set_of_triangles.length; _k < _len2; _k++) {
+          triangle = set_of_triangles[_k];
+          triangles.push([
+            {
+              x: triangle.points_[0].x,
+              y: triangle.points_[0].y
+            }, {
+              x: triangle.points_[1].x,
+              y: triangle.points_[1].y
+            }, {
+              x: triangle.points_[2].x,
+              y: triangle.points_[2].y
+            }
+          ]);
+        }
       }
     }
     return triangles;
@@ -1072,7 +1076,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l1042.lvl');
+    level.load_from_file('l1043.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
@@ -2077,6 +2081,16 @@
         x: rotation_axe.x + point.x * Math.cos(angle) - point.y * Math.sin(angle),
         y: rotation_axe.y + point.x * Math.sin(angle) + point.y * Math.cos(angle)
       };
+    };
+
+    Math2D.invalid_shape = function(vertices) {
+      var vertex, _i, _len;
+      for (_i = 0, _len = vertices.length; _i < _len; _i++) {
+        vertex = vertices[_i];
+        vertex.x = vertex.x + 0.5 / 100 - Math.random() / 100;
+        vertex.y = vertex.y + 0.5 / 100 - Math.random() / 100;
+      }
+      return false;
     };
 
     return Math2D;

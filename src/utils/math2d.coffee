@@ -27,3 +27,10 @@ class Math2D
     new_point =
       x: rotation_axe.x + point.x * Math.cos(angle) - point.y * Math.sin(angle)
       y: rotation_axe.y + point.x * Math.sin(angle) + point.y * Math.cos(angle)
+
+  @invalid_shape: (vertices) ->
+    for vertex in vertices
+      vertex.x = vertex.x + 0.5/100 - Math.random()/100
+      vertex.y = vertex.y + 0.5/100 - Math.random()/100
+
+    false
