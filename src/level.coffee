@@ -113,8 +113,9 @@ class Level
 
     @sky     .display(@ctx)
     @limits  .display(@ctx)
-    @entities.display(@ctx)
+    @entities.display_sprites(@ctx)
     @blocks  .display(@ctx)
+    @entities.display_items(@ctx)
     @moto    .display(@ctx)
     @ghost   .display(@ctx) if @ghost
 

@@ -58,40 +58,43 @@ class Input
     )
 
   move_moto: ->
-    return false if @level.moto.dead
-
     force = 24.1
     moto  = @level.moto
     rider = moto.rider
 
-    # Accelerate
-    if @up
-      moto.left_wheel.ApplyTorque(- moto.mirror * force/3)
+    if not @level.moto.dead
+      # Accelerate
+      if @up
+        moto.left_wheel.ApplyTorque(- moto.mirror * force/3)
 
-    # Brakes
-    if @down
-      # block right wheel velocity
-      v_r = moto.right_wheel.GetAngularVelocity()
-      moto.right_wheel.ApplyTorque((if Math.abs(v_r) >= 0.001 then -2*v_r))
+      # Brakes
+      if @down
+        # block right wheel velocity
+        v_r = moto.right_wheel.GetAngularVelocity()
+        moto.right_wheel.ApplyTorque((if Math.abs(v_r) >= 0.001 then -2*v_r))
 
-      # block left wheel velocity
-      v_l = moto.left_wheel.GetAngularVelocity()
-      moto.left_wheel.ApplyTorque((if Math.abs(v_l) >= 0.001 then -v_l))
+        # block left wheel velocity
+        v_l = moto.left_wheel.GetAngularVelocity()
+        moto.left_wheel.ApplyTorque((if Math.abs(v_l) >= 0.001 then -v_l))
 
-    # Back wheeling
-    if @left
-      moto.body.ApplyTorque(force/3.0)
-      moto.rider.torso.ApplyTorque(force/3.0)
+      # Back wheeling
+      if @left
+        moto.body.ApplyTorque(force/3.0)
+        moto.rider.torso.ApplyTorque(force/3.0)
 
-    # Front wheeling
-    if @right
-      moto.body.ApplyTorque(-force/3.0)
-      moto.rider.torso.ApplyTorque(-force/3.0)
+      # Front wheeling
+      if @right
+        moto.body.ApplyTorque(-force/3.0)
+        moto.rider.torso.ApplyTorque(-force/3.0)
 
-    # Engine brake
     if not @up and not @down
+      # Engine brake
       v = moto.left_wheel.GetAngularVelocity()
       @level.moto.left_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/10))
+
+      # Friction on right wheel
+      v = moto.right_wheel.GetAngularVelocity()
+      @level.moto.right_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/100))
 
     # Left wheel suspension
     moto.left_prismatic_joint.SetMaxMotorForce(8+Math.abs(800*Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)))

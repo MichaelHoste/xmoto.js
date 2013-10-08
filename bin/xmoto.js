@@ -15,7 +15,7 @@
         x: 0.0,
         y: 1.0
       },
-      collision_box: [new b2Vec2(0.4, -0.3), new b2Vec2(0.56, 0.45), new b2Vec2(-0.95, 0.26), new b2Vec2(-0.35, -0.3)]
+      collision_box: [new b2Vec2(0.4, -0.3), new b2Vec2(0.56, 0.45), new b2Vec2(-0.83, 0.2), new b2Vec2(-0.35, -0.3)]
     };
 
     Constants.wheels = {
@@ -70,7 +70,7 @@
         x: -0.24,
         y: 1.87
       },
-      collision_box: [new b2Vec2(0.16, -0.575), new b2Vec2(0.25, 0.53), new b2Vec2(-0.23, 0.53), new b2Vec2(-0.17, -0.575)],
+      collision_box: [new b2Vec2(0.16, -0.575), new b2Vec2(0.23, 0.50), new b2Vec2(-0.20, 0.48), new b2Vec2(-0.17, -0.575)],
       angle: -Math.PI / 20.0
     };
 
@@ -239,32 +239,33 @@
 
     Input.prototype.move_moto = function() {
       var force, moto, rider, v, v_l, v_r;
-      if (this.level.moto.dead) {
-        return false;
-      }
       force = 24.1;
       moto = this.level.moto;
       rider = moto.rider;
-      if (this.up) {
-        moto.left_wheel.ApplyTorque(-moto.mirror * force / 3);
-      }
-      if (this.down) {
-        v_r = moto.right_wheel.GetAngularVelocity();
-        moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.001 ? -2 * v_r : void 0));
-        v_l = moto.left_wheel.GetAngularVelocity();
-        moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.001 ? -v_l : void 0));
-      }
-      if (this.left) {
-        moto.body.ApplyTorque(force / 3.0);
-        moto.rider.torso.ApplyTorque(force / 3.0);
-      }
-      if (this.right) {
-        moto.body.ApplyTorque(-force / 3.0);
-        moto.rider.torso.ApplyTorque(-force / 3.0);
+      if (!this.level.moto.dead) {
+        if (this.up) {
+          moto.left_wheel.ApplyTorque(-moto.mirror * force / 3);
+        }
+        if (this.down) {
+          v_r = moto.right_wheel.GetAngularVelocity();
+          moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.001 ? -2 * v_r : void 0));
+          v_l = moto.left_wheel.GetAngularVelocity();
+          moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.001 ? -v_l : void 0));
+        }
+        if (this.left) {
+          moto.body.ApplyTorque(force / 3.0);
+          moto.rider.torso.ApplyTorque(force / 3.0);
+        }
+        if (this.right) {
+          moto.body.ApplyTorque(-force / 3.0);
+          moto.rider.torso.ApplyTorque(-force / 3.0);
+        }
       }
       if (!this.up && !this.down) {
         v = moto.left_wheel.GetAngularVelocity();
         this.level.moto.left_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 10 : void 0));
+        v = moto.right_wheel.GetAngularVelocity();
+        this.level.moto.right_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 100 : void 0));
       }
       moto.left_prismatic_joint.SetMaxMotorForce(8 + Math.abs(800 * Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)));
       moto.left_prismatic_joint.SetMotorSpeed(-3 * moto.left_prismatic_joint.GetJointTranslation());
@@ -380,8 +381,9 @@
       this.ctx.translate(-this.moto.position().x, -this.moto.position().y - 0.25);
       this.sky.display(this.ctx);
       this.limits.display(this.ctx);
-      this.entities.display(this.ctx);
+      this.entities.display_sprites(this.ctx);
       this.blocks.display(this.ctx);
+      this.entities.display_items(this.ctx);
       this.moto.display(this.ctx);
       if (this.ghost) {
         this.ghost.display(this.ctx);
@@ -706,7 +708,7 @@
       return body;
     };
 
-    Entities.prototype.display = function(ctx) {
+    Entities.prototype.display_sprites = function(ctx) {
       var entity, texture_name, _i, _len, _ref, _results;
       _ref = this.list;
       _results = [];
@@ -719,7 +721,20 @@
           ctx.scale(1, -1);
           ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
           _results.push(ctx.restore());
-        } else if (entity.type_id === 'EndOfLevel') {
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Entities.prototype.display_items = function(ctx) {
+      var entity, texture_name, _i, _len, _ref, _results;
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        entity = _ref[_i];
+        if (entity.type_id === 'EndOfLevel') {
           texture_name = 'checkball';
           ctx.save();
           ctx.translate(entity.position.x, entity.position.y);
@@ -992,14 +1007,14 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l1287.lvl');
+    level.load_from_file('l1042.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
         level.input.move_moto();
         level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
-        return level.display(true);
+        return level.display(false);
       };
       return setInterval(update, 1000 / 60);
     });

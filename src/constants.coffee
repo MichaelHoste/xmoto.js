@@ -13,7 +13,7 @@ class Constants
       y: 1.0
     collision_box: [ new b2Vec2( 0.4, -0.3)
                      new b2Vec2( 0.56,  0.45)
-                     new b2Vec2(-0.95,  0.26)
+                     new b2Vec2(-0.83,  0.2)
                      new b2Vec2(-0.35, -0.3) ]
 
   @wheels =
@@ -70,8 +70,8 @@ class Constants
       x: -0.24
       y:  1.87
     collision_box: [ new b2Vec2( 0.16, -0.575)
-                     new b2Vec2( 0.25,  0.53)
-                     new b2Vec2(-0.23,  0.53)
+                     new b2Vec2( 0.23,  0.50)
+                     new b2Vec2(-0.20,  0.48)
                      new b2Vec2(-0.17, -0.575) ]
     angle: -Math.PI/20.0
 

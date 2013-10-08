@@ -96,10 +96,8 @@ class Entities
 
     body
 
-  display: (ctx) ->
+  display_sprites: (ctx) ->
     for entity in @list
-
-      # Sprites
       if entity.type_id == 'Sprite'
         texture_name = Entities.texture_name(entity)
 
@@ -113,8 +111,9 @@ class Entities
                       entity.size.height)
         ctx.restore()
 
-      # End of Level
-      else if entity.type_id == 'EndOfLevel'
+  display_items: (ctx) ->
+    for entity in @list
+      if entity.type_id == 'EndOfLevel'
         texture_name = 'checkball'
 
         ctx.save()
