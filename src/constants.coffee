@@ -11,10 +11,10 @@ class Constants
     position:
       x: 0.0
       y: 1.0
-    collision_box: [ new b2Vec2( 0.6, -0.3)
-                     new b2Vec2( 0.6,  0.4)
-                     new b2Vec2(-0.7,  0.4)
-                     new b2Vec2(-0.7, -0.3) ]
+    collision_box: [ new b2Vec2( 0.4, -0.3)
+                     new b2Vec2( 0.56,  0.45)
+                     new b2Vec2(-0.95,  0.26)
+                     new b2Vec2(-0.35, -0.3) ]
 
   @wheels =
     density:     2.0
@@ -51,8 +51,8 @@ class Constants
   # MOTO JOINTS
 
   @left_suspension =
-    angle: new b2Vec2(0.2, 1)
-    lower_translation: -0.10
+    angle: new b2Vec2(0, 1)
+    lower_translation: -0.03
     upper_translation:  0.20
 
   @right_suspension =
@@ -63,7 +63,7 @@ class Constants
   # RIDER PARTS
 
   @torso =
-    density:     0.2
+    density:     0.4
     restitution: 0.0
     friction:    1.0
     position:
@@ -76,7 +76,7 @@ class Constants
     angle: -Math.PI/20.0
 
   @lower_leg =
-    density:     0.2
+    density:     0.4
     restitution: 0.0
     friction:    1.0
     position:
@@ -91,7 +91,7 @@ class Constants
     angle: -Math.PI/6.0
 
   @upper_leg =
-    density:     0.2
+    density:     0.4
     restitution: 0.0
     friction:    1.0
     position:
@@ -104,7 +104,7 @@ class Constants
     angle: -Math.PI/12.0
 
   @lower_arm =
-    density:     0.2
+    density:     0.4
     restitution: 0.0
     friction:    1.0
     position:
@@ -117,7 +117,7 @@ class Constants
     angle: -Math.PI/10.0
 
   @upper_arm =
-    density:     0.2
+    density:     0.4
     restitution: 0.0
     friction:    1.0
     position:

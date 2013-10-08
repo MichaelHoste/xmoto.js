@@ -42,7 +42,7 @@ class Input
         when 13
           @level.restart()
         when 32
-          @level.flip_moto()
+          @level.flip_moto() if not @level.moto.dead
     )
 
     $(document).on('keyup', (event) =>

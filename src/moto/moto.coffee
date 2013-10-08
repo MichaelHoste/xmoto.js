@@ -310,7 +310,7 @@ class Moto
     @level.ctx.restore()
 
   display_right_axle: ->
-    axle_thickness = 0.09
+    axle_thickness = 0.07
 
     # Position
     right_wheel_position = @right_wheel.GetPosition()
@@ -320,7 +320,7 @@ class Moto
 
     # Position relative to center of body
     right_axle_position =
-      x: 0.54 * @mirror
+      x: 0.52 * @mirror
       y: 0.025
 
     # Adjusted position depending of rotation of body

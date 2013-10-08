@@ -15,7 +15,7 @@
         x: 0.0,
         y: 1.0
       },
-      collision_box: [new b2Vec2(0.6, -0.3), new b2Vec2(0.6, 0.4), new b2Vec2(-0.7, 0.4), new b2Vec2(-0.7, -0.3)]
+      collision_box: [new b2Vec2(0.4, -0.3), new b2Vec2(0.56, 0.45), new b2Vec2(-0.95, 0.26), new b2Vec2(-0.35, -0.3)]
     };
 
     Constants.wheels = {
@@ -51,8 +51,8 @@
     };
 
     Constants.left_suspension = {
-      angle: new b2Vec2(0.2, 1),
-      lower_translation: -0.10,
+      angle: new b2Vec2(0, 1),
+      lower_translation: -0.03,
       upper_translation: 0.20
     };
 
@@ -63,7 +63,7 @@
     };
 
     Constants.torso = {
-      density: 0.2,
+      density: 0.4,
       restitution: 0.0,
       friction: 1.0,
       position: {
@@ -75,7 +75,7 @@
     };
 
     Constants.lower_leg = {
-      density: 0.2,
+      density: 0.4,
       restitution: 0.0,
       friction: 1.0,
       position: {
@@ -87,7 +87,7 @@
     };
 
     Constants.upper_leg = {
-      density: 0.2,
+      density: 0.4,
       restitution: 0.0,
       friction: 1.0,
       position: {
@@ -99,7 +99,7 @@
     };
 
     Constants.lower_arm = {
-      density: 0.2,
+      density: 0.4,
       restitution: 0.0,
       friction: 1.0,
       position: {
@@ -111,7 +111,7 @@
     };
 
     Constants.upper_arm = {
-      density: 0.2,
+      density: 0.4,
       restitution: 0.0,
       friction: 1.0,
       position: {
@@ -218,7 +218,9 @@
           case 13:
             return _this.level.restart();
           case 32:
-            return _this.level.flip_moto();
+            if (!_this.level.moto.dead) {
+              return _this.level.flip_moto();
+            }
         }
       });
       return $(document).on('keyup', function(event) {
@@ -282,8 +284,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 150,
-        y: -150
+        x: 100,
+        y: -100
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -990,7 +992,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l3.lvl');
+    level.load_from_file('l1287.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
@@ -1392,14 +1394,14 @@
 
     Moto.prototype.display_right_axle = function() {
       var angle, axle_thickness, distance, right_axle_adjusted_position, right_axle_position, right_wheel_position;
-      axle_thickness = 0.09;
+      axle_thickness = 0.07;
       right_wheel_position = this.right_wheel.GetPosition();
       right_wheel_position = {
         x: right_wheel_position.x + this.mirror * axle_thickness / 2.0 - this.mirror * 0.03,
         y: right_wheel_position.y - 0.045
       };
       right_axle_position = {
-        x: 0.54 * this.mirror,
+        x: 0.52 * this.mirror,
         y: 0.025
       };
       right_axle_adjusted_position = Math2D.rotate_point(right_axle_position, this.body.GetAngle(), this.position());
@@ -1657,9 +1659,7 @@
         joint.lowerAngle = -Math.PI / 180;
         joint.upperAngle = Math.PI / 15;
       }
-      joint.enableLimit = true;
-      joint.maxMotorTorque = 0;
-      return joint.enableMotor = true;
+      return joint.enableLimit = true;
     };
 
     Rider.prototype.create_ankle_joint = function() {
