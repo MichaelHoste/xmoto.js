@@ -587,7 +587,7 @@
 
   Edges = (function() {
     function Edges(level, blocks) {
-      var block, vertex, _i, _j, _len, _len1, _ref, _ref1;
+      var block, edge, i, vertex, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
       this.level = level;
       this.assets = this.level.assets;
       this.theme = this.assets.theme;
@@ -604,9 +604,49 @@
           }
         }
       }
+      _ref2 = this.blocks;
+      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+        block = _ref2[_k];
+        _ref3 = block.vertices;
+        for (i = _l = 0, _len3 = _ref3.length; _l < _len3; i = ++_l) {
+          vertex = _ref3[i];
+          if (vertex.edge) {
+            edge = {
+              vertex1: vertex,
+              vertex2: i === block.vertices.length - 1 ? block.vertices[0] : block.vertices[i + 1],
+              block: block,
+              texture: vertex.edge,
+              theme: this.theme.edges[vertex.edge]
+            };
+            edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
+            this.list.push(edge);
+          }
+        }
+      }
     }
 
-    Edges.prototype.display = function(ctx) {};
+    Edges.prototype.display = function(ctx) {
+      var edge, _i, _len, _ref, _results;
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        edge = _ref[_i];
+        ctx.beginPath();
+        ctx.moveTo(edge.block.position.x + edge.vertex1.x, edge.block.position.y + edge.vertex1.y - edge.theme.depth);
+        ctx.lineTo(edge.block.position.x + edge.vertex2.x, edge.block.position.y + edge.vertex2.y - edge.theme.depth);
+        ctx.lineTo(edge.block.position.x + edge.vertex2.x, edge.block.position.y + edge.vertex2.y);
+        ctx.lineTo(edge.block.position.x + edge.vertex1.x, edge.block.position.y + edge.vertex1.y);
+        ctx.closePath();
+        ctx.save();
+        ctx.translate(edge.block.position.x + edge.vertex1.x, edge.block.position.y + edge.vertex1.y);
+        ctx.rotate(edge.angle);
+        ctx.scale(1.0 / this.level.scale.x, 1.0 / this.level.scale.y);
+        ctx.fillStyle = ctx.createPattern(this.assets.get(edge.theme.file), 'repeat');
+        ctx.fill();
+        _results.push(ctx.restore());
+      }
+      return _results;
+    };
 
     return Edges;
 
