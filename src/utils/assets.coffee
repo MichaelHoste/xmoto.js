@@ -4,7 +4,8 @@ class Assets
     @queue = new createjs.LoadQueue()
     @theme = new Theme('modern.xml')
     @textures = [] # texture list
-    @anims    = [] # anim lists
+    @anims    = [] # anim list
+    @effects  = [] # effect list (edge etc.)
     @moto     = [] # moto list
 
   load: (callback) ->
@@ -19,6 +20,11 @@ class Assets
       items.push(
         id:   item
         src:  "data/Textures/Anims/#{item}.png"
+      )
+    for item in @effects
+      items.push(
+        id:  item
+        src: "data/Textures/Effects/#{item}" # In /Effects/, we can find png AND jpg. The extension is on the modern.xml file
       )
     for item in @moto
       items.push(

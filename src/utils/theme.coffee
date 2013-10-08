@@ -2,6 +2,7 @@ class Theme
 
   constructor: (file_name) ->
     @sprites = []
+    @edges   = []
 
     $.ajax({
       type:     "GET",
@@ -24,6 +25,11 @@ class Theme
           center:
             x: parseFloat($(xml_sprite).attr('centerX'))
             y: parseFloat($(xml_sprite).attr('centerY'))
+      else if $(xml_sprite).attr('type') == 'EdgeEffect'
+        @edges[$(xml_sprite).attr('name').toLowerCase()] =
+          file:  $(xml_sprite).attr('file').toLowerCase()
+          scale: parseFloat($(xml_sprite).attr('scale'))
+          depth: parseFloat($(xml_sprite).attr('depth'))
 
   sprite_params: (name) ->
     @sprites[name]

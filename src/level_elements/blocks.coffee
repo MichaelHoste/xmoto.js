@@ -47,9 +47,9 @@ class Blocks
       xml_vertices = $(xml_block).find('vertex')
       for xml_vertex in xml_vertices
         vertex =
-          x:     parseFloat($(xml_vertex).attr('x'))
-          y:     parseFloat($(xml_vertex).attr('y'))
-          edge : $(xml_vertex).attr('edge')
+          x:    parseFloat($(xml_vertex).attr('x'))
+          y:    parseFloat($(xml_vertex).attr('y'))
+          edge: $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
 
@@ -77,6 +77,9 @@ class Blocks
     for triangle in @triangles
       @level.physics.create_polygon(triangle, 'ground')
 
+    # Init edges
+    @edges = new Edges(@level, @list)
+
   display: (ctx) ->
     # draw back blocks before front blocks
     for block in @back_list.concat(@front_list)
@@ -95,6 +98,8 @@ class Blocks
       ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), 'repeat')
       ctx.fill()
       ctx.restore()
+
+    @edges.display(ctx)
 
 # Out of class methods
 triangulate = (blocks) ->
