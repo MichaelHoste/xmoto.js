@@ -11,11 +11,10 @@ class Constants
     position:
       x: 0.0
       y: 1.0
-    collision_box:
-      v1: new b2Vec2( 0.6, -0.3)
-      v2: new b2Vec2( 0.6,  0.4)
-      v3: new b2Vec2(-0.7,  0.4)
-      v4: new b2Vec2(-0.7, -0.3)
+    collision_box: [ new b2Vec2( 0.6, -0.3)
+                     new b2Vec2( 0.6,  0.4)
+                     new b2Vec2(-0.7,  0.4)
+                     new b2Vec2(-0.7, -0.3) ]
 
   @wheels =
     density:     2.0
@@ -32,11 +31,10 @@ class Constants
     position:
       x: 0.0
       y: 1.0
-    collision_box:
-      v1: new b2Vec2(-0.10, -0.30)
-      v2: new b2Vec2(-0.25, -0.30)
-      v3: new b2Vec2(-0.80, -0.58)
-      v4: new b2Vec2(-0.65, -0.58)
+    collision_box: [ new b2Vec2(-0.10, -0.30)
+                     new b2Vec2(-0.25, -0.30)
+                     new b2Vec2(-0.80, -0.58)
+                     new b2Vec2(-0.65, -0.58) ]
 
   @right_axle =
     density:     1.5
@@ -45,11 +43,10 @@ class Constants
     position:
       x: 0.0
       y: 1.0
-    collision_box:
-      v1: new b2Vec2(0.58, -0.02)
-      v2: new b2Vec2(0.48, -0.02)
-      v3: new b2Vec2(0.66, -0.58)
-      v4: new b2Vec2(0.76, -0.58)
+    collision_box: [ new b2Vec2(0.58, -0.02)
+                     new b2Vec2(0.48, -0.02)
+                     new b2Vec2(0.66, -0.58)
+                     new b2Vec2(0.76, -0.58) ]
 
   # MOTO JOINTS
 
@@ -67,72 +64,69 @@ class Constants
 
   @torso =
     density:     0.2
-    restitution: 0.5
+    restitution: 0.0
     friction:    1.0
     position:
       x: -0.24
       y:  1.87
-    collision_box:
-      v1: new b2Vec2( 0.25, -0.575)
-      v2: new b2Vec2( 0.25,  0.575)
-      v3: new b2Vec2(-0.25,  0.575)
-      v4: new b2Vec2(-0.25, -0.575)
+    collision_box: [ new b2Vec2( 0.16, -0.575)
+                     new b2Vec2( 0.25,  0.53)
+                     new b2Vec2(-0.23,  0.53)
+                     new b2Vec2(-0.17, -0.575) ]
     angle: -Math.PI/20.0
 
   @lower_leg =
     density:     0.2
-    restitution: 0.5
+    restitution: 0.0
     friction:    1.0
     position:
       x: 0.15
       y: 0.90
-    collision_box:
-      v1: new b2Vec2( 0.2, -0.33)
-      v2: new b2Vec2( 0.2,  0.33)
-      v3: new b2Vec2(-0.2,  0.33)
-      v4: new b2Vec2(-0.2, -0.33)
+    collision_box: [ new b2Vec2( 0.2, -0.33)
+                     new b2Vec2( 0.2, -0.27)
+                     new b2Vec2( 0.00  , -0.2)
+                     new b2Vec2( 0.02,  0.33)
+                     new b2Vec2(-0.17,  0.33)
+                     new b2Vec2(-0.14, -0.33) ]
     angle: -Math.PI/6.0
 
   @upper_leg =
     density:     0.2
-    restitution: 0.5
+    restitution: 0.0
     friction:    1.0
     position:
       x: - 0.09
       y:   1.27
-    collision_box:
-      v1: new b2Vec2( 0.4, -0.14)
-      v2: new b2Vec2( 0.4,  0.14)
-      v3: new b2Vec2(-0.4,  0.14)
-      v4: new b2Vec2(-0.4, -0.14)
+    collision_box: [ new b2Vec2( 0.4, -0.14)
+                     new b2Vec2( 0.4,  0.07)
+                     new b2Vec2(-0.4,  0.14)
+                     new b2Vec2(-0.4, -0.08) ]
     angle: -Math.PI/12.0
 
   @lower_arm =
     density:     0.2
-    restitution: 0.5
+    restitution: 0.0
     friction:    1.0
     position:
       x: 0.07
       y: 1.52
-    collision_box:
-      v1: new b2Vec2( 0.28, -0.1)
-      v2: new b2Vec2( 0.28,  0.1)
-      v3: new b2Vec2(-0.28,  0.1)
-      v4: new b2Vec2(-0.28, -0.1)
+    collision_box: [ new b2Vec2( 0.28, -0.055)
+                     new b2Vec2( 0.28,  0.055)
+                     new b2Vec2(-0.28,  0.08)
+                     new b2Vec2(-0.28, -0.05) ]
     angle: -Math.PI/10.0
 
   @upper_arm =
     density:     0.2
-    restitution: 0.5
+    restitution: 0.0
     friction:    1.0
     position:
       x: -0.17
       y:  1.83
-    collision_box:
-      v1: new b2Vec2( 0.125, -0.28)
-      v2: new b2Vec2( 0.125,  0.28)
-      v3: new b2Vec2(-0.125,  0.28)
-      v4: new b2Vec2(-0.125, -0.28)
+    collision_box: [ new b2Vec2( 0.09, -0.26)
+                     new b2Vec2( 0.09,  0.26)
+                     new b2Vec2(-0.11,  0.26)
+                     new b2Vec2(-0.11, -0.26) ]
     angle: Math.PI/9.0
 
   # RIDER JOINTS

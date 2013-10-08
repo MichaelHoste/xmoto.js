@@ -75,7 +75,7 @@ class Blocks
 
     # Create triangles in box2D
     for triangle in @triangles
-      @level.physics.createPolygon(triangle, 'ground')
+      @level.physics.create_polygon(triangle, 'ground')
 
   display: (ctx) ->
     # draw back blocks before front blocks

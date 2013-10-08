@@ -58,6 +58,8 @@ class Input
     )
 
   move_moto: ->
+    return false if @level.moto.dead
+
     force = 24.1
     moto  = @level.moto
     rider = moto.rider

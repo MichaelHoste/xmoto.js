@@ -15,12 +15,7 @@
         x: 0.0,
         y: 1.0
       },
-      collision_box: {
-        v1: new b2Vec2(0.6, -0.3),
-        v2: new b2Vec2(0.6, 0.4),
-        v3: new b2Vec2(-0.7, 0.4),
-        v4: new b2Vec2(-0.7, -0.3)
-      }
+      collision_box: [new b2Vec2(0.6, -0.3), new b2Vec2(0.6, 0.4), new b2Vec2(-0.7, 0.4), new b2Vec2(-0.7, -0.3)]
     };
 
     Constants.wheels = {
@@ -41,12 +36,7 @@
         x: 0.0,
         y: 1.0
       },
-      collision_box: {
-        v1: new b2Vec2(-0.10, -0.30),
-        v2: new b2Vec2(-0.25, -0.30),
-        v3: new b2Vec2(-0.80, -0.58),
-        v4: new b2Vec2(-0.65, -0.58)
-      }
+      collision_box: [new b2Vec2(-0.10, -0.30), new b2Vec2(-0.25, -0.30), new b2Vec2(-0.80, -0.58), new b2Vec2(-0.65, -0.58)]
     };
 
     Constants.right_axle = {
@@ -57,12 +47,7 @@
         x: 0.0,
         y: 1.0
       },
-      collision_box: {
-        v1: new b2Vec2(0.58, -0.02),
-        v2: new b2Vec2(0.48, -0.02),
-        v3: new b2Vec2(0.66, -0.58),
-        v4: new b2Vec2(0.76, -0.58)
-      }
+      collision_box: [new b2Vec2(0.58, -0.02), new b2Vec2(0.48, -0.02), new b2Vec2(0.66, -0.58), new b2Vec2(0.76, -0.58)]
     };
 
     Constants.left_suspension = {
@@ -79,86 +64,61 @@
 
     Constants.torso = {
       density: 0.2,
-      restitution: 0.5,
+      restitution: 0.0,
       friction: 1.0,
       position: {
         x: -0.24,
         y: 1.87
       },
-      collision_box: {
-        v1: new b2Vec2(0.25, -0.575),
-        v2: new b2Vec2(0.25, 0.575),
-        v3: new b2Vec2(-0.25, 0.575),
-        v4: new b2Vec2(-0.25, -0.575)
-      },
+      collision_box: [new b2Vec2(0.16, -0.575), new b2Vec2(0.25, 0.53), new b2Vec2(-0.23, 0.53), new b2Vec2(-0.17, -0.575)],
       angle: -Math.PI / 20.0
     };
 
     Constants.lower_leg = {
       density: 0.2,
-      restitution: 0.5,
+      restitution: 0.0,
       friction: 1.0,
       position: {
         x: 0.15,
         y: 0.90
       },
-      collision_box: {
-        v1: new b2Vec2(0.2, -0.33),
-        v2: new b2Vec2(0.2, 0.33),
-        v3: new b2Vec2(-0.2, 0.33),
-        v4: new b2Vec2(-0.2, -0.33)
-      },
+      collision_box: [new b2Vec2(0.2, -0.33), new b2Vec2(0.2, -0.27), new b2Vec2(0.00, -0.2), new b2Vec2(0.02, 0.33), new b2Vec2(-0.17, 0.33), new b2Vec2(-0.14, -0.33)],
       angle: -Math.PI / 6.0
     };
 
     Constants.upper_leg = {
       density: 0.2,
-      restitution: 0.5,
+      restitution: 0.0,
       friction: 1.0,
       position: {
         x: -0.09,
         y: 1.27
       },
-      collision_box: {
-        v1: new b2Vec2(0.4, -0.14),
-        v2: new b2Vec2(0.4, 0.14),
-        v3: new b2Vec2(-0.4, 0.14),
-        v4: new b2Vec2(-0.4, -0.14)
-      },
+      collision_box: [new b2Vec2(0.4, -0.14), new b2Vec2(0.4, 0.07), new b2Vec2(-0.4, 0.14), new b2Vec2(-0.4, -0.08)],
       angle: -Math.PI / 12.0
     };
 
     Constants.lower_arm = {
       density: 0.2,
-      restitution: 0.5,
+      restitution: 0.0,
       friction: 1.0,
       position: {
         x: 0.07,
         y: 1.52
       },
-      collision_box: {
-        v1: new b2Vec2(0.28, -0.1),
-        v2: new b2Vec2(0.28, 0.1),
-        v3: new b2Vec2(-0.28, 0.1),
-        v4: new b2Vec2(-0.28, -0.1)
-      },
+      collision_box: [new b2Vec2(0.28, -0.055), new b2Vec2(0.28, 0.055), new b2Vec2(-0.28, 0.08), new b2Vec2(-0.28, -0.05)],
       angle: -Math.PI / 10.0
     };
 
     Constants.upper_arm = {
       density: 0.2,
-      restitution: 0.5,
+      restitution: 0.0,
       friction: 1.0,
       position: {
         x: -0.17,
         y: 1.83
       },
-      collision_box: {
-        v1: new b2Vec2(0.125, -0.28),
-        v2: new b2Vec2(0.125, 0.28),
-        v3: new b2Vec2(-0.125, 0.28),
-        v4: new b2Vec2(-0.125, -0.28)
-      },
+      collision_box: [new b2Vec2(0.09, -0.26), new b2Vec2(0.09, 0.26), new b2Vec2(-0.11, 0.26), new b2Vec2(-0.11, -0.26)],
       angle: Math.PI / 9.0
     };
 
@@ -277,6 +237,9 @@
 
     Input.prototype.move_moto = function() {
       var force, moto, rider, v, v_l, v_r;
+      if (this.level.moto.dead) {
+        return false;
+      }
       force = 24.1;
       moto = this.level.moto;
       rider = moto.rider;
@@ -319,8 +282,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 80,
-        y: -80
+        x: 150,
+        y: -150
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -385,8 +348,13 @@
         if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
           return _this.need_to_restart = true;
         } else if (a === 'rider' && b === 'ground') {
+          _this.moto.dead = true;
           _this.world.DestroyJoint(_this.moto.rider.ankle_joint);
-          return _this.world.DestroyJoint(_this.moto.rider.wrist_joint);
+          _this.world.DestroyJoint(_this.moto.rider.wrist_joint);
+          _this.moto.rider.knee_joint.m_lowerAngle = _this.moto.rider.knee_joint.m_lowerAngle * 1.5;
+          _this.moto.rider.elbow_joint.m_upperAngle = _this.moto.rider.elbow_joint.m_upperAngle * 1.5;
+          _this.moto.rider.shoulder_joint.m_upperAngle = _this.moto.rider.shoulder_joint.m_upperAngle * 1.5;
+          return _this.moto.rider.hip_joint.m_lowerAngle = _this.moto.rider.hip_joint.m_lowerAngle * 1.5;
         }
       };
       return this.world.SetContactListener(listener);
@@ -535,7 +503,7 @@
       _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         triangle = _ref1[_j];
-        _results.push(this.level.physics.createPolygon(triangle, 'ground'));
+        _results.push(this.level.physics.create_polygon(triangle, 'ground'));
       }
       return _results;
     };
@@ -889,7 +857,7 @@
         x: this.player.left,
         y: this.screen.top * 5
       });
-      this.level.physics.createPolygon(vertices, 'ground');
+      this.level.physics.create_polygon(vertices, 'ground');
       vertices = [];
       vertices.push({
         x: this.player.right,
@@ -907,7 +875,7 @@
         x: this.screen.right,
         y: this.screen.top * 5
       });
-      this.level.physics.createPolygon(vertices, 'ground');
+      this.level.physics.create_polygon(vertices, 'ground');
       vertices = [];
       vertices.push({
         x: this.player.right,
@@ -925,7 +893,7 @@
         x: this.player.right,
         y: this.screen.bottom
       });
-      return this.level.physics.createPolygon(vertices, 'ground');
+      return this.level.physics.create_polygon(vertices, 'ground');
     };
 
     Limits.prototype.display = function(ctx) {
@@ -1029,7 +997,7 @@
         level.input.move_moto();
         level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
-        return level.display(false);
+        return level.display(true);
       };
       return setInterval(update, 1000 / 60);
     });
@@ -1209,6 +1177,7 @@
         this.mirror = 1;
       }
       this.rider = new Rider(level, this);
+      this.dead = false;
     }
 
     Moto.prototype.destroy = function() {
@@ -1878,19 +1847,14 @@
       this.world;
     }
 
-    Physics.prototype.createPolygon = function(vertices, name) {
-      var b2vertices, bodyDef, fixDef, vertex, _i, _len;
+    Physics.prototype.create_polygon = function(vertices, name) {
+      var bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
       fixDef.density = 1.0;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
-      b2vertices = [];
-      for (_i = 0, _len = vertices.length; _i < _len; _i++) {
-        vertex = vertices[_i];
-        b2vertices.push(new b2Vec2(vertex.x, vertex.y));
-      }
-      fixDef.shape.SetAsArray(b2vertices);
+      Physics.create_shape(fixDef, vertices);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = 0;
       bodyDef.position.y = 0;
@@ -1900,14 +1864,21 @@
     };
 
     Physics.create_shape = function(fix_def, collision_box, mirror) {
-      var b2vertices;
+      var b2vertices, vertex, _i, _j, _len, _len1;
       if (mirror == null) {
         mirror = false;
       }
+      b2vertices = [];
       if (mirror === false) {
-        b2vertices = [collision_box.v1, collision_box.v2, collision_box.v3, collision_box.v4];
+        for (_i = 0, _len = collision_box.length; _i < _len; _i++) {
+          vertex = collision_box[_i];
+          b2vertices.push(new b2Vec2(vertex.x, vertex.y));
+        }
       } else {
-        b2vertices = [new b2Vec2(-collision_box.v4.x, collision_box.v4.y), new b2Vec2(-collision_box.v3.x, collision_box.v3.y), new b2Vec2(-collision_box.v2.x, collision_box.v2.y), new b2Vec2(-collision_box.v1.x, collision_box.v1.y)];
+        for (_j = 0, _len1 = collision_box.length; _j < _len1; _j++) {
+          vertex = collision_box[_j];
+          b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y));
+        }
       }
       return fix_def.shape.SetAsArray(b2vertices);
     };

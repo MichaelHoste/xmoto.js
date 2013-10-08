@@ -15,6 +15,7 @@ class Moto
     @assets   = level.assets
     if mirror then @mirror = -1 else @mirror = 1
     @rider    = new Rider(level, this)
+    @dead     = false
 
   destroy: ->
     world = @level.world

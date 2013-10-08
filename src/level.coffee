@@ -9,8 +9,8 @@ class Level
 
     # level unities * scale = pixels
     @scale =
-      x:  80
-      y: -80
+      x:  150
+      y: -150
 
     # Assets manager
     @assets        = new Assets()
@@ -84,8 +84,15 @@ class Level
       if (a == 'moto' and b == 'end_of_level') || (a == 'rider' and b == 'end_of_level')
         @need_to_restart = true
       else if a == 'rider' and b == 'ground'
+        @moto.dead = true
+
         @world.DestroyJoint(@moto.rider.ankle_joint)
         @world.DestroyJoint(@moto.rider.wrist_joint)
+
+        @moto.rider.knee_joint.m_lowerAngle     = @moto.rider.knee_joint.m_lowerAngle * 1.5
+        @moto.rider.elbow_joint.m_upperAngle    = @moto.rider.elbow_joint.m_upperAngle * 1.5
+        @moto.rider.shoulder_joint.m_upperAngle = @moto.rider.shoulder_joint.m_upperAngle * 1.5
+        @moto.rider.hip_joint.m_lowerAngle      = @moto.rider.hip_joint.m_lowerAngle * 1.5
 
     @world.SetContactListener(listener)
 
