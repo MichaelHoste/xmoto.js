@@ -13,15 +13,18 @@ class Listeners
       a = contact.GetFixtureA().GetBody().GetUserData().name
       b = contact.GetFixtureB().GetBody().GetUserData().name
 
-      # Strawberries
-      if (a == 'moto' and b == 'strawberry') || (a == 'rider' and b == 'strawberry') || (a == 'rider-lower_leg' and b == 'strawberry')
-        strawberry = if a == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
-        strawberry.GetBody().GetUserData().entity.display = false
-
-      # Fall of moto
       if not moto.dead
+        # Strawberries
+        if (a == 'moto' and b == 'strawberry') || (a == 'rider' and b == 'strawberry') || (a == 'rider-lower_leg' and b == 'strawberry')
+          strawberry = if a == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
+          strawberry.GetBody().GetUserData().entity.display = false
+
+        # End of level
         if (a == 'moto' and b == 'end_of_level') || (a == 'rider' and b == 'end_of_level')
-          @level.need_to_restart = true
+          if @level.got_strawberries()
+            @level.need_to_restart = true
+
+        # Fall of rider
         else if a == 'rider' and b == 'ground'
           moto.dead = true
 

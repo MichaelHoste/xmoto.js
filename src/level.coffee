@@ -107,6 +107,12 @@ class Level
   flip_moto: ->
     @moto = MotoFlip.execute(@moto)
 
+  got_strawberries: ->
+    for strawberry in @entities.strawberries
+      if strawberry.display
+        return false
+    return true
+
   restart: (save_replay = false) ->
     if save_replay
       if (not @ghost.replay) or @ghost.replay.frames_count() > @replay.frames_count()

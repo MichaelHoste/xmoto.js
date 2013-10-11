@@ -375,6 +375,18 @@
       return this.moto = MotoFlip.execute(this.moto);
     };
 
+    Level.prototype.got_strawberries = function() {
+      var strawberry, _i, _len, _ref;
+      _ref = this.entities.strawberries;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        strawberry = _ref[_i];
+        if (strawberry.display) {
+          return false;
+        }
+      }
+      return true;
+    };
+
     Level.prototype.restart = function(save_replay) {
       var entity, _i, _len, _ref, _results;
       if (save_replay == null) {
@@ -1084,13 +1096,15 @@
         moto = _this.level.moto;
         a = contact.GetFixtureA().GetBody().GetUserData().name;
         b = contact.GetFixtureB().GetBody().GetUserData().name;
-        if ((a === 'moto' && b === 'strawberry') ||  (a === 'rider' && b === 'strawberry') ||  (a === 'rider-lower_leg' && b === 'strawberry')) {
-          strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
-          strawberry.GetBody().GetUserData().entity.display = false;
-        }
         if (!moto.dead) {
+          if ((a === 'moto' && b === 'strawberry') ||  (a === 'rider' && b === 'strawberry') ||  (a === 'rider-lower_leg' && b === 'strawberry')) {
+            strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
+            strawberry.GetBody().GetUserData().entity.display = false;
+          }
           if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
-            return _this.level.need_to_restart = true;
+            if (_this.level.got_strawberries()) {
+              return _this.level.need_to_restart = true;
+            }
           } else if (a === 'rider' && b === 'ground') {
             moto.dead = true;
             _this.level.world.DestroyJoint(moto.rider.ankle_joint);
