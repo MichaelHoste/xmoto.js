@@ -12,7 +12,7 @@ class Edges
     for block in @blocks
       for vertex in block.vertices
         if vertex.edge
-          @assets.effects.push(@theme.edges[vertex.edge].file)
+          @assets.effects.push(@theme.edge_params(vertex.edge).file)
 
     # Create edges
     for block in @blocks
@@ -23,7 +23,7 @@ class Edges
             vertex2: if i == block.vertices.length-1 then block.vertices[0] else block.vertices[i+1]
             block:   block
             texture: vertex.edge
-            theme:   @theme.edges[vertex.edge]
+            theme:   @theme.edge_params(vertex.edge)
           edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI/2
 
           @list.push(edge)

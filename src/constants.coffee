@@ -2,6 +2,10 @@ b2Vec2 = Box2D.Common.Math.b2Vec2
 
 class Constants
 
+  # GENERAL
+
+  @gravity = 9.81
+
   # MOTO PARTS
 
   @body =

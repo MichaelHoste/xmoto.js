@@ -3,9 +3,10 @@ b2FixtureDef = Box2D.Dynamics.b2FixtureDef
 class Entities
 
   constructor: (level) ->
-    @level  = level
-    @assets = level.assets
-    @list   = []
+    @level        = level
+    @assets       = level.assets
+    @list         = []
+    @strawberries = []
 
   parse: (xml) ->
     xml_entities = $(xml).find('entity')
@@ -34,20 +35,19 @@ class Entities
         entity.params.push(param)
 
       # Get default values for sprite from theme
-      if entity.type_id == 'Sprite'
-        for param in entity.params
-          if param.name == 'name'
-            sprite = @assets.theme.sprite_params(param.value)
-            entity['center'] =
-              x: sprite.center.x if sprite
-              y: sprite.center.y if sprite
-            entity.size.width  = sprite.size.width  if not entity.size.width
-            entity.size.height = sprite.size.height if not entity.size.height
+      texture_name = Entities.texture_name(entity)
+      if texture_name
+        sprite = @assets.theme.sprite_params(texture_name)
 
-      else if entity.type_id == 'EndOfLevel'
-        sprite = @assets.theme.sprite_params('checkball')
         entity.size.width  = sprite.size.width  if not entity.size.width
         entity.size.height = sprite.size.height if not entity.size.height
+        entity.center =
+          x: sprite.center.x
+          y: sprite.center.y
+        entity.center.x = entity.size.width/2  if not entity.center.x
+        entity.center.y = entity.size.height/2 if not entity.center.y
+        entity.delay       = sprite.delay
+        entity.frames      = sprite.frames
 
       @list.push(entity)
 
@@ -56,16 +56,22 @@ class Entities
   init: ->
     for entity in @list
 
-      # Sprites (Anims)
-      if entity.type_id == 'Sprite'
-        for param in entity.params
-          if param.name == 'name'
-            @assets.anims.push(param.value)
+      texture_name = Entities.texture_name(entity)
+
+      if texture_name
+        if entity.frames == 0
+          @assets.anims.push(texture_name)
+        else
+          for i in [0..entity.frames-1]
+            @assets.anims.push(Entities.frame_name(texture_name, 0))
 
       # End of level
-      else if entity.type_id == 'EndOfLevel'
-        @assets.anims.push('checkball')
-        @end_of_level = @create_end_of_level(entity)
+      if entity.type_id == 'EndOfLevel'
+        @end_of_level = @create_entity(entity, 'end_of_level')
+
+      # Strawberries
+      else if entity.type_id == 'Strawberry'
+        @strawberries = @create_entity(entity, 'strawberry')
 
       # Player start
       else if entity.type_id == 'PlayerStart'
@@ -73,11 +79,10 @@ class Entities
           x: entity.position.x
           y: entity.position.y
 
-  create_end_of_level: (entity) ->
+  create_entity: (entity, name) ->
     # Create fixture
     fixDef = new b2FixtureDef()
     fixDef.shape = new b2CircleShape(entity.size.r)
-    fixDef.isSensor = true
 
     # Create body
     bodyDef = new b2BodyDef()
@@ -86,7 +91,7 @@ class Entities
     bodyDef.position.x = entity.position.x
     bodyDef.position.y = entity.position.y
 
-    bodyDef.userData = 'end_of_level'
+    bodyDef.userData = name
 
     bodyDef.type = b2Body.b2_staticBody
 
@@ -99,34 +104,37 @@ class Entities
   display_sprites: (ctx) ->
     for entity in @list
       if entity.type_id == 'Sprite'
-        texture_name = Entities.texture_name(entity)
-
-        ctx.save()
-        ctx.translate(entity.position.x, entity.position.y)
-        ctx.scale(1, -1)
-        ctx.drawImage(@assets.get(texture_name),
-                      -entity.size.width  + entity.center.x,
-                      -entity.size.height + entity.center.y,
-                      entity.size.width,
-                      entity.size.height)
-        ctx.restore()
+        @display_entity(ctx, entity)
 
   display_items: (ctx) ->
     for entity in @list
-      if entity.type_id == 'EndOfLevel'
-        texture_name = 'checkball'
+      if entity.type_id == 'EndOfLevel' or entity.type_id == "Strawberry"
+        @display_entity(ctx, entity)
 
-        ctx.save()
-        ctx.translate(entity.position.x, entity.position.y)
-        ctx.scale(1, -1)
-        ctx.drawImage(@assets.get(texture_name),
-                      -entity.size.width/2,
-                      -entity.size.height/2,
-                      entity.size.width,
-                      entity.size.height)
-        ctx.restore()
+  display_entity: (ctx, entity) ->
+    texture_name = Entities.texture_name(entity)
+    if entity.frames
+      texture_name = Entities.frame_name(texture_name, 0) if entity.frames
+
+    ctx.save()
+    ctx.translate(entity.position.x, entity.position.y)
+    ctx.scale(1, -1)
+    ctx.drawImage(@assets.get(texture_name),
+                  -entity.size.width  + entity.center.x,
+                  -entity.size.height + entity.center.y,
+                  entity.size.width,
+                  entity.size.height)
+    ctx.restore()
 
   @texture_name = (entity) ->
-    for param in entity.params
-      if param.name == 'name'
-        return param.value
+    if entity.type_id == 'Sprite'
+      for param in entity.params
+        if param.name == 'name'
+          return param.value
+    else if entity.type_id == 'EndOfLevel'
+      return 'checkball'
+    else if entity.type_id == 'Strawberry'
+      return 'cog2'
+
+  @frame_name = (texture_name, frame_number) ->
+    "#{texture_name}_" + (frame_number/100.0).toFixed(2).toString().substring(2)

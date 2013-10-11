@@ -95,6 +95,10 @@ class Level
           @moto.rider.shoulder_joint.m_upperAngle = @moto.rider.shoulder_joint.m_upperAngle * 1.5
           @moto.rider.hip_joint.m_lowerAngle      = @moto.rider.hip_joint.m_lowerAngle      * 1.5
 
+        #else if (a == 'moto' and b == 'strawberry') || (a == 'rider' and b == 'strawberry')
+        #  console.log("salut")
+        #  false
+
     @world.SetContactListener(listener)
 
   display: (debug = false) ->

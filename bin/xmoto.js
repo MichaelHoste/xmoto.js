@@ -7,6 +7,8 @@
   Constants = (function() {
     function Constants() {}
 
+    Constants.gravity = 9.81;
+
     Constants.body = {
       density: 1.5,
       restitution: 0.5,
@@ -603,7 +605,7 @@
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           vertex = _ref1[_j];
           if (vertex.edge) {
-            this.assets.effects.push(this.theme.edges[vertex.edge].file);
+            this.assets.effects.push(this.theme.edge_params(vertex.edge).file);
           }
         }
       }
@@ -619,7 +621,7 @@
               vertex2: i === block.vertices.length - 1 ? block.vertices[0] : block.vertices[i + 1],
               block: block,
               texture: vertex.edge,
-              theme: this.theme.edges[vertex.edge]
+              theme: this.theme.edge_params(vertex.edge)
             };
             edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
             this.list.push(edge);
@@ -662,10 +664,11 @@
       this.level = level;
       this.assets = level.assets;
       this.list = [];
+      this.strawberries = [];
     }
 
     Entities.prototype.parse = function(xml) {
-      var entity, param, sprite, xml_entities, xml_entity, xml_param, xml_params, _i, _j, _k, _len, _len1, _len2, _ref;
+      var entity, param, sprite, texture_name, xml_entities, xml_entity, xml_param, xml_params, _i, _j, _len, _len1;
       xml_entities = $(xml).find('entity');
       for (_i = 0, _len = xml_entities.length; _i < _len; _i++) {
         xml_entity = xml_entities[_i];
@@ -693,32 +696,27 @@
           };
           entity.params.push(param);
         }
-        if (entity.type_id === 'Sprite') {
-          _ref = entity.params;
-          for (_k = 0, _len2 = _ref.length; _k < _len2; _k++) {
-            param = _ref[_k];
-            if (param.name === 'name') {
-              sprite = this.assets.theme.sprite_params(param.value);
-              entity['center'] = {
-                x: sprite ? sprite.center.x : void 0,
-                y: sprite ? sprite.center.y : void 0
-              };
-              if (!entity.size.width) {
-                entity.size.width = sprite.size.width;
-              }
-              if (!entity.size.height) {
-                entity.size.height = sprite.size.height;
-              }
-            }
-          }
-        } else if (entity.type_id === 'EndOfLevel') {
-          sprite = this.assets.theme.sprite_params('checkball');
+        texture_name = Entities.texture_name(entity);
+        if (texture_name) {
+          sprite = this.assets.theme.sprite_params(texture_name);
           if (!entity.size.width) {
             entity.size.width = sprite.size.width;
           }
           if (!entity.size.height) {
             entity.size.height = sprite.size.height;
           }
+          entity.center = {
+            x: sprite.center.x,
+            y: sprite.center.y
+          };
+          if (!entity.center.x) {
+            entity.center.x = entity.size.width / 2;
+          }
+          if (!entity.center.y) {
+            entity.center.y = entity.size.height / 2;
+          }
+          entity.delay = sprite.delay;
+          entity.frames = sprite.frames;
         }
         this.list.push(entity);
       }
@@ -726,29 +724,25 @@
     };
 
     Entities.prototype.init = function() {
-      var entity, param, _i, _len, _ref, _results;
+      var entity, i, texture_name, _i, _j, _len, _ref, _ref1, _results;
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
-        if (entity.type_id === 'Sprite') {
-          _results.push((function() {
-            var _j, _len1, _ref1, _results1;
-            _ref1 = entity.params;
-            _results1 = [];
-            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-              param = _ref1[_j];
-              if (param.name === 'name') {
-                _results1.push(this.assets.anims.push(param.value));
-              } else {
-                _results1.push(void 0);
-              }
+        texture_name = Entities.texture_name(entity);
+        if (texture_name) {
+          if (entity.frames === 0) {
+            this.assets.anims.push(texture_name);
+          } else {
+            for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+              this.assets.anims.push(Entities.frame_name(texture_name, 0));
             }
-            return _results1;
-          }).call(this));
-        } else if (entity.type_id === 'EndOfLevel') {
-          this.assets.anims.push('checkball');
-          _results.push(this.end_of_level = this.create_end_of_level(entity));
+          }
+        }
+        if (entity.type_id === 'EndOfLevel') {
+          _results.push(this.end_of_level = this.create_entity(entity, 'end_of_level'));
+        } else if (entity.type_id === 'Strawberry') {
+          _results.push(this.strawberries = this.create_entity(entity, 'strawberry'));
         } else if (entity.type_id === 'PlayerStart') {
           _results.push(this.player_start = {
             x: entity.position.x,
@@ -761,15 +755,14 @@
       return _results;
     };
 
-    Entities.prototype.create_end_of_level = function(entity) {
+    Entities.prototype.create_entity = function(entity, name) {
       var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2CircleShape(entity.size.r);
-      fixDef.isSensor = true;
       bodyDef = new b2BodyDef();
       bodyDef.position.x = entity.position.x;
       bodyDef.position.y = entity.position.y;
-      bodyDef.userData = 'end_of_level';
+      bodyDef.userData = name;
       bodyDef.type = b2Body.b2_staticBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -777,18 +770,13 @@
     };
 
     Entities.prototype.display_sprites = function(ctx) {
-      var entity, texture_name, _i, _len, _ref, _results;
+      var entity, _i, _len, _ref, _results;
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
         if (entity.type_id === 'Sprite') {
-          texture_name = Entities.texture_name(entity);
-          ctx.save();
-          ctx.translate(entity.position.x, entity.position.y);
-          ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
-          _results.push(ctx.restore());
+          _results.push(this.display_entity(ctx, entity));
         } else {
           _results.push(void 0);
         }
@@ -797,18 +785,13 @@
     };
 
     Entities.prototype.display_items = function(ctx) {
-      var entity, texture_name, _i, _len, _ref, _results;
+      var entity, _i, _len, _ref, _results;
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
-        if (entity.type_id === 'EndOfLevel') {
-          texture_name = 'checkball';
-          ctx.save();
-          ctx.translate(entity.position.x, entity.position.y);
-          ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get(texture_name), -entity.size.width / 2, -entity.size.height / 2, entity.size.width, entity.size.height);
-          _results.push(ctx.restore());
+        if (entity.type_id === 'EndOfLevel' || entity.type_id === "Strawberry") {
+          _results.push(this.display_entity(ctx, entity));
         } else {
           _results.push(void 0);
         }
@@ -816,15 +799,40 @@
       return _results;
     };
 
-    Entities.texture_name = function(entity) {
-      var param, _i, _len, _ref;
-      _ref = entity.params;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        param = _ref[_i];
-        if (param.name === 'name') {
-          return param.value;
+    Entities.prototype.display_entity = function(ctx, entity) {
+      var texture_name;
+      texture_name = Entities.texture_name(entity);
+      if (entity.frames) {
+        if (entity.frames) {
+          texture_name = Entities.frame_name(texture_name, 0);
         }
       }
+      ctx.save();
+      ctx.translate(entity.position.x, entity.position.y);
+      ctx.scale(1, -1);
+      ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
+      return ctx.restore();
+    };
+
+    Entities.texture_name = function(entity) {
+      var param, _i, _len, _ref;
+      if (entity.type_id === 'Sprite') {
+        _ref = entity.params;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          param = _ref[_i];
+          if (param.name === 'name') {
+            return param.value;
+          }
+        }
+      } else if (entity.type_id === 'EndOfLevel') {
+        return 'checkball';
+      } else if (entity.type_id === 'Strawberry') {
+        return 'cog2';
+      }
+    };
+
+    Entities.frame_name = function(texture_name, frame_number) {
+      return ("" + texture_name + "_") + (frame_number / 100.0).toFixed(2).toString().substring(2);
     };
 
     return Entities;
@@ -1075,7 +1083,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l1038.lvl');
+    level.load_from_file('l1043.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
@@ -1918,7 +1926,7 @@
       var context, debugDraw;
       this.scale = level.scale.x;
       this.level = level;
-      this.world = new b2World(new b2Vec2(0, -9.81), true);
+      this.world = new b2World(new b2Vec2(0, -Constants.gravity), true);
       b2Settings.b2_linearSlop = 0.0025;
       context = this.level.ctx;
       debugDraw = new b2DebugDraw();
@@ -2242,6 +2250,9 @@
         xml_sprite = xml_sprites[_i];
         if ($(xml_sprite).attr('type') === 'Entity') {
           _results.push(this.sprites[$(xml_sprite).attr('name').toLowerCase()] = {
+            file: $(xml_sprite).attr('file'),
+            file_base: $(xml_sprite).attr('fileBase'),
+            file_ext: $(xml_sprite).attr('fileExtension'),
             size: {
               width: parseFloat($(xml_sprite).attr('width')),
               height: parseFloat($(xml_sprite).attr('height'))
@@ -2249,7 +2260,9 @@
             center: {
               x: parseFloat($(xml_sprite).attr('centerX')),
               y: parseFloat($(xml_sprite).attr('centerY'))
-            }
+            },
+            frames: $(xml_sprite).find('frame').length,
+            delay: parseFloat($(xml_sprite).attr('delay'))
           });
         } else if ($(xml_sprite).attr('type') === 'EdgeEffect') {
           _results.push(this.edges[$(xml_sprite).attr('name').toLowerCase()] = {
@@ -2266,6 +2279,10 @@
 
     Theme.prototype.sprite_params = function(name) {
       return this.sprites[name];
+    };
+
+    Theme.prototype.edge_params = function(name) {
+      return this.edges[name];
     };
 
     return Theme;
