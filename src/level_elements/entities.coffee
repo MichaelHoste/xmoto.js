@@ -86,6 +86,7 @@ class Entities
     # Create fixture
     fixDef = new b2FixtureDef()
     fixDef.shape = new b2CircleShape(entity.size.r)
+    fixDef.isSensor = true
 
     # Create body
     bodyDef = new b2BodyDef()

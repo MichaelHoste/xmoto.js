@@ -742,6 +742,7 @@
       var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2CircleShape(entity.size.r);
+      fixDef.isSensor = true;
       bodyDef = new b2BodyDef();
       bodyDef.position.x = entity.position.x;
       bodyDef.position.y = entity.position.y;
@@ -1078,21 +1079,15 @@
       var listener,
         _this = this;
       listener = new Box2D.Dynamics.b2ContactListener;
-      listener.PreSolve = function(contact) {
-        var a, b, strawberry;
+      listener.BeginContact = function(contact) {
+        var a, b, moto, strawberry;
+        moto = _this.level.moto;
         a = contact.GetFixtureA().GetBody().GetUserData().name;
         b = contact.GetFixtureB().GetBody().GetUserData().name;
         if ((a === 'moto' && b === 'strawberry') ||  (a === 'rider' && b === 'strawberry') ||  (a === 'rider-lower_leg' && b === 'strawberry')) {
           strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
           strawberry.GetBody().GetUserData().entity.display = false;
-          return contact.SetEnabled(false);
         }
-      };
-      listener.BeginContact = function(contact) {
-        var a, b, moto;
-        moto = _this.level.moto;
-        a = contact.GetFixtureA().GetBody().GetUserData().name;
-        b = contact.GetFixtureB().GetBody().GetUserData().name;
         if (!moto.dead) {
           if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
             return _this.level.need_to_restart = true;
