@@ -249,7 +249,7 @@ class Moto
 
   display_body: ->
     # Position
-    position = @position()
+    position = @body.GetPosition()
 
     # Angle
     angle = @body.GetAngle()
@@ -285,7 +285,7 @@ class Moto
       y: -0.30
 
     # Adjusted position depending of rotation of body
-    left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, @body.GetAngle(), @position())
+    left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, @body.GetAngle(), @body.GetPosition())
 
     # Distance
     distance = Math2D.distance_between_points(left_wheel_position, left_axle_adjusted_position)
@@ -324,7 +324,7 @@ class Moto
       y: 0.025
 
     # Adjusted position depending of rotation of body
-    right_axle_adjusted_position = Math2D.rotate_point(right_axle_position, @body.GetAngle(), @position())
+    right_axle_adjusted_position = Math2D.rotate_point(right_axle_position, @body.GetAngle(), @body.GetPosition())
 
     # Distance
     distance = Math2D.distance_between_points(right_wheel_position, right_axle_adjusted_position)

@@ -643,7 +643,7 @@
         ctx.save();
         ctx.translate(edge.block.position.x + edge.vertex1.x, edge.block.position.y + edge.vertex1.y);
         ctx.rotate(edge.angle);
-        ctx.scale(1.0 / this.level.scale.x, 1.0 / this.level.scale.y);
+        ctx.scale(1.0 / 100, -1.0 / 100);
         ctx.fillStyle = ctx.createPattern(this.assets.get(edge.theme.file), 'repeat');
         ctx.fill();
         _results.push(ctx.restore());
@@ -1075,7 +1075,7 @@
   $(function() {
     var level;
     level = new Level();
-    level.load_from_file('l374.lvl');
+    level.load_from_file('l1038.lvl');
     return level.assets.load(function() {
       var update;
       update = function() {
@@ -1442,7 +1442,7 @@
 
     Moto.prototype.display_body = function() {
       var angle, position;
-      position = this.position();
+      position = this.body.GetPosition();
       angle = this.body.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
@@ -1464,7 +1464,7 @@
         x: -0.17 * this.mirror,
         y: -0.30
       };
-      left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, this.body.GetAngle(), this.position());
+      left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, this.body.GetAngle(), this.body.GetPosition());
       distance = Math2D.distance_between_points(left_wheel_position, left_axle_adjusted_position);
       angle = Math2D.angle_between_points(left_axle_adjusted_position, left_wheel_position) + this.mirror * Math.PI / 2;
       this.level.ctx.save();
@@ -1487,7 +1487,7 @@
         x: 0.52 * this.mirror,
         y: 0.025
       };
-      right_axle_adjusted_position = Math2D.rotate_point(right_axle_position, this.body.GetAngle(), this.position());
+      right_axle_adjusted_position = Math2D.rotate_point(right_axle_position, this.body.GetAngle(), this.body.GetPosition());
       distance = Math2D.distance_between_points(right_wheel_position, right_axle_adjusted_position);
       angle = Math2D.angle_between_points(right_axle_adjusted_position, right_wheel_position) + this.mirror * Math.PI / 2;
       this.level.ctx.save();
@@ -1918,7 +1918,7 @@
       var context, debugDraw;
       this.scale = level.scale.x;
       this.level = level;
-      this.world = new b2World(new b2Vec2(0, -10), true);
+      this.world = new b2World(new b2Vec2(0, -9.81), true);
       b2Settings.b2_linearSlop = 0.0025;
       context = this.level.ctx;
       debugDraw = new b2DebugDraw();

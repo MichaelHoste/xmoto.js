@@ -43,7 +43,7 @@ class Edges
       ctx.save()
       ctx.translate(edge.block.position.x + edge.vertex1.x, edge.block.position.y + edge.vertex1.y) # Always start texture on the left vertex
       ctx.rotate(edge.angle)
-      ctx.scale(1.0 / @level.scale.x, 1.0 / @level.scale.y)
+      ctx.scale(1.0 / 100, -1.0 / 100)
       ctx.fillStyle = ctx.createPattern(@assets.get(edge.theme.file), 'repeat')
       ctx.fill()
       ctx.restore()
