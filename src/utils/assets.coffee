@@ -34,6 +34,8 @@ class Assets
 
     items = @remove_duplicate_textures(items)
 
+    console.log(items)
+
     @queue.addEventListener("complete", callback)
     @queue.loadManifest(items)
 

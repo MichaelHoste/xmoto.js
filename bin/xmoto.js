@@ -754,7 +754,7 @@
             this.assets.anims.push(texture_name);
           } else {
             for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-              this.assets.anims.push(Entities.frame_name(texture_name, 0));
+              this.assets.anims.push(Entities.frame_name(texture_name, i));
             }
           }
         }
@@ -2070,6 +2070,7 @@
         });
       }
       items = this.remove_duplicate_textures(items);
+      console.log(items);
       this.queue.addEventListener("complete", callback);
       return this.queue.loadManifest(items);
     };

@@ -64,7 +64,7 @@ class Entities
           @assets.anims.push(texture_name)
         else
           for i in [0..entity.frames-1]
-            @assets.anims.push(Entities.frame_name(texture_name, 0))
+            @assets.anims.push(Entities.frame_name(texture_name, i))
 
       # End of level
       if entity.type_id == 'EndOfLevel'
