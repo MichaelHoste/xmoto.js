@@ -95,7 +95,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    bodyDef.userData = 'moto'
+    bodyDef.userData =
+      name: 'moto'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -122,7 +123,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    bodyDef.userData = 'moto'
+    bodyDef.userData =
+      name: 'moto'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -151,7 +153,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    bodyDef.userData = 'moto'
+    bodyDef.userData =
+      name: 'moto'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -180,7 +183,8 @@ class Moto
     bodyDef.position.x = x
     bodyDef.position.y = y
 
-    bodyDef.userData = 'moto'
+    bodyDef.userData =
+      name: 'moto'
 
     bodyDef.type = b2Body.b2_dynamicBody
 

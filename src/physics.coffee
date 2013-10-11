@@ -56,7 +56,8 @@ class Physics
     bodyDef.position.x = 0
     bodyDef.position.y = 0
 
-    bodyDef.userData = name
+    bodyDef.userData =
+        name: name
 
     bodyDef.type = b2Body.b2_staticBody
 

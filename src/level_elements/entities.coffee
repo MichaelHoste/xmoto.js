@@ -46,8 +46,9 @@ class Entities
           y: sprite.center.y
         entity.center.x = entity.size.width/2  if not entity.center.x
         entity.center.y = entity.size.height/2 if not entity.center.y
-        entity.delay       = sprite.delay
-        entity.frames      = sprite.frames
+        entity.delay    = sprite.delay
+        entity.frames   = sprite.frames
+        entity.display  = true
 
       @list.push(entity)
 
@@ -67,11 +68,13 @@ class Entities
 
       # End of level
       if entity.type_id == 'EndOfLevel'
-        @end_of_level = @create_entity(entity, 'end_of_level')
+        @create_entity(entity, 'end_of_level')
+        @end_of_level = entity
 
       # Strawberries
       else if entity.type_id == 'Strawberry'
-        @strawberries = @create_entity(entity, 'strawberry')
+        @create_entity(entity, 'strawberry')
+        @strawberries.push(entity)
 
       # Player start
       else if entity.type_id == 'PlayerStart'
@@ -91,7 +94,9 @@ class Entities
     bodyDef.position.x = entity.position.x
     bodyDef.position.y = entity.position.y
 
-    bodyDef.userData = name
+    bodyDef.userData =
+      name:   name
+      entity: entity
 
     bodyDef.type = b2Body.b2_staticBody
 
@@ -112,19 +117,20 @@ class Entities
         @display_entity(ctx, entity)
 
   display_entity: (ctx, entity) ->
-    texture_name = Entities.texture_name(entity)
-    if entity.frames
-      texture_name = Entities.frame_name(texture_name, 0) if entity.frames
+    if entity.display
+      texture_name = Entities.texture_name(entity)
+      if entity.frames
+        texture_name = Entities.frame_name(texture_name, 0) if entity.frames
 
-    ctx.save()
-    ctx.translate(entity.position.x, entity.position.y)
-    ctx.scale(1, -1)
-    ctx.drawImage(@assets.get(texture_name),
-                  -entity.size.width  + entity.center.x,
-                  -entity.size.height + entity.center.y,
-                  entity.size.width,
-                  entity.size.height)
-    ctx.restore()
+      ctx.save()
+      ctx.translate(entity.position.x, entity.position.y)
+      ctx.scale(1, -1)
+      ctx.drawImage(@assets.get(texture_name),
+                    -entity.size.width  + entity.center.x,
+                    -entity.size.height + entity.center.y,
+                    entity.size.width,
+                    entity.size.height)
+      ctx.restore()
 
   @texture_name = (entity) ->
     if entity.type_id == 'Sprite'

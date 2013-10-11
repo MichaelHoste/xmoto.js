@@ -328,7 +328,7 @@
       this.moto.init();
       this.ghost.init();
       this.init_input();
-      return this.init_sensors();
+      return this.init_listeners();
     };
 
     Level.prototype.init_canvas = function() {
@@ -342,14 +342,24 @@
       return this.input.init();
     };
 
-    Level.prototype.init_sensors = function() {
+    Level.prototype.init_listeners = function() {
       var listener,
         _this = this;
       listener = new Box2D.Dynamics.b2ContactListener;
+      listener.PreSolve = function(contact) {
+        var a, b, strawberry;
+        a = contact.GetFixtureA().GetBody().GetUserData().name;
+        b = contact.GetFixtureB().GetBody().GetUserData().name;
+        if ((a === 'moto' && b === 'strawberry') ||  (a === 'rider' && b === 'strawberry') ||  (a === 'rider-lower_leg' && b === 'strawberry')) {
+          strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
+          strawberry.GetBody().GetUserData().entity.display = false;
+          return contact.SetEnabled(false);
+        }
+      };
       listener.BeginContact = function(contact) {
         var a, b;
-        a = contact.GetFixtureA().GetBody().GetUserData();
-        b = contact.GetFixtureB().GetBody().GetUserData();
+        a = contact.GetFixtureA().GetBody().GetUserData().name;
+        b = contact.GetFixtureB().GetBody().GetUserData().name;
         if (!_this.moto.dead) {
           if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
             return _this.need_to_restart = true;
@@ -404,6 +414,7 @@
     };
 
     Level.prototype.restart = function(save_replay) {
+      var entity, _i, _len, _ref, _results;
       if (save_replay == null) {
         save_replay = false;
       }
@@ -416,7 +427,14 @@
       this.replay = new Replay(this);
       this.moto.destroy();
       this.moto = new Moto(this, false);
-      return this.moto.init();
+      this.moto.init();
+      _ref = this.entities.strawberries;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        entity = _ref[_i];
+        _results.push(entity.display = true);
+      }
+      return _results;
     };
 
     return Level;
@@ -717,6 +735,7 @@
           }
           entity.delay = sprite.delay;
           entity.frames = sprite.frames;
+          entity.display = true;
         }
         this.list.push(entity);
       }
@@ -740,9 +759,11 @@
           }
         }
         if (entity.type_id === 'EndOfLevel') {
-          _results.push(this.end_of_level = this.create_entity(entity, 'end_of_level'));
+          this.create_entity(entity, 'end_of_level');
+          _results.push(this.end_of_level = entity);
         } else if (entity.type_id === 'Strawberry') {
-          _results.push(this.strawberries = this.create_entity(entity, 'strawberry'));
+          this.create_entity(entity, 'strawberry');
+          _results.push(this.strawberries.push(entity));
         } else if (entity.type_id === 'PlayerStart') {
           _results.push(this.player_start = {
             x: entity.position.x,
@@ -762,7 +783,10 @@
       bodyDef = new b2BodyDef();
       bodyDef.position.x = entity.position.x;
       bodyDef.position.y = entity.position.y;
-      bodyDef.userData = name;
+      bodyDef.userData = {
+        name: name,
+        entity: entity
+      };
       bodyDef.type = b2Body.b2_staticBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -801,17 +825,19 @@
 
     Entities.prototype.display_entity = function(ctx, entity) {
       var texture_name;
-      texture_name = Entities.texture_name(entity);
-      if (entity.frames) {
+      if (entity.display) {
+        texture_name = Entities.texture_name(entity);
         if (entity.frames) {
-          texture_name = Entities.frame_name(texture_name, 0);
+          if (entity.frames) {
+            texture_name = Entities.frame_name(texture_name, 0);
+          }
         }
+        ctx.save();
+        ctx.translate(entity.position.x, entity.position.y);
+        ctx.scale(1, -1);
+        ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
+        return ctx.restore();
       }
-      ctx.save();
-      ctx.translate(entity.position.x, entity.position.y);
-      ctx.scale(1, -1);
-      ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
-      return ctx.restore();
     };
 
     Entities.texture_name = function(entity) {
@@ -1333,7 +1359,9 @@
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
-      bodyDef.userData = 'moto';
+      bodyDef.userData = {
+        name: 'moto'
+      };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1351,7 +1379,9 @@
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
-      bodyDef.userData = 'moto';
+      bodyDef.userData = {
+        name: 'moto'
+      };
       bodyDef.type = b2Body.b2_dynamicBody;
       wheel = this.level.world.CreateBody(bodyDef);
       wheel.CreateFixture(fixDef);
@@ -1370,7 +1400,9 @@
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
-      bodyDef.userData = 'moto';
+      bodyDef.userData = {
+        name: 'moto'
+      };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1389,7 +1421,9 @@
       bodyDef = new b2BodyDef();
       bodyDef.position.x = x;
       bodyDef.position.y = y;
-      bodyDef.userData = 'moto';
+      bodyDef.userData = {
+        name: 'moto'
+      };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1655,7 +1689,9 @@
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.torso.angle;
-      bodyDef.userData = 'rider';
+      bodyDef.userData = {
+        name: 'rider'
+      };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1675,7 +1711,9 @@
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_leg.angle;
-      bodyDef.userData = 'rider-lower_leg';
+      bodyDef.userData = {
+        name: 'rider-lower_leg'
+      };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1695,7 +1733,9 @@
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.upper_leg.angle;
-      bodyDef.userData = 'rider';
+      bodyDef.userData = {
+        name: 'rider'
+      };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1715,7 +1755,9 @@
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_arm.angle;
-      bodyDef.userData = 'rider';
+      bodyDef.userData = {
+        name: 'rider'
+      };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1735,7 +1777,9 @@
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.upper_arm.angle;
-      bodyDef.userData = 'rider';
+      bodyDef.userData = {
+        name: 'rider'
+      };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
@@ -1949,7 +1993,9 @@
       bodyDef = new b2BodyDef();
       bodyDef.position.x = 0;
       bodyDef.position.y = 0;
-      bodyDef.userData = name;
+      bodyDef.userData = {
+        name: name
+      };
       bodyDef.type = b2Body.b2_staticBody;
       return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
     };

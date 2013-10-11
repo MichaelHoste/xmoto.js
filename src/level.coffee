@@ -63,7 +63,7 @@ class Level
     @ghost.init()
 
     @init_input()
-    @init_sensors()
+    @init_listeners()
 
   init_canvas: ->
     @canvas  = $('#game').get(0)
@@ -74,13 +74,23 @@ class Level
   init_input: ->
     @input.init()
 
-  init_sensors: ->
+  init_listeners: ->
     # Add listeners for end of level
     listener = new Box2D.Dynamics.b2ContactListener
 
+    listener.PreSolve = (contact) =>
+      a = contact.GetFixtureA().GetBody().GetUserData().name
+      b = contact.GetFixtureB().GetBody().GetUserData().name
+
+      if (a == 'moto' and b == 'strawberry') || (a == 'rider' and b == 'strawberry') || (a == 'rider-lower_leg' and b == 'strawberry')
+        strawberry = if a == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
+        strawberry.GetBody().GetUserData().entity.display = false
+        contact.SetEnabled(false)
+
     listener.BeginContact = (contact) =>
-      a = contact.GetFixtureA().GetBody().GetUserData()
-      b = contact.GetFixtureB().GetBody().GetUserData()
+      a = contact.GetFixtureA().GetBody().GetUserData().name
+      b = contact.GetFixtureB().GetBody().GetUserData().name
+
       if not @moto.dead
         if (a == 'moto' and b == 'end_of_level') || (a == 'rider' and b == 'end_of_level')
           @need_to_restart = true
@@ -94,10 +104,6 @@ class Level
           @moto.rider.elbow_joint.m_upperAngle    = @moto.rider.elbow_joint.m_upperAngle    * 1.5
           @moto.rider.shoulder_joint.m_upperAngle = @moto.rider.shoulder_joint.m_upperAngle * 1.5
           @moto.rider.hip_joint.m_lowerAngle      = @moto.rider.hip_joint.m_lowerAngle      * 1.5
-
-        #else if (a == 'moto' and b == 'strawberry') || (a == 'rider' and b == 'strawberry')
-        #  console.log("salut")
-        #  false
 
     @world.SetContactListener(listener)
 
@@ -144,3 +150,6 @@ class Level
     @moto.destroy()
     @moto = new Moto(this, false)
     @moto.init()
+
+    for entity in @entities.strawberries
+      entity.display = true

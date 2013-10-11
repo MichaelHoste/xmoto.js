@@ -94,7 +94,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = @mirror * Constants.torso.angle
 
-    bodyDef.userData = 'rider'
+    bodyDef.userData =
+      name: 'rider'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -126,7 +127,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = @mirror * Constants.lower_leg.angle
 
-    bodyDef.userData = 'rider-lower_leg'
+    bodyDef.userData =
+      name: 'rider-lower_leg'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -158,7 +160,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = @mirror * Constants.upper_leg.angle
 
-    bodyDef.userData = 'rider'
+    bodyDef.userData =
+      name: 'rider'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -190,7 +193,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = @mirror * Constants.lower_arm.angle
 
-    bodyDef.userData = 'rider'
+    bodyDef.userData =
+      name: 'rider'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -222,7 +226,8 @@ class Rider
     # Assign body angle
     bodyDef.angle = @mirror * Constants.upper_arm.angle
 
-    bodyDef.userData = 'rider'
+    bodyDef.userData =
+      name: 'rider'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
