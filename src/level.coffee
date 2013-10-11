@@ -22,6 +22,9 @@ class Level
     # Inputs
     @input         = new Input(this)
 
+    # Listeners
+    @listeners     = new Listeners(this)
+
     # Replay (for ghost)
     @replay        = new Replay(this)
     @ghost         = new Ghost(this, null)
@@ -62,50 +65,14 @@ class Level
     @moto.init()
     @ghost.init()
 
-    @init_input()
-    @init_listeners()
+    @input.init()
+    @listeners.init()
 
   init_canvas: ->
     @canvas  = $('#game').get(0)
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height)
     @ctx.lineWidth = 0.01
-
-  init_input: ->
-    @input.init()
-
-  init_listeners: ->
-    # Add listeners for end of level
-    listener = new Box2D.Dynamics.b2ContactListener
-
-    listener.PreSolve = (contact) =>
-      a = contact.GetFixtureA().GetBody().GetUserData().name
-      b = contact.GetFixtureB().GetBody().GetUserData().name
-
-      if (a == 'moto' and b == 'strawberry') || (a == 'rider' and b == 'strawberry') || (a == 'rider-lower_leg' and b == 'strawberry')
-        strawberry = if a == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
-        strawberry.GetBody().GetUserData().entity.display = false
-        contact.SetEnabled(false)
-
-    listener.BeginContact = (contact) =>
-      a = contact.GetFixtureA().GetBody().GetUserData().name
-      b = contact.GetFixtureB().GetBody().GetUserData().name
-
-      if not @moto.dead
-        if (a == 'moto' and b == 'end_of_level') || (a == 'rider' and b == 'end_of_level')
-          @need_to_restart = true
-        else if a == 'rider' and b == 'ground'
-          @moto.dead = true
-
-          @world.DestroyJoint(@moto.rider.ankle_joint)
-          @world.DestroyJoint(@moto.rider.wrist_joint)
-
-          @moto.rider.knee_joint.m_lowerAngle     = @moto.rider.knee_joint.m_lowerAngle     * 1.5
-          @moto.rider.elbow_joint.m_upperAngle    = @moto.rider.elbow_joint.m_upperAngle    * 1.5
-          @moto.rider.shoulder_joint.m_upperAngle = @moto.rider.shoulder_joint.m_upperAngle * 1.5
-          @moto.rider.hip_joint.m_lowerAngle      = @moto.rider.hip_joint.m_lowerAngle      * 1.5
-
-    @world.SetContactListener(listener)
 
   display: (debug = false) ->
     if @need_to_restart
