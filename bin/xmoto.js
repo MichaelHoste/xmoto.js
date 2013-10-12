@@ -305,6 +305,8 @@
       this.layer_offsets = new LayerOffsets(this);
       this.script = new Script(this);
       this.entities = new Entities(this);
+      this.start_time = new Date().getTime();
+      this.current_time = 0;
     }
 
     Level.prototype.load_from_file = function(file_name) {
@@ -347,6 +349,7 @@
         this.need_to_restart = false;
         this.restart(true);
       }
+      this.current_time = new Date().getTime() - this.start_time;
       if (!this.canvas) {
         this.init_canvas();
       }
@@ -402,6 +405,8 @@
       this.moto.destroy();
       this.moto = new Moto(this, false);
       this.moto.init();
+      this.start_time = new Date().getTime();
+      this.current_time = 0;
       _ref = this.entities.strawberries;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -799,12 +804,14 @@
     };
 
     Entities.prototype.display_entity = function(ctx, entity) {
-      var texture_name;
+      var i, texture_name;
       if (entity.display) {
         texture_name = Entities.texture_name(entity);
         if (entity.frames) {
+          i = this.level.current_time % (entity.frames * entity.delay * 1000);
+          i = Math.floor(i / (entity.delay * 1000));
           if (entity.frames) {
-            texture_name = Entities.frame_name(texture_name, 0);
+            texture_name = Entities.frame_name(texture_name, i);
           }
         }
         ctx.save();

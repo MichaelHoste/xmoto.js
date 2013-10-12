@@ -41,6 +41,9 @@ class Level
     @script        = new Script(this)
     @entities      = new Entities(this)
 
+    @start_time   = new Date().getTime()
+    @current_time = 0
+
   load_from_file: (file_name) ->
     $.ajax({
       type:     "GET",
@@ -78,6 +81,8 @@ class Level
     if @need_to_restart
       @need_to_restart = false
       @restart(true)
+
+    @current_time = new Date().getTime() - @start_time
 
     @init_canvas() if not @canvas
     @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
@@ -123,6 +128,9 @@ class Level
     @moto.destroy()
     @moto = new Moto(this, false)
     @moto.init()
+
+    @start_time   = new Date().getTime()
+    @current_time = 0
 
     for entity in @entities.strawberries
       entity.display = true

@@ -121,7 +121,9 @@ class Entities
     if entity.display
       texture_name = Entities.texture_name(entity)
       if entity.frames
-        texture_name = Entities.frame_name(texture_name, 0) if entity.frames
+        i = @level.current_time % (entity.frames * entity.delay * 1000)
+        i = Math.floor(i / (entity.delay * 1000))
+        texture_name = Entities.frame_name(texture_name, i) if entity.frames
 
       ctx.save()
       ctx.translate(entity.position.x, entity.position.y)
