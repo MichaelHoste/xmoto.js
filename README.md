@@ -66,8 +66,6 @@ Then put result lines in a bash file at the root of the project, chmod +x the fi
 ## TODO
 
  * Understand impect of "scale" and "depth" on edges
- * Strawberies
- * Animations
  * Optimization : create x bodies with y shapes for each polygon (set of triangles) instead of x*y bodies of 1 triangle
  * Optimization : group the blocks by texture and fill the texture just once by group
  * Optimization : only draw polygons that are on screen (and only collide with these polygons)

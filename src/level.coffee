@@ -9,8 +9,8 @@ class Level
 
     # level unities * scale = pixels
     @scale =
-      x:  100
-      y: -100
+      x:  70
+      y: -70
 
     # Assets manager
     @assets        = new Assets()
