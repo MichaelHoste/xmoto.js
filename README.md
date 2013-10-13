@@ -43,6 +43,26 @@ If the computer is not able to run the game at 60FPS, we can change the display 
 A good idea would be to make an educated guess of the power of the computer and adapt the framerate.
 (check http://gafferongames.com/game-physics/fix-your-timestep/)
 
+## Download the levels from the XMoto official website
+
+Execute this on the chrome console of one of the page of listing (ex. http://xmoto.tuxfamily.org/index.php?page=levels&sort=name&letter=A)
+
+```
+var jq = document.createElement('script');
+jq.src = "//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js";
+document.getElementsByTagName('head')[0].appendChild(jq);
+// ... give time for script to load, then type.
+jQuery.noConflict();
+```
+
+Then this
+
+```
+$('.admin_data tr').each(function(){ $(this).find('td:last a').each(function() { console.log("wget -P data/Levels/ " + $(this).attr('href')) }) })
+```
+
+Then put result lines in a bash file at the root of the project, chmod +x the file and execute it.
+
 ## TODO
 
  * Understand impect of "scale" and "depth" on edges

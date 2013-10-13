@@ -18,28 +18,28 @@ path4019 = {}
 
 function path4019.OnEnter()
   Game.SetPlayerPosition(-41, -1, 1)
-  Game.Message("Second, Upside Down :-)")
+  Game.Message("Stage 2: Upside Down")
 end
 
 zone2 = {}
 
 function zone2.OnEnter()
   Game.SetPlayerPosition(22, -32, 1)
-  Game.Message("Third, avoid the holes!")
+  Game.Message("Stage 3: Climb this hill fast")
 end
 
 rect6203 = {}
 
 function rect6203.OnEnter()
   Game.SetPlayerPosition(-32, 30, 1)
-  Game.Message("Fourth, Swing between those platforms.")
+  Game.Message("Stage 4: Platforms")
 end
 
 rect6445 = {}
 
 function rect6445.OnEnter()
   Game.SetPlayerPosition(37, -3, 1)
-  Game.Message("Fifth, go through these pools")
+  Game.Message("Stage 5: Climb harder")
 end
 
 rect6883 = {}
@@ -53,7 +53,7 @@ rect7900 = {}
 
 function rect7900.OnEnter()
   Game.SetPlayerPosition(17, 30, 1)
-  Game.Message("Sixth, avoid the wreckers!")
+  Game.Message("Stage 6: Hard Wreckers")
 end
 
 rect10025 = {}
@@ -61,7 +61,7 @@ rect10025 = {}
 function rect10025.OnEnter()
   Game.SetPlayerPosition(40, 35, 1)
   Game.Message("Go get that flower.")
-  Game.Message("If I was you, I would try the left...")
+  Game.Message("If I were you, I would try the left...")
 end
 
 rect10633 = {}
@@ -74,10 +74,10 @@ end
 tek = 0
 
 function OnLoad()
-  Game.Message("The stars will teleport you.")
-  Game.Message("First, get through the little hole.")
-  Game.Message("This level has a trainer. Press 1-5. ")
-  Game.Message("Ofc, you cannot finish the level that way.")
+  Game.Message("The stars will teleport you")
+  Game.Message("Stage 1: Hole")
+  Game.Message("This level has a trainer. Press 1-5 ")
+  Game.Message("Of course, you cannot finish the level that way")
 	Game.SetKeyHook("1", "Teleport1")
 	Game.SetKeyHook("2", "Teleport2")
 	Game.SetKeyHook("3", "Teleport3")

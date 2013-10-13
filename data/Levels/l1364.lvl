@@ -6,7 +6,7 @@
 		<author>Gaivota</author>
 		<date>2007-05-15</date>
 		<sky driftColor_b="66" driftColor_a="27" driftColor_g="81" driftZoom="2.9" color_g="193" zoom="2.3" color_a="224" color_b="174" driftColor_r="66" offset="0.01" drifted="true" use_params="true" color_r="255">Sky3</sky>
-		<border texture="Black"/>
+		<border texture="invisible"/>
 	</info>
 	<script>
 		-- Level Parameters
@@ -1467,10 +1467,10 @@
 	<block id="rect4650">
 		<position y="16.198459" x="-18.561381"/>
 		<usetexture id="Asphalt1"/>
-		<vertex x="0.000000" y="-25.392112" edge="street"/>
-		<vertex x="37.244129" y="-25.392112"/>
-		<vertex x="37.244129" y="-32.396917"/>
-		<vertex x="0.000000" y="-32.396917"/>
+		<vertex x="-10.000000" y="-25.392112" edge="street"/>
+		<vertex x="56.244129" y="-25.392112"/>
+		<vertex x="47.244129" y="-45.396917"/>
+		<vertex x="-15.000000" y="-45.396917"/>
 	</block>
 	<block id="rect4966">
 		<position y="16.198459" x="-18.561381"/>
