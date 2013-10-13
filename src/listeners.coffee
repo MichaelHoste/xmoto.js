@@ -17,7 +17,10 @@ class Listeners
         # Strawberries
         if (a == 'moto' and b == 'strawberry') || (a == 'rider' and b == 'strawberry') || (a == 'rider-lower_leg' and b == 'strawberry')
           strawberry = if a == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
-          strawberry.GetBody().GetUserData().entity.display = false
+          entity = strawberry.GetBody().GetUserData().entity
+          if entity.display
+            entity.display = false
+            createjs.Sound.play('PickUpStrawberry')
 
         # End of level
         if (a == 'moto' and b == 'end_of_level') || (a == 'rider' and b == 'end_of_level')

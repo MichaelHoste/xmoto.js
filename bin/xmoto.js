@@ -1099,14 +1099,18 @@
         _this = this;
       listener = new Box2D.Dynamics.b2ContactListener;
       listener.BeginContact = function(contact) {
-        var a, b, moto, strawberry;
+        var a, b, entity, moto, strawberry;
         moto = _this.level.moto;
         a = contact.GetFixtureA().GetBody().GetUserData().name;
         b = contact.GetFixtureB().GetBody().GetUserData().name;
         if (!moto.dead) {
           if ((a === 'moto' && b === 'strawberry') ||  (a === 'rider' && b === 'strawberry') ||  (a === 'rider-lower_leg' && b === 'strawberry')) {
             strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
-            strawberry.GetBody().GetUserData().entity.display = false;
+            entity = strawberry.GetBody().GetUserData().entity;
+            if (entity.display) {
+              entity.display = false;
+              createjs.Sound.play('PickUpStrawberry');
+            }
           }
           if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
             if (_this.level.got_strawberries()) {
@@ -2064,6 +2068,7 @@
       this.anims = [];
       this.effects = [];
       this.moto = [];
+      this.sounds = [];
     }
 
     Assets.prototype.load = function(callback) {
@@ -2101,6 +2106,10 @@
           src: "data/Textures/Riders/" + item + ".png"
         });
       }
+      createjs.Sound.registerSound({
+        id: "PickUpStrawberry",
+        src: "data/Sounds/PickUpStrawberry.ogg"
+      });
       items = this.remove_duplicate_textures(items);
       this.queue.addEventListener("complete", callback);
       return this.queue.loadManifest(items);

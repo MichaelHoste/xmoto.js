@@ -1,12 +1,14 @@
 class Assets
 
   constructor: ->
-    @queue = new createjs.LoadQueue()
-    @theme = new Theme('modern.xml')
+    @queue    = new createjs.LoadQueue()
+    @theme    = new Theme('modern.xml')
+
     @textures = [] # texture list
     @anims    = [] # anim list
     @effects  = [] # effect list (edge etc.)
     @moto     = [] # moto list
+    @sounds   = [] # Sounds
 
   load: (callback) ->
     # Format list for loading
@@ -31,6 +33,11 @@ class Assets
         id:  item
         src: "data/Textures/Riders/#{item}.png"
       )
+
+    createjs.Sound.registerSound(
+      id:  "PickUpStrawberry"
+      src: "data/Sounds/PickUpStrawberry.ogg"
+    )
 
     items = @remove_duplicate_textures(items)
 
