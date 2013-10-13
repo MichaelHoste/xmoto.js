@@ -1,6 +1,6 @@
-$ ->
+play_level = (name) ->
   level = new Level()
-  level.load_from_file('l1043.lvl') # l9562.lvl  # l1287.lvl (snake) # l1038 #l3.lvl # l1041 (jumps), l1042, l1043 #l74
+  level.load_from_file(name)
 
   # Load assets for this level before doing anything else
   level.assets.load( ->
@@ -11,6 +11,13 @@ $ ->
       level.display(false)
 
     # Render 2D environment
-    setInterval(update, 1000 / 60)
+    window.game_loop = setInterval(update, 1000 / 60)
   )
 
+$ ->
+  play_level($("#levels option:selected").val())
+
+  $("#levels").on('change', ->
+    clearInterval(window.game_loop)
+    play_level($(this).val())
+  )

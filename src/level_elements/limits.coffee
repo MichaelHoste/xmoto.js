@@ -11,10 +11,10 @@ class Limits
     # be in the limits (maybe it's the limits where the player can go)
 
     @screen =
-      left:   parseFloat(xml_limits.attr('left'))   * 1.15
-      right:  parseFloat(xml_limits.attr('right'))  * 1.15
-      top:    parseFloat(xml_limits.attr('top'))    * 1.15
-      bottom: parseFloat(xml_limits.attr('bottom')) * 1.15
+      left:   parseFloat(xml_limits.attr('left'))   * 2
+      right:  parseFloat(xml_limits.attr('right'))  * 2
+      top:    parseFloat(xml_limits.attr('top'))    * 2
+      bottom: parseFloat(xml_limits.attr('bottom')) * 2
 
     @player =
       left:   parseFloat(xml_limits.attr('left'))
