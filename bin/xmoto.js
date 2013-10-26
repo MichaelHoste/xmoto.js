@@ -183,7 +183,7 @@
 
     Input.prototype.disable_scroll = function() {
       var keydown, keys, preventDefault;
-      keys = [37, 38, 39, 40];
+      keys = [37, 38, 39, 40, 32];
       preventDefault = function(e) {
         e = e || window.event;
         if (e.preventDefault) {
