@@ -52,7 +52,7 @@ class Assets
     for rpm in ['0000', '1000', '2000', '3000', '4000', '5000', '6000']
       createjs.Sound.registerSound(
         id:  "engine_#{rpm}"
-        src: "data/Sounds/engine_#{rpm}.mp3"
+        src: "data/Sounds/engine_#{rpm}.ogg"
       )
 
     items = @remove_duplicate_textures(items)

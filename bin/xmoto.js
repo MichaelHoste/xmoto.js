@@ -205,7 +205,9 @@
       console.log(vitesse);
       if (vitesse !== this.old_vitesse) {
         this.engine[this.old_vitesse].pause();
-        this.engine[vitesse].play();
+        this.engine[vitesse].play({
+          loop: -1
+        });
       }
       return this.old_vitesse = vitesse;
     };
@@ -2181,7 +2183,7 @@
         rpm = _ref4[_m];
         createjs.Sound.registerSound({
           id: "engine_" + rpm,
-          src: "data/Sounds/engine_" + rpm + ".mp3"
+          src: "data/Sounds/engine_" + rpm + ".ogg"
         });
       }
       items = this.remove_duplicate_textures(items);

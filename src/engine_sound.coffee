@@ -29,6 +29,6 @@ class EngineSound
 
     if vitesse != @old_vitesse
       @engine[@old_vitesse].pause()
-      @engine[vitesse].play()
+      @engine[vitesse].play({loop: -1})
 
     @old_vitesse = vitesse
