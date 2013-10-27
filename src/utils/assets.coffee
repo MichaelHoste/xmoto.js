@@ -39,6 +39,21 @@ class Assets
       src: "data/Sounds/PickUpStrawberry.ogg"
     )
 
+    createjs.Sound.registerSound(
+      id:  "Headcrash"
+      src: "data/Sounds/Headcrash.ogg"
+    )
+
+    createjs.Sound.registerSound(
+      id:  "EndOfLevel"
+      src: "data/Sounds/EndOfLevel.ogg"
+    )
+
+    createjs.Sound.registerSound(
+      id:  "motorbike"
+      src: "data/Sounds/motorbike.mp3"
+    )
+
     items = @remove_duplicate_textures(items)
 
     @queue.addEventListener("complete", callback)
