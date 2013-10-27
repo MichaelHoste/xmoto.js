@@ -32,6 +32,9 @@ class Level
     # Moto (level independant)
     @moto          = new Moto(this)
 
+    # Engine sound
+    @engine_sound  = new EngineSound(this)
+
     # Level dependent objects
     @infos         = new Infos(this)
     @sky           = new Sky(this)
