@@ -1189,6 +1189,7 @@
     level.load_from_file(name);
     return level.assets.load(function() {
       var update;
+      createjs.Sound.setMute(true);
       update = function() {
         level.input.move_moto();
         level.engine_sound.play();

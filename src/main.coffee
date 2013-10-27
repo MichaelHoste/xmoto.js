@@ -4,6 +4,8 @@ play_level = (name) ->
 
   # Load assets for this level before doing anything else
   level.assets.load( ->
+    createjs.Sound.setMute(true)
+
     update = ->
       level.input.move_moto()
       level.engine_sound.play()
