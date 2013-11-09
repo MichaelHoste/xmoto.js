@@ -1,0 +1,16 @@
+{
+  "name": "XMoto",
+  "description": "2D moto simulator",
+  "launch_path": "/index.html",
+
+  "icons": {
+    "128": "/img/icon-128.png"
+  },
+
+  "developer": {
+    "name": "80LIMIT SPRL",
+    "url": "http://80limit.com"
+  },
+
+  "default_locale": "en"
+}
