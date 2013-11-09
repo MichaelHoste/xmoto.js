@@ -17,6 +17,7 @@ play_level = (name) ->
     window.game_loop = setInterval(update, 1000 / 60)
 
     hide_loading()
+    document.getElementById("game").requestFullscreen()
   )
 
 show_loading = ->
@@ -34,3 +35,7 @@ $ ->
     play_level($(this).val())
   )
 
+  #$('#fullscreen').click( ->
+  #  #document.getElementById("game").requestFullscreen()
+  #  $("#game").fullScreen(true)
+  #)

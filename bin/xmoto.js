@@ -202,7 +202,6 @@
       if (vitesse > 6) {
         vitesse = 6;
       }
-      console.log(vitesse);
       if (vitesse !== this.old_vitesse) {
         this.engine[this.old_vitesse].pause();
         this.engine[vitesse].play({
@@ -1198,7 +1197,8 @@
         return level.display(false);
       };
       window.game_loop = setInterval(update, 1000 / 60);
-      return hide_loading();
+      hide_loading();
+      return document.getElementById("game").requestFullscreen();
     });
   };
 
