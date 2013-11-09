@@ -37,11 +37,9 @@ $ ->
     play_level($(this).val())
   )
 
-  canvas = document.getElementById("canvas")
-  width  = window.innerWidth
-  height = document.body.offsetHeight
+  $("canvas").width($("body").width())
+  $("canvas").height($("body").height())
 
   window.onresize = ->
-    height = canvas.height = document.body.offsetHeight
-    width  = canvas.width  = document.body.offsetWidth
-
+    $("canvas").width($("body").width())
+    $("canvas").height($("body").height())

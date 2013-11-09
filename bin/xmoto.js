@@ -294,8 +294,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 70,
-        y: -70
+        x: 20,
+        y: -20
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -1167,19 +1167,17 @@
   };
 
   $(function() {
-    var canvas, height, width;
     play_level($("#levels option:selected").val());
     $("#levels").on('change', function() {
       show_loading();
       clearInterval(window.game_loop);
       return play_level($(this).val());
     });
-    canvas = document.getElementById("canvas");
-    width = window.innerWidth;
-    height = document.body.offsetHeight;
+    $("canvas").width($("body").width());
+    $("canvas").height($("body").height());
     return window.onresize = function() {
-      height = canvas.height = document.body.offsetHeight;
-      return width = canvas.width = document.body.offsetWidth;
+      $("canvas").width($("body").width());
+      return $("canvas").height($("body").height());
     };
   });
 
