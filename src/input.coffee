@@ -28,12 +28,32 @@ class Input
     document.onkeydown = keydown
 
   init_keyboard: ->
-    window.addEventListener('deviceorientation', (event) ->
-      console.log(event.alpha + ' : ' + event.beta + ' : ' + event.gamma)
-      if event.gamma > 0
-        @left = true
-      if event.gamma < 0
-        @right = true
+    #window.addEventListener('deviceorientation', (event) =>
+    #  #$('#left').html("#{event.alpha}<br/>#{event.beta}<br/>#{event.gamma}")
+    #  #alert()
+    #  if event.beta > 12
+    #    @left = true
+    #  else if event.beta < -12
+    #    @right = true
+#
+    #  if event.gamma > 50
+    #    @down = true
+    #  else if event.gamma < 30
+    #    @up = true
+    #)
+
+    $("#right").on("touchstart", =>
+      @up = true
+    )
+    $("#right").on("touchend", =>
+      @up = false
+    )
+
+    $("#left").on("touchstart", =>
+      @down = true
+    )
+    $("#left").on("touchend", =>
+      @down = false
     )
 
     $(document).off('keydown')

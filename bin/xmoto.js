@@ -213,14 +213,17 @@
 
     Input.prototype.init_keyboard = function() {
       var _this = this;
-      window.addEventListener('deviceorientation', function(event) {
-        console.log(event.alpha + ' : ' + event.beta + ' : ' + event.gamma);
-        if (event.gamma > 0) {
-          this.left = true;
-        }
-        if (event.gamma < 0) {
-          return this.right = true;
-        }
+      $("#right").on("touchstart", function() {
+        return _this.up = true;
+      });
+      $("#right").on("touchend", function() {
+        return _this.up = false;
+      });
+      $("#left").on("touchstart", function() {
+        return _this.down = true;
+      });
+      $("#left").on("touchend", function() {
+        return _this.down = false;
       });
       $(document).off('keydown');
       $(document).on('keydown', function(event) {
