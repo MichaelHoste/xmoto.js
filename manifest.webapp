@@ -1,10 +1,10 @@
 {
   "name": "XMoto",
   "description": "2D moto simulator",
-  "launch_path": "/index.html",
+  "launch_path": "/test.html",
 
   "icons": {
-    "128": "/img/icon-128.png"
+    "128": "/icon.png"
   },
 
   "developer": {
