@@ -27,6 +27,13 @@ class Input
 
     document.onkeydown = keydown
 
+  window.addEventListener('deviceorientation', function(event) {
+    console.log(event.alpha + ' : ' + event.beta + ' : ' + event.gamma);
+    if (event.gamma > 0) { @left = true }
+    if (event.gamma < 0) { @right = true}
+  });
+
+
   init_keyboard: ->
     $(document).off('keydown')
     $(document).on('keydown', (event) =>
