@@ -4,14 +4,9 @@ class Theme
     @sprites = []
     @edges   = []
 
-    $.ajax({
-      type:     "GET",
-      url:      "data/Themes/#{file_name}",
-      dataType: "xml",
-      success:  @load_theme
-      async:    false
-      context:  @
-    })
+    theme = $("#theme").text()
+    console.log(theme)
+    @load_theme(theme)
 
   load_theme: (xml) ->
     xml_sprites = $(xml).find('sprite')

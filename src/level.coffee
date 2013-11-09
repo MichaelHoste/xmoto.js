@@ -48,14 +48,8 @@ class Level
     @current_time = 0
 
   load_from_file: (file_name) ->
-    $.ajax({
-      type:     "GET",
-      url:      "data/Levels/#{file_name}",
-      dataType: "xml",
-      success:  @load_level
-      async:    false
-      context:  @
-    })
+    level = $("#level").text()
+    @load_level(level)
 
   load_level: (xml) ->
     # Level dependent objects

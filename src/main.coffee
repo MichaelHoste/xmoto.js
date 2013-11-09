@@ -3,12 +3,16 @@ play_level = (name) ->
   level.load_from_file(name)
 
   # Load assets for this level before doing anything else
-  level.assets.load( ->
-    createjs.Sound.setMute(true)
+  level.assets.load()
+  console.log("assets chargées")
+  setTimeout( (-> go()), 3000)
+
+  go = ->
+    #createjs.Sound.setMute(true)
 
     update = ->
       level.input.move_moto()
-      level.engine_sound.play()
+      #level.engine_sound.play()
       level.world.Step(1.0 / 60.0, 10, 10)
       level.world.ClearForces()
       level.display(false)
@@ -17,8 +21,6 @@ play_level = (name) ->
     window.game_loop = setInterval(update, 1000 / 60)
 
     hide_loading()
-    document.getElementById("game").requestFullscreen()
-  )
 
 show_loading = ->
   $(".xmoto-loading").show()
@@ -35,7 +37,11 @@ $ ->
     play_level($(this).val())
   )
 
-  #$('#fullscreen').click( ->
-  #  #document.getElementById("game").requestFullscreen()
-  #  $("#game").fullScreen(true)
-  #)
+  canvas = document.getElementById("canvas")
+  width  = window.innerWidth
+  height = document.body.offsetHeight
+
+  window.onresize = ->
+    height = canvas.height = document.body.offsetHeight
+    width  = canvas.width  = document.body.offsetWidth
+

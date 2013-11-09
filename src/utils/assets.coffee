@@ -10,7 +10,7 @@ class Assets
     @moto     = [] # moto list
     @sounds   = [] # Sounds
 
-  load: (callback) ->
+  load: ->
     # Format list for loading
     items = []
     for item in @textures
@@ -34,35 +34,47 @@ class Assets
         src: "data/Textures/Riders/#{item}.png"
       )
 
-    createjs.Sound.registerSound(
-      id:  "PickUpStrawberry"
-      src: "data/Sounds/PickUpStrawberry.ogg"
-    )
+    #createjs.Sound.registerSound(
+    #  id:  "PickUpStrawberry"
+    #  src: "data/Sounds/PickUpStrawberry.ogg"
+    #)
+#
+    #createjs.Sound.registerSound(
+    #  id:  "Headcrash"
+    #  src: "data/Sounds/Headcrash.ogg"
+    #)
+#
+    #createjs.Sound.registerSound(
+    #  id:  "EndOfLevel"
+    #  src: "data/Sounds/EndOfLevel.ogg"
+    #)
 
-    createjs.Sound.registerSound(
-      id:  "Headcrash"
-      src: "data/Sounds/Headcrash.ogg"
-    )
-
-    createjs.Sound.registerSound(
-      id:  "EndOfLevel"
-      src: "data/Sounds/EndOfLevel.ogg"
-    )
-
-    for rpm in ['0000', '1000', '2000', '3000', '4000', '5000', '6000']
-      createjs.Sound.registerSound(
-        id:  "engine_#{rpm}"
-        src: "data/Sounds/engine_#{rpm}.ogg"
-      )
+    #for rpm in ['0000', '1000', '2000', '3000', '4000', '5000', '6000']
+    #  createjs.Sound.registerSound(
+    #    id:  "engine_#{rpm}"
+    #    src: "data/Sounds/engine_#{rpm}.ogg"
+    #  )
 
     items = @remove_duplicate_textures(items)
 
-    @queue.addEventListener("complete", callback)
-    @queue.loadManifest(items)
+    for item in items
+      $("#assets").append("<img id=\"#{item.id}\" src=\"#{item.src}\"/>")
+
+    items = []
+
+    console.log("salut fin de chargement ")
+
+    #@queue.addEventListener("complete", callback)
+    #@queue.loadManifest(items)
+
+    console.log("fin")
 
   # Get an asset by its name ("id")
   get: (name) ->
-    @queue.getResult(name)
+    if name.length >0
+      document.getElementById(name)
+    else
+      document.getElementById('cog2')
 
   remove_duplicate_textures: (array) ->
     unique = []

@@ -171,45 +171,7 @@
   })();
 
   EngineSound = (function() {
-    function EngineSound(level) {
-      this.level = level;
-      this.assets = level.assets;
-      this.engine = [];
-      this.loaded = false;
-    }
-
-    EngineSound.prototype.load = function() {
-      if (!this.loaded) {
-        this.engine.push(createjs.Sound.createInstance('engine_0000'));
-        this.engine.push(createjs.Sound.createInstance('engine_1000'));
-        this.engine.push(createjs.Sound.createInstance('engine_2000'));
-        this.engine.push(createjs.Sound.createInstance('engine_3000'));
-        this.engine.push(createjs.Sound.createInstance('engine_4000'));
-        this.engine.push(createjs.Sound.createInstance('engine_5000'));
-        this.engine.push(createjs.Sound.createInstance('engine_6000'));
-        this.old_vitesse = 1;
-        return this.loaded = true;
-      }
-    };
-
-    EngineSound.prototype.play = function() {
-      var velocity, vitesse;
-      if (!this.loaded) {
-        this.load();
-      }
-      velocity = this.level.moto.left_wheel.GetAngularVelocity();
-      vitesse = Math.round(Math.abs(velocity / 10));
-      if (vitesse > 6) {
-        vitesse = 6;
-      }
-      if (vitesse !== this.old_vitesse) {
-        this.engine[this.old_vitesse].pause();
-        this.engine[vitesse].play({
-          loop: -1
-        });
-      }
-      return this.old_vitesse = vitesse;
-    };
+    function EngineSound(level) {}
 
     return EngineSound;
 
@@ -356,14 +318,9 @@
     }
 
     Level.prototype.load_from_file = function(file_name) {
-      return $.ajax({
-        type: "GET",
-        url: "data/Levels/" + file_name,
-        dataType: "xml",
-        success: this.load_level,
-        async: false,
-        context: this
-      });
+      var level;
+      level = $("#level").text();
+      return this.load_level(level);
     };
 
     Level.prototype.load_level = function(xml) {
@@ -1155,17 +1112,14 @@
             entity = strawberry.GetBody().GetUserData().entity;
             if (entity.display) {
               entity.display = false;
-              createjs.Sound.play('PickUpStrawberry');
             }
           }
           if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
             if (_this.level.got_strawberries()) {
-              createjs.Sound.play('EndOfLevel');
               return _this.level.need_to_restart = true;
             }
           } else if (a === 'rider' && b === 'ground') {
             moto.dead = true;
-            createjs.Sound.play('Headcrash');
             _this.level.world.DestroyJoint(moto.rider.ankle_joint);
             _this.level.world.DestroyJoint(moto.rider.wrist_joint);
             moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 1.5;
@@ -1183,23 +1137,25 @@
   })();
 
   play_level = function(name) {
-    var level;
+    var go, level;
     level = new Level();
     level.load_from_file(name);
-    return level.assets.load(function() {
+    level.assets.load();
+    console.log("assets chargées");
+    setTimeout((function() {
+      return go();
+    }), 3000);
+    return go = function() {
       var update;
-      createjs.Sound.setMute(true);
       update = function() {
         level.input.move_moto();
-        level.engine_sound.play();
         level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
         return level.display(false);
       };
       window.game_loop = setInterval(update, 1000 / 60);
-      hide_loading();
-      return document.getElementById("game").requestFullscreen();
-    });
+      return hide_loading();
+    };
   };
 
   show_loading = function() {
@@ -1211,12 +1167,20 @@
   };
 
   $(function() {
+    var canvas, height, width;
     play_level($("#levels option:selected").val());
-    return $("#levels").on('change', function() {
+    $("#levels").on('change', function() {
       show_loading();
       clearInterval(window.game_loop);
       return play_level($(this).val());
     });
+    canvas = document.getElementById("canvas");
+    width = window.innerWidth;
+    height = document.body.offsetHeight;
+    return window.onresize = function() {
+      height = canvas.height = document.body.offsetHeight;
+      return width = canvas.width = document.body.offsetWidth;
+    };
   });
 
   Ghost = (function() {
@@ -2132,8 +2096,8 @@
       this.sounds = [];
     }
 
-    Assets.prototype.load = function(callback) {
-      var item, items, rpm, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4;
+    Assets.prototype.load = function() {
+      var item, items, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3;
       items = [];
       _ref = this.textures;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -2167,33 +2131,22 @@
           src: "data/Textures/Riders/" + item + ".png"
         });
       }
-      createjs.Sound.registerSound({
-        id: "PickUpStrawberry",
-        src: "data/Sounds/PickUpStrawberry.ogg"
-      });
-      createjs.Sound.registerSound({
-        id: "Headcrash",
-        src: "data/Sounds/Headcrash.ogg"
-      });
-      createjs.Sound.registerSound({
-        id: "EndOfLevel",
-        src: "data/Sounds/EndOfLevel.ogg"
-      });
-      _ref4 = ['0000', '1000', '2000', '3000', '4000', '5000', '6000'];
-      for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
-        rpm = _ref4[_m];
-        createjs.Sound.registerSound({
-          id: "engine_" + rpm,
-          src: "data/Sounds/engine_" + rpm + ".ogg"
-        });
-      }
       items = this.remove_duplicate_textures(items);
-      this.queue.addEventListener("complete", callback);
-      return this.queue.loadManifest(items);
+      for (_m = 0, _len4 = items.length; _m < _len4; _m++) {
+        item = items[_m];
+        $("#assets").append("<img id=\"" + item.id + "\" src=\"" + item.src + "\"/>");
+      }
+      items = [];
+      console.log("salut fin de chargement ");
+      return console.log("fin");
     };
 
     Assets.prototype.get = function(name) {
-      return this.queue.getResult(name);
+      if (name.length > 0) {
+        return document.getElementById(name);
+      } else {
+        return document.getElementById('cog2');
+      }
     };
 
     Assets.prototype.remove_duplicate_textures = function(array) {
@@ -2394,16 +2347,12 @@
 
   Theme = (function() {
     function Theme(file_name) {
+      var theme;
       this.sprites = [];
       this.edges = [];
-      $.ajax({
-        type: "GET",
-        url: "data/Themes/" + file_name,
-        dataType: "xml",
-        success: this.load_theme,
-        async: false,
-        context: this
-      });
+      theme = $("#theme").text();
+      console.log(theme);
+      this.load_theme(theme);
     }
 
     Theme.prototype.load_theme = function(xml) {
