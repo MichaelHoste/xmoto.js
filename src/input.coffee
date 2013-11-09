@@ -28,32 +28,42 @@ class Input
     document.onkeydown = keydown
 
   init_keyboard: ->
-    #window.addEventListener('deviceorientation', (event) =>
-    #  #$('#left').html("#{event.alpha}<br/>#{event.beta}<br/>#{event.gamma}")
-    #  #alert()
-    #  if event.beta > 12
-    #    @left = true
-    #  else if event.beta < -12
-    #    @right = true
+    window.addEventListener('deviceorientation', (event) =>
+      #alert()
+      if event.beta > 12
+        @left = true
+        @right = false
+        @value = Math.min(event.beta, 80)
+      else if event.beta < -12 and event.beta > -80
+        @right = true
+        @left = false
+        @value = Math.max(event.beta, -80)
+      else
+        @right = false
+        @left = false
 #
-    #  if event.gamma > 50
-    #    @down = true
-    #  else if event.gamma < 30
-    #    @up = true
-    #)
-
-    $("#right").on("touchstart", =>
-      @up = true
-    )
-    $("#right").on("touchend", =>
-      @up = false
+      #if event.gamma > 50
+      #  @down = true
+      #else if event.gamma < 30
+      #  @up = true
     )
 
     $("#left").on("touchstart", =>
-      @down = true
+      @up = true
     )
     $("#left").on("touchend", =>
+      @up = false
+    )
+
+    $("#right").on("touchstart", =>
+      @down = true
+    )
+    $("#right").on("touchend", =>
       @down = false
+    )
+
+    $("#debug").on("touchstart", =>
+      @level.restart()
     )
 
     $(document).off('keydown')
@@ -107,13 +117,21 @@ class Input
 
       # Back wheeling
       if @left
-        moto.body.ApplyTorque(force/3.0)
-        moto.rider.torso.ApplyTorque(force/3.0)
+        if @value
+          moto.body.ApplyTorque(@value/2.8)
+          moto.rider.torso.ApplyTorque(@value/2.8)
+        else
+          moto.body.ApplyTorque(force/3.0)
+          moto.rider.torso.ApplyTorque(force/3.0)
 
       # Front wheeling
       if @right
-        moto.body.ApplyTorque(-force/3.0)
-        moto.rider.torso.ApplyTorque(-force/3.0)
+        if @value
+          moto.body.ApplyTorque(@value/2.8)
+          moto.rider.torso.ApplyTorque(@value/2.8)
+        else
+          moto.body.ApplyTorque(-force/3.0)
+          moto.rider.torso.ApplyTorque(-force/3.0)
 
     if not @up and not @down
       # Engine brake

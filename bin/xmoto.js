@@ -213,17 +213,34 @@
 
     Input.prototype.init_keyboard = function() {
       var _this = this;
-      $("#right").on("touchstart", function() {
-        return _this.up = true;
-      });
-      $("#right").on("touchend", function() {
-        return _this.up = false;
+      window.addEventListener('deviceorientation', function(event) {
+        if (event.beta > 12) {
+          _this.left = true;
+          _this.right = false;
+          return _this.value = Math.min(event.beta, 80);
+        } else if (event.beta < -12 && event.beta > -80) {
+          _this.right = true;
+          _this.left = false;
+          return _this.value = Math.max(event.beta, -80);
+        } else {
+          _this.right = false;
+          return _this.left = false;
+        }
       });
       $("#left").on("touchstart", function() {
-        return _this.down = true;
+        return _this.up = true;
       });
       $("#left").on("touchend", function() {
+        return _this.up = false;
+      });
+      $("#right").on("touchstart", function() {
+        return _this.down = true;
+      });
+      $("#right").on("touchend", function() {
         return _this.down = false;
+      });
+      $("#debug").on("touchstart", function() {
+        return _this.level.restart();
       });
       $(document).off('keydown');
       $(document).on('keydown', function(event) {
@@ -274,12 +291,22 @@
           moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.001 ? -v_l : void 0));
         }
         if (this.left) {
-          moto.body.ApplyTorque(force / 3.0);
-          moto.rider.torso.ApplyTorque(force / 3.0);
+          if (this.value) {
+            moto.body.ApplyTorque(this.value / 2.8);
+            moto.rider.torso.ApplyTorque(this.value / 2.8);
+          } else {
+            moto.body.ApplyTorque(force / 3.0);
+            moto.rider.torso.ApplyTorque(force / 3.0);
+          }
         }
         if (this.right) {
-          moto.body.ApplyTorque(-force / 3.0);
-          moto.rider.torso.ApplyTorque(-force / 3.0);
+          if (this.value) {
+            moto.body.ApplyTorque(this.value / 2.8);
+            moto.rider.torso.ApplyTorque(this.value / 2.8);
+          } else {
+            moto.body.ApplyTorque(-force / 3.0);
+            moto.rider.torso.ApplyTorque(-force / 3.0);
+          }
         }
       }
       if (!this.up && !this.down) {
@@ -1161,7 +1188,8 @@
       var update;
       update = function() {
         level.input.move_moto();
-        level.world.Step(1.0 / 15.0, 40, 40);
+        level.world.Step(1.0 / 30.0, 20, 20);
+        level.world.Step(1.0 / 30.0, 20, 20);
         level.world.ClearForces();
         return level.display(false);
       };
@@ -1179,6 +1207,7 @@
   };
 
   $(function() {
+    window.screen.mozLockOrientation('landscape-primary');
     play_level($("#levels option:selected").val());
     $("#levels").on('change', function() {
       show_loading();

@@ -23,11 +23,11 @@
 
     <style media="screen" type="text/css">
       body, html {
-          width: 100%;
-          height: 100%;
-          margin: 0;
-          padding: 0;
-          overflow: hidden;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
       }
 
       canvas {
@@ -44,6 +44,8 @@
         background-color:blue;
         z-index:2;
         font-size:30px;
+        opacity:0.2;
+        border-radius: 50px;
       }
 
       #right {
@@ -55,6 +57,21 @@
         background-color:blue;
         z-index:2;
         font-size:30px;
+        opacity:0.2;
+        border-radius:50px;
+      }
+
+      #debug {
+        top:20px;
+        right:20px;
+        position:absolute;
+        width:80px;
+        height:80px;
+        background-color:red;
+        z-index:2;
+        font-size:30px;
+        opacity:0.2;
+        border-radius:50px;
       }
     </style>
   </head>
@@ -889,6 +906,7 @@
     <div id="right"></div>
     <div id="acceleration"></div>
     <div id="brake"></div>
+    <div id="debug"></div>
   </body>
 </html>
 
