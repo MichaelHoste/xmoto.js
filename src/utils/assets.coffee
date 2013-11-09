@@ -71,7 +71,7 @@ class Assets
 
   # Get an asset by its name ("id")
   get: (name) ->
-    if name.length >0
+    if name.length > 0
       document.getElementById(name)
     else
       document.getElementById('cog2')

@@ -294,8 +294,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 20,
-        y: -20
+        x: 60,
+        y: -60
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -1073,7 +1073,7 @@
       this.color_a = parseInt(xml_sky.attr('color_a'));
       this.zoom = parseFloat(xml_sky.attr('zoom'));
       this.offset = parseFloat(xml_sky.attr('offset'));
-      if (name === '') {
+      if (this.name === '') {
         this.name = 'sky1';
       }
       return this;
@@ -1149,11 +1149,11 @@
       var update;
       update = function() {
         level.input.move_moto();
-        level.world.Step(1.0 / 60.0, 10, 10);
+        level.world.Step(1.0 / 30.0, 20, 20);
         level.world.ClearForces();
         return level.display(false);
       };
-      window.game_loop = setInterval(update, 1000 / 60);
+      window.game_loop = setInterval(update, 1000 / 30);
       return hide_loading();
     };
   };
