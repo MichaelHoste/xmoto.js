@@ -294,8 +294,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 60,
-        y: -60
+        x: 30,
+        y: -30
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -1149,11 +1149,11 @@
       var update;
       update = function() {
         level.input.move_moto();
-        level.world.Step(1.0 / 30.0, 20, 20);
+        level.world.Step(1.0 / 15.0, 40, 40);
         level.world.ClearForces();
         return level.display(false);
       };
-      window.game_loop = setInterval(update, 1000 / 30);
+      window.game_loop = setInterval(update, 1000 / 15);
       return hide_loading();
     };
   };

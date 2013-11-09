@@ -13,12 +13,12 @@ play_level = (name) ->
     update = ->
       level.input.move_moto()
       #level.engine_sound.play()
-      level.world.Step(1.0 / 30.0, 20, 20)
+      level.world.Step(1.0 / 15.0, 40, 40)
       level.world.ClearForces()
       level.display(false)
 
     # Render 2D environment
-    window.game_loop = setInterval(update, 1000 / 30)
+    window.game_loop = setInterval(update, 1000 / 15)
 
     hide_loading()
 
