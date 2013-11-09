@@ -213,6 +213,15 @@
 
     Input.prototype.init_keyboard = function() {
       var _this = this;
+      window.addEventListener('deviceorientation', function(event) {
+        console.log(event.alpha + ' : ' + event.beta + ' : ' + event.gamma);
+        if (event.gamma > 0) {
+          this.left = true;
+        }
+        if (event.gamma < 0) {
+          return this.right = true;
+        }
+      });
       $(document).off('keydown');
       $(document).on('keydown', function(event) {
         switch (event.which || event.keyCode) {
