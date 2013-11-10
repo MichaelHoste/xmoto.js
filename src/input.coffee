@@ -41,24 +41,19 @@ class Input
       else
         @right = false
         @left = false
-#
-      #if event.gamma > 50
-      #  @down = true
-      #else if event.gamma < 30
-      #  @up = true
-    )
-
-    $("#left").on("touchstart", =>
-      @up = true
-    )
-    $("#left").on("touchend", =>
-      @up = false
     )
 
     $("#right").on("touchstart", =>
-      @down = true
+      @up = true
     )
     $("#right").on("touchend", =>
+      @up = false
+    )
+
+    $("#left").on("touchstart", =>
+      @down = true
+    )
+    $("#left").on("touchend", =>
       @down = false
     )
 
@@ -118,8 +113,8 @@ class Input
       # Back wheeling
       if @left
         if @value
-          moto.body.ApplyTorque(@value/2.8)
-          moto.rider.torso.ApplyTorque(@value/2.8)
+          moto.body.ApplyTorque(@value/6)
+          moto.rider.torso.ApplyTorque(@value/6)
         else
           moto.body.ApplyTorque(force/3.0)
           moto.rider.torso.ApplyTorque(force/3.0)
@@ -127,8 +122,8 @@ class Input
       # Front wheeling
       if @right
         if @value
-          moto.body.ApplyTorque(@value/2.8)
-          moto.rider.torso.ApplyTorque(@value/2.8)
+          moto.body.ApplyTorque(@value/6)
+          moto.rider.torso.ApplyTorque(@value/6)
         else
           moto.body.ApplyTorque(-force/3.0)
           moto.rider.torso.ApplyTorque(-force/3.0)

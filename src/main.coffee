@@ -12,6 +12,7 @@ play_level = (name) ->
 
     update = ->
       level.input.move_moto()
+
       #level.engine_sound.play()
       level.world.Step(1.0 / 30.0, 20, 20)
       level.world.Step(1.0 / 30.0, 20, 20)
@@ -30,7 +31,7 @@ hide_loading = ->
   $(".xmoto-loading").hide()
 
 $ ->
-  window.screen.mozLockOrientation('landscape-primary')
+  window.screen.mozLockOrientation('landscape-primary') if window.screen.mozLockOrientation
   play_level($("#levels option:selected").val())
 
   $("#levels").on('change', ->

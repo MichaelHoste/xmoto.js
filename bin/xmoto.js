@@ -227,16 +227,16 @@
           return _this.left = false;
         }
       });
-      $("#left").on("touchstart", function() {
+      $("#right").on("touchstart", function() {
         return _this.up = true;
       });
-      $("#left").on("touchend", function() {
+      $("#right").on("touchend", function() {
         return _this.up = false;
       });
-      $("#right").on("touchstart", function() {
+      $("#left").on("touchstart", function() {
         return _this.down = true;
       });
-      $("#right").on("touchend", function() {
+      $("#left").on("touchend", function() {
         return _this.down = false;
       });
       $("#debug").on("touchstart", function() {
@@ -292,8 +292,8 @@
         }
         if (this.left) {
           if (this.value) {
-            moto.body.ApplyTorque(this.value / 2.8);
-            moto.rider.torso.ApplyTorque(this.value / 2.8);
+            moto.body.ApplyTorque(this.value / 6);
+            moto.rider.torso.ApplyTorque(this.value / 6);
           } else {
             moto.body.ApplyTorque(force / 3.0);
             moto.rider.torso.ApplyTorque(force / 3.0);
@@ -301,8 +301,8 @@
         }
         if (this.right) {
           if (this.value) {
-            moto.body.ApplyTorque(this.value / 2.8);
-            moto.rider.torso.ApplyTorque(this.value / 2.8);
+            moto.body.ApplyTorque(this.value / 6);
+            moto.rider.torso.ApplyTorque(this.value / 6);
           } else {
             moto.body.ApplyTorque(-force / 3.0);
             moto.rider.torso.ApplyTorque(-force / 3.0);
@@ -1207,7 +1207,9 @@
   };
 
   $(function() {
-    window.screen.mozLockOrientation('landscape-primary');
+    if (window.screen.mozLockOrientation) {
+      window.screen.mozLockOrientation('landscape-primary');
+    }
     play_level($("#levels option:selected").val());
     $("#levels").on('change', function() {
       show_loading();
