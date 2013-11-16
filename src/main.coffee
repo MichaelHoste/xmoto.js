@@ -1,6 +1,12 @@
 play_level = (name) ->
   level = new Level()
-  level.load_from_file(name)
+  #level.load_from_file(name)
+
+  level.load_from_file("l1.lvl")
+  level.load_as_replay("replay_1383574.rpl")
+
+  #level.load_from_file("l2813.lvl")
+  #level.load_as_replay("credits.rpl")
 
   # Load assets for this level before doing anything else
   level.assets.load( ->

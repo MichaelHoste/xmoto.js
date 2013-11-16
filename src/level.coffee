@@ -9,8 +9,8 @@ class Level
 
     # level unities * scale = pixels
     @scale =
-      x:  70
-      y: -70
+      x:  35
+      y: -35
 
     # Assets manager
     @assets        = new Assets()
@@ -57,6 +57,14 @@ class Level
       context:  @
     })
 
+  load_as_replay: (@replay_name) ->
+    @load_replay()
+
+  load_replay: ->
+    replayFile = new ReplayFile()
+    replayFile.load_from_file(@replay_name)
+    @replayPlayer = new Ghost(this, replayFile.clone(this))
+
   load_level: (xml) ->
     # Level dependent objects
     @infos        .parse(xml).init()
@@ -95,15 +103,22 @@ class Level
     # initialize position of camera
     @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
     @ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
-    @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
+
+    if @replayPlayer # mode replaying
+      @ctx.translate(-@replayPlayer.position().x, -@replayPlayer.position().y - 0.25) # Camera on moto
+    else # mode playing
+      @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
 
     @sky     .display(@ctx)
     @limits  .display(@ctx)
     @entities.display_sprites(@ctx)
     @blocks  .display(@ctx)
     @entities.display_items(@ctx)
-    @moto    .display(@ctx)
-    @ghost   .display(@ctx) if @ghost
+
+    if @replayPlayer # mode replaying
+      @replayPlayer   .display(@ctx)
+    else
+      @moto    .display(@ctx)
 
     @world.DrawDebugData() if debug
 
@@ -132,8 +147,25 @@ class Level
     @moto = new Moto(this, false)
     @moto.init()
 
+    @load_replay() if @replayPlayer
+
     @start_time   = new Date().getTime()
     @current_time = 0
 
     for entity in @entities.strawberries
       entity.display = true
+
+  mode: ->
+    return "replay" if @replayPlayer
+    "play"
+
+  rewind: (x) ->
+    if @replayPlayer
+      @replayPlayer.current_frame -= x
+      if @replayPlayer.current_frame < 0
+        @replayPlayer.current_frame = 0
+
+  forward: (x) ->
+    if @replayPlayer
+      @replayPlayer.current_frame += x
+      @replayPlayer.current_frame = @replayPlayer.replay.frames_count()-1 if @replayPlayer.current_frame > @replayPlayer.replay.frames_count()-1

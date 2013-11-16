@@ -20,7 +20,8 @@ class Ghost
       @display_upper_arm()
       @display_lower_arm()
 
-      @current_frame = @current_frame + 1
+      if @current_frame < @replay.frames_count()-1
+        @current_frame = @current_frame + 1
 
   init: ->
     # Assets
@@ -229,3 +230,6 @@ class Ghost
     )
 
     @level.ctx.restore()
+
+  position: ->
+    @replay.frame(@current_frame).body.position

@@ -36,9 +36,15 @@ class Input
         when 40
           @down = true
         when 37
-          @left = true
+          if @level.mode() == "play"
+            @left = true
+          else if @level.mode() == "replay"
+            @level.rewind(30)
         when 39
-          @right = true
+          if @level.mode() == "play"
+            @right = true
+          else if @level.mode() == "replay"
+            @level.forward(30)
         when 13
           @level.restart()
         when 32
