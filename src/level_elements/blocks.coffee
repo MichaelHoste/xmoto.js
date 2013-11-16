@@ -83,23 +83,27 @@ class Blocks
   display: (ctx) ->
     # draw back blocks before front blocks
     for block in @back_list.concat(@front_list)
-      ctx.beginPath()
+      if is_visible(block)
+        ctx.beginPath()
 
-      for vertex, i in block.vertices
-        if i == 0
-          ctx.moveTo(block.position.x + vertex.x, block.position.y + vertex.y)
-        else
-          ctx.lineTo(block.position.x + vertex.x, block.position.y + vertex.y)
+        for vertex, i in block.vertices
+          if i == 0
+            ctx.moveTo(block.position.x + vertex.x, block.position.y + vertex.y)
+          else
+            ctx.lineTo(block.position.x + vertex.x, block.position.y + vertex.y)
 
-      ctx.closePath()
+        ctx.closePath()
 
-      ctx.save()
-      ctx.scale(1.0 / 40.0, -1.0 / 40.0)
-      ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), 'repeat')
-      ctx.fill()
-      ctx.restore()
+        ctx.save()
+        ctx.scale(1.0 / 40.0, -1.0 / 40.0)
+        ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), 'repeat')
+        ctx.fill()
+        ctx.restore()
 
     @edges.display(ctx)
+
+# true if block is on the screen (has to be displayed)
+is_visible = (block) ->
 
 # Out of class methods
 triangulate = (blocks) ->
