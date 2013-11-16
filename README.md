@@ -45,6 +45,8 @@ A good idea would be to make an educated guess of the power of the computer and 
 
 ## Download the levels from the XMoto official website
 
+### Solution 1
+
 Execute this on the chrome console of one of the page of listing (ex. http://xmoto.tuxfamily.org/index.php?page=levels&sort=name&letter=A)
 
 ```
@@ -62,6 +64,10 @@ $('.admin_data tr').each(function(){ $(this).find('td:last a').each(function() {
 ```
 
 Then put result lines in a bash file at the root of the project, chmod +x the file and execute it.
+
+### Solution 2
+
+Use this file : http://xmoto.tuxfamily.org/levels.xml
 
 ## TODO
 

@@ -7,6 +7,7 @@ class Input
   init: ->
     @disable_scroll()
     @init_keyboard()
+    @init_zoom()
 
   disable_scroll: ->
     # Disable up, down, left, right to scroll
@@ -57,6 +58,34 @@ class Input
           @right = false
     )
 
+  # If there are some issues on other systems than MacOS,
+  # check this to find a solution : http://stackoverflow.com/questions/5527601/normalizing-mousewheel-speed-across-browsers
+  init_zoom: ->
+    scroll = (event) =>
+      if event.wheelDelta
+        delta = event.wheelDelta/40
+      else if event.detail
+        delta = event.detail
+      else
+        delta = 0
+
+      # zoom / dezoom
+      @level.scale.x += (@level.scale.x/200) * delta
+      @level.scale.y += (@level.scale.y/200) * delta
+
+      # boundaries
+      @level.scale.x =  35 if @level.scale.x <  35
+      @level.scale.y = -35 if @level.scale.y > -35
+
+      @level.scale.x =  200 if @level.scale.x >  200
+      @level.scale.y = -200 if @level.scale.y < -200
+
+      return event.preventDefault() && false
+
+    canvas = $('#game').get(0)
+    canvas.addEventListener('DOMMouseScroll', scroll, false)
+    canvas.addEventListener('mousewheel',     scroll, false)
+
   move_moto: ->
     force = 24.1
     moto  = @level.moto
@@ -71,7 +100,7 @@ class Input
       if @down
         # block right wheel velocity
         v_r = moto.right_wheel.GetAngularVelocity()
-        moto.right_wheel.ApplyTorque((if Math.abs(v_r) >= 0.001 then -2*v_r))
+        moto.right_wheel.ApplyTorque((if Math.abs(v_r) >= 0.001 then -v_r))
 
         # block left wheel velocity
         v_l = moto.left_wheel.GetAngularVelocity()
@@ -103,16 +132,3 @@ class Input
     # Right wheel suspension
     moto.right_prismatic_joint.SetMaxMotorForce(4+Math.abs(800*Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)))
     moto.right_prismatic_joint.SetMotorSpeed(-3*moto.right_prismatic_joint.GetJointTranslation())
-
-    # No more articulation feedback, gravity does its job !
-
-    #articulations = [ rider.ankle_joint, rider.wrist_joint, rider.knee_joint,
-    #                  rider.elbow_joint, rider.shoulder_joint, rider.hip_joint ]
-    #
-    ## Articulations of the rider ("suspension")
-    #if not @left and not @right
-    #  for articulation in articulations
-    #    angle = articulation.GetJointAngle()
-    #    articulation.SetMaxMotorTorque(angle/2)
-    #    articulation.SetMotorSpeed(angle/2)
-    #

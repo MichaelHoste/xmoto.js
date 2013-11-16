@@ -25,8 +25,6 @@ class EngineSound
     vitesse  = Math.round(Math.abs(velocity/10))
     vitesse  = 6 if vitesse > 6
 
-    console.log(vitesse)
-
     if vitesse != @old_vitesse
       @engine[@old_vitesse].pause()
       @engine[vitesse].play({loop: -1})

@@ -202,7 +202,6 @@
       if (vitesse > 6) {
         vitesse = 6;
       }
-      console.log(vitesse);
       if (vitesse !== this.old_vitesse) {
         this.engine[this.old_vitesse].pause();
         this.engine[vitesse].play({
@@ -224,7 +223,8 @@
 
     Input.prototype.init = function() {
       this.disable_scroll();
-      return this.init_keyboard();
+      this.init_keyboard();
+      return this.init_zoom();
     };
 
     Input.prototype.disable_scroll = function() {
@@ -285,6 +285,39 @@
       });
     };
 
+    Input.prototype.init_zoom = function() {
+      var canvas, scroll,
+        _this = this;
+      scroll = function(event) {
+        var delta;
+        if (event.wheelDelta) {
+          delta = event.wheelDelta / 40;
+        } else if (event.detail) {
+          delta = event.detail;
+        } else {
+          delta = 0;
+        }
+        _this.level.scale.x += (_this.level.scale.x / 200) * delta;
+        _this.level.scale.y += (_this.level.scale.y / 200) * delta;
+        if (_this.level.scale.x < 35) {
+          _this.level.scale.x = 35;
+        }
+        if (_this.level.scale.y > -35) {
+          _this.level.scale.y = -35;
+        }
+        if (_this.level.scale.x > 200) {
+          _this.level.scale.x = 200;
+        }
+        if (_this.level.scale.y < -200) {
+          _this.level.scale.y = -200;
+        }
+        return event.preventDefault() && false;
+      };
+      canvas = $('#game').get(0);
+      canvas.addEventListener('DOMMouseScroll', scroll, false);
+      return canvas.addEventListener('mousewheel', scroll, false);
+    };
+
     Input.prototype.move_moto = function() {
       var force, moto, rider, v, v_l, v_r;
       force = 24.1;
@@ -296,7 +329,7 @@
         }
         if (this.down) {
           v_r = moto.right_wheel.GetAngularVelocity();
-          moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.001 ? -2 * v_r : void 0));
+          moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.001 ? -v_r : void 0));
           v_l = moto.left_wheel.GetAngularVelocity();
           moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.001 ? -v_l : void 0));
         }
@@ -576,7 +609,7 @@
         }
         ctx.closePath();
         ctx.save();
-        ctx.scale(1.0 / this.level.scale.x, 1.0 / this.level.scale.y);
+        ctx.scale(1.0 / 40.0, -1.0 / 40.0);
         ctx.fillStyle = ctx.createPattern(this.assets.get(block.usetexture.id), 'repeat');
         ctx.fill();
         ctx.restore();
@@ -1070,7 +1103,7 @@
 
     Limits.prototype.save_apply_texture_and_restore = function(ctx) {
       ctx.save();
-      ctx.scale(1.0 / this.level.scale.x, 1.0 / this.level.scale.y);
+      ctx.scale(1.0 / 40.0, -1.0 / 40.0);
       ctx.fillStyle = ctx.createPattern(this.assets.get('dirt'), "repeat");
       ctx.fill();
       return ctx.restore();
@@ -1117,7 +1150,7 @@
       this.color_a = parseInt(xml_sky.attr('color_a'));
       this.zoom = parseFloat(xml_sky.attr('zoom'));
       this.offset = parseFloat(xml_sky.attr('offset'));
-      if (name === '') {
+      if (this.name === '') {
         this.name = 'sky1';
       }
       return this;
@@ -1128,7 +1161,17 @@
     };
 
     Sky.prototype.display = function(ctx) {
-      return ctx.drawImage(this.assets.get(this.name), this.level.limits.screen.left, this.level.limits.screen.bottom, this.level.limits.size.x, this.level.limits.size.y);
+      ctx.beginPath();
+      ctx.moveTo(this.level.limits.screen.left + this.level.limits.size.x, this.level.limits.screen.bottom);
+      ctx.lineTo(this.level.limits.screen.left + this.level.limits.size.x, this.level.limits.screen.bottom + this.level.limits.size.y);
+      ctx.lineTo(this.level.limits.screen.left, this.level.limits.screen.bottom + this.level.limits.size.y);
+      ctx.lineTo(this.level.limits.screen.left, this.level.limits.screen.bottom);
+      ctx.closePath();
+      ctx.save();
+      ctx.scale(1.0 / 15.0, -1.0 / 15.0);
+      ctx.fillStyle = ctx.createPattern(this.assets.get(this.name), "repeat");
+      ctx.fill();
+      return ctx.restore();
     };
 
     return Sky;
