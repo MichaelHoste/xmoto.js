@@ -319,7 +319,7 @@
     };
 
     Input.prototype.move_moto = function() {
-      var force, moto, rider, v, v_l, v_r;
+      var force, moto, rider, v;
       force = 24.1;
       moto = this.level.moto;
       rider = moto.rider;
@@ -328,10 +328,8 @@
           moto.left_wheel.ApplyTorque(-moto.mirror * force / 3);
         }
         if (this.down) {
-          v_r = moto.right_wheel.GetAngularVelocity();
-          moto.right_wheel.ApplyTorque((Math.abs(v_r) >= 0.001 ? -v_r : void 0));
-          v_l = moto.left_wheel.GetAngularVelocity();
-          moto.left_wheel.ApplyTorque((Math.abs(v_l) >= 0.001 ? -v_l : void 0));
+          moto.right_wheel.SetAngularVelocity(0);
+          moto.left_wheel.SetAngularVelocity(0);
         }
         if (this.left) {
           moto.body.ApplyTorque(force / 3.0);

@@ -98,13 +98,9 @@ class Input
 
       # Brakes
       if @down
-        # block right wheel velocity
-        v_r = moto.right_wheel.GetAngularVelocity()
-        moto.right_wheel.ApplyTorque((if Math.abs(v_r) >= 0.001 then -v_r))
-
-        # block left wheel velocity
-        v_l = moto.left_wheel.GetAngularVelocity()
-        moto.left_wheel.ApplyTorque((if Math.abs(v_l) >= 0.001 then -v_l))
+        # block wheels
+        moto.right_wheel.SetAngularVelocity(0)
+        moto.left_wheel.SetAngularVelocity(0)
 
       # Back wheeling
       if @left
