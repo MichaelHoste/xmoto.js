@@ -91,7 +91,7 @@ class Limits
 
   save_apply_texture_and_restore: (ctx) ->
     ctx.save()
-    ctx.scale(1.0 / @level.scale.x, 1.0 / @level.scale.y)
+    ctx.scale(1.0 / 40.0, -1.0 / 40.0)
     ctx.fillStyle = ctx.createPattern(@assets.get('dirt'), "repeat")
     ctx.fill()
     ctx.restore()

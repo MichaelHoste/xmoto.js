@@ -94,7 +94,7 @@ class Blocks
       ctx.closePath()
 
       ctx.save()
-      ctx.scale(1.0 / @level.scale.x, 1.0 / @level.scale.y)
+      ctx.scale(1.0 / 40.0, -1.0 / 40.0)
       ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), 'repeat')
       ctx.fill()
       ctx.restore()

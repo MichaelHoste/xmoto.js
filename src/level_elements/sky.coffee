@@ -14,7 +14,7 @@ class Sky
     @zoom      = parseFloat(xml_sky.attr('zoom'))
     @offset    = parseFloat(xml_sky.attr('offset'))
 
-    @name = 'sky1' if name == ''
+    @name = 'sky1' if @name == ''
 
     return this
 
@@ -22,8 +22,15 @@ class Sky
     @assets.textures.push(@name)
 
   display: (ctx) ->
-    ctx.drawImage(@assets.get(@name),
-                  @level.limits.screen.left,
-                  @level.limits.screen.bottom,
-                  @level.limits.size.x,
-                  @level.limits.size.y)
+    ctx.beginPath()
+    ctx.moveTo(@level.limits.screen.left + @level.limits.size.x, @level.limits.screen.bottom)
+    ctx.lineTo(@level.limits.screen.left + @level.limits.size.x, @level.limits.screen.bottom + @level.limits.size.y)
+    ctx.lineTo(@level.limits.screen.left,                        @level.limits.screen.bottom + @level.limits.size.y)
+    ctx.lineTo(@level.limits.screen.left,                        @level.limits.screen.bottom)
+    ctx.closePath()
+
+    ctx.save()
+    ctx.scale(1.0 / 15.0, -1.0 / 15.0)
+    ctx.fillStyle = ctx.createPattern(@assets.get(@name), "repeat")
+    ctx.fill()
+    ctx.restore()
