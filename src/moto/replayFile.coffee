@@ -53,7 +53,6 @@ class ReplayFile
     format = replay.getInt8()
     @load_replay_01(replay, format) if format == 0
     @load_replay_01(replay, format) if format == 1
-    @load_replay_2(replay)          if format == 2
     @load_replay_3(replay)          if format == 3
 
   load_replay_01: (replay, format) ->
