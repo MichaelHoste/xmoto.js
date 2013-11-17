@@ -88,9 +88,15 @@ class Level
       @need_to_restart = false
       @restart(true)
 
+    if not @canvas_width
+      @init_canvas()
+      @buffer.redraw()
+
+    if @buffer.redraw_needed()
+      @buffer.redraw()
+
     @current_time = new Date().getTime() - @start_time
 
-    @init_canvas() if not @canvas_width
     @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
 
     buffer_center_x = @buffer.canvas_width / 2
@@ -108,12 +114,12 @@ class Level
     @ctx.drawImage(@buffer.canvas,
                    buffer_center_x - canvas_center_x  + translate_x + margin_zoom_x, # The x coordinate where to start clipping
                    buffer_center_y - canvas_center_y  + translate_y + margin_zoom_y, # The y coordinate where to start clipping
-                   clipped_width,                                                                                          # The width of the clipped image
-                   clipped_height,                                                                                         # The height of the clipped image
-                   0,                                                                                                      # The x coordinate where to place the image on the canvas
-                   0,                                                                                                      # The y coordinate where to place the image on the canvas
-                   @canvas_width,                                                                                          # The width of the image to use (stretch or reduce the image)
-                   @canvas_height)                                                                                         # The height of the image to use (stretch or reduce the image)
+                   clipped_width,                                                    # The width of the clipped image
+                   clipped_height,                                                   # The height of the clipped image
+                   0,                                                                # The x coordinate where to place the image on the canvas
+                   0,                                                                # The y coordinate where to place the image on the canvas
+                   @canvas_width,                                                    # The width of the image to use (stretch or reduce the image)
+                   @canvas_height)                                                   # The height of the image to use (stretch or reduce the image)
 
     @ctx.save()
 

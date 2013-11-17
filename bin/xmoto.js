@@ -12,12 +12,34 @@
       this.canvas = $('#buffer').get(0);
       this.ctx = this.canvas.getContext('2d');
       this.scale = this.level.scale;
-      this.moto = this.level.moto;
       this.sky = this.level.sky;
       this.limits = this.level.limits;
       this.entities = this.level.entities;
       this.blocks = this.level.blocks;
     }
+
+    Buffer.prototype.redraw_needed = function() {
+      var moto;
+      moto = this.level.moto;
+      if (!this.canvas_width) {
+        return true;
+      }
+      if (this.visible) {
+        if (this.visible.right < moto.position().x + (this.level.canvas_width / 2) / this.scale.x) {
+          return true;
+        }
+        if (this.visible.left > moto.position().x - (this.level.canvas_width / 2) / this.scale.x) {
+          return true;
+        }
+        if (this.visible.top < moto.position().y - (this.level.canvas_height / 2) / this.scale.y) {
+          return true;
+        }
+        if (this.visible.bottom > moto.position().y + (this.level.canvas_height / 2) / this.scale.y) {
+          return true;
+        }
+      }
+      return false;
+    };
 
     Buffer.prototype.init_canvas = function() {
       this.canvas_width = parseFloat(this.canvas.width);
@@ -25,24 +47,26 @@
       return this.ctx.lineWidth = 0.01;
     };
 
-    Buffer.prototype.display = function() {
+    Buffer.prototype.redraw = function() {
+      var moto;
+      moto = this.level.moto;
       if (!this.canvas_width) {
         this.init_canvas();
       }
       this.moto_position = {
-        x: this.moto.position().x,
-        y: this.moto.position().y
+        x: moto.position().x,
+        y: moto.position().y
       };
       this.ctx.clearRect(0, 0, this.canvas_width, this.canvas_height);
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
-      this.ctx.scale(this.scale.x, this.scale.y);
-      this.ctx.translate(-this.moto.position().x, -this.moto.position().y - 0.25);
+      this.ctx.scale(70, -70);
+      this.ctx.translate(-moto.position().x, -moto.position().y - 0.25);
       this.visible = {
-        left: this.moto.position().x - (this.canvas_width / 2) / this.scale.x,
-        right: this.moto.position().x + (this.canvas_width / 2) / this.scale.x,
-        bottom: this.moto.position().y + (this.canvas_height / 2) / this.scale.y,
-        top: this.moto.position().y - (this.canvas_height / 2) / this.scale.y
+        left: moto.position().x - (this.canvas_width / 2) / 70,
+        right: moto.position().x + (this.canvas_width / 2) / 70,
+        bottom: moto.position().y + (this.canvas_height / 2) / -70,
+        top: moto.position().y - (this.canvas_height / 2) / -70
       };
       this.visible.aabb = new b2AABB();
       this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
@@ -485,10 +509,14 @@
         this.need_to_restart = false;
         this.restart(true);
       }
-      this.current_time = new Date().getTime() - this.start_time;
       if (!this.canvas_width) {
         this.init_canvas();
+        this.buffer.redraw();
       }
+      if (this.buffer.redraw_needed()) {
+        this.buffer.redraw();
+      }
+      this.current_time = new Date().getTime() - this.start_time;
       this.ctx.clearRect(0, 0, this.canvas_width, this.canvas_height);
       buffer_center_x = this.buffer.canvas_width / 2;
       canvas_center_x = this.canvas_width / 2;
@@ -1424,7 +1452,6 @@
     return level.assets.load(function() {
       var update;
       createjs.Sound.setMute(true);
-      level.buffer.display();
       update = function() {
         level.input.move_moto();
         level.engine_sound.play();
