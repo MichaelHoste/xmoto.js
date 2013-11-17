@@ -1,11 +1,12 @@
+b2AABB = Box2D.Collision.b2AABB
 b2Vec2 = Box2D.Common.Math.b2Vec2
 
 class Level
 
   constructor: ->
     # Context
-    canvas  = $('#game').get(0)
-    @ctx = canvas.getContext('2d')
+    @canvas = $('#game').get(0)
+    @ctx    = @canvas.getContext('2d')
 
     # level unities * scale = pixels
     @scale =
@@ -75,10 +76,31 @@ class Level
     @listeners.init()
 
   init_canvas: ->
-    @canvas  = $('#game').get(0)
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height)
     @ctx.lineWidth = 0.01
+
+  #create_background_buffer: ->
+  #  @back_canvas = $('#back').get(0)
+  #  @back_ctx    = @back_canvas.getContext('2d')
+#
+  #  @back_canvas_width  = parseFloat(@back_canvas.width)
+  #  @back_canvas_height = parseFloat(@back_canvas.height)
+  #  @back_ctx.lineWidth = 0.01
+#
+  #  @back_ctx.clearRect(0, 0, @back_canvas_width, @back_canvas_height)
+  #  @back_ctx.save()
+#
+  #  # initialize position of camera
+  #  @back_ctx.translate(@back_canvas_width/2, @back_canvas_height/2)     # Center of canvas
+  #  @back_ctx.scale(@back_canvas_width / @limits.size.x, -@back_canvas_height / @limits.size.y)                                  # Scale (zoom)
+#
+  #  @sky     .display(@back_ctx)
+  #  @limits  .display(@back_ctx)
+  #  @entities.display_sprites(@back_ctx)
+  #  @blocks  .display(@back_ctx)
+#
+  #  @back_ctx.restore()
 
   display: (debug = false) ->
     if @need_to_restart
@@ -87,15 +109,26 @@ class Level
 
     @current_time = new Date().getTime() - @start_time
 
-    @init_canvas() if not @canvas
+    @init_canvas() if not @canvas_width
     @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
 
+    #@ctx.drawImage(@back_canvas, 0, 0, 1000, 400)
     @ctx.save()
 
     # initialize position of camera
     @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
     @ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
     @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
+
+    # visible limits of the world (don't show anything outside of these limits)
+    @visible =
+      left:   @moto.position().x - (@canvas_width  / 2) / @scale.x
+      right:  @moto.position().x + (@canvas_width  / 2) / @scale.x
+      bottom: @moto.position().y + (@canvas_height / 2) / @scale.y
+      top:    @moto.position().y - (@canvas_height / 2) / @scale.y
+    @visible.aabb = new b2AABB()
+    @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
+    @visible.aabb.upperBound.Set(@visible.right, @visible.top)
 
     @sky     .display(@ctx)
     @limits  .display(@ctx)

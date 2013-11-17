@@ -1,3 +1,6 @@
+b2Vec2          = Box2D.Common.Math.b2Vec2
+b2AABB          = Box2D.Collision.b2AABB
+
 class Blocks
 
   constructor: (level) ->
@@ -49,9 +52,13 @@ class Blocks
         vertex =
           x:    parseFloat($(xml_vertex).attr('x'))
           y:    parseFloat($(xml_vertex).attr('y'))
+          absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are here to
+          absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # accelerate drawing of each frame
           edge: $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
+
+      block.aabb = block_AABB(block)
 
       @list.push(block)
       if block.position.background
@@ -83,14 +90,14 @@ class Blocks
   display: (ctx) ->
     # draw back blocks before front blocks
     for block in @back_list.concat(@front_list)
-      if is_visible(block)
+      if visible_block(@level.visible, block)
         ctx.beginPath()
 
         for vertex, i in block.vertices
           if i == 0
-            ctx.moveTo(block.position.x + vertex.x, block.position.y + vertex.y)
+            ctx.moveTo(vertex.absolute_x, vertex.absolute_y)
           else
-            ctx.lineTo(block.position.x + vertex.x, block.position.y + vertex.y)
+            ctx.lineTo(vertex.absolute_x, vertex.absolute_y)
 
         ctx.closePath()
 
@@ -102,8 +109,32 @@ class Blocks
 
     @edges.display(ctx)
 
-# true if block is on the screen (has to be displayed)
-is_visible = (block) ->
+block_AABB = (block) ->
+  first = true
+  lower_bound = {}
+  upper_bound = {}
+  for vertex in block.vertices
+    if first
+      lower_bound =
+        x: vertex.absolute_x
+        y: vertex.absolute_y
+      upper_bound =
+        x: vertex.absolute_x
+        y: vertex.absolute_y
+      first = false
+    else
+      lower_bound.x = vertex.absolute_x if vertex.absolute_x < lower_bound.x
+      lower_bound.y = vertex.absolute_y if vertex.absolute_y < lower_bound.y
+      upper_bound.x = vertex.absolute_x if vertex.absolute_x > upper_bound.x
+      upper_bound.y = vertex.absolute_y if vertex.absolute_y > upper_bound.y
+
+  aabb = new b2AABB()
+  aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
+  aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+  return aabb
+
+visible_block = (zone, block) ->
+  block.aabb.TestOverlap(zone.aabb)
 
 # Out of class methods
 triangulate = (blocks) ->
