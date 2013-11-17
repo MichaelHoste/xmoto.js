@@ -26,6 +26,13 @@ show_loading = ->
 hide_loading = ->
   $(".xmoto-loading").hide()
 
+full_screen = ->
+  $("#game").width($("body").width())
+  $("#game").height($("body").height())
+  window.onresize = ->
+    $("#game").width($("body").width())
+    $("#game").height($("body").height())
+
 $ ->
   play_level($("#levels option:selected").val())
 
@@ -35,3 +42,4 @@ $ ->
     play_level($(this).val())
   )
 
+  #full_screen()
