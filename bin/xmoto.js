@@ -12,8 +12,8 @@
       this.canvas = $('#buffer').get(0);
       this.ctx = this.canvas.getContext('2d');
       this.buffer_scale = {
-        x: 70,
-        y: -70
+        x: this.level.scale.x,
+        y: this.level.scale.y
       };
       this.scale = this.level.scale;
       this.sky = this.level.sky;
@@ -60,6 +60,10 @@
       this.moto_position = {
         x: moto.position().x,
         y: moto.position().y
+      };
+      this.buffer_scale = {
+        x: this.level.scale.x > 70 ? 70 : this.level.scale.x,
+        y: this.level.scale.y < -70 ? -70 : this.level.scale.y
       };
       this.compute_visibility();
       this.ctx.save();

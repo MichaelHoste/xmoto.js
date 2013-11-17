@@ -10,8 +10,11 @@ class Buffer
     @canvas = $('#buffer').get(0)
     @ctx    = @canvas.getContext('2d')
 
-    # can be any size, but better looking if close to default scale of the game
-    @buffer_scale = { x: 70; y: -70 }
+    # can be any size, but we prefer to be close to default scale of the game
+    # for better image quality
+    @buffer_scale =
+      x: @level.scale.x
+      y: @level.scale.y
 
     @scale        = @level.scale
     @sky          = @level.sky
@@ -47,6 +50,12 @@ class Buffer
       x: moto.position().x
       y: moto.position().y
 
+    # Save buffer scale at the moment of the redrawn
+    # (minimum 70 because or else the quality is too high and the buffer too small => waste of ressources)
+    @buffer_scale =
+      x: if @level.scale.x > 70  then  70 else @level.scale.x
+      y: if @level.scale.y < -70 then -70 else @level.scale.y
+
     # visible screen limits of the world
     # (don't show anything outside of these limits when the buffer redraw)
     @compute_visibility()
@@ -55,7 +64,7 @@ class Buffer
 
     # initialize position of camera
     @ctx.translate(@canvas_width/2, @canvas_height/2)             # Center of canvas
-    @ctx.scale(@buffer_scale.x, @buffer_scale.y)                    # Scale (zoom)
+    @ctx.scale(@buffer_scale.x, @buffer_scale.y)                  # Scale (zoom)
     @ctx.translate(-moto.position().x, -moto.position().y - 0.25) # Camera on moto
 
     # Display sky, limits, entities and blocks/edges (moto/ghost is drawn on each frame)

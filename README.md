@@ -72,7 +72,6 @@ Use this file : http://xmoto.tuxfamily.org/levels.xml
 ## TODO
 
  * Optimization : hide the ghosts and entities that are off the screen
- * Save the buffer at the current zoom level (or at maximum 70 with lower quality if zoom)
  * Create timer
  * Better game loop (semi)
  * Create a "motor" for acceleration instead of actual system. Externalize behaviour variables.
