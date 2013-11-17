@@ -18,13 +18,19 @@
       this.blocks = this.level.blocks;
     }
 
+    Buffer.prototype.init_canvas = function() {
+      this.canvas_width = parseFloat(this.canvas.width);
+      this.canvas_height = parseFloat(this.canvas.height);
+      return this.ctx.lineWidth = 0.01;
+    };
+
     Buffer.prototype.redraw_needed = function() {
       var moto;
-      moto = this.level.moto;
       if (!this.canvas_width) {
         return true;
       }
       if (this.visible) {
+        moto = this.level.moto;
         if (this.visible.right < moto.position().x + (this.level.canvas_width / 2) / this.scale.x) {
           return true;
         }
@@ -41,12 +47,6 @@
       return false;
     };
 
-    Buffer.prototype.init_canvas = function() {
-      this.canvas_width = parseFloat(this.canvas.width);
-      this.canvas_height = parseFloat(this.canvas.height);
-      return this.ctx.lineWidth = 0.01;
-    };
-
     Buffer.prototype.redraw = function() {
       var moto;
       moto = this.level.moto;
@@ -57,11 +57,21 @@
         x: moto.position().x,
         y: moto.position().y
       };
-      this.ctx.clearRect(0, 0, this.canvas_width, this.canvas_height);
+      this.compute_visibility();
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(70, -70);
       this.ctx.translate(-moto.position().x, -moto.position().y - 0.25);
+      this.sky.display(this.ctx);
+      this.limits.display(this.ctx);
+      this.entities.display_sprites(this.ctx);
+      this.blocks.display(this.ctx);
+      return this.ctx.restore();
+    };
+
+    Buffer.prototype.compute_visibility = function() {
+      var moto;
+      moto = this.level.moto;
       this.visible = {
         left: moto.position().x - (this.canvas_width / 2) / 70,
         right: moto.position().x + (this.canvas_width / 2) / 70,
@@ -70,12 +80,23 @@
       };
       this.visible.aabb = new b2AABB();
       this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
-      this.visible.aabb.upperBound.Set(this.visible.right, this.visible.top);
-      this.sky.display(this.ctx);
-      this.limits.display(this.ctx);
-      this.entities.display_sprites(this.ctx);
-      this.blocks.display(this.ctx);
-      return this.ctx.restore();
+      return this.visible.aabb.upperBound.Set(this.visible.right, this.visible.top);
+    };
+
+    Buffer.prototype.display = function() {
+      var buffer_center_x, buffer_center_y, canvas_center_x, canvas_center_y, clipped_height, clipped_width, margin_zoom_x, margin_zoom_y, moto, translate_x, translate_y;
+      moto = this.level.moto;
+      buffer_center_x = this.canvas_width / 2;
+      canvas_center_x = this.level.canvas_width / 2;
+      translate_x = (moto.position().x - this.moto_position.x) * 70;
+      clipped_width = this.level.canvas_width / (this.scale.x / 70);
+      margin_zoom_x = (this.level.canvas_width - clipped_width) / 2;
+      buffer_center_y = this.canvas_height / 2;
+      canvas_center_y = this.level.canvas_height / 2;
+      translate_y = (moto.position().y - this.moto_position.y) * -70;
+      clipped_height = this.level.canvas_height / (this.scale.y / -70);
+      margin_zoom_y = (this.level.canvas_height - clipped_height) / 2;
+      return this.level.ctx.drawImage(this.canvas, buffer_center_x - canvas_center_x + translate_x + margin_zoom_x, buffer_center_y - canvas_center_y + translate_y + margin_zoom_y, clipped_width, clipped_height, 0, 0, this.level.canvas_width, this.level.canvas_height);
     };
 
     return Buffer;
@@ -501,7 +522,6 @@
     };
 
     Level.prototype.display = function(debug) {
-      var buffer_center_x, buffer_center_y, canvas_center_x, canvas_center_y, clipped_height, clipped_width, margin_zoom_x, margin_zoom_y, translate_x, translate_y;
       if (debug == null) {
         debug = false;
       }
@@ -511,37 +531,17 @@
       }
       if (!this.canvas_width) {
         this.init_canvas();
-        this.buffer.redraw();
       }
+      this.current_time = new Date().getTime() - this.start_time;
+      this.compute_visibility();
       if (this.buffer.redraw_needed()) {
         this.buffer.redraw();
       }
-      this.current_time = new Date().getTime() - this.start_time;
-      this.ctx.clearRect(0, 0, this.canvas_width, this.canvas_height);
-      buffer_center_x = this.buffer.canvas_width / 2;
-      canvas_center_x = this.canvas_width / 2;
-      translate_x = (this.moto.position().x - this.buffer.moto_position.x) * 70;
-      clipped_width = this.canvas_width / (this.scale.x / 70);
-      margin_zoom_x = (this.canvas_width - clipped_width) / 2;
-      buffer_center_y = this.buffer.canvas_height / 2;
-      canvas_center_y = this.canvas_height / 2;
-      translate_y = (this.moto.position().y - this.buffer.moto_position.y) * -70;
-      clipped_height = this.canvas_height / (this.scale.y / -70);
-      margin_zoom_y = (this.canvas_height - clipped_height) / 2;
-      this.ctx.drawImage(this.buffer.canvas, buffer_center_x - canvas_center_x + translate_x + margin_zoom_x, buffer_center_y - canvas_center_y + translate_y + margin_zoom_y, clipped_width, clipped_height, 0, 0, this.canvas_width, this.canvas_height);
+      this.buffer.display();
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(this.scale.x, this.scale.y);
       this.ctx.translate(-this.moto.position().x, -this.moto.position().y - 0.25);
-      this.visible = {
-        left: this.moto.position().x - (this.canvas_width / 2) / this.scale.x,
-        right: this.moto.position().x + (this.canvas_width / 2) / this.scale.x,
-        bottom: this.moto.position().y + (this.canvas_height / 2) / this.scale.y,
-        top: this.moto.position().y - (this.canvas_height / 2) / this.scale.y
-      };
-      this.visible.aabb = new b2AABB();
-      this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
-      this.visible.aabb.upperBound.Set(this.visible.right, this.visible.top);
       this.entities.display_items(this.ctx);
       this.moto.display(this.ctx);
       if (this.ghost) {
@@ -552,6 +552,18 @@
       }
       this.ctx.restore();
       return this.replay.add_frame();
+    };
+
+    Level.prototype.compute_visibility = function() {
+      this.visible = {
+        left: this.moto.position().x - (this.canvas_width / 2) / this.scale.x,
+        right: this.moto.position().x + (this.canvas_width / 2) / this.scale.x,
+        bottom: this.moto.position().y + (this.canvas_height / 2) / this.scale.y,
+        top: this.moto.position().y - (this.canvas_height / 2) / this.scale.y
+      };
+      this.visible.aabb = new b2AABB();
+      this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
+      return this.visible.aabb.upperBound.Set(this.visible.right, this.visible.top);
     };
 
     Level.prototype.flip_moto = function() {

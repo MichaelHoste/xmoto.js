@@ -88,38 +88,17 @@ class Level
       @need_to_restart = false
       @restart(true)
 
-    if not @canvas_width
-      @init_canvas()
-      @buffer.redraw()
-
-    if @buffer.redraw_needed()
-      @buffer.redraw()
+    @init_canvas() if not @canvas_width
 
     @current_time = new Date().getTime() - @start_time
 
-    @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
+    # visible screen limits of the world (don't show anything outside of these limits)
+    @compute_visibility()
 
-    buffer_center_x = @buffer.canvas_width / 2
-    canvas_center_x = @canvas_width / 2
-    translate_x     = (@moto.position().x - @buffer.moto_position.x) * 70
-    clipped_width   = @canvas_width  / (@scale.x / 70)
-    margin_zoom_x   = (@canvas_width - clipped_width) / 2
-
-    buffer_center_y = @buffer.canvas_height / 2
-    canvas_center_y = @canvas_height / 2
-    translate_y     = (@moto.position().y - @buffer.moto_position.y) * -70
-    clipped_height  = @canvas_height / (@scale.y / -70)
-    margin_zoom_y   = (@canvas_height - clipped_height) / 2
-
-    @ctx.drawImage(@buffer.canvas,
-                   buffer_center_x - canvas_center_x  + translate_x + margin_zoom_x, # The x coordinate where to start clipping
-                   buffer_center_y - canvas_center_y  + translate_y + margin_zoom_y, # The y coordinate where to start clipping
-                   clipped_width,                                                    # The width of the clipped image
-                   clipped_height,                                                   # The height of the clipped image
-                   0,                                                                # The x coordinate where to place the image on the canvas
-                   0,                                                                # The y coordinate where to place the image on the canvas
-                   @canvas_width,                                                    # The width of the image to use (stretch or reduce the image)
-                   @canvas_height)                                                   # The height of the image to use (stretch or reduce the image)
+    # Redraw buffer if needed (the buffer is bigger than the canvas)
+    # And display it (copy the right pixels from the buffer to the canvas)
+    @buffer.redraw() if @buffer.redraw_needed()
+    @buffer.display()
 
     @ctx.save()
 
@@ -128,16 +107,7 @@ class Level
     @ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
     @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
 
-    # visible limits of the world (don't show anything outside of these limits)
-    @visible =
-      left:   @moto.position().x - (@canvas_width  / 2) / @scale.x
-      right:  @moto.position().x + (@canvas_width  / 2) / @scale.x
-      bottom: @moto.position().y + (@canvas_height / 2) / @scale.y
-      top:    @moto.position().y - (@canvas_height / 2) / @scale.y
-    @visible.aabb = new b2AABB()
-    @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
-    @visible.aabb.upperBound.Set(@visible.right, @visible.top)
-
+    # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
     @entities.display_items(@ctx)
     @moto    .display(@ctx)
     @ghost   .display(@ctx) if @ghost
@@ -148,6 +118,16 @@ class Level
 
     # Save last step for replay
     @replay.add_frame()
+
+  compute_visibility: ->
+    @visible =
+      left:   @moto.position().x - (@canvas_width  / 2) / @scale.x
+      right:  @moto.position().x + (@canvas_width  / 2) / @scale.x
+      bottom: @moto.position().y + (@canvas_height / 2) / @scale.y
+      top:    @moto.position().y - (@canvas_height / 2) / @scale.y
+    @visible.aabb = new b2AABB()
+    @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
+    @visible.aabb.upperBound.Set(@visible.right, @visible.top)
 
   flip_moto: ->
     @moto = MotoFlip.execute(@moto)
