@@ -477,6 +477,7 @@
     };
 
     Level.prototype.display = function(debug) {
+      var buffer_center_x, buffer_center_y, canvas_center_x, canvas_center_y, clipped_height, clipped_width, margin_zoom_x, margin_zoom_y, translate_x, translate_y;
       if (debug == null) {
         debug = false;
       }
@@ -489,7 +490,17 @@
         this.init_canvas();
       }
       this.ctx.clearRect(0, 0, this.canvas_width, this.canvas_height);
-      this.ctx.drawImage(this.buffer.canvas, (this.buffer.canvas_width - this.canvas_width) / 2 + (this.moto.position().x - this.buffer.moto_position.x) * this.scale.x, (this.buffer.canvas_height - this.canvas_height) / 2 + (this.moto.position().y - this.buffer.moto_position.y) * this.scale.y, this.canvas_width, this.canvas_height, 0, 0, this.canvas_width, this.canvas_height);
+      buffer_center_x = this.buffer.canvas_width / 2;
+      canvas_center_x = this.canvas_width / 2;
+      translate_x = (this.moto.position().x - this.buffer.moto_position.x) * 70;
+      clipped_width = this.canvas_width / (this.scale.x / 70);
+      margin_zoom_x = (this.canvas_width - clipped_width) / 2;
+      buffer_center_y = this.buffer.canvas_height / 2;
+      canvas_center_y = this.canvas_height / 2;
+      translate_y = (this.moto.position().y - this.buffer.moto_position.y) * -70;
+      clipped_height = this.canvas_height / (this.scale.y / -70);
+      margin_zoom_y = (this.canvas_height - clipped_height) / 2;
+      this.ctx.drawImage(this.buffer.canvas, buffer_center_x - canvas_center_x + translate_x + margin_zoom_x, buffer_center_y - canvas_center_y + translate_y + margin_zoom_y, clipped_width, clipped_height, 0, 0, this.canvas_width, this.canvas_height);
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(this.scale.x, this.scale.y);

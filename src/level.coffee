@@ -93,12 +93,27 @@ class Level
     @init_canvas() if not @canvas_width
     @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
 
+    buffer_center_x = @buffer.canvas_width / 2
+    canvas_center_x = @canvas_width / 2
+    translate_x     = (@moto.position().x - @buffer.moto_position.x) * 70
+    clipped_width   = @canvas_width  / (@scale.x / 70)
+    margin_zoom_x   = (@canvas_width - clipped_width) / 2
+
+    buffer_center_y = @buffer.canvas_height / 2
+    canvas_center_y = @canvas_height / 2
+    translate_y     = (@moto.position().y - @buffer.moto_position.y) * -70
+    clipped_height  = @canvas_height / (@scale.y / -70)
+    margin_zoom_y   = (@canvas_height - clipped_height) / 2
+
     @ctx.drawImage(@buffer.canvas,
-                   (@buffer.canvas_width  - @canvas_width)/2  + (@moto.position().x - @buffer.moto_position.x) * @scale.x,
-                   (@buffer.canvas_height - @canvas_height)/2 + (@moto.position().y - @buffer.moto_position.y) * @scale.y,
-                   @canvas_width, @canvas_height,
-                   0, 0,
-                   @canvas_width, @canvas_height)
+                   buffer_center_x - canvas_center_x  + translate_x + margin_zoom_x, # The x coordinate where to start clipping
+                   buffer_center_y - canvas_center_y  + translate_y + margin_zoom_y, # The y coordinate where to start clipping
+                   clipped_width,                                                                                          # The width of the clipped image
+                   clipped_height,                                                                                         # The height of the clipped image
+                   0,                                                                                                      # The x coordinate where to place the image on the canvas
+                   0,                                                                                                      # The y coordinate where to place the image on the canvas
+                   @canvas_width,                                                                                          # The width of the image to use (stretch or reduce the image)
+                   @canvas_height)                                                                                         # The height of the image to use (stretch or reduce the image)
 
     @ctx.save()
 
@@ -117,10 +132,6 @@ class Level
     @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
     @visible.aabb.upperBound.Set(@visible.right, @visible.top)
 
-#    @sky     .display(@ctx)
-#    @limits  .display(@ctx)
-#    @entities.display_sprites(@ctx)
-#    @blocks  .display(@ctx)
     @entities.display_items(@ctx)
     @moto    .display(@ctx)
     @ghost   .display(@ctx) if @ghost
