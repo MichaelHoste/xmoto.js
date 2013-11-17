@@ -10,11 +10,14 @@ class Buffer
     @canvas = $('#buffer').get(0)
     @ctx    = @canvas.getContext('2d')
 
-    @scale    = @level.scale
-    @sky      = @level.sky
-    @limits   = @level.limits
-    @entities = @level.entities
-    @blocks   = @level.blocks
+    # can be any size, but better looking if close to default scale of the game
+    @buffer_scale = { x: 70; y: -70 }
+
+    @scale        = @level.scale
+    @sky          = @level.sky
+    @limits       = @level.limits
+    @entities     = @level.entities
+    @blocks       = @level.blocks
 
   init_canvas: ->
     @canvas_width  = parseFloat(@canvas.width)
@@ -52,7 +55,7 @@ class Buffer
 
     # initialize position of camera
     @ctx.translate(@canvas_width/2, @canvas_height/2)             # Center of canvas
-    @ctx.scale(70, -70)                                           # Scale (zoom)
+    @ctx.scale(@buffer_scale.x, @buffer_scale.y)                    # Scale (zoom)
     @ctx.translate(-moto.position().x, -moto.position().y - 0.25) # Camera on moto
 
     # Display sky, limits, entities and blocks/edges (moto/ghost is drawn on each frame)
@@ -66,10 +69,10 @@ class Buffer
   compute_visibility: ->
     moto = @level.moto
     @visible =
-      left:   moto.position().x - (@canvas_width  / 2) /  70
-      right:  moto.position().x + (@canvas_width  / 2) /  70
-      bottom: moto.position().y + (@canvas_height / 2) / -70
-      top:    moto.position().y - (@canvas_height / 2) / -70
+      left:   moto.position().x - (@canvas_width  / 2) / @buffer_scale.x
+      right:  moto.position().x + (@canvas_width  / 2) / @buffer_scale.x
+      bottom: moto.position().y + (@canvas_height / 2) / @buffer_scale.y
+      top:    moto.position().y - (@canvas_height / 2) / @buffer_scale.y
     @visible.aabb = new b2AABB()
     @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
     @visible.aabb.upperBound.Set(@visible.right, @visible.top)
@@ -79,14 +82,14 @@ class Buffer
 
     buffer_center_x = @canvas_width / 2
     canvas_center_x = @level.canvas_width / 2
-    translate_x     = (moto.position().x - @moto_position.x) * 70
-    clipped_width   = @level.canvas_width  / (@scale.x / 70)
+    translate_x     = (moto.position().x - @moto_position.x) * @buffer_scale.x
+    clipped_width   = @level.canvas_width  / (@scale.x / @buffer_scale.x)
     margin_zoom_x   = (@level.canvas_width - clipped_width) / 2
 
     buffer_center_y = @canvas_height / 2
     canvas_center_y = @level.canvas_height / 2
-    translate_y     = (moto.position().y - @moto_position.y) * -70
-    clipped_height  = @level.canvas_height / (@scale.y / -70)
+    translate_y     = (moto.position().y - @moto_position.y) * @buffer_scale.y
+    clipped_height  = @level.canvas_height / (@scale.y / @buffer_scale.y)
     margin_zoom_y   = (@level.canvas_height - clipped_height) / 2
 
     @level.ctx.drawImage(

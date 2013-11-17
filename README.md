@@ -71,9 +71,13 @@ Use this file : http://xmoto.tuxfamily.org/levels.xml
 
 ## TODO
 
+ * Optimization : hide the ghosts and entities that are off the screen
+ * Save the buffer at the current zoom level (or at maximum 70 with lower quality if zoom)
+ * Create timer
+ * Better game loop (semi)
  * Create a "motor" for acceleration instead of actual system. Externalize behaviour variables.
- * Understand impect of "scale" and "depth" on edges.
+ * Understand impact of "scale" and "depth" on edges.
  * Optimization : create x bodies with y shapes for each polygon (set of triangles) instead of x*y bodies of 1 triangle.
  * Optimization : group the blocks by texture and fill the texture just once by group.
- * Optimization : only draw polygons that are on screen (and only collide with these polygons).
+ * Optimization : only collide with polygons on the screen ?
  * Optimization : group triangles polygons (collision blocks) by pairs to get convex polygons with max 8 sides (less complexity, less clipping).

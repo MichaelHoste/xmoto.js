@@ -11,6 +11,10 @@
       this.level = level;
       this.canvas = $('#buffer').get(0);
       this.ctx = this.canvas.getContext('2d');
+      this.buffer_scale = {
+        x: 70,
+        y: -70
+      };
       this.scale = this.level.scale;
       this.sky = this.level.sky;
       this.limits = this.level.limits;
@@ -60,7 +64,7 @@
       this.compute_visibility();
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
-      this.ctx.scale(70, -70);
+      this.ctx.scale(this.buffer_scale.x, this.buffer_scale.y);
       this.ctx.translate(-moto.position().x, -moto.position().y - 0.25);
       this.sky.display(this.ctx);
       this.limits.display(this.ctx);
@@ -73,10 +77,10 @@
       var moto;
       moto = this.level.moto;
       this.visible = {
-        left: moto.position().x - (this.canvas_width / 2) / 70,
-        right: moto.position().x + (this.canvas_width / 2) / 70,
-        bottom: moto.position().y + (this.canvas_height / 2) / -70,
-        top: moto.position().y - (this.canvas_height / 2) / -70
+        left: moto.position().x - (this.canvas_width / 2) / this.buffer_scale.x,
+        right: moto.position().x + (this.canvas_width / 2) / this.buffer_scale.x,
+        bottom: moto.position().y + (this.canvas_height / 2) / this.buffer_scale.y,
+        top: moto.position().y - (this.canvas_height / 2) / this.buffer_scale.y
       };
       this.visible.aabb = new b2AABB();
       this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
@@ -88,13 +92,13 @@
       moto = this.level.moto;
       buffer_center_x = this.canvas_width / 2;
       canvas_center_x = this.level.canvas_width / 2;
-      translate_x = (moto.position().x - this.moto_position.x) * 70;
-      clipped_width = this.level.canvas_width / (this.scale.x / 70);
+      translate_x = (moto.position().x - this.moto_position.x) * this.buffer_scale.x;
+      clipped_width = this.level.canvas_width / (this.scale.x / this.buffer_scale.x);
       margin_zoom_x = (this.level.canvas_width - clipped_width) / 2;
       buffer_center_y = this.canvas_height / 2;
       canvas_center_y = this.level.canvas_height / 2;
-      translate_y = (moto.position().y - this.moto_position.y) * -70;
-      clipped_height = this.level.canvas_height / (this.scale.y / -70);
+      translate_y = (moto.position().y - this.moto_position.y) * this.buffer_scale.y;
+      clipped_height = this.level.canvas_height / (this.scale.y / this.buffer_scale.y);
       margin_zoom_y = (this.level.canvas_height - clipped_height) / 2;
       return this.level.ctx.drawImage(this.canvas, buffer_center_x - canvas_center_x + translate_x + margin_zoom_x, buffer_center_y - canvas_center_y + translate_y + margin_zoom_y, clipped_width, clipped_height, 0, 0, this.level.canvas_width, this.level.canvas_height);
     };
