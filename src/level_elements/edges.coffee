@@ -9,7 +9,7 @@ class Edges
     @theme  = @assets.theme
     @blocks = blocks
 
-    @list   = [] # list of edges
+    @list   = [] # List of edges
 
     # Assets
     for block in @blocks
@@ -36,8 +36,8 @@ class Edges
 
           @list.push(edge)
 
+  # only display edges present on the screen zone
   display: (ctx) ->
-    # draw back blocks before front blocks
     for edge in @list
       if visible_edge(@level.visible, edge)
         ctx.beginPath()

@@ -419,6 +419,33 @@
       return this.ctx.lineWidth = 0.01;
     };
 
+    Level.prototype.create_background_buffer = function() {
+      this.back_canvas = $('#back').get(0);
+      this.back_ctx = this.back_canvas.getContext('2d');
+      this.back_canvas_width = parseFloat(this.back_canvas.width);
+      this.back_canvas_height = parseFloat(this.back_canvas.height);
+      this.back_ctx.lineWidth = 0.01;
+      this.back_ctx.clearRect(0, 0, this.back_canvas_width, this.back_canvas_height);
+      this.back_ctx.save();
+      this.back_ctx.translate(this.back_canvas_width / 2, this.back_canvas_height / 2);
+      this.back_ctx.scale(this.scale.x, this.scale.y);
+      this.back_ctx.translate(-this.moto.position().x, -this.moto.position().y - 0.25);
+      this.visible = {
+        left: this.moto.position().x - (this.canvas_width / 2) / this.scale.x,
+        right: this.moto.position().x + (this.canvas_width / 2) / this.scale.x,
+        bottom: this.moto.position().y + (this.canvas_height / 2) / this.scale.y,
+        top: this.moto.position().y - (this.canvas_height / 2) / this.scale.y
+      };
+      this.visible.aabb = new b2AABB();
+      this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
+      this.visible.aabb.upperBound.Set(this.visible.right, this.visible.top);
+      this.sky.display(this.back_ctx);
+      this.limits.display(this.back_ctx);
+      this.entities.display_sprites(this.back_ctx);
+      this.blocks.display(this.back_ctx);
+      return this.back_ctx.restore();
+    };
+
     Level.prototype.display = function(debug) {
       if (debug == null) {
         debug = false;
@@ -1359,6 +1386,7 @@
     return level.assets.load(function() {
       var update;
       createjs.Sound.setMute(true);
+      level.create_background_buffer();
       update = function() {
         level.input.move_moto();
         level.engine_sound.play();

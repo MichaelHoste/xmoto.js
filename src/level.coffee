@@ -80,27 +80,37 @@ class Level
     @canvas_height = parseFloat(@canvas.height)
     @ctx.lineWidth = 0.01
 
-  #create_background_buffer: ->
-  #  @back_canvas = $('#back').get(0)
-  #  @back_ctx    = @back_canvas.getContext('2d')
-#
-  #  @back_canvas_width  = parseFloat(@back_canvas.width)
-  #  @back_canvas_height = parseFloat(@back_canvas.height)
-  #  @back_ctx.lineWidth = 0.01
-#
-  #  @back_ctx.clearRect(0, 0, @back_canvas_width, @back_canvas_height)
-  #  @back_ctx.save()
-#
-  #  # initialize position of camera
-  #  @back_ctx.translate(@back_canvas_width/2, @back_canvas_height/2)     # Center of canvas
-  #  @back_ctx.scale(@back_canvas_width / @limits.size.x, -@back_canvas_height / @limits.size.y)                                  # Scale (zoom)
-#
-  #  @sky     .display(@back_ctx)
-  #  @limits  .display(@back_ctx)
-  #  @entities.display_sprites(@back_ctx)
-  #  @blocks  .display(@back_ctx)
-#
-  #  @back_ctx.restore()
+  create_background_buffer: ->
+    @back_canvas = $('#back').get(0)
+    @back_ctx    = @back_canvas.getContext('2d')
+
+    @back_canvas_width  = parseFloat(@back_canvas.width)
+    @back_canvas_height = parseFloat(@back_canvas.height)
+    @back_ctx.lineWidth = 0.01
+
+    @back_ctx.clearRect(0, 0, @back_canvas_width, @back_canvas_height)
+    @back_ctx.save()
+
+    # initialize position of camera
+    @back_ctx.translate(@back_canvas_width/2, @back_canvas_height/2)     # Center of canvas
+    @back_ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
+    @back_ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
+
+    @visible =
+      left:   @moto.position().x - (@canvas_width  / 2) / @scale.x
+      right:  @moto.position().x + (@canvas_width  / 2) / @scale.x
+      bottom: @moto.position().y + (@canvas_height / 2) / @scale.y
+      top:    @moto.position().y - (@canvas_height / 2) / @scale.y
+    @visible.aabb = new b2AABB()
+    @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
+    @visible.aabb.upperBound.Set(@visible.right, @visible.top)
+
+    @sky     .display(@back_ctx)
+    @limits  .display(@back_ctx)
+    @entities.display_sprites(@back_ctx)
+    @blocks  .display(@back_ctx)
+
+    @back_ctx.restore()
 
   display: (debug = false) ->
     if @need_to_restart
