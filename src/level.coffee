@@ -45,6 +45,9 @@ class Level
     @script        = new Script(this)
     @entities      = new Entities(this)
 
+    # Buffer
+    @buffer        = new Buffer(this)
+
     @start_time   = new Date().getTime()
     @current_time = 0
 
@@ -80,38 +83,6 @@ class Level
     @canvas_height = parseFloat(@canvas.height)
     @ctx.lineWidth = 0.01
 
-  create_background_buffer: ->
-    @back_canvas = $('#back').get(0)
-    @back_ctx    = @back_canvas.getContext('2d')
-
-    @back_canvas_width  = parseFloat(@back_canvas.width)
-    @back_canvas_height = parseFloat(@back_canvas.height)
-    @back_ctx.lineWidth = 0.01
-
-    @back_ctx.clearRect(0, 0, @back_canvas_width, @back_canvas_height)
-    @back_ctx.save()
-
-    # initialize position of camera
-    @back_ctx.translate(@back_canvas_width/2, @back_canvas_height/2)     # Center of canvas
-    @back_ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
-    @back_ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
-
-    @visible =
-      left:   @moto.position().x - (@canvas_width  / 2) / @scale.x
-      right:  @moto.position().x + (@canvas_width  / 2) / @scale.x
-      bottom: @moto.position().y + (@canvas_height / 2) / @scale.y
-      top:    @moto.position().y - (@canvas_height / 2) / @scale.y
-    @visible.aabb = new b2AABB()
-    @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
-    @visible.aabb.upperBound.Set(@visible.right, @visible.top)
-
-    @sky     .display(@back_ctx)
-    @limits  .display(@back_ctx)
-    @entities.display_sprites(@back_ctx)
-    @blocks  .display(@back_ctx)
-
-    @back_ctx.restore()
-
   display: (debug = false) ->
     if @need_to_restart
       @need_to_restart = false
@@ -122,7 +93,13 @@ class Level
     @init_canvas() if not @canvas_width
     @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
 
-    #@ctx.drawImage(@back_canvas, 0, 0, 1000, 400)
+    @ctx.drawImage(@buffer.canvas,
+                   @canvas_width/2  + (@moto.position().x - @buffer.moto_position.x) * @scale.x,
+                   @canvas_height/2 + (@moto.position().y - @buffer.moto_position.y) * @scale.y,
+                   @canvas_width, @canvas_height,
+                   0, 0,
+                   @canvas_width, @canvas_height)
+
     @ctx.save()
 
     # initialize position of camera
@@ -140,10 +117,10 @@ class Level
     @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
     @visible.aabb.upperBound.Set(@visible.right, @visible.top)
 
-    @sky     .display(@ctx)
-    @limits  .display(@ctx)
-    @entities.display_sprites(@ctx)
-    @blocks  .display(@ctx)
+#    @sky     .display(@ctx)
+#    @limits  .display(@ctx)
+#    @entities.display_sprites(@ctx)
+#    @blocks  .display(@ctx)
     @entities.display_items(@ctx)
     @moto    .display(@ctx)
     @ghost   .display(@ctx) if @ghost

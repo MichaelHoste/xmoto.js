@@ -90,7 +90,7 @@ class Blocks
   display: (ctx) ->
     # draw back blocks before front blocks
     for block in @back_list.concat(@front_list)
-      if visible_block(@level.visible, block)
+      if visible_block(@level.buffer.visible, block)
         ctx.beginPath()
 
         for vertex, i in block.vertices

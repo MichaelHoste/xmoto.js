@@ -39,7 +39,7 @@ class Edges
   # only display edges present on the screen zone
   display: (ctx) ->
     for edge in @list
-      if visible_edge(@level.visible, edge)
+      if visible_edge(@level.buffer.visible, edge)
         ctx.beginPath()
 
         ctx.moveTo(edge.vertices[0].x, edge.vertices[0].y)
