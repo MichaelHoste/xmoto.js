@@ -45,6 +45,7 @@ class Physics
     fixDef.density     = 1.0
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
+    fixDef.filter.groupIndex = -2
 
     # Create polygon
     Physics.create_shape(fixDef, vertices)
@@ -57,7 +58,7 @@ class Physics
     bodyDef.position.y = 0
 
     bodyDef.userData =
-        name: name
+      name: name
 
     bodyDef.type = b2Body.b2_staticBody
 

@@ -2377,6 +2377,7 @@
       fixDef.density = 1.0;
       fixDef.restitution = 0.5;
       fixDef.friction = 1.0;
+      fixDef.filter.groupIndex = -2;
       Physics.create_shape(fixDef, vertices);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = 0;
