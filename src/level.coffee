@@ -94,8 +94,8 @@ class Level
     @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
 
     @ctx.drawImage(@buffer.canvas,
-                   @canvas_width/2  + (@moto.position().x - @buffer.moto_position.x) * @scale.x,
-                   @canvas_height/2 + (@moto.position().y - @buffer.moto_position.y) * @scale.y,
+                   (@buffer.canvas_width  - @canvas_width)/2  + (@moto.position().x - @buffer.moto_position.x) * @scale.x,
+                   (@buffer.canvas_height - @canvas_height)/2 + (@moto.position().y - @buffer.moto_position.y) * @scale.y,
                    @canvas_width, @canvas_height,
                    0, 0,
                    @canvas_width, @canvas_height)

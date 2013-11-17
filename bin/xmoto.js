@@ -489,7 +489,7 @@
         this.init_canvas();
       }
       this.ctx.clearRect(0, 0, this.canvas_width, this.canvas_height);
-      this.ctx.drawImage(this.buffer.canvas, this.canvas_width / 2 + (this.moto.position().x - this.buffer.moto_position.x) * this.scale.x, this.canvas_height / 2 + (this.moto.position().y - this.buffer.moto_position.y) * this.scale.y, this.canvas_width, this.canvas_height, 0, 0, this.canvas_width, this.canvas_height);
+      this.ctx.drawImage(this.buffer.canvas, (this.buffer.canvas_width - this.canvas_width) / 2 + (this.moto.position().x - this.buffer.moto_position.x) * this.scale.x, (this.buffer.canvas_height - this.canvas_height) / 2 + (this.moto.position().y - this.buffer.moto_position.y) * this.scale.y, this.canvas_width, this.canvas_height, 0, 0, this.canvas_width, this.canvas_height);
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(this.scale.x, this.scale.y);
