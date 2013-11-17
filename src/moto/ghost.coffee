@@ -20,14 +20,15 @@ class Ghost
       @display_upper_arm()
       @display_lower_arm()
 
-      if @current_frame < @replay.frames_count()-1
-        @current_frame = @current_frame + 1
+  next_state: ->
+    if @current_frame < @replay.frames_count()-1
+      @current_frame = @current_frame + 1
 
   init: ->
     # Assets
-    textures = [ 'ghostbikerbody', 'ghostbikerwheel', 'front_ghost', 'rear_ghost'
-                 'ghostlowerarm', 'ghostlowerleg', 'ghosttorso',
-                 'ghostupperarm', 'ghostupperleg' ]
+    textures = [ 'playerbikerbody', 'playerbikerwheel', 'front1', 'rear1'
+                 'playerlowerarm', 'playerlowerleg', 'playertorso',
+                 'playerupperarm', 'playerupperleg' ]
     for texture in textures
       @assets.moto.push(texture)
 
@@ -47,7 +48,7 @@ class Ghost
     @level.ctx.rotate(angle)
 
     @level.ctx.drawImage(
-      @assets.get('ghostbikerwheel'), # texture
+      @assets.get('playerbikerwheel'), # texture
       -radius,   # x
       -radius,   # y
        radius*2, # size-x
@@ -72,7 +73,7 @@ class Ghost
     @level.ctx.rotate(angle)
 
     @level.ctx.drawImage(
-      @assets.get('ghostbikerwheel'), # texture
+      @assets.get('playerbikerwheel'), # texture
       -radius,   # x
       -radius,   # y
        radius*2, # size-x
@@ -97,7 +98,7 @@ class Ghost
     @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
-      @assets.get('ghostbikerbody'), # texture
+      @assets.get('playerbikerbody'), # texture
       -1.0, # x
       -0.5, # y
        2.0, # size-x
@@ -122,7 +123,7 @@ class Ghost
     @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
-      @assets.get('ghosttorso'), # texture
+      @assets.get('playertorso'), # texture
       -0.25,  # x
       -0.575, # y
        0.5,   # size-x
@@ -147,7 +148,7 @@ class Ghost
     @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
-      @assets.get('ghostlowerleg'), # texture
+      @assets.get('playerlowerleg'), # texture
       -0.2,  # x
       -0.33, # y
        0.40, # size-x
@@ -172,7 +173,7 @@ class Ghost
     @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
-      @assets.get('ghostupperleg'), # texture
+      @assets.get('playerupperleg'), # texture
       -0.40, # x
       -0.14, # y
        0.80, # size-x
@@ -197,7 +198,7 @@ class Ghost
     @level.ctx.rotate(@mirror * angle)
 
     @level.ctx.drawImage(
-      @assets.get('ghostlowerarm'), # texture
+      @assets.get('playerlowerarm'), # texture
       -0.28,  # x
       -0.10, # y
        0.56, # size-x
@@ -222,7 +223,7 @@ class Ghost
     @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
-      @assets.get('ghostupperarm'), # texture
+      @assets.get('playerupperarm'), # texture
       -0.125, # x
       -0.28, # y
        0.25, # size-x

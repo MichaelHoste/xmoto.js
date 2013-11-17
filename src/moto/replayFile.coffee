@@ -26,22 +26,27 @@ class ReplayFile
 
   map16BitsToAngle: (n16) ->
     n1 = parseInt(n16/256)
-    n2 = n16-n1
-    n2 = parseInt(n2/256)
-
+    n2 = n16%256
     pfM1 = (n1 - 127) / 127
     pfM2 = (n2 - 127) / 127
-
-    if pfM1 > 0
-      if pfM2 > 0
-        return Math.acos(pfM1)
-      else
-        return Math.acos(pfM1) - Math.PI/2
+    if pfM2 > 0
+      return Math.acos(pfM1)
     else
-      if pfM2 > 0
-        return Math.acos(pfM1) + Math.PI
+      return -Math.acos(pfM1)
+
+  pointsToAngle: (x1, y1, x2, y2, extra90) ->
+    extra90v = -Math.PI/2 * extra90
+
+    if x1 > x2
+      if y1 > y2
+        return -Math.atan((x1-x2)/(y1-y2)) + extra90v # ok
       else
-        return Math.acos(pfM1) + Math.PI/2
+        return -Math.atan((x2-x1)/(y2-y1)) + Math.PI + extra90v # ok
+    else
+      if y1 > y2
+        return -Math.atan((x1-x2)/(y1-y2)) + extra90v # ok
+      else
+        return -Math.atan((x2-x1)/(y2-y1)) + Math.PI + extra90v # ok
 
   load_replay: (bin) =>
     replay = new jDataView(bin, 0, bin.length, true)
@@ -101,39 +106,34 @@ class ReplayFile
       maxXDiff = chunk.getFloat32()
       maxYDiff = chunk.getFloat32()
 
-      nRearWheelRot  = chunk.getUint16()
-      nFrontWheelRot = chunk.getUint16()
-      nFrameRot      = chunk.getUint16()
-
       # angles
-      fRearWheelRot  = @map16BitsToAngle(nRearWheelRot)
-      fFrontWheelRot = @map16BitsToAngle(nFrontWheelRot)
-      fFrameRot      = @map16BitsToAngle(nFrameRot)
+      fRearWheelRot  = @map16BitsToAngle(chunk.getUint16())
+      fFrontWheelRot = @map16BitsToAngle(chunk.getUint16())
+      fFrameRot      = @map16BitsToAngle(chunk.getUint16())
 
+      # sound
       cBikeEngineRPM = chunk.getInt8()
 
-      # wheels
-      cRearWheelX    = chunk.getInt8()
-      cRearWheelY    = chunk.getInt8()
-      cFrontWheelX   = chunk.getInt8()
-      cFrontWheelY   = chunk.getInt8()
-      rearWheelPx  = @map8BitsToCoord(frameX, maxXDiff, cRearWheelX) 
-      rearWheelPy  = @map8BitsToCoord(frameY, maxYDiff, cRearWheelY)
-      frontWheelPx = @map8BitsToCoord(frameX, maxXDiff, cFrontWheelX) 
-      frontWheelPy = @map8BitsToCoord(frameY, maxYDiff, cFrontWheelY)
+      # wheels positions
+      rearWheelPx  = @map8BitsToCoord(frameX, maxXDiff, chunk.getInt8())
+      rearWheelPy  = @map8BitsToCoord(frameY, maxYDiff, chunk.getInt8())
+      frontWheelPx = @map8BitsToCoord(frameX, maxXDiff, chunk.getInt8())
+      frontWheelPy = @map8BitsToCoord(frameY, maxYDiff, chunk.getInt8())
 
+      # bike
       centerPx = frameX; 
       centerPy = frameY;
 
-      cElbowX        = chunk.getInt8()
-      cElbowY        = chunk.getInt8()
-      cShoulderX     = chunk.getInt8()
-      cShoulderY     = chunk.getInt8()
-      cLowerBodyX    = chunk.getInt8()
-      cLowerBodyY    = chunk.getInt8()
-      cKneeX         = chunk.getInt8()
-      cKneeY         = chunk.getInt8()
-      unused         = chunk.getBytes(1)
+      # body
+      elbowX     = @map8BitsToCoord(frameX, maxXDiff, chunk.getInt8())
+      elbowY     = @map8BitsToCoord(frameY, maxYDiff, chunk.getInt8())
+      shoulderX  = @map8BitsToCoord(frameX, maxXDiff, chunk.getInt8())
+      shoulderY  = @map8BitsToCoord(frameY, maxYDiff, chunk.getInt8())
+      lowerBodyX = @map8BitsToCoord(frameX, maxXDiff, chunk.getInt8())
+      lowerBodyY = @map8BitsToCoord(frameY, maxYDiff, chunk.getInt8())
+      kneeX      = @map8BitsToCoord(frameX, maxXDiff, chunk.getInt8())
+      kneeY      = @map8BitsToCoord(frameY, maxYDiff, chunk.getInt8())
+      unused     = chunk.getBytes(1)
 
       frame =
         mirror: flags == 1
@@ -154,35 +154,35 @@ class ReplayFile
           angle: fFrameRot
         torso:
           position:
-            x: (cShoulderX+cLowerBodyX)/2
-            y: (cShoulderY+cLowerBodyY)/2
-          angle: fFrameRot
+            x: (shoulderX + lowerBodyX)/2
+            y: (shoulderY + lowerBodyY)/2
+          angle: @pointsToAngle(shoulderX, shoulderY, lowerBodyX, lowerBodyY, 0)
 
         upper_leg:
           position:
-            x: (cLowerBodyX+cKneeX)/2
-            y: (cLowerBodyY+cKneeY)/2
-          angle: fFrameRot
+            x: (lowerBodyX+kneeX)/2
+            y: (lowerBodyY+kneeY)/2
+          angle: @pointsToAngle(lowerBodyX, lowerBodyY, kneeX, kneeY, 1)
 
         lower_leg:
           position:
-            x: (cKneeX+centerPx)/2
-            y: (cKneeY+centerPy)/2
-          angle: fFrameRot
+            x: (kneeX+centerPx)/2
+            y: (kneeY+centerPy)/2
+          angle: @pointsToAngle(kneeX, kneeY, centerPx, centerPy, 0)
 
         upper_arm:
           position:
-            x: (cShoulderX+cElbowX)/2
-            y: (cShoulderY+cElbowY)/2
-          angle: fFrameRot
+            x: (shoulderX+elbowX)/2
+            y: (shoulderY+elbowY)/2
+          angle: @pointsToAngle(shoulderX, shoulderY, elbowX, elbowY, 0)
 
         lower_arm:
           position:
-            x: 0
-            y: 0
-          angle: fFrameRot
+            x: (elbowX+centerPx)/2
+            y: (elbowY+centerPy)/2
+          angle: @pointsToAngle(elbowX, elbowY, centerPx, centerPy, 0)
 
-      for i in [0..4]
+      for i in [0..1]
         @frames.push(frame)
 
   load_replay_2: (replay) ->

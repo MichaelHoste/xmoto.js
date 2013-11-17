@@ -277,8 +277,12 @@
           case 13:
             return _this.level.restart();
           case 32:
-            if (!_this.level.moto.dead) {
-              return _this.level.flip_moto();
+            if (_this.level.mode() === "play") {
+              if (!_this.level.moto.dead) {
+                return _this.level.flip_moto();
+              }
+            } else if (_this.level.mode() === "replay") {
+              return _this.level.pause();
             }
         }
       });
@@ -375,8 +379,8 @@
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
       this.scale = {
-        x: 35,
-        y: -35
+        x: 100,
+        y: -100
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -396,6 +400,7 @@
       this.entities = new Entities(this);
       this.start_time = new Date().getTime();
       this.current_time = 0;
+      this.paused = false;
     }
 
     Level.prototype.load_from_file = function(file_name) {
@@ -470,6 +475,9 @@
       this.entities.display_items(this.ctx);
       if (this.replayPlayer) {
         this.replayPlayer.display(this.ctx);
+        if (!this.paused) {
+          this.replayPlayer.next_state();
+        }
       } else {
         this.moto.display(this.ctx);
       }
@@ -548,6 +556,10 @@
           return this.replayPlayer.current_frame = this.replayPlayer.replay.frames_count() - 1;
         }
       }
+    };
+
+    Level.prototype.pause = function() {
+      return this.paused = !this.paused;
     };
 
     return Level;
@@ -1421,16 +1433,19 @@
         this.display_upper_leg();
         this.display_lower_leg();
         this.display_upper_arm();
-        this.display_lower_arm();
-        if (this.current_frame < this.replay.frames_count() - 1) {
-          return this.current_frame = this.current_frame + 1;
-        }
+        return this.display_lower_arm();
+      }
+    };
+
+    Ghost.prototype.next_state = function() {
+      if (this.current_frame < this.replay.frames_count() - 1) {
+        return this.current_frame = this.current_frame + 1;
       }
     };
 
     Ghost.prototype.init = function() {
       var texture, textures, _i, _len, _results;
-      textures = ['ghostbikerbody', 'ghostbikerwheel', 'front_ghost', 'rear_ghost', 'ghostlowerarm', 'ghostlowerleg', 'ghosttorso', 'ghostupperarm', 'ghostupperleg'];
+      textures = ['playerbikerbody', 'playerbikerwheel', 'front1', 'rear1', 'playerlowerarm', 'playerlowerleg', 'playertorso', 'playerupperarm', 'playerupperleg'];
       _results = [];
       for (_i = 0, _len = textures.length; _i < _len; _i++) {
         texture = textures[_i];
@@ -1448,7 +1463,7 @@
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get('ghostbikerwheel'), -radius, -radius, radius * 2, radius * 2);
+      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
       return this.level.ctx.restore();
     };
 
@@ -1461,7 +1476,7 @@
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get('ghostbikerwheel'), -radius, -radius, radius * 2, radius * 2);
+      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
       return this.level.ctx.restore();
     };
 
@@ -1474,7 +1489,7 @@
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1 * this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('ghostbikerbody'), -1.0, -0.5, 2.0, 1.0);
+      this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
       return this.level.ctx.restore();
     };
 
@@ -1487,7 +1502,7 @@
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1 * this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('ghosttorso'), -0.25, -0.575, 0.5, 1.15);
+      this.level.ctx.drawImage(this.assets.get('playertorso'), -0.25, -0.575, 0.5, 1.15);
       return this.level.ctx.restore();
     };
 
@@ -1500,7 +1515,7 @@
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1 * this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('ghostlowerleg'), -0.2, -0.33, 0.40, 0.66);
+      this.level.ctx.drawImage(this.assets.get('playerlowerleg'), -0.2, -0.33, 0.40, 0.66);
       return this.level.ctx.restore();
     };
 
@@ -1513,7 +1528,7 @@
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1 * this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('ghostupperleg'), -0.40, -0.14, 0.80, 0.28);
+      this.level.ctx.drawImage(this.assets.get('playerupperleg'), -0.40, -0.14, 0.80, 0.28);
       return this.level.ctx.restore();
     };
 
@@ -1526,7 +1541,7 @@
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1 * this.mirror, 1);
       this.level.ctx.rotate(this.mirror * angle);
-      this.level.ctx.drawImage(this.assets.get('ghostlowerarm'), -0.28, -0.10, 0.56, 0.20);
+      this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.28, -0.10, 0.56, 0.20);
       return this.level.ctx.restore();
     };
 
@@ -1539,7 +1554,7 @@
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(1 * this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('ghostupperarm'), -0.125, -0.28, 0.25, 0.56);
+      this.level.ctx.drawImage(this.assets.get('playerupperarm'), -0.125, -0.28, 0.25, 0.56);
       return this.level.ctx.restore();
     };
 
@@ -1926,21 +1941,30 @@
     ReplayFile.prototype.map16BitsToAngle = function(n16) {
       var n1, n2, pfM1, pfM2;
       n1 = parseInt(n16 / 256);
-      n2 = n16 - n1;
-      n2 = parseInt(n2 / 256);
+      n2 = n16 % 256;
       pfM1 = (n1 - 127) / 127;
       pfM2 = (n2 - 127) / 127;
-      if (pfM1 > 0) {
-        if (pfM2 > 0) {
-          return Math.acos(pfM1);
+      if (pfM2 > 0) {
+        return Math.acos(pfM1);
+      } else {
+        return -Math.acos(pfM1);
+      }
+    };
+
+    ReplayFile.prototype.pointsToAngle = function(x1, y1, x2, y2, extra90) {
+      var extra90v;
+      extra90v = -Math.PI / 2 * extra90;
+      if (x1 > x2) {
+        if (y1 > y2) {
+          return -Math.atan((x1 - x2) / (y1 - y2)) + extra90v;
         } else {
-          return Math.acos(pfM1) - Math.PI / 2;
+          return -Math.atan((x2 - x1) / (y2 - y1)) + Math.PI + extra90v;
         }
       } else {
-        if (pfM2 > 0) {
-          return Math.acos(pfM1) + Math.PI;
+        if (y1 > y2) {
+          return -Math.atan((x1 - x2) / (y1 - y2)) + extra90v;
         } else {
-          return Math.acos(pfM1) + Math.PI / 2;
+          return -Math.atan((x2 - x1) / (y2 - y1)) + Math.PI + extra90v;
         }
       }
     };
@@ -2004,7 +2028,7 @@
     };
 
     ReplayFile.prototype.load_chunks = function(data, nstates) {
-      var cBikeEngineRPM, cElbowX, cElbowY, cFrontWheelX, cFrontWheelY, cKneeX, cKneeY, cLowerBodyX, cLowerBodyY, cRearWheelX, cRearWheelY, cShoulderX, cShoulderY, centerPx, centerPy, chunk, fFrameRot, fFrontWheelRot, fRearWheelRot, flags, frame, frameX, frameY, frontWheelPx, frontWheelPy, gameTime, i, maxXDiff, maxYDiff, nFrameRot, nFrontWheelRot, nRearWheelRot, rearWheelPx, rearWheelPy, s, unused, _i, _results;
+      var cBikeEngineRPM, centerPx, centerPy, chunk, elbowX, elbowY, fFrameRot, fFrontWheelRot, fRearWheelRot, flags, frame, frameX, frameY, frontWheelPx, frontWheelPy, gameTime, i, kneeX, kneeY, lowerBodyX, lowerBodyY, maxXDiff, maxYDiff, rearWheelPx, rearWheelPy, s, shoulderX, shoulderY, unused, _i, _results;
       chunk = new jDataView(data, 0, data.length, true);
       _results = [];
       for (s = _i = 0; 0 <= nstates ? _i < nstates : _i > nstates; s = 0 <= nstates ? ++_i : --_i) {
@@ -2015,31 +2039,24 @@
         frameY = chunk.getFloat32();
         maxXDiff = chunk.getFloat32();
         maxYDiff = chunk.getFloat32();
-        nRearWheelRot = chunk.getUint16();
-        nFrontWheelRot = chunk.getUint16();
-        nFrameRot = chunk.getUint16();
-        fRearWheelRot = this.map16BitsToAngle(nRearWheelRot);
-        fFrontWheelRot = this.map16BitsToAngle(nFrontWheelRot);
-        fFrameRot = this.map16BitsToAngle(nFrameRot);
+        fRearWheelRot = this.map16BitsToAngle(chunk.getUint16());
+        fFrontWheelRot = this.map16BitsToAngle(chunk.getUint16());
+        fFrameRot = this.map16BitsToAngle(chunk.getUint16());
         cBikeEngineRPM = chunk.getInt8();
-        cRearWheelX = chunk.getInt8();
-        cRearWheelY = chunk.getInt8();
-        cFrontWheelX = chunk.getInt8();
-        cFrontWheelY = chunk.getInt8();
-        rearWheelPx = this.map8BitsToCoord(frameX, maxXDiff, cRearWheelX);
-        rearWheelPy = this.map8BitsToCoord(frameY, maxYDiff, cRearWheelY);
-        frontWheelPx = this.map8BitsToCoord(frameX, maxXDiff, cFrontWheelX);
-        frontWheelPy = this.map8BitsToCoord(frameY, maxYDiff, cFrontWheelY);
+        rearWheelPx = this.map8BitsToCoord(frameX, maxXDiff, chunk.getInt8());
+        rearWheelPy = this.map8BitsToCoord(frameY, maxYDiff, chunk.getInt8());
+        frontWheelPx = this.map8BitsToCoord(frameX, maxXDiff, chunk.getInt8());
+        frontWheelPy = this.map8BitsToCoord(frameY, maxYDiff, chunk.getInt8());
         centerPx = frameX;
         centerPy = frameY;
-        cElbowX = chunk.getInt8();
-        cElbowY = chunk.getInt8();
-        cShoulderX = chunk.getInt8();
-        cShoulderY = chunk.getInt8();
-        cLowerBodyX = chunk.getInt8();
-        cLowerBodyY = chunk.getInt8();
-        cKneeX = chunk.getInt8();
-        cKneeY = chunk.getInt8();
+        elbowX = this.map8BitsToCoord(frameX, maxXDiff, chunk.getInt8());
+        elbowY = this.map8BitsToCoord(frameY, maxYDiff, chunk.getInt8());
+        shoulderX = this.map8BitsToCoord(frameX, maxXDiff, chunk.getInt8());
+        shoulderY = this.map8BitsToCoord(frameY, maxYDiff, chunk.getInt8());
+        lowerBodyX = this.map8BitsToCoord(frameX, maxXDiff, chunk.getInt8());
+        lowerBodyY = this.map8BitsToCoord(frameY, maxYDiff, chunk.getInt8());
+        kneeX = this.map8BitsToCoord(frameX, maxXDiff, chunk.getInt8());
+        kneeY = this.map8BitsToCoord(frameY, maxYDiff, chunk.getInt8());
         unused = chunk.getBytes(1);
         frame = {
           mirror: flags === 1,
@@ -2066,44 +2083,44 @@
           },
           torso: {
             position: {
-              x: (cShoulderX + cLowerBodyX) / 2,
-              y: (cShoulderY + cLowerBodyY) / 2
+              x: (shoulderX + lowerBodyX) / 2,
+              y: (shoulderY + lowerBodyY) / 2
             },
-            angle: fFrameRot
+            angle: this.pointsToAngle(shoulderX, shoulderY, lowerBodyX, lowerBodyY, 0)
           },
           upper_leg: {
             position: {
-              x: (cLowerBodyX + cKneeX) / 2,
-              y: (cLowerBodyY + cKneeY) / 2
+              x: (lowerBodyX + kneeX) / 2,
+              y: (lowerBodyY + kneeY) / 2
             },
-            angle: fFrameRot
+            angle: this.pointsToAngle(lowerBodyX, lowerBodyY, kneeX, kneeY, 1)
           },
           lower_leg: {
             position: {
-              x: (cKneeX + centerPx) / 2,
-              y: (cKneeY + centerPy) / 2
+              x: (kneeX + centerPx) / 2,
+              y: (kneeY + centerPy) / 2
             },
-            angle: fFrameRot
+            angle: this.pointsToAngle(kneeX, kneeY, centerPx, centerPy, 0)
           },
           upper_arm: {
             position: {
-              x: (cShoulderX + cElbowX) / 2,
-              y: (cShoulderY + cElbowY) / 2
+              x: (shoulderX + elbowX) / 2,
+              y: (shoulderY + elbowY) / 2
             },
-            angle: fFrameRot
+            angle: this.pointsToAngle(shoulderX, shoulderY, elbowX, elbowY, 0)
           },
           lower_arm: {
             position: {
-              x: 0,
-              y: 0
+              x: (elbowX + centerPx) / 2,
+              y: (elbowY + centerPy) / 2
             },
-            angle: fFrameRot
+            angle: this.pointsToAngle(elbowX, elbowY, centerPx, centerPy, 0)
           }
         };
         _results.push((function() {
           var _j, _results1;
           _results1 = [];
-          for (i = _j = 0; _j <= 4; i = ++_j) {
+          for (i = _j = 0; _j <= 1; i = ++_j) {
             _results1.push(this.frames.push(frame));
           }
           return _results1;

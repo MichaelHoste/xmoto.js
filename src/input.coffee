@@ -49,7 +49,10 @@ class Input
         when 13
           @level.restart()
         when 32
-          @level.flip_moto() if not @level.moto.dead
+          if @level.mode() == "play"
+            @level.flip_moto() if not @level.moto.dead
+          else if @level.mode() == "replay"
+            @level.pause()
     )
 
     $(document).on('keyup', (event) =>

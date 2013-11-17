@@ -9,8 +9,8 @@ class Level
 
     # level unities * scale = pixels
     @scale =
-      x:  35
-      y: -35
+      x:  100
+      y: -100
 
     # Assets manager
     @assets        = new Assets()
@@ -46,6 +46,9 @@ class Level
 
     @start_time   = new Date().getTime()
     @current_time = 0
+
+    # pause
+    @paused = false
 
   load_from_file: (file_name) ->
     $.ajax({
@@ -117,6 +120,7 @@ class Level
 
     if @replayPlayer # mode replaying
       @replayPlayer   .display(@ctx)
+      @replayPlayer   .next_state() if not @paused
     else
       @moto    .display(@ctx)
 
@@ -169,3 +173,6 @@ class Level
     if @replayPlayer
       @replayPlayer.current_frame += x
       @replayPlayer.current_frame = @replayPlayer.replay.frames_count()-1 if @replayPlayer.current_frame > @replayPlayer.replay.frames_count()-1
+
+  pause: ->
+    @paused = not @paused
