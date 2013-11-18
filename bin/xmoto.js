@@ -378,9 +378,10 @@
       var canvas;
       canvas = $('#game').get(0);
       this.ctx = canvas.getContext('2d');
+      this.render_mode = "ugly";
       this.scale = {
-        x: 100,
-        y: -100
+        x: 30,
+        y: -30
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -438,6 +439,10 @@
       this.ghost.init();
       this.input.init();
       return this.listeners.init();
+    };
+
+    Level.prototype.get_render_mode = function() {
+      return this.render_mode;
     };
 
     Level.prototype.init_canvas = function() {
@@ -617,8 +622,8 @@
   play_level = function(name) {
     var level;
     level = new Level();
-    level.load_from_file("l1.lvl");
-    level.load_as_replay("replay_1383574.rpl");
+    level.load_from_file("l2813.lvl");
+    level.load_as_replay("credits.rpl");
     return level.assets.load(function() {
       var update;
       createjs.Sound.setMute(true);
@@ -1463,7 +1468,16 @@
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#FF0000";
+        this.level.ctx.lineWidth = 0.05;
+        this.level.ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        this.level.ctx.stroke();
+      }
       return this.level.ctx.restore();
     };
 
@@ -1476,7 +1490,16 @@
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#FF0000";
+        this.level.ctx.lineWidth = 0.05;
+        this.level.ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        this.level.ctx.stroke();
+      }
       return this.level.ctx.restore();
     };
 
@@ -1485,77 +1508,139 @@
       body = this.frame.body;
       position = body.position;
       angle = body.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.save();
+        this.level.ctx.translate(position.x, position.y);
+        this.level.ctx.scale(1 * this.mirror, -1);
+        this.level.ctx.rotate(this.mirror * (-angle));
+        this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
+        return this.level.ctx.restore();
+      }
     };
 
     Ghost.prototype.display_torso = function() {
-      var angle, position, torso;
+      var angle, frame, position, torso;
       torso = this.frame.torso;
       position = torso.position;
       angle = torso.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playertorso'), -0.25, -0.575, 0.5, 1.15);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.save();
+        this.level.ctx.translate(position.x, position.y);
+        this.level.ctx.scale(1 * this.mirror, -1);
+        this.level.ctx.rotate(this.mirror * (-angle));
+        this.level.ctx.drawImage(this.assets.get('playertorso'), -0.25, -0.575, 0.5, 1.15);
+        this.level.ctx.restore();
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#00FF00";
+        this.level.ctx.lineWidth = 0.05;
+        frame = this.replay.frame(this.current_frame);
+        this.level.ctx.moveTo(frame.anchors.shoulder.x, frame.anchors.shoulder.y);
+        this.level.ctx.lineTo(frame.anchors.lowerBody.x, frame.anchors.lowerBody.y);
+        this.level.ctx.stroke();
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#00FF00";
+        this.level.ctx.lineWidth = 0.05;
+        this.level.ctx.arc(frame.anchors.head.x, frame.anchors.head.y, 0.22, 0, 2 * Math.PI);
+        return this.level.ctx.stroke();
+      }
     };
 
     Ghost.prototype.display_lower_leg = function() {
-      var angle, lower_leg, position;
+      var angle, frame, lower_leg, position;
       lower_leg = this.frame.lower_leg;
       position = lower_leg.position;
       angle = lower_leg.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerlowerleg'), -0.2, -0.33, 0.40, 0.66);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.save();
+        this.level.ctx.translate(position.x, position.y);
+        this.level.ctx.scale(1 * this.mirror, -1);
+        this.level.ctx.rotate(this.mirror * (-angle));
+        this.level.ctx.drawImage(this.assets.get('playerlowerleg'), -0.2, -0.33, 0.40, 0.66);
+        this.level.ctx.restore();
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#00FF00";
+        this.level.ctx.lineWidth = 0.05;
+        frame = this.replay.frame(this.current_frame);
+        this.level.ctx.moveTo(frame.anchors.foot.x, frame.anchors.foot.y);
+        this.level.ctx.lineTo(frame.anchors.knee.x, frame.anchors.knee.y);
+        return this.level.ctx.stroke();
+      }
     };
 
     Ghost.prototype.display_upper_leg = function() {
-      var angle, position, upper_leg;
+      var angle, frame, position, upper_leg;
       upper_leg = this.frame.upper_leg;
       position = upper_leg.position;
       angle = upper_leg.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerupperleg'), -0.40, -0.14, 0.80, 0.28);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.save();
+        this.level.ctx.translate(position.x, position.y);
+        this.level.ctx.scale(1 * this.mirror, -1);
+        this.level.ctx.rotate(this.mirror * (-angle));
+        this.level.ctx.drawImage(this.assets.get('playerupperleg'), -0.40, -0.14, 0.80, 0.28);
+        this.level.ctx.restore();
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#00FF00";
+        this.level.ctx.lineWidth = 0.05;
+        frame = this.replay.frame(this.current_frame);
+        this.level.ctx.moveTo(frame.anchors.lowerBody.x, frame.anchors.lowerBody.y);
+        this.level.ctx.lineTo(frame.anchors.knee.x, frame.anchors.knee.y);
+        return this.level.ctx.stroke();
+      }
     };
 
     Ghost.prototype.display_lower_arm = function() {
-      var angle, lower_arm, position;
+      var angle, frame, lower_arm, position;
       lower_arm = this.frame.lower_arm;
       position = lower_arm.position;
       angle = lower_arm.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, 1);
-      this.level.ctx.rotate(this.mirror * angle);
-      this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.28, -0.10, 0.56, 0.20);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.save();
+        this.level.ctx.translate(position.x, position.y);
+        this.level.ctx.scale(1 * this.mirror, 1);
+        this.level.ctx.rotate(this.mirror * angle);
+        this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.28, -0.10, 0.56, 0.20);
+        this.level.ctx.restore();
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#00FF00";
+        this.level.ctx.lineWidth = 0.05;
+        frame = this.replay.frame(this.current_frame);
+        this.level.ctx.moveTo(frame.anchors.elbow.x, frame.anchors.elbow.y);
+        this.level.ctx.lineTo(frame.anchors.hand.x, frame.anchors.hand.y);
+        return this.level.ctx.stroke();
+      }
     };
 
     Ghost.prototype.display_upper_arm = function() {
-      var angle, position, upper_arm;
+      var angle, frame, position, upper_arm;
       upper_arm = this.frame.upper_arm;
       position = upper_arm.position;
       angle = upper_arm.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerupperarm'), -0.125, -0.28, 0.25, 0.56);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.save();
+        this.level.ctx.translate(position.x, position.y);
+        this.level.ctx.scale(1 * this.mirror, -1);
+        this.level.ctx.rotate(this.mirror * (-angle));
+        this.level.ctx.drawImage(this.assets.get('playerupperarm'), -0.125, -0.28, 0.25, 0.56);
+        this.level.ctx.restore();
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#00FF00";
+        this.level.ctx.lineWidth = 0.05;
+        frame = this.replay.frame(this.current_frame);
+        this.level.ctx.moveTo(frame.anchors.shoulder.x, frame.anchors.shoulder.y);
+        this.level.ctx.lineTo(frame.anchors.elbow.x, frame.anchors.elbow.y);
+        return this.level.ctx.stroke();
+      }
     };
 
     Ghost.prototype.position = function() {
@@ -1979,9 +2064,6 @@
       if (format === 1) {
         this.load_replay_01(replay, format);
       }
-      if (format === 2) {
-        this.load_replay_2(replay);
-      }
       if (format === 3) {
         return this.load_replay_3(replay);
       }
@@ -2028,7 +2110,7 @@
     };
 
     ReplayFile.prototype.load_chunks = function(data, nstates) {
-      var cBikeEngineRPM, centerPx, centerPy, chunk, elbowX, elbowY, fFrameRot, fFrontWheelRot, fRearWheelRot, flags, frame, frameX, frameY, frontWheelPx, frontWheelPy, gameTime, i, kneeX, kneeY, lowerBodyX, lowerBodyY, maxXDiff, maxYDiff, rearWheelPx, rearWheelPy, s, shoulderX, shoulderY, unused, _i, _results;
+      var cBikeEngineRPM, centerPx, centerPy, chunk, elbowX, elbowY, fFrameRot, fFrontWheelRot, fRearWheelRot, flags, frame, frameX, frameY, frontWheelPx, frontWheelPy, gameTime, i, kneeX, kneeY, lowerBodyX, lowerBodyY, maxXDiff, maxYDiff, rearWheelPx, rearWheelPy, s, sensmult, shoulderX, shoulderY, unused, _i, _results;
       chunk = new jDataView(data, 0, data.length, true);
       _results = [];
       for (s = _i = 0; 0 <= nstates ? _i < nstates : _i > nstates; s = 0 <= nstates ? ++_i : --_i) {
@@ -2058,6 +2140,11 @@
         kneeX = this.map8BitsToCoord(frameX, maxXDiff, chunk.getInt8());
         kneeY = this.map8BitsToCoord(frameY, maxYDiff, chunk.getInt8());
         unused = chunk.getBytes(1);
+        if (flags === 1) {
+          sensmult = -1;
+        } else {
+          sensmult = 1;
+        }
         frame = {
           mirror: flags === 1,
           left_wheel: {
@@ -2083,22 +2170,22 @@
           },
           torso: {
             position: {
-              x: (shoulderX + lowerBodyX) / 2,
-              y: (shoulderY + lowerBodyY) / 2
+              x: (shoulderX - Constants.shoulder.axe_position.x + lowerBodyX - Constants.hip.axe_position.x) / 2,
+              y: (shoulderY - Constants.shoulder.axe_position.y + lowerBodyY - Constants.hip.axe_position.y) / 2
             },
             angle: this.pointsToAngle(shoulderX, shoulderY, lowerBodyX, lowerBodyY, 0)
           },
           upper_leg: {
             position: {
-              x: (lowerBodyX + kneeX) / 2,
-              y: (lowerBodyY + kneeY) / 2
+              x: (lowerBodyX - Constants.hip.axe_position.x + kneeX - Constants.knee.axe_position.x) / 2,
+              y: (lowerBodyY - Constants.hip.axe_position.y + kneeY - Constants.knee.axe_position.y) / 2
             },
             angle: this.pointsToAngle(lowerBodyX, lowerBodyY, kneeX, kneeY, 1)
           },
           lower_leg: {
             position: {
-              x: (kneeX + centerPx) / 2,
-              y: (kneeY + centerPy) / 2
+              x: (kneeX + Constants.ankle.axe_position.x + centerPx) / 2,
+              y: (kneeY + Constants.ankle.axe_position.y + centerPy) / 2
             },
             angle: this.pointsToAngle(kneeX, kneeY, centerPx, centerPy, 0)
           },
@@ -2115,6 +2202,36 @@
               y: (elbowY + centerPy) / 2
             },
             angle: this.pointsToAngle(elbowX, elbowY, centerPx, centerPy, 0)
+          },
+          anchors: {
+            elbow: {
+              x: elbowX,
+              y: elbowY
+            },
+            shoulder: {
+              x: shoulderX,
+              y: shoulderY
+            },
+            lowerBody: {
+              x: lowerBodyX,
+              y: lowerBodyY
+            },
+            knee: {
+              x: kneeX,
+              y: kneeY
+            },
+            hand: {
+              x: centerPx + sensmult * 0.3 * Math.cos(fFrameRot) - 0.45 * Math.sin(fFrameRot),
+              y: centerPy + sensmult * 0.3 * Math.sin(fFrameRot) + 0.45 * Math.cos(fFrameRot)
+            },
+            foot: {
+              x: centerPx + sensmult * 0 * Math.cos(fFrameRot) - (-0.37) * Math.sin(fFrameRot),
+              y: centerPy + sensmult * 0 * Math.sin(fFrameRot) + (-0.37) * Math.cos(fFrameRot)
+            },
+            head: {
+              x: shoulderX + 0.22 * this.normalizeX(shoulderX - lowerBodyX, shoulderY - lowerBodyY),
+              y: shoulderY + 0.22 * this.normalizeY(shoulderX - lowerBodyX, shoulderY - lowerBodyY)
+            }
           }
         };
         _results.push((function() {
@@ -2127,6 +2244,28 @@
         }).call(this));
       }
       return _results;
+    };
+
+    ReplayFile.prototype.length = function(x, y) {
+      return Math.sqrt(x * x + y * y);
+    };
+
+    ReplayFile.prototype.normalizeX = function(x, y) {
+      var v;
+      v = this.length(x, y);
+      if (v === 0) {
+        return 0;
+      }
+      return x / v;
+    };
+
+    ReplayFile.prototype.normalizeY = function(x, y) {
+      var v;
+      v = this.length(x, y);
+      if (v === 0) {
+        return 0;
+      }
+      return y / v;
     };
 
     ReplayFile.prototype.load_replay_2 = function(replay) {

@@ -134,6 +134,11 @@ class ReplayFile
       kneeY      = @map8BitsToCoord(frameY, maxYDiff, chunk.getInt8())
       unused     = chunk.getBytes(1)
 
+      if flags == 1
+        sensmult = -1
+      else
+        sensmult = 1
+
       frame =
         mirror: flags == 1
         left_wheel:
@@ -153,20 +158,20 @@ class ReplayFile
           angle: fFrameRot
         torso:
           position:
-            x: (shoulderX + lowerBodyX)/2
-            y: (shoulderY + lowerBodyY)/2
+            x: (shoulderX-Constants.shoulder.axe_position.x + lowerBodyX-Constants.hip.axe_position.x)/2
+            y: (shoulderY-Constants.shoulder.axe_position.y + lowerBodyY-Constants.hip.axe_position.y)/2
           angle: @pointsToAngle(shoulderX, shoulderY, lowerBodyX, lowerBodyY, 0)
 
         upper_leg:
           position:
-            x: (lowerBodyX+kneeX)/2
-            y: (lowerBodyY+kneeY)/2
+            x: (lowerBodyX-Constants.hip.axe_position.x + kneeX-Constants.knee.axe_position.x)/2
+            y: (lowerBodyY-Constants.hip.axe_position.y + kneeY-Constants.knee.axe_position.y)/2
           angle: @pointsToAngle(lowerBodyX, lowerBodyY, kneeX, kneeY, 1)
 
         lower_leg:
           position:
-            x: (kneeX+centerPx)/2
-            y: (kneeY+centerPy)/2
+            x: (kneeX+Constants.ankle.axe_position.x+centerPx)/2
+            y: (kneeY+Constants.ankle.axe_position.y+centerPy)/2
           angle: @pointsToAngle(kneeX, kneeY, centerPx, centerPy, 0)
 
         upper_arm:
@@ -181,8 +186,44 @@ class ReplayFile
             y: (elbowY+centerPy)/2
           angle: @pointsToAngle(elbowX, elbowY, centerPx, centerPy, 0)
 
+        anchors:
+          elbow:
+            x: elbowX
+            y: elbowY
+          shoulder:
+            x: shoulderX
+            y: shoulderY
+          lowerBody:
+            x: lowerBodyX
+            y: lowerBodyY
+          knee:
+            x: kneeX
+            y: kneeY
+          hand:
+            x: centerPx+sensmult*0.3*Math.cos(fFrameRot)-0.45*Math.sin(fFrameRot)
+            y: centerPy+sensmult*0.3*Math.sin(fFrameRot)+0.45*Math.cos(fFrameRot)
+          foot:
+            x: centerPx+sensmult*0*Math.cos(fFrameRot)-(-0.37)*Math.sin(fFrameRot)
+            y: centerPy+sensmult*0*Math.sin(fFrameRot)+(-0.37)*Math.cos(fFrameRot)
+          head:
+            x: shoulderX + 0.22*@normalizeX(shoulderX-lowerBodyX, shoulderY-lowerBodyY)
+            y: shoulderY + 0.22*@normalizeY(shoulderX-lowerBodyX, shoulderY-lowerBodyY)
+
       for i in [0..1]
         @frames.push(frame)
+
+  length: (x, y) ->
+    Math.sqrt(x*x + y*y)
+
+  normalizeX: (x, y) ->
+    v = @length(x, y)
+    return 0 if v == 0
+    return x/v
+
+  normalizeY: (x, y) ->
+    v = @length(x, y)
+    return 0 if v == 0
+    return y/v
 
   load_replay_2: (replay) ->
     todo = true

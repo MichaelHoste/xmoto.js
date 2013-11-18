@@ -6,11 +6,12 @@ class Level
     # Context
     canvas  = $('#game').get(0)
     @ctx = canvas.getContext('2d')
+    @render_mode = "ugly" # normal / ugly / uglyOver
 
     # level unities * scale = pixels
     @scale =
-      x:  100
-      y: -100
+      x:  30
+      y: -30
 
     # Assets manager
     @assets        = new Assets()
@@ -84,6 +85,9 @@ class Level
 
     @input.init()
     @listeners.init()
+
+  get_render_mode: ->	
+    @render_mode
 
   init_canvas: ->
     @canvas  = $('#game').get(0)
