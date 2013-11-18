@@ -8,6 +8,8 @@ b2Fixture       = Box2D.Dynamics.b2Fixture
 b2MassData      = Box2D.Collision.Shapes.b2MassData
 b2PolygonShape  = Box2D.Collision.Shapes.b2PolygonShape
 b2CircleShape   = Box2D.Collision.Shapes.b2CircleShape
+b2EdgeShape     = Box2D.Collision.Shapes.b2EdgeShape
+b2EdgeChainDef  = Box2D.Collision.Shapes.b2EdgeChainDef
 b2DebugDraw     = Box2D.Dynamics.b2DebugDraw
 b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
 b2Settings      = Box2D.Common.b2Settings
@@ -41,7 +43,7 @@ class Physics
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    fixDef.shape = new b2PolygonShape()
+    fixDef.shape       = new b2PolygonShape()
     fixDef.density     = 1.0
     fixDef.restitution = 0.5
     fixDef.friction    = 1.0
@@ -64,6 +66,41 @@ class Physics
 
     # Assign fixture to body and add body to 2D world
     @world.CreateBody(bodyDef).CreateFixture(fixDef)
+
+  create_lines: (block, name) ->
+    # Create body
+    bodyDef = new b2BodyDef()
+
+    # Assign body position
+    bodyDef.position.x = block.position.x
+    bodyDef.position.y = block.position.y
+
+    bodyDef.userData =
+      name: name
+
+    bodyDef.type = b2Body.b2_staticBody
+
+    # add body to the world
+    body = @world.CreateBody(bodyDef)
+
+    # assign each couple of vertices to a line
+    for vertex, i in block.vertices
+      # Create fixture
+      fixDef = new b2FixtureDef()
+
+      fixDef.shape       = new b2PolygonShape()
+      fixDef.density     = 1.0
+      fixDef.restitution = 0.5
+      fixDef.friction    = 1.0
+      fixDef.filter.groupIndex = -2
+
+      # Create line (from polygon because box2Dweb cannot do otherwise)
+      vertex1 = vertex
+      vertex2 = if i == block.vertices.length-1 then block.vertices[0] else block.vertices[i+1]
+      fixDef.shape.SetAsArray([new b2Vec2(vertex1.x, vertex1.y), new b2Vec2(vertex2.x, vertex2.y)], 2)
+
+      # Assign fixture (line) to body
+      body.CreateFixture(fixDef)
 
   @create_shape: (fix_def, collision_box, mirror = false) ->
     b2vertices = []

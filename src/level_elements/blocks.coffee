@@ -77,12 +77,9 @@ class Blocks
     for block in @list
       @assets.textures.push(block.usetexture.id)
 
-    # Triangulation (for collisions in box2D)
-    @triangles = triangulate(@front_list)
-
-    # Create triangles in box2D
-    for triangle in @triangles
-      @level.physics.create_polygon(triangle, 'ground')
+    # Collisions for blocks
+    for block in @front_list
+      @level.physics.create_lines(block, 'ground')
 
     # Init edges
     @edges = new Edges(@level, @list)
@@ -135,25 +132,6 @@ block_AABB = (block) ->
 
 visible_block = (zone, block) ->
   block.aabb.TestOverlap(zone.aabb)
-
-# Out of class methods
-triangulate = (blocks) ->
-  triangles = []
-  for block in blocks
-    vertices = []
-    for vertex in block.vertices
-      vertices.push( new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y ))
-
-    Math2D.not_collinear_vertices(vertices)
-    triangulation = new poly2tri.SweepContext(vertices, { cloneArrays: true })
-    triangulation.triangulate()
-    set_of_triangles = triangulation.getTriangles()
-
-    for triangle in set_of_triangles
-      triangles.push([ { x: triangle.points_[0].x, y: triangle.points_[0].y },
-                       { x: triangle.points_[1].x, y: triangle.points_[1].y },
-                       { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
-  triangles
 
 # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
 sort_blocks_by_texture = (a, b) ->
