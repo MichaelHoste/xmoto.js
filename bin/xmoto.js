@@ -620,6 +620,185 @@
 
   })();
 
+  Listeners = (function() {
+    function Listeners(level) {
+      this.level = level;
+      this.assets = level.assets;
+    }
+
+    Listeners.prototype.init = function() {
+      var listener,
+        _this = this;
+      listener = new Box2D.Dynamics.b2ContactListener;
+      listener.BeginContact = function(contact) {
+        var a, b, entity, moto, strawberry;
+        moto = _this.level.moto;
+        a = contact.GetFixtureA().GetBody().GetUserData().name;
+        b = contact.GetFixtureB().GetBody().GetUserData().name;
+        if (!moto.dead) {
+          if ((a === 'moto' && b === 'strawberry') ||  (a === 'rider' && b === 'strawberry') ||  (a === 'rider-lower_leg' && b === 'strawberry')) {
+            strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
+            entity = strawberry.GetBody().GetUserData().entity;
+            if (entity.display) {
+              entity.display = false;
+              createjs.Sound.play('PickUpStrawberry');
+            }
+          }
+          if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
+            if (_this.level.got_strawberries()) {
+              createjs.Sound.play('EndOfLevel');
+              return _this.level.need_to_restart = true;
+            }
+          } else if (a === 'rider' && b === 'ground') {
+            moto.dead = true;
+            createjs.Sound.play('Headcrash');
+            _this.level.world.DestroyJoint(moto.rider.ankle_joint);
+            _this.level.world.DestroyJoint(moto.rider.wrist_joint);
+            moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 1.5;
+            moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 1.5;
+            moto.rider.shoulder_joint.m_upperAngle = moto.rider.shoulder_joint.m_upperAngle * 1.5;
+            return moto.rider.hip_joint.m_lowerAngle = moto.rider.hip_joint.m_lowerAngle * 1.5;
+          }
+        }
+      };
+      return this.level.world.SetContactListener(listener);
+    };
+
+    return Listeners;
+
+  })();
+
+  play_level = function(name) {
+    var level;
+    level = new Level();
+    level.load_from_file(name);
+    return level.assets.load(function() {
+      var update;
+      createjs.Sound.setMute(true);
+      update = function() {
+        level.input.move_moto();
+        level.engine_sound.play();
+        level.world.Step(1.0 / 60.0, 10, 10);
+        level.world.ClearForces();
+        return level.display(false);
+      };
+      window.game_loop = setInterval(update, 1000 / 60);
+      return hide_loading();
+    });
+  };
+
+  show_loading = function() {
+    return $(".xmoto-loading").show();
+  };
+
+  hide_loading = function() {
+    return $(".xmoto-loading").hide();
+  };
+
+  full_screen = function() {
+    $("#game").width($("body").width());
+    $("#game").height($("body").height());
+    return window.onresize = function() {
+      $("#game").width($("body").width());
+      return $("#game").height($("body").height());
+    };
+  };
+
+  $(function() {
+    play_level($("#levels option:selected").val());
+    return $("#levels").on('change', function() {
+      show_loading();
+      clearInterval(window.game_loop);
+      return play_level($(this).val());
+    });
+  });
+
+  b2World = Box2D.Dynamics.b2World;
+
+  b2Vec2 = Box2D.Common.Math.b2Vec2;
+
+  b2AABB = Box2D.Collision.b2AABB;
+
+  b2BodyDef = Box2D.Dynamics.b2BodyDef;
+
+  b2Body = Box2D.Dynamics.b2Body;
+
+  b2FixtureDef = Box2D.Dynamics.b2FixtureDef;
+
+  b2Fixture = Box2D.Dynamics.b2Fixture;
+
+  b2MassData = Box2D.Collision.Shapes.b2MassData;
+
+  b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+
+  b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
+
+  b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+
+  b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef;
+
+  b2Settings = Box2D.Common.b2Settings;
+
+  Physics = (function() {
+    function Physics(level) {
+      var context, debugDraw;
+      this.scale = level.scale.x;
+      this.level = level;
+      this.world = new b2World(new b2Vec2(0, -Constants.gravity), true);
+      b2Settings.b2_linearSlop = 0.0025;
+      context = this.level.ctx;
+      debugDraw = new b2DebugDraw();
+      debugDraw.SetSprite(context);
+      debugDraw.SetFillAlpha(0.3);
+      debugDraw.SetLineThickness(1.0);
+      debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+      this.world.SetDebugDraw(debugDraw);
+      this.world;
+    }
+
+    Physics.prototype.create_polygon = function(vertices, name) {
+      var bodyDef, fixDef;
+      fixDef = new b2FixtureDef();
+      fixDef.shape = new b2PolygonShape();
+      fixDef.density = 1.0;
+      fixDef.restitution = 0.5;
+      fixDef.friction = 1.0;
+      fixDef.filter.groupIndex = -2;
+      Physics.create_shape(fixDef, vertices);
+      bodyDef = new b2BodyDef();
+      bodyDef.position.x = 0;
+      bodyDef.position.y = 0;
+      bodyDef.userData = {
+        name: name
+      };
+      bodyDef.type = b2Body.b2_staticBody;
+      return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+    };
+
+    Physics.create_shape = function(fix_def, collision_box, mirror) {
+      var b2vertices, vertex, _i, _j, _len, _len1;
+      if (mirror == null) {
+        mirror = false;
+      }
+      b2vertices = [];
+      if (mirror === false) {
+        for (_i = 0, _len = collision_box.length; _i < _len; _i++) {
+          vertex = collision_box[_i];
+          b2vertices.push(new b2Vec2(vertex.x, vertex.y));
+        }
+      } else {
+        for (_j = 0, _len1 = collision_box.length; _j < _len1; _j++) {
+          vertex = collision_box[_j];
+          b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y));
+        }
+      }
+      return fix_def.shape.SetAsArray(b2vertices);
+    };
+
+    return Physics;
+
+  })();
+
   b2Vec2 = Box2D.Common.Math.b2Vec2;
 
   b2AABB = Box2D.Collision.b2AABB;
@@ -1416,99 +1595,6 @@
     return Sky;
 
   })();
-
-  Listeners = (function() {
-    function Listeners(level) {
-      this.level = level;
-      this.assets = level.assets;
-    }
-
-    Listeners.prototype.init = function() {
-      var listener,
-        _this = this;
-      listener = new Box2D.Dynamics.b2ContactListener;
-      listener.BeginContact = function(contact) {
-        var a, b, entity, moto, strawberry;
-        moto = _this.level.moto;
-        a = contact.GetFixtureA().GetBody().GetUserData().name;
-        b = contact.GetFixtureB().GetBody().GetUserData().name;
-        if (!moto.dead) {
-          if ((a === 'moto' && b === 'strawberry') ||  (a === 'rider' && b === 'strawberry') ||  (a === 'rider-lower_leg' && b === 'strawberry')) {
-            strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
-            entity = strawberry.GetBody().GetUserData().entity;
-            if (entity.display) {
-              entity.display = false;
-              createjs.Sound.play('PickUpStrawberry');
-            }
-          }
-          if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
-            if (_this.level.got_strawberries()) {
-              createjs.Sound.play('EndOfLevel');
-              return _this.level.need_to_restart = true;
-            }
-          } else if (a === 'rider' && b === 'ground') {
-            moto.dead = true;
-            createjs.Sound.play('Headcrash');
-            _this.level.world.DestroyJoint(moto.rider.ankle_joint);
-            _this.level.world.DestroyJoint(moto.rider.wrist_joint);
-            moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 1.5;
-            moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 1.5;
-            moto.rider.shoulder_joint.m_upperAngle = moto.rider.shoulder_joint.m_upperAngle * 1.5;
-            return moto.rider.hip_joint.m_lowerAngle = moto.rider.hip_joint.m_lowerAngle * 1.5;
-          }
-        }
-      };
-      return this.level.world.SetContactListener(listener);
-    };
-
-    return Listeners;
-
-  })();
-
-  play_level = function(name) {
-    var level;
-    level = new Level();
-    level.load_from_file(name);
-    return level.assets.load(function() {
-      var update;
-      createjs.Sound.setMute(true);
-      update = function() {
-        level.input.move_moto();
-        level.engine_sound.play();
-        level.world.Step(1.0 / 60.0, 10, 10);
-        level.world.ClearForces();
-        return level.display(false);
-      };
-      window.game_loop = setInterval(update, 1000 / 60);
-      return hide_loading();
-    });
-  };
-
-  show_loading = function() {
-    return $(".xmoto-loading").show();
-  };
-
-  hide_loading = function() {
-    return $(".xmoto-loading").hide();
-  };
-
-  full_screen = function() {
-    $("#game").width($("body").width());
-    $("#game").height($("body").height());
-    return window.onresize = function() {
-      $("#game").width($("body").width());
-      return $("#game").height($("body").height());
-    };
-  };
-
-  $(function() {
-    play_level($("#levels option:selected").val());
-    return $("#levels").on('change', function() {
-      show_loading();
-      clearInterval(window.game_loop);
-      return play_level($(this).val());
-    });
-  });
 
   Ghost = (function() {
     function Ghost(level, replay) {
@@ -2324,92 +2410,6 @@
     };
 
     return Rider;
-
-  })();
-
-  b2World = Box2D.Dynamics.b2World;
-
-  b2Vec2 = Box2D.Common.Math.b2Vec2;
-
-  b2AABB = Box2D.Collision.b2AABB;
-
-  b2BodyDef = Box2D.Dynamics.b2BodyDef;
-
-  b2Body = Box2D.Dynamics.b2Body;
-
-  b2FixtureDef = Box2D.Dynamics.b2FixtureDef;
-
-  b2Fixture = Box2D.Dynamics.b2Fixture;
-
-  b2MassData = Box2D.Collision.Shapes.b2MassData;
-
-  b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
-
-  b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
-
-  b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
-
-  b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef;
-
-  b2Settings = Box2D.Common.b2Settings;
-
-  Physics = (function() {
-    function Physics(level) {
-      var context, debugDraw;
-      this.scale = level.scale.x;
-      this.level = level;
-      this.world = new b2World(new b2Vec2(0, -Constants.gravity), true);
-      b2Settings.b2_linearSlop = 0.0025;
-      context = this.level.ctx;
-      debugDraw = new b2DebugDraw();
-      debugDraw.SetSprite(context);
-      debugDraw.SetFillAlpha(0.3);
-      debugDraw.SetLineThickness(1.0);
-      debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-      this.world.SetDebugDraw(debugDraw);
-      this.world;
-    }
-
-    Physics.prototype.create_polygon = function(vertices, name) {
-      var bodyDef, fixDef;
-      fixDef = new b2FixtureDef();
-      fixDef.shape = new b2PolygonShape();
-      fixDef.density = 1.0;
-      fixDef.restitution = 0.5;
-      fixDef.friction = 1.0;
-      fixDef.filter.groupIndex = -2;
-      Physics.create_shape(fixDef, vertices);
-      bodyDef = new b2BodyDef();
-      bodyDef.position.x = 0;
-      bodyDef.position.y = 0;
-      bodyDef.userData = {
-        name: name
-      };
-      bodyDef.type = b2Body.b2_staticBody;
-      return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-    };
-
-    Physics.create_shape = function(fix_def, collision_box, mirror) {
-      var b2vertices, vertex, _i, _j, _len, _len1;
-      if (mirror == null) {
-        mirror = false;
-      }
-      b2vertices = [];
-      if (mirror === false) {
-        for (_i = 0, _len = collision_box.length; _i < _len; _i++) {
-          vertex = collision_box[_i];
-          b2vertices.push(new b2Vec2(vertex.x, vertex.y));
-        }
-      } else {
-        for (_j = 0, _len1 = collision_box.length; _j < _len1; _j++) {
-          vertex = collision_box[_j];
-          b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y));
-        }
-      }
-      return fix_def.shape.SetAsArray(b2vertices);
-    };
-
-    return Physics;
 
   })();
 
