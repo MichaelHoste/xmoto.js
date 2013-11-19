@@ -8,7 +8,7 @@ class Level
 
     @canvas = $('#game').get(0)
     @ctx    = @canvas.getContext('2d')
-    @render_mode = "ugly" # normal / ugly / uglyOver
+    @render_mode = "uglyOver" # normal / ugly / uglyOver
 
     # level unities * scale = pixels
     @scale =

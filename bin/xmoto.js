@@ -35,7 +35,7 @@
         return true;
       }
       if (this.visible) {
-        moto = this.level.moto;
+        moto = this.level.replayPlayer;
         if (this.visible.right < moto.position().x + (this.level.canvas_width / 2) / this.scale.x) {
           return true;
         }
@@ -54,7 +54,7 @@
 
     Buffer.prototype.redraw = function() {
       var moto;
-      moto = this.level.moto;
+      moto = this.level.replayPlayer;
       if (!this.canvas_width) {
         this.init_canvas();
       }
@@ -80,7 +80,7 @@
 
     Buffer.prototype.compute_visibility = function() {
       var moto;
-      moto = this.level.moto;
+      moto = this.level.replayPlayer;
       this.visible = {
         left: moto.position().x - (this.canvas_width / 2) / this.buffer_scale.x,
         right: moto.position().x + (this.canvas_width / 2) / this.buffer_scale.x,
@@ -94,7 +94,7 @@
 
     Buffer.prototype.display = function() {
       var buffer_center_x, buffer_center_y, canvas_center_x, canvas_center_y, clipped_height, clipped_width, margin_zoom_x, margin_zoom_y, moto, translate_x, translate_y;
-      moto = this.level.moto;
+      moto = this.level.replayPlayer;
       buffer_center_x = this.canvas_width / 2;
       canvas_center_x = this.level.canvas_width / 2;
       translate_x = (moto.position().x - this.moto_position.x) * this.buffer_scale.x;
@@ -488,7 +488,7 @@
     function Level() {
       this.canvas = $('#game').get(0);
       this.ctx = this.canvas.getContext('2d');
-      this.render_mode = "ugly";
+      this.render_mode = "uglyOver";
       this.scale = {
         x: 30,
         y: -30
@@ -1373,19 +1373,28 @@
     Entities.prototype.display_entity = function(ctx, entity) {
       var i, texture_name;
       if (entity.display) {
-        texture_name = Entities.texture_name(entity);
-        if (entity.frames) {
-          i = this.level.current_time % (entity.frames * entity.delay * 1000);
-          i = Math.floor(i / (entity.delay * 1000));
+        if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+          texture_name = Entities.texture_name(entity);
           if (entity.frames) {
-            texture_name = Entities.frame_name(texture_name, i);
+            i = this.level.current_time % (entity.frames * entity.delay * 1000);
+            i = Math.floor(i / (entity.delay * 1000));
+            if (entity.frames) {
+              texture_name = Entities.frame_name(texture_name, i);
+            }
           }
+          ctx.save();
+          ctx.translate(entity.position.x, entity.position.y);
+          ctx.scale(1, -1);
+          ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
+          ctx.restore();
         }
-        ctx.save();
-        ctx.translate(entity.position.x, entity.position.y);
-        ctx.scale(1, -1);
-        ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
-        return ctx.restore();
+        if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+          this.level.ctx.beginPath();
+          this.level.ctx.strokeStyle = "#0000FF";
+          this.level.ctx.lineWidth = 0.05;
+          this.level.ctx.arc(entity.position.x + entity.center.x - entity.size.width / 2, entity.position.y + entity.center.y - entity.size.height / 2, entity.size.width / 2, 0, 2 * Math.PI);
+          return this.level.ctx.stroke();
+        }
       }
     };
 
