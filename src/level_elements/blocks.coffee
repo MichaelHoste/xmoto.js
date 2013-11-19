@@ -1,3 +1,6 @@
+b2Vec2          = Box2D.Common.Math.b2Vec2
+b2AABB          = Box2D.Collision.b2AABB
+
 class Blocks
 
   constructor: (level) ->
@@ -49,9 +52,13 @@ class Blocks
         vertex =
           x:    parseFloat($(xml_vertex).attr('x'))
           y:    parseFloat($(xml_vertex).attr('y'))
+          absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are here to
+          absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # accelerate drawing of each frame
           edge: $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
+
+      block.aabb = block_AABB(block)
 
       @list.push(block)
       if block.position.background
@@ -70,12 +77,9 @@ class Blocks
     for block in @list
       @assets.textures.push(block.usetexture.id)
 
-    # Triangulation (for collisions in box2D)
-    @triangles = triangulate(@front_list)
-
-    # Create triangles in box2D
-    for triangle in @triangles
-      @level.physics.create_polygon(triangle, 'ground')
+    # Collisions for blocks
+    for block in @front_list
+      @level.physics.create_lines(block, 'ground')
 
     # Init edges
     @edges = new Edges(@level, @list)
@@ -83,42 +87,51 @@ class Blocks
   display: (ctx) ->
     # draw back blocks before front blocks
     for block in @back_list.concat(@front_list)
-      ctx.beginPath()
+      if visible_block(@level.buffer.visible, block)
+        ctx.beginPath()
 
-      for vertex, i in block.vertices
-        if i == 0
-          ctx.moveTo(block.position.x + vertex.x, block.position.y + vertex.y)
-        else
-          ctx.lineTo(block.position.x + vertex.x, block.position.y + vertex.y)
+        for vertex, i in block.vertices
+          if i == 0
+            ctx.moveTo(vertex.absolute_x, vertex.absolute_y)
+          else
+            ctx.lineTo(vertex.absolute_x, vertex.absolute_y)
 
-      ctx.closePath()
+        ctx.closePath()
 
-      ctx.save()
-      ctx.scale(1.0 / 40.0, -1.0 / 40.0)
-      ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), 'repeat')
-      ctx.fill()
-      ctx.restore()
+        ctx.save()
+        ctx.scale(1.0 / 40.0, -1.0 / 40.0)
+        ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), 'repeat')
+        ctx.fill()
+        ctx.restore()
 
     @edges.display(ctx)
 
-# Out of class methods
-triangulate = (blocks) ->
-  triangles = []
-  for block in blocks
-    vertices = []
-    for vertex in block.vertices
-      vertices.push( new poly2tri.Point(block.position.x + vertex.x, block.position.y + vertex.y ))
+block_AABB = (block) ->
+  first = true
+  lower_bound = {}
+  upper_bound = {}
+  for vertex in block.vertices
+    if first
+      lower_bound =
+        x: vertex.absolute_x
+        y: vertex.absolute_y
+      upper_bound =
+        x: vertex.absolute_x
+        y: vertex.absolute_y
+      first = false
+    else
+      lower_bound.x = vertex.absolute_x if vertex.absolute_x < lower_bound.x
+      lower_bound.y = vertex.absolute_y if vertex.absolute_y < lower_bound.y
+      upper_bound.x = vertex.absolute_x if vertex.absolute_x > upper_bound.x
+      upper_bound.y = vertex.absolute_y if vertex.absolute_y > upper_bound.y
 
-    Math2D.not_collinear_vertices(vertices)
-    triangulation = new poly2tri.SweepContext(vertices, { cloneArrays: true })
-    triangulation.triangulate()
-    set_of_triangles = triangulation.getTriangles()
+  aabb = new b2AABB()
+  aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
+  aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+  return aabb
 
-    for triangle in set_of_triangles
-      triangles.push([ { x: triangle.points_[0].x, y: triangle.points_[0].y },
-                       { x: triangle.points_[1].x, y: triangle.points_[1].y },
-                       { x: triangle.points_[2].x, y: triangle.points_[2].y } ])
-  triangles
+visible_block = (zone, block) ->
+  block.aabb.TestOverlap(zone.aabb)
 
 # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
 sort_blocks_by_texture = (a, b) ->

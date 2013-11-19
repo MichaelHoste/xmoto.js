@@ -1,11 +1,13 @@
+b2AABB = Box2D.Collision.b2AABB
 b2Vec2 = Box2D.Common.Math.b2Vec2
 
 class Level
 
   constructor: ->
     # Context
-    canvas  = $('#game').get(0)
-    @ctx = canvas.getContext('2d')
+
+    @canvas = $('#game').get(0)
+    @ctx    = @canvas.getContext('2d')
     @render_mode = "ugly" # normal / ugly / uglyOver
 
     # level unities * scale = pixels
@@ -44,6 +46,9 @@ class Level
     @layer_offsets = new LayerOffsets(this)
     @script        = new Script(this)
     @entities      = new Entities(this)
+
+    # Buffer
+    @buffer        = new Buffer(this)
 
     @start_time   = new Date().getTime()
     @current_time = 0
@@ -90,7 +95,6 @@ class Level
     @render_mode
 
   init_canvas: ->
-    @canvas  = $('#game').get(0)
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height)
     @ctx.lineWidth = 0.01
@@ -100,10 +104,17 @@ class Level
       @need_to_restart = false
       @restart(true)
 
+    @init_canvas() if not @canvas_width
+
     @current_time = new Date().getTime() - @start_time
 
-    @init_canvas() if not @canvas
-    @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
+    # visible screen limits of the world (don't show anything outside of these limits)
+    @compute_visibility()
+
+    # Redraw buffer if needed (the buffer is bigger than the canvas)
+    # And display it (copy the right pixels from the buffer to the canvas)
+    @buffer.redraw() if @buffer.redraw_needed()
+    @buffer.display()
 
     @ctx.save()
 
@@ -116,10 +127,7 @@ class Level
     else # mode playing
       @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
 
-    @sky     .display(@ctx)
-    @limits  .display(@ctx)
-    @entities.display_sprites(@ctx)
-    @blocks  .display(@ctx)
+    # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
     @entities.display_items(@ctx)
 
     if @replayPlayer # mode replaying
@@ -134,6 +142,16 @@ class Level
 
     # Save last step for replay
     @replay.add_frame()
+
+  compute_visibility: ->
+    @visible =
+      left:   @moto.position().x - (@canvas_width  / 2) / @scale.x
+      right:  @moto.position().x + (@canvas_width  / 2) / @scale.x
+      bottom: @moto.position().y + (@canvas_height / 2) / @scale.y
+      top:    @moto.position().y - (@canvas_height / 2) / @scale.y
+    @visible.aabb = new b2AABB()
+    @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
+    @visible.aabb.upperBound.Set(@visible.right, @visible.top)
 
   flip_moto: ->
     @moto = MotoFlip.execute(@moto)

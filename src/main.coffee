@@ -2,15 +2,16 @@ play_level = (name) ->
   level = new Level()
   #level.load_from_file(name)
 
-  #level.load_from_file("l1.lvl")
-  #level.load_as_replay("replay_1383574.rpl")
+  level.load_from_file("l1.lvl")
+  level.load_as_replay("replay_1383574.rpl")
 
-  level.load_from_file("l2813.lvl")
-  level.load_as_replay("credits.rpl")
+  #level.load_from_file("l2813.lvl")
+  #level.load_as_replay("credits.rpl")
 
   # Load assets for this level before doing anything else
   level.assets.load( ->
     createjs.Sound.setMute(true)
+    #level.create_background_buffer()
 
     update = ->
       level.input.move_moto()
@@ -31,6 +32,13 @@ show_loading = ->
 hide_loading = ->
   $(".xmoto-loading").hide()
 
+full_screen = ->
+  $("#game").width($("body").width())
+  $("#game").height($("body").height())
+  window.onresize = ->
+    $("#game").width($("body").width())
+    $("#game").height($("body").height())
+
 $ ->
   play_level($("#levels option:selected").val())
 
@@ -40,3 +48,4 @@ $ ->
     play_level($(this).val())
   )
 
+  #full_screen()
