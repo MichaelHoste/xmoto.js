@@ -160,7 +160,7 @@ class Ghost
       @level.ctx.beginPath()
       @level.ctx.strokeStyle="#00FF00"
       @level.ctx.lineWidth = 0.05
-      @level.ctx.arc(frame.anchors.head.x, frame.anchors.head.y, 0.22, 0, 2*Math.PI)
+      @level.ctx.arc(frame.anchors.head.x, frame.anchors.head.y, Constants.cpp.rider_head_size, 0, 2*Math.PI)
       @level.ctx.stroke()
 
   display_lower_leg: ->

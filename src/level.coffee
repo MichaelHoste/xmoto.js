@@ -12,8 +12,8 @@ class Level
 
     # level unities * scale = pixels
     @scale =
-      x:  30
-      y: -30
+      x:  50
+      y: -50
 
     # Assets manager
     @assets        = new Assets()
@@ -198,3 +198,7 @@ class Level
 
   pause: ->
     @paused = not @paused
+
+  object_to_follow: ->
+    return @replayPlayer if @mode() == "replay"
+    @moto

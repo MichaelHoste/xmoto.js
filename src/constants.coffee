@@ -164,3 +164,127 @@ class Constants
     axe_position:
       x: -0.27
       y:  0.10
+
+  # xmoto c++ version constants
+  @cpp =
+    rider_hand:
+      x: 0.3
+      y: 0.45
+    rider_foot:
+      x: 0.0
+      y: -0.37
+    rider_head_size: 0.18
+    rider_neck_length: 0.22
+
+
+#      /* torso */
+#      renderBodyPart(pBike->Dir == DD_RIGHT ? pBike->ShoulderP  : pBike->Shoulder2P,
+#		     pBike->Dir == DD_RIGHT ? pBike->LowerBodyP : pBike->LowerBody2P,
+#		     0.24, 0.46,
+#		     0.24, -0.1,
+#		     0.24, -0.1,
+#		     0.24, 0.46,
+#		     p_theme->getTorso(),
+#		     i_filterColor,
+#		     i_biker
+#		     );
+#
+#      /* upper leg */
+#      renderBodyPart(pBike->Dir == DD_RIGHT ? pBike->LowerBodyP : pBike->LowerBody2P,
+#		     pBike->Dir == DD_RIGHT ? pBike->KneeP      : pBike->Knee2P,
+#		     0.20, 0.14,
+#		     0.15, 0.00,
+#		     0.15, 0.00,
+#		     0.10, 0.14,
+#		     p_theme->getUpperLeg(),
+#		     i_filterColor,
+#		     i_biker, 1
+#		     );
+#
+#      /* lower leg */
+#      renderBodyPart(pBike->Dir == DD_RIGHT ? pBike->KneeP : pBike->Knee2P,
+#		     pBike->Dir == DD_RIGHT ? pBike->FootP : pBike->Foot2P,
+#		     0.23, 0.01,
+#		     0.20, 0.00,
+#		     0.20, 0.00,
+#		     0.23, 0.10,
+#		     p_theme->getLowerLeg(),
+#		     i_filterColor,
+#		     i_biker
+#		     );
+#
+#      /* upper arm */
+#      renderBodyPart(pBike->Dir == DD_RIGHT ? pBike->ShoulderP : pBike->Shoulder2P,
+#		     pBike->Dir == DD_RIGHT ? pBike->ElbowP    : pBike->Elbow2P,
+#		     0.12, 0.09,
+#		     0.12, -0.05,
+#		     0.10, -0.05,
+#		     0.10, 0.09,
+#		     p_theme->getUpperArm(),
+#		     i_filterColor,
+#		     i_biker
+#		     );
+#
+#      /* lower arm */
+#      renderBodyPart(pBike->Dir == DD_RIGHT ? pBike->ElbowP : pBike->Elbow2P,
+#		     pBike->Dir == DD_RIGHT ? pBike->HandP  : pBike->Hand2P,
+#		     0.12, 0.09,
+#		     0.12, -0.05,
+#		     0.10, -0.05,
+#		     0.10, 0.09,
+#		     p_theme->getLowerArm(),
+#		     i_filterColor,
+#		     i_biker, 2
+#		     );
+#  void GameRenderer::renderBodyPart(const Vector2f& i_from, const Vector2f& i_to,
+#				    float i_c11, float i_c12,
+#				    float i_c21, float i_c22,
+#				    float i_c31, float i_c32,
+#				    float i_c41, float i_c42,
+#				    Sprite* i_sprite,
+#				    const TColor& i_filterColor,
+#				    Biker* i_biker,
+#				    int i_90_rotation
+#				    ) {
+#    Texture *pTexture;
+#    Vector2f Sv;
+#    Vector2f p0, p1, p2, p3;
+#
+#    if(i_sprite == NULL)
+#      return;
+#    pTexture = i_sprite->getTexture(false, false, FM_LINEAR); // FM_LINEAR
+#    if(pTexture == NULL)
+#      return;
+#
+#    Sv = i_from - i_to;
+#    Sv.normalize();
+#
+#    if(i_biker->getState()->Dir == DD_RIGHT) {
+#      p0 = i_from + Vector2f(-Sv.y, Sv.x) * i_c11 + Sv * i_c12;
+#      p1 = i_to   + Vector2f(-Sv.y, Sv.x) * i_c21 + Sv * i_c22;
+#      p2 = i_to   - Vector2f(-Sv.y, Sv.x) * i_c31 + Sv * i_c32;
+#      p3 = i_from - Vector2f(-Sv.y, Sv.x) * i_c41 + Sv * i_c42;
+#    } else {
+#      p0 = i_from - Vector2f(-Sv.y, Sv.x) * i_c11 + Sv * i_c12;
+#      p1 = i_to   - Vector2f(-Sv.y, Sv.x) * i_c21 + Sv * i_c22;
+#      p2 = i_to   + Vector2f(-Sv.y, Sv.x) * i_c31 + Sv * i_c32;
+#      p3 = i_from + Vector2f(-Sv.y, Sv.x) * i_c41 + Sv * i_c42;
+#    }
+#
+#    p0 = calculateChangeDirPosition(i_biker,p0);
+#    p1 = calculateChangeDirPosition(i_biker,p1);
+#    p2 = calculateChangeDirPosition(i_biker,p2);
+#    p3 = calculateChangeDirPosition(i_biker,p3);
+#    
+#    switch(i_90_rotation) {
+#      case 0:
+#      _RenderAlphaBlendedSection(pTexture, p1, p2, p3, p0, i_filterColor);
+#      break;
+#      case 1:
+#      _RenderAlphaBlendedSection(pTexture, p0, p1, p2, p3, i_filterColor);
+#      break;
+#      case 2:
+#      _RenderAlphaBlendedSection(pTexture, p3, p2, p1, p0, i_filterColor);
+#      break;
+#    }
+#  }

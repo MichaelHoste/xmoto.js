@@ -35,7 +35,7 @@
         return true;
       }
       if (this.visible) {
-        moto = this.level.replayPlayer;
+        moto = this.level.object_to_follow();
         if (this.visible.right < moto.position().x + (this.level.canvas_width / 2) / this.scale.x) {
           return true;
         }
@@ -54,7 +54,7 @@
 
     Buffer.prototype.redraw = function() {
       var moto;
-      moto = this.level.replayPlayer;
+      moto = this.level.object_to_follow();
       if (!this.canvas_width) {
         this.init_canvas();
       }
@@ -80,7 +80,7 @@
 
     Buffer.prototype.compute_visibility = function() {
       var moto;
-      moto = this.level.replayPlayer;
+      moto = this.level.object_to_follow();
       this.visible = {
         left: moto.position().x - (this.canvas_width / 2) / this.buffer_scale.x,
         right: moto.position().x + (this.canvas_width / 2) / this.buffer_scale.x,
@@ -94,7 +94,7 @@
 
     Buffer.prototype.display = function() {
       var buffer_center_x, buffer_center_y, canvas_center_x, canvas_center_y, clipped_height, clipped_width, margin_zoom_x, margin_zoom_y, moto, translate_x, translate_y;
-      moto = this.level.replayPlayer;
+      moto = this.level.object_to_follow();
       buffer_center_x = this.canvas_width / 2;
       canvas_center_x = this.level.canvas_width / 2;
       translate_x = (moto.position().x - this.moto_position.x) * this.buffer_scale.x;
@@ -274,6 +274,19 @@
         x: -0.27,
         y: 0.10
       }
+    };
+
+    Constants.cpp = {
+      rider_hand: {
+        x: 0.3,
+        y: 0.45
+      },
+      rider_foot: {
+        x: 0.0,
+        y: -0.37
+      },
+      rider_head_size: 0.18,
+      rider_neck_length: 0.22
     };
 
     return Constants;
@@ -490,8 +503,8 @@
       this.ctx = this.canvas.getContext('2d');
       this.render_mode = "uglyOver";
       this.scale = {
-        x: 30,
-        y: -30
+        x: 50,
+        y: -50
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -687,6 +700,13 @@
 
     Level.prototype.pause = function() {
       return this.paused = !this.paused;
+    };
+
+    Level.prototype.object_to_follow = function() {
+      if (this.mode() === "replay") {
+        return this.replayPlayer;
+      }
+      return this.moto;
     };
 
     return Level;
@@ -1392,7 +1412,7 @@
           this.level.ctx.beginPath();
           this.level.ctx.strokeStyle = "#0000FF";
           this.level.ctx.lineWidth = 0.05;
-          this.level.ctx.arc(entity.position.x + entity.center.x - entity.size.width / 2, entity.position.y + entity.center.y - entity.size.height / 2, entity.size.width / 2, 0, 2 * Math.PI);
+          this.level.ctx.arc(entity.position.x + entity.center.x - entity.size.width / 2, entity.position.y + entity.center.y - entity.size.height / 2, entity.size.r, 0, 2 * Math.PI);
           return this.level.ctx.stroke();
         }
       }
@@ -1797,7 +1817,7 @@
         this.level.ctx.beginPath();
         this.level.ctx.strokeStyle = "#00FF00";
         this.level.ctx.lineWidth = 0.05;
-        this.level.ctx.arc(frame.anchors.head.x, frame.anchors.head.y, 0.22, 0, 2 * Math.PI);
+        this.level.ctx.arc(frame.anchors.head.x, frame.anchors.head.y, Constants.cpp.rider_head_size, 0, 2 * Math.PI);
         return this.level.ctx.stroke();
       }
     };
@@ -2476,16 +2496,16 @@
               y: kneeY
             },
             hand: {
-              x: centerPx + sensmult * 0.3 * Math.cos(fFrameRot) - 0.45 * Math.sin(fFrameRot),
-              y: centerPy + sensmult * 0.3 * Math.sin(fFrameRot) + 0.45 * Math.cos(fFrameRot)
+              x: centerPx + sensmult * Constants.cpp.rider_hand.x * Math.cos(fFrameRot) - Constants.cpp.rider_hand.y * Math.sin(fFrameRot),
+              y: centerPy + sensmult * Constants.cpp.rider_hand.x * Math.sin(fFrameRot) + Constants.cpp.rider_hand.y * Math.cos(fFrameRot)
             },
             foot: {
-              x: centerPx + sensmult * 0 * Math.cos(fFrameRot) - (-0.37) * Math.sin(fFrameRot),
-              y: centerPy + sensmult * 0 * Math.sin(fFrameRot) + (-0.37) * Math.cos(fFrameRot)
+              x: centerPx + sensmult * Constants.cpp.rider_foot.x * Math.cos(fFrameRot) - Constants.cpp.rider_foot.y * Math.sin(fFrameRot),
+              y: centerPy + sensmult * Constants.cpp.rider_foot.x * Math.sin(fFrameRot) + Constants.cpp.rider_foot.y * Math.cos(fFrameRot)
             },
             head: {
-              x: shoulderX + 0.22 * this.normalizeX(shoulderX - lowerBodyX, shoulderY - lowerBodyY),
-              y: shoulderY + 0.22 * this.normalizeY(shoulderX - lowerBodyX, shoulderY - lowerBodyY)
+              x: shoulderX + Constants.cpp.rider_neck_length * this.normalizeX(shoulderX - lowerBodyX, shoulderY - lowerBodyY),
+              y: shoulderY + Constants.cpp.rider_neck_length * this.normalizeY(shoulderX - lowerBodyX, shoulderY - lowerBodyY)
             }
           }
         };

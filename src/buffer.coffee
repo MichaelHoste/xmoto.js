@@ -32,7 +32,7 @@ class Buffer
       return true
 
     if @visible
-      moto = @level.replayPlayer
+      moto = @level.object_to_follow()
       return true if @visible.right < moto.position().x + (@level.canvas_width/2) / @scale.x
       return true if @visible.left  > moto.position().x - (@level.canvas_width/2) / @scale.x
       return true if @visible.top    < moto.position().y - (@level.canvas_height/2) / @scale.y
@@ -41,7 +41,7 @@ class Buffer
     false
 
   redraw: ->
-    moto = @level.replayPlayer
+    moto = @level.object_to_follow()
 
     @init_canvas() if not @canvas_width
 
@@ -76,7 +76,7 @@ class Buffer
     @ctx.restore()
 
   compute_visibility: ->
-    moto = @level.replayPlayer
+    moto = @level.object_to_follow()
     @visible =
       left:   moto.position().x - (@canvas_width  / 2) / @buffer_scale.x
       right:  moto.position().x + (@canvas_width  / 2) / @buffer_scale.x
@@ -87,7 +87,7 @@ class Buffer
     @visible.aabb.upperBound.Set(@visible.right, @visible.top)
 
   display: ->
-    moto = @level.replayPlayer
+    moto = @level.object_to_follow()
 
     buffer_center_x = @canvas_width / 2
     canvas_center_x = @level.canvas_width / 2

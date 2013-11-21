@@ -200,14 +200,14 @@ class ReplayFile
             x: kneeX
             y: kneeY
           hand:
-            x: centerPx+sensmult*0.3*Math.cos(fFrameRot)-0.45*Math.sin(fFrameRot)
-            y: centerPy+sensmult*0.3*Math.sin(fFrameRot)+0.45*Math.cos(fFrameRot)
+            x: centerPx+sensmult*Constants.cpp.rider_hand.x*Math.cos(fFrameRot)-Constants.cpp.rider_hand.y*Math.sin(fFrameRot)
+            y: centerPy+sensmult*Constants.cpp.rider_hand.x*Math.sin(fFrameRot)+Constants.cpp.rider_hand.y*Math.cos(fFrameRot)
           foot:
-            x: centerPx+sensmult*0*Math.cos(fFrameRot)-(-0.37)*Math.sin(fFrameRot)
-            y: centerPy+sensmult*0*Math.sin(fFrameRot)+(-0.37)*Math.cos(fFrameRot)
+            x: centerPx+sensmult*Constants.cpp.rider_foot.x*Math.cos(fFrameRot)-Constants.cpp.rider_foot.y*Math.sin(fFrameRot)
+            y: centerPy+sensmult*Constants.cpp.rider_foot.x*Math.sin(fFrameRot)+Constants.cpp.rider_foot.y*Math.cos(fFrameRot)
           head:
-            x: shoulderX + 0.22*@normalizeX(shoulderX-lowerBodyX, shoulderY-lowerBodyY)
-            y: shoulderY + 0.22*@normalizeY(shoulderX-lowerBodyX, shoulderY-lowerBodyY)
+            x: shoulderX + Constants.cpp.rider_neck_length*@normalizeX(shoulderX-lowerBodyX, shoulderY-lowerBodyY)
+            y: shoulderY + Constants.cpp.rider_neck_length*@normalizeY(shoulderX-lowerBodyX, shoulderY-lowerBodyY)
 
       for i in [0..1]
         @frames.push(frame)

@@ -140,7 +140,7 @@ class Entities
         @level.ctx.beginPath()
         @level.ctx.strokeStyle="#0000FF"
         @level.ctx.lineWidth = 0.05
-        @level.ctx.arc(entity.position.x+entity.center.x-entity.size.width/2, entity.position.y+entity.center.y-entity.size.height/2, entity.size.width/2, 0, 2*Math.PI)
+        @level.ctx.arc(entity.position.x+entity.center.x-entity.size.width/2, entity.position.y+entity.center.y-entity.size.height/2, entity.size.r, 0, 2*Math.PI)
         @level.ctx.stroke()
 
   @texture_name = (entity) ->
