@@ -540,7 +540,7 @@
       if (!this.canvas_width) {
         this.init_canvas();
       }
-      this.current_time = new Date().getTime() - this.start_time;
+      this.update_timer();
       this.compute_visibility();
       if (this.buffer.redraw_needed()) {
         this.buffer.redraw();
@@ -560,6 +560,23 @@
       }
       this.ctx.restore();
       return this.replay.add_frame();
+    };
+
+    Level.prototype.update_timer = function(now) {
+      var minutes, new_time, seconds;
+      if (now == null) {
+        now = false;
+      }
+      new_time = new Date().getTime() - this.start_time;
+      if (now || Math.floor(new_time / 1000) > Math.floor(this.current_time / 1000)) {
+        minutes = Math.floor(new_time / 1000 / 60);
+        seconds = Math.floor(new_time / 1000) % 60;
+        if (seconds < 10) {
+          seconds = "0" + seconds;
+        }
+        $("#chrono").text("" + minutes + ":" + seconds);
+      }
+      return this.current_time = new_time;
     };
 
     Level.prototype.compute_visibility = function() {
@@ -607,6 +624,7 @@
       this.moto.init();
       this.start_time = new Date().getTime();
       this.current_time = 0;
+      this.update_timer(true);
       _ref = this.entities.strawberries;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {

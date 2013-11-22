@@ -90,7 +90,7 @@ class Level
 
     @init_canvas() if not @canvas_width
 
-    @current_time = new Date().getTime() - @start_time
+    @update_timer()
 
     # visible screen limits of the world (don't show anything outside of these limits)
     @compute_visibility()
@@ -118,6 +118,17 @@ class Level
 
     # Save last step for replay
     @replay.add_frame()
+
+  update_timer: (now = false) ->
+    new_time = new Date().getTime() - @start_time
+
+    if now or Math.floor(new_time/1000) > Math.floor(@current_time/1000)
+      minutes = Math.floor(new_time / 1000 / 60)
+      seconds = Math.floor(new_time / 1000) % 60
+      seconds = "0#{seconds}" if seconds < 10
+      $("#chrono").text("#{minutes}:#{seconds}")
+
+    @current_time = new_time
 
   compute_visibility: ->
     @visible =
@@ -151,6 +162,7 @@ class Level
 
     @start_time   = new Date().getTime()
     @current_time = 0
+    @update_timer(true)
 
     for entity in @entities.strawberries
       entity.display = true
