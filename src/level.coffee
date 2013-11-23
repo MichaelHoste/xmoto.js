@@ -48,8 +48,7 @@ class Level
     # Buffer
     @buffer        = new Buffer(this)
 
-    @start_time   = new Date().getTime()
-    @current_time = 0
+    @need_to_restart = true
 
   load_from_file: (file_name) ->
     $.ajax({

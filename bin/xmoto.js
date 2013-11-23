@@ -494,8 +494,7 @@
       this.script = new Script(this);
       this.entities = new Entities(this);
       this.buffer = new Buffer(this);
-      this.start_time = new Date().getTime();
-      this.current_time = 0;
+      this.need_to_restart = true;
     }
 
     Level.prototype.load_from_file = function(file_name) {
