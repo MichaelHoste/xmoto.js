@@ -8,7 +8,6 @@ play_level = (name) ->
 
     update = ->
       level.input.move_moto()
-      level.engine_sound.play()
       level.world.Step(1.0 / 60.0, 10, 10)
       level.world.ClearForces()
       level.display(false)

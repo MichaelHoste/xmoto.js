@@ -1,7 +1,9 @@
-XMoto
-=====
+XMoto.io
+========
 
 HTML5 Version of XMOTO (2D Canvas + Box2D)
+
+More about the development here : http://xmoto.io
 
 ## For developpment
 

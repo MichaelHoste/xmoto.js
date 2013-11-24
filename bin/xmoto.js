@@ -485,7 +485,6 @@
       this.replay = new Replay(this);
       this.ghost = new Ghost(this, null);
       this.moto = new Moto(this);
-      this.engine_sound = new EngineSound(this);
       this.infos = new Infos(this);
       this.sky = new Sky(this);
       this.blocks = new Blocks(this);
@@ -694,7 +693,6 @@
       createjs.Sound.setMute(true);
       update = function() {
         level.input.move_moto();
-        level.engine_sound.play();
         level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
         return level.display(false);
@@ -2462,7 +2460,7 @@
     }
 
     Assets.prototype.load = function(callback) {
-      var item, items, rpm, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4;
+      var item, items, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
       items = [];
       _ref = this.textures;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -2508,14 +2506,6 @@
         id: "EndOfLevel",
         src: "data/Sounds/EndOfLevel.ogg"
       });
-      _ref4 = ['0000', '1000', '2000', '3000', '4000', '5000', '6000'];
-      for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
-        rpm = _ref4[_m];
-        createjs.Sound.registerSound({
-          id: "engine_" + rpm,
-          src: "data/Sounds/engine_" + rpm + ".ogg"
-        });
-      }
       items = this.remove_duplicate_textures(items);
       this.queue.addEventListener("complete", callback);
       return this.queue.loadManifest(items);

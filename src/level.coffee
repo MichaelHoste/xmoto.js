@@ -34,7 +34,7 @@ class Level
     @moto          = new Moto(this)
 
     # Engine sound
-    @engine_sound  = new EngineSound(this)
+#   @engine_sound  = new EngineSound(this)
 
     # Level dependent objects
     @infos         = new Infos(this)
