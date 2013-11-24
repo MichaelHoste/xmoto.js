@@ -493,7 +493,6 @@
       this.script = new Script(this);
       this.entities = new Entities(this);
       this.buffer = new Buffer(this);
-      this.need_to_restart = true;
     }
 
     Level.prototype.load_from_file = function(file_name) {

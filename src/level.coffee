@@ -34,7 +34,7 @@ class Level
     @moto          = new Moto(this)
 
     # Engine sound
-#   @engine_sound  = new EngineSound(this)
+    #@engine_sound  = new EngineSound(this)
 
     # Level dependent objects
     @infos         = new Infos(this)
@@ -48,7 +48,7 @@ class Level
     # Buffer
     @buffer        = new Buffer(this)
 
-    @need_to_restart = true
+    #@need_to_restart = true
 
   load_from_file: (file_name) ->
     $.ajax({

@@ -71,5 +71,5 @@ class Assets
       for unique_image in unique
         found = true if image.id == unique_image.id
       unique.push(image) if not found
-    return unique
+    unique
 
