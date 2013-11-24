@@ -1633,7 +1633,7 @@
       ctx.closePath();
       ctx.save();
       ctx.scale(4.0, 4.0);
-      ctx.translate(-this.level.moto.position().x * 6, this.level.moto.position().y * 3);
+      ctx.translate(-this.level.moto.position().x * 4, this.level.moto.position().y * 2);
       ctx.fillStyle = ctx.createPattern(this.assets.get(this.name), "repeat");
       ctx.fill();
       return ctx.restore();

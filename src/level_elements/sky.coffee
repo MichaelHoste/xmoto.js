@@ -31,7 +31,7 @@ class Sky
 
     ctx.save()
     ctx.scale(4.0, 4.0)
-    ctx.translate(-@level.moto.position().x*6, @level.moto.position().y*3)
+    ctx.translate(-@level.moto.position().x*4, @level.moto.position().y*2)
     ctx.fillStyle = ctx.createPattern(@assets.get(@name), "repeat")
     ctx.fill()
     ctx.restore()
