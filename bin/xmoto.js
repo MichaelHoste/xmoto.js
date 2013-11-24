@@ -427,7 +427,7 @@
       return canvas.addEventListener('mousewheel', scroll, false);
     };
 
-    Input.prototype.move_moto = function() {
+    Input.prototype.move = function() {
       var force, moto, rider, v;
       force = 24.1;
       moto = this.level.moto;
@@ -690,15 +690,27 @@
     level = new Level();
     level.load_from_file(name);
     return level.assets.load(function() {
-      var update;
+      var last_step, physics_step, update, update_physics;
       createjs.Sound.setMute(true);
-      update = function() {
-        level.input.move_moto();
-        level.world.Step(1.0 / 60.0, 10, 10);
-        level.world.ClearForces();
-        return level.display(false);
+      last_step = new Date().getTime();
+      physics_step = 1000.0 / 60.0;
+      update_physics = function() {
+        var _results;
+        _results = [];
+        while ((new Date()).getTime() - last_step > physics_step) {
+          level.input.move();
+          level.world.Step(1.0 / 60.0, 10, 10);
+          level.world.ClearForces();
+          _results.push(last_step += physics_step);
+        }
+        return _results;
       };
-      window.game_loop = setInterval(update, 1000 / 60);
+      update = function() {
+        update_physics();
+        level.display(false);
+        return window.requestAnimationFrame(update);
+      };
+      update();
       return hide_loading();
     });
   };
@@ -712,12 +724,11 @@
   };
 
   full_screen = function() {
-    $("#game").width($("body").width());
-    $("#game").height($("body").height());
-    return window.onresize = function() {
+    window.onresize = function() {
       $("#game").width($("body").width());
       return $("#game").height($("body").height());
     };
+    return window.onresize();
   };
 
   $(function() {

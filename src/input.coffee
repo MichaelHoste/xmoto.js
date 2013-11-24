@@ -86,7 +86,7 @@ class Input
     canvas.addEventListener('DOMMouseScroll', scroll, false)
     canvas.addEventListener('mousewheel',     scroll, false)
 
-  move_moto: ->
+  move: ->
     force = 24.1
     moto  = @level.moto
     rider = moto.rider
