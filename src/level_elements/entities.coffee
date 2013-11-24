@@ -139,6 +139,7 @@ class Entities
                     entity.size.height)
       
       ctx.restore()
+
     if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
       @level.ctx.beginPath()
       @level.ctx.strokeStyle="#0000FF"
@@ -146,32 +147,32 @@ class Entities
       @level.ctx.arc(entity.position.x+entity.center.x-entity.size.width/2, entity.position.y+entity.center.y-entity.size.height/2, entity.size.r, 0, 2*Math.PI)
       @level.ctx.stroke()
 
-  entity_texture_name = (entity) ->
-    if entity.type_id == 'Sprite'
-      for param in entity.params
-        if param.name == 'name'
-          return param.value
-    else if entity.type_id == 'EndOfLevel'
-      return 'checkball'
-    else if entity.type_id == 'Strawberry'
-      return 'cog2'
-  
-  frame_name = (texture_name, frame_number) ->
-    "#{texture_name}_" + (frame_number/100.0).toFixed(2).toString().substring(2)
-  
-  entity_AABB = (entity) ->
-    lower_bound = {}
-    upper_bound = {}
-    lower_bound.x = entity.position.x - entity.size.width + entity.center.x
-    lower_bound.y = entity.position.y - entity.center.y
-    upper_bound.x = lower_bound.x + entity.size.width
-    upper_bound.y = lower_bound.y + entity.size.height
-  
-    aabb = new b2AABB()
-    aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
-    aabb.upperBound.Set(upper_bound.x, upper_bound.y)
-  
-    return aabb
-  
-  visible_entity = (zone, entity) ->
-    entity.display and entity.aabb.TestOverlap(zone.aabb)
+entity_texture_name = (entity) ->
+  if entity.type_id == 'Sprite'
+    for param in entity.params
+      if param.name == 'name'
+        return param.value
+  else if entity.type_id == 'EndOfLevel'
+    return 'checkball'
+  else if entity.type_id == 'Strawberry'
+    return 'cog2'
+
+frame_name = (texture_name, frame_number) ->
+  "#{texture_name}_" + (frame_number/100.0).toFixed(2).toString().substring(2)
+
+entity_AABB = (entity) ->
+  lower_bound = {}
+  upper_bound = {}
+  lower_bound.x = entity.position.x - entity.size.width + entity.center.x
+  lower_bound.y = entity.position.y - entity.center.y
+  upper_bound.x = lower_bound.x + entity.size.width
+  upper_bound.y = lower_bound.y + entity.size.height
+
+  aabb = new b2AABB()
+  aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
+  aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+
+  return aabb
+
+visible_entity = (zone, entity) ->
+  entity.display and entity.aabb.TestOverlap(zone.aabb)

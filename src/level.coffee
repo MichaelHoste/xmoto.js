@@ -124,10 +124,7 @@ class Level
     @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
     @ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
 
-    if @replayPlayer # mode replaying
-      @ctx.translate(-@replayPlayer.position().x, -@replayPlayer.position().y - 0.25) # Camera on moto
-    else # mode playing
-      @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
+    @ctx.translate(-@object_to_follow().position().x, -@object_to_follow().position().y - 0.25) # Camera on moto
 
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
     @entities.display_items(@ctx)
@@ -136,7 +133,10 @@ class Level
       @replayPlayer   .display(@ctx)
       @replayPlayer   .next_state() if not @paused
     else
-      @moto    .display(@ctx)
+      @moto.display(@ctx)
+      if @ghost
+        @ghost.display(@ctx) 
+        @ghost.next_state()
 
     @world.DrawDebugData() if debug
 
@@ -158,10 +158,10 @@ class Level
 
   compute_visibility: ->
     @visible =
-      left:   @moto.position().x - (@canvas_width  / 2) / @scale.x
-      right:  @moto.position().x + (@canvas_width  / 2) / @scale.x
-      bottom: @moto.position().y + (@canvas_height / 2) / @scale.y
-      top:    @moto.position().y - (@canvas_height / 2) / @scale.y
+      left:   @object_to_follow().position().x - (@canvas_width  / 2) / @scale.x
+      right:  @object_to_follow().position().x + (@canvas_width  / 2) / @scale.x
+      bottom: @object_to_follow().position().y + (@canvas_height / 2) / @scale.y
+      top:    @object_to_follow().position().y - (@canvas_height / 2) / @scale.y
     @visible.aabb = new b2AABB()
     @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
     @visible.aabb.upperBound.Set(@visible.right, @visible.top)

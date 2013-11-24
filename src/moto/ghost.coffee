@@ -21,8 +21,9 @@ class Ghost
       @display_lower_arm()
 
   next_state: ->
-    if @current_frame < @replay.frames_count()-1
-      @current_frame = @current_frame + 1
+    if @replay
+      if @current_frame < @replay.frames_count()-1
+        @current_frame = @current_frame + 1
 
   init: ->
     # Assets
