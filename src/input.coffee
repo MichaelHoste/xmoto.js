@@ -53,6 +53,11 @@ class Input
             @level.flip_moto() if not @level.moto.dead
           else if @level.mode() == "replay"
             @level.pause()
+        when 85 # u
+          switch(@level.get_render_mode())
+            when "normal"   then @level.set_render_mode("ugly")
+            when "ugly"     then @level.set_render_mode("uglyOver")
+            when "uglyOver" then @level.set_render_mode("normal")
     )
 
     $(document).on('keyup', (event) =>

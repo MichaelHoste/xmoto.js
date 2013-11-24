@@ -18,12 +18,14 @@ class Rider
 
   destroy: ->
     world = @level.world
+    world.DestroyBody(@head)
     world.DestroyBody(@torso)
     world.DestroyBody(@lower_leg)
     world.DestroyBody(@upper_leg)
     world.DestroyBody(@lower_arm)
     world.DestroyBody(@upper_arm)
 
+    world.DestroyJoint(@neck_joint)
     world.DestroyJoint(@ankle_joint)
     world.DestroyJoint(@wrist_joint)
     world.DestroyJoint(@knee_joint)
@@ -32,7 +34,7 @@ class Rider
     world.DestroyJoint(@hip_joint)
 
   display: ->
-    @display_torso()
+    @display_torso_head()
     @display_upper_leg()
     @display_lower_leg()
     @display_upper_arm()
@@ -47,6 +49,9 @@ class Rider
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
+    @head         = @create_head(@player_start.x + @mirror * Constants.head.position.x,
+                                 @player_start.y + Constants.head.position.y)
+
     @torso        = @create_torso(@player_start.x + @mirror * Constants.torso.position.x,
                                   @player_start.y + Constants.torso.position.y)
 
@@ -62,6 +67,7 @@ class Rider
     @upper_arm    = @create_upper_arm(@player_start.x + @mirror * Constants.upper_arm.position.x,
                                       @player_start.y + Constants.upper_arm.position.y)
 
+    @neck_joint     = @create_neck_joint()
     @ankle_joint    = @create_ankle_joint()
     @wrist_joint    = @create_wrist_joint()
     @knee_joint     = @create_knee_joint()
@@ -71,6 +77,34 @@ class Rider
 
   position: ->
     @moto.body.GetPosition()
+
+  create_head: (x, y)  ->
+    # Create fixture
+    fixDef = new b2FixtureDef()
+  
+    fixDef.shape       = new b2CircleShape(0.18)
+    fixDef.density     = Constants.head.density
+    fixDef.restitution = Constants.head.restitution
+    fixDef.friction    = Constants.head.friction
+    fixDef.filter.groupIndex = -1
+  
+    # Create body
+    bodyDef = new b2BodyDef()
+  
+    # Assign body position
+    bodyDef.position.x = x
+    bodyDef.position.y = y
+  
+    bodyDef.userData =
+      name: 'rider-head'
+  
+    bodyDef.type = b2Body.b2_dynamicBody
+  
+    ## Assign fixture to body and add body to 2D world
+    body = @level.world.CreateBody(bodyDef)
+    body.CreateFixture(fixDef)
+  
+    body
 
   create_torso: (x, y)  ->
     # Create fixture
@@ -248,6 +282,17 @@ class Rider
     #joint.maxMotorTorque = 1.0
     #joint.enableMotor    = true
 
+  create_neck_joint: ->
+    position = @head.GetWorldCenter()
+    axe =
+      x: position.x + @mirror * Constants.neck.axe_position.x
+      y: position.y + Constants.neck.axe_position.y
+
+    jointDef = new b2RevoluteJointDef()
+    jointDef.Initialize(@head, @torso, axe)
+    @set_joint_commons(jointDef)
+    @level.world.CreateJoint(jointDef)
+
   create_ankle_joint: ->
     position = @lower_leg.GetWorldCenter()
     axe =
@@ -314,117 +359,61 @@ class Rider
     @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
-  display_torso: ->
-    # Position
-    position = @torso.GetPosition()
-
-    # Angle
-    angle = @torso.GetAngle()
-
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1*@mirror, -1)
-    @level.ctx.rotate(@mirror * (-angle))
-
-    @level.ctx.drawImage(
-      @assets.get('playertorso'), # texture
-      -0.25,   # x
-      -0.575, # y
-       0.5,   # size-x
-       1.15   # size-y
-    )
-
-    @level.ctx.restore()
+  display_torso_head: ->
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      @display_normal_part(@hip_joint, @shoulder_joint, @assets.get('playertorso'), @mirror, -0.27, -0.80, 0.5, 1.15)
+    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
+      @display_ugly_part(@hip_joint, @shoulder_joint)
 
   display_lower_leg: ->
-    # Position
-    position = @lower_leg.GetPosition()
-
-    # Angle
-    angle = @lower_leg.GetAngle()
-
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1*@mirror, -1)
-    @level.ctx.rotate(@mirror * (-angle))
-
-    @level.ctx.drawImage(
-      @assets.get('playerlowerleg'), # texture
-      -0.2,  # x
-      -0.33, # y
-       0.40, # size-x
-       0.66  # size-y
-    )
-
-    @level.ctx.restore()
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      @display_normal_part(@ankle_joint, @knee_joint, @assets.get('playerlowerleg'), @mirror, -0.17, -0.33, 0.40, 0.66)
+    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
+      @display_ugly_part(@ankle_joint, @knee_joint)
 
   display_upper_leg: ->
-    # Position
-    position = @upper_leg.GetPosition()
-
-    # Angle
-    angle = @upper_leg.GetAngle()
-
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1*@mirror, -1)
-    @level.ctx.rotate(@mirror * (-angle))
-
-    @level.ctx.drawImage(
-      @assets.get('playerupperleg'), # texture
-      -0.40, # x
-      -0.14, # y
-       0.80, # size-x
-       0.28  # size-y
-    )
-
-    @level.ctx.restore()
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      @display_normal_part(@hip_joint, @knee_joint, @assets.get('playerupperleg'), @mirror, -0.48, -0.15, 0.80, 0.28, 1)
+    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
+      @display_ugly_part(@hip_joint, @knee_joint)
 
   display_lower_arm: ->
-    # Position
-    position = @lower_arm.GetPosition()
-
-    # Angle
-    angle = @lower_arm.GetAngle()
-
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1*@mirror, 1)
-    @level.ctx.rotate(@mirror * angle)
-
-    @level.ctx.drawImage(
-      @assets.get('playerlowerarm'), # texture
-      -0.28,  # x
-      -0.10, # y
-       0.56, # size-x
-       0.20  # size-y
-    )
-
-    @level.ctx.restore()
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      @display_normal_part(@elbow_joint, @wrist_joint, @assets.get('playerlowerarm'), -@mirror, -0.30, -0.12, 0.56, 0.20, 1)
+    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
+      @display_ugly_part(@elbow_joint, @wrist_joint)
 
   display_upper_arm: ->
-    # Position
-    position = @upper_arm.GetPosition()
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      @display_normal_part(@elbow_joint, @shoulder_joint, @assets.get('playerupperarm'), @mirror, -0.13, -0.3, 0.25, 0.56)
+    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
+      @display_ugly_part(@shoulder_joint, @elbow_joint)
 
-    # Angle
-    angle = @upper_arm.GetAngle()
+  display_ugly_part: (joint1, joint2) ->
+    @level.ctx.beginPath()
+    @level.ctx.strokeStyle="#00FF00"
+    @level.ctx.lineWidth = 0.04
+    anchor1 = joint1.GetAnchorA()
+    anchor2 = joint2.GetAnchorA()
+    @level.ctx.moveTo(anchor1.x, anchor1.y)
+    @level.ctx.lineTo(anchor2.x, anchor2.y)
+    @level.ctx.stroke()
 
-    # Draw texture
+  display_normal_part: (joint1, joint2, texture, mirror, x, y, sx, sy, i90rot = 0) ->
     @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1*@mirror, -1)
-    @level.ctx.rotate(@mirror * (-angle))
-
-    @level.ctx.drawImage(
-      @assets.get('playerupperarm'), # texture
-      -0.125, # x
-      -0.28, # y
-       0.25, # size-x
-       0.56  # size-y
-    )
-
+    anchor1 = joint1.GetAnchorA()
+    anchor2 = joint2.GetAnchorA()
+    centerX = (anchor1.x + anchor2.x)/2
+    centerY = (anchor1.y + anchor2.y)/2
+    angle   = @pointsToAngle(anchor1, anchor2) + mirror*i90rot*Math.PI/2.0
+    @level.ctx.translate(centerX, centerY)
+    @level.ctx.scale(-mirror, 1)
+    @level.ctx.rotate(-mirror * angle)
+    @level.ctx.drawImage(texture, x, y, sx, sy)
     @level.ctx.restore()
+
+  pointsToAngle: (a, b) ->
+    if a.y > b.y
+      return -Math.atan((a.x-b.x)/(a.y-b.y))
+    else
+      return -Math.atan((b.x-a.x)/(b.y-a.y)) + Math.PI

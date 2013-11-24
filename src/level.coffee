@@ -12,8 +12,8 @@ class Level
 
     # level unities * scale = pixels
     @scale =
-      x:  50
-      y: -50
+      x:  90
+      y: -90
 
     # Assets manager
     @assets        = new Assets()
@@ -93,6 +93,8 @@ class Level
 
   get_render_mode: ->	
     @render_mode
+
+  set_render_mode: (@render_mode) ->	
 
   init_canvas: ->
     @canvas_width  = parseFloat(@canvas.width)

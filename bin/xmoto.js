@@ -174,6 +174,16 @@
       upper_translation: 0.20
     };
 
+    Constants.head = {
+      density: 0.001,
+      restitution: 0.0,
+      friction: 0.0,
+      position: {
+        x: -0.3,
+        y: 2.3
+      }
+    };
+
     Constants.torso = {
       density: 0.4,
       restitution: 0.0,
@@ -182,7 +192,7 @@
         x: -0.24,
         y: 1.87
       },
-      collision_box: [new b2Vec2(0.16, -0.575), new b2Vec2(0.23, 0.50), new b2Vec2(-0.20, 0.48), new b2Vec2(-0.17, -0.575)],
+      collision_box: [new b2Vec2(0.05, -0.575), new b2Vec2(0.08, 0.25), new b2Vec2(-0.32, 0.23), new b2Vec2(-0.22, -0.575)],
       angle: -Math.PI / 20.0
     };
 
@@ -273,6 +283,13 @@
       axe_position: {
         x: -0.27,
         y: 0.10
+      }
+    };
+
+    Constants.neck = {
+      axe_position: {
+        x: 0.0,
+        y: 0.0
       }
     };
 
@@ -406,6 +423,16 @@
             } else if (_this.level.mode() === "replay") {
               return _this.level.pause();
             }
+            break;
+          case 85:
+            switch (_this.level.get_render_mode()) {
+              case "normal":
+                return _this.level.set_render_mode("ugly");
+              case "ugly":
+                return _this.level.set_render_mode("uglyOver");
+              case "uglyOver":
+                return _this.level.set_render_mode("normal");
+            }
         }
       });
       return $(document).on('keyup', function(event) {
@@ -503,8 +530,8 @@
       this.ctx = this.canvas.getContext('2d');
       this.render_mode = "uglyOver";
       this.scale = {
-        x: 50,
-        y: -50
+        x: 90,
+        y: -90
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -567,6 +594,10 @@
 
     Level.prototype.get_render_mode = function() {
       return this.render_mode;
+    };
+
+    Level.prototype.set_render_mode = function(render_mode) {
+      this.render_mode = render_mode;
     };
 
     Level.prototype.init_canvas = function() {
@@ -1794,17 +1825,9 @@
     };
 
     Ghost.prototype.display_torso = function() {
-      var angle, frame, position, torso;
-      torso = this.frame.torso;
-      position = torso.position;
-      angle = torso.angle;
+      var frame;
       if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.save();
-        this.level.ctx.translate(position.x, position.y);
-        this.level.ctx.scale(1 * this.mirror, -1);
-        this.level.ctx.rotate(this.mirror * (-angle));
-        this.level.ctx.drawImage(this.assets.get('playertorso'), -0.25, -0.575, 0.5, 1.15);
-        this.level.ctx.restore();
+        this.display_normal_part(this.frame.anchors.hip, this.frame.anchors.shoulder, this.assets.get('playertorso'), this.mirror, -0.27, -0.80, 0.5, 1.15);
       }
       if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
         this.level.ctx.beginPath();
@@ -1812,76 +1835,52 @@
         this.level.ctx.lineWidth = 0.05;
         frame = this.replay.frame(this.current_frame);
         this.level.ctx.moveTo(frame.anchors.shoulder.x, frame.anchors.shoulder.y);
-        this.level.ctx.lineTo(frame.anchors.lowerBody.x, frame.anchors.lowerBody.y);
+        this.level.ctx.lineTo(frame.anchors.hip.x, frame.anchors.hip.y);
         this.level.ctx.stroke();
         this.level.ctx.beginPath();
         this.level.ctx.strokeStyle = "#00FF00";
         this.level.ctx.lineWidth = 0.05;
-        this.level.ctx.arc(frame.anchors.head.x, frame.anchors.head.y, Constants.cpp.rider_head_size, 0, 2 * Math.PI);
+        this.level.ctx.arc(frame.anchors.neck.x, frame.anchors.neck.y, Constants.cpp.rider_head_size, 0, 2 * Math.PI);
         return this.level.ctx.stroke();
       }
     };
 
     Ghost.prototype.display_lower_leg = function() {
-      var angle, frame, lower_leg, position;
-      lower_leg = this.frame.lower_leg;
-      position = lower_leg.position;
-      angle = lower_leg.angle;
+      var frame;
       if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.save();
-        this.level.ctx.translate(position.x, position.y);
-        this.level.ctx.scale(1 * this.mirror, -1);
-        this.level.ctx.rotate(this.mirror * (-angle));
-        this.level.ctx.drawImage(this.assets.get('playerlowerleg'), -0.2, -0.33, 0.40, 0.66);
-        this.level.ctx.restore();
+        this.display_normal_part(this.frame.anchors.ankle, this.frame.anchors.knee, this.assets.get('playerlowerleg'), this.mirror, -0.17, -0.33, 0.40, 0.66);
       }
       if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
         this.level.ctx.beginPath();
         this.level.ctx.strokeStyle = "#00FF00";
         this.level.ctx.lineWidth = 0.05;
         frame = this.replay.frame(this.current_frame);
-        this.level.ctx.moveTo(frame.anchors.foot.x, frame.anchors.foot.y);
+        this.level.ctx.moveTo(frame.anchors.ankle.x, frame.anchors.ankle.y);
         this.level.ctx.lineTo(frame.anchors.knee.x, frame.anchors.knee.y);
         return this.level.ctx.stroke();
       }
     };
 
     Ghost.prototype.display_upper_leg = function() {
-      var angle, frame, position, upper_leg;
-      upper_leg = this.frame.upper_leg;
-      position = upper_leg.position;
-      angle = upper_leg.angle;
+      var frame;
       if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.save();
-        this.level.ctx.translate(position.x, position.y);
-        this.level.ctx.scale(1 * this.mirror, -1);
-        this.level.ctx.rotate(this.mirror * (-angle));
-        this.level.ctx.drawImage(this.assets.get('playerupperleg'), -0.40, -0.14, 0.80, 0.28);
-        this.level.ctx.restore();
+        this.display_normal_part(this.frame.anchors.hip, this.frame.anchors.knee, this.assets.get('playerupperleg'), this.mirror, -0.48, -0.15, 0.80, 0.28, 1);
       }
       if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
         this.level.ctx.beginPath();
         this.level.ctx.strokeStyle = "#00FF00";
         this.level.ctx.lineWidth = 0.05;
         frame = this.replay.frame(this.current_frame);
-        this.level.ctx.moveTo(frame.anchors.lowerBody.x, frame.anchors.lowerBody.y);
+        this.level.ctx.moveTo(frame.anchors.hip.x, frame.anchors.hip.y);
         this.level.ctx.lineTo(frame.anchors.knee.x, frame.anchors.knee.y);
         return this.level.ctx.stroke();
       }
     };
 
     Ghost.prototype.display_lower_arm = function() {
-      var angle, frame, lower_arm, position;
-      lower_arm = this.frame.lower_arm;
-      position = lower_arm.position;
-      angle = lower_arm.angle;
+      var frame;
       if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.save();
-        this.level.ctx.translate(position.x, position.y);
-        this.level.ctx.scale(1 * this.mirror, 1);
-        this.level.ctx.rotate(this.mirror * angle);
-        this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.28, -0.10, 0.56, 0.20);
-        this.level.ctx.restore();
+        this.display_normal_part(this.frame.anchors.elbow, this.frame.anchors.wrist, this.assets.get('playerlowerarm'), -this.mirror, -0.30, -0.12, 0.56, 0.20, 1);
       }
       if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
         this.level.ctx.beginPath();
@@ -1889,23 +1888,15 @@
         this.level.ctx.lineWidth = 0.05;
         frame = this.replay.frame(this.current_frame);
         this.level.ctx.moveTo(frame.anchors.elbow.x, frame.anchors.elbow.y);
-        this.level.ctx.lineTo(frame.anchors.hand.x, frame.anchors.hand.y);
+        this.level.ctx.lineTo(frame.anchors.wrist.x, frame.anchors.wrist.y);
         return this.level.ctx.stroke();
       }
     };
 
     Ghost.prototype.display_upper_arm = function() {
-      var angle, frame, position, upper_arm;
-      upper_arm = this.frame.upper_arm;
-      position = upper_arm.position;
-      angle = upper_arm.angle;
+      var frame;
       if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.save();
-        this.level.ctx.translate(position.x, position.y);
-        this.level.ctx.scale(1 * this.mirror, -1);
-        this.level.ctx.rotate(this.mirror * (-angle));
-        this.level.ctx.drawImage(this.assets.get('playerupperarm'), -0.125, -0.28, 0.25, 0.56);
-        this.level.ctx.restore();
+        this.display_normal_part(this.frame.anchors.elbow, this.frame.anchors.shoulder, this.assets.get('playerupperarm'), -this.mirror, -0.13, -0.3, 0.25, 0.56);
       }
       if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
         this.level.ctx.beginPath();
@@ -1920,6 +1911,30 @@
 
     Ghost.prototype.position = function() {
       return this.replay.frame(this.current_frame).body.position;
+    };
+
+    Ghost.prototype.pointsToAngle = function(a, b) {
+      if (a.y > b.y) {
+        return -Math.atan((a.x - b.x) / (a.y - b.y));
+      } else {
+        return -Math.atan((b.x - a.x) / (b.y - a.y)) + Math.PI;
+      }
+    };
+
+    Ghost.prototype.display_normal_part = function(anchor1, anchor2, texture, mirror, x, y, sx, sy, i90rot) {
+      var angle, centerX, centerY;
+      if (i90rot == null) {
+        i90rot = 0;
+      }
+      this.level.ctx.save();
+      centerX = (anchor1.x + anchor2.x) / 2;
+      centerY = (anchor1.y + anchor2.y) / 2;
+      angle = this.pointsToAngle(anchor1, anchor2) + mirror * i90rot * Math.PI / 2.0;
+      this.level.ctx.translate(centerX, centerY);
+      this.level.ctx.scale(-mirror, 1);
+      this.level.ctx.rotate(-mirror * angle);
+      this.level.ctx.drawImage(texture, x, y, sx, sy);
+      return this.level.ctx.restore();
     };
 
     return Ghost;
@@ -2139,7 +2154,16 @@
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#FF0000";
+        this.level.ctx.lineWidth = 0.05;
+        this.level.ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        this.level.ctx.stroke();
+      }
       return this.level.ctx.restore();
     };
 
@@ -2147,12 +2171,14 @@
       var angle, position;
       position = this.body.GetPosition();
       angle = this.body.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.save();
+        this.level.ctx.translate(position.x, position.y);
+        this.level.ctx.scale(1 * this.mirror, -1);
+        this.level.ctx.rotate(this.mirror * (-angle));
+        this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
+        return this.level.ctx.restore();
+      }
     };
 
     Moto.prototype.display_left_axle = function() {
@@ -2170,12 +2196,14 @@
       left_axle_adjusted_position = Math2D.rotate_point(left_axle_position, this.body.GetAngle(), this.body.GetPosition());
       distance = Math2D.distance_between_points(left_wheel_position, left_axle_adjusted_position);
       angle = Math2D.angle_between_points(left_axle_adjusted_position, left_wheel_position) + this.mirror * Math.PI / 2;
-      this.level.ctx.save();
-      this.level.ctx.translate(left_wheel_position.x, left_wheel_position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('rear1'), 0.0, -axle_thickness / 2, distance, axle_thickness);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.save();
+        this.level.ctx.translate(left_wheel_position.x, left_wheel_position.y);
+        this.level.ctx.scale(1 * this.mirror, -1);
+        this.level.ctx.rotate(this.mirror * (-angle));
+        this.level.ctx.drawImage(this.assets.get('rear1'), 0.0, -axle_thickness / 2, distance, axle_thickness);
+        return this.level.ctx.restore();
+      }
     };
 
     Moto.prototype.display_right_axle = function() {
@@ -2193,12 +2221,14 @@
       right_axle_adjusted_position = Math2D.rotate_point(right_axle_position, this.body.GetAngle(), this.body.GetPosition());
       distance = Math2D.distance_between_points(right_wheel_position, right_axle_adjusted_position);
       angle = Math2D.angle_between_points(right_axle_adjusted_position, right_wheel_position) + this.mirror * Math.PI / 2;
-      this.level.ctx.save();
-      this.level.ctx.translate(right_wheel_position.x, right_wheel_position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('front1'), 0.0, -axle_thickness / 2, distance, axle_thickness);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.save();
+        this.level.ctx.translate(right_wheel_position.x, right_wheel_position.y);
+        this.level.ctx.scale(1 * this.mirror, -1);
+        this.level.ctx.rotate(this.mirror * (-angle));
+        this.level.ctx.drawImage(this.assets.get('front1'), 0.0, -axle_thickness / 2, distance, axle_thickness);
+        return this.level.ctx.restore();
+      }
     };
 
     return Moto;
@@ -2235,7 +2265,16 @@
         upper_leg: position_2d(moto.rider.upper_leg),
         lower_leg: position_2d(moto.rider.lower_leg),
         upper_arm: position_2d(moto.rider.upper_arm),
-        lower_arm: position_2d(moto.rider.lower_arm)
+        lower_arm: position_2d(moto.rider.lower_arm),
+        anchors: {
+          elbow: this.level.moto.rider.elbow_joint.GetAnchorA(),
+          shoulder: this.level.moto.rider.shoulder_joint.GetAnchorA(),
+          hip: this.level.moto.rider.hip_joint.GetAnchorA(),
+          knee: this.level.moto.rider.knee_joint.GetAnchorA(),
+          wrist: this.level.moto.rider.wrist_joint.GetAnchorA(),
+          ankle: this.level.moto.rider.ankle_joint.GetAnchorA(),
+          neck: this.level.moto.rider.neck_joint.GetAnchorA()
+        }
       };
       return this.frames.push(frame);
     };
@@ -2487,7 +2526,7 @@
               x: shoulderX,
               y: shoulderY
             },
-            lowerBody: {
+            hip: {
               x: lowerBodyX,
               y: lowerBodyY
             },
@@ -2495,15 +2534,15 @@
               x: kneeX,
               y: kneeY
             },
-            hand: {
+            wrist: {
               x: centerPx + sensmult * Constants.cpp.rider_hand.x * Math.cos(fFrameRot) - Constants.cpp.rider_hand.y * Math.sin(fFrameRot),
               y: centerPy + sensmult * Constants.cpp.rider_hand.x * Math.sin(fFrameRot) + Constants.cpp.rider_hand.y * Math.cos(fFrameRot)
             },
-            foot: {
+            ankle: {
               x: centerPx + sensmult * Constants.cpp.rider_foot.x * Math.cos(fFrameRot) - Constants.cpp.rider_foot.y * Math.sin(fFrameRot),
               y: centerPy + sensmult * Constants.cpp.rider_foot.x * Math.sin(fFrameRot) + Constants.cpp.rider_foot.y * Math.cos(fFrameRot)
             },
-            head: {
+            neck: {
               x: shoulderX + Constants.cpp.rider_neck_length * this.normalizeX(shoulderX - lowerBodyX, shoulderY - lowerBodyY),
               y: shoulderY + Constants.cpp.rider_neck_length * this.normalizeY(shoulderX - lowerBodyX, shoulderY - lowerBodyY)
             }
@@ -2604,11 +2643,13 @@
     Rider.prototype.destroy = function() {
       var world;
       world = this.level.world;
+      world.DestroyBody(this.head);
       world.DestroyBody(this.torso);
       world.DestroyBody(this.lower_leg);
       world.DestroyBody(this.upper_leg);
       world.DestroyBody(this.lower_arm);
       world.DestroyBody(this.upper_arm);
+      world.DestroyJoint(this.neck_joint);
       world.DestroyJoint(this.ankle_joint);
       world.DestroyJoint(this.wrist_joint);
       world.DestroyJoint(this.knee_joint);
@@ -2618,7 +2659,7 @@
     };
 
     Rider.prototype.display = function() {
-      this.display_torso();
+      this.display_torso_head();
       this.display_upper_leg();
       this.display_lower_leg();
       this.display_upper_arm();
@@ -2633,11 +2674,13 @@
         this.assets.moto.push(texture);
       }
       this.player_start = this.level.entities.player_start;
+      this.head = this.create_head(this.player_start.x + this.mirror * Constants.head.position.x, this.player_start.y + Constants.head.position.y);
       this.torso = this.create_torso(this.player_start.x + this.mirror * Constants.torso.position.x, this.player_start.y + Constants.torso.position.y);
       this.lower_leg = this.create_lower_leg(this.player_start.x + this.mirror * Constants.lower_leg.position.x, this.player_start.y + Constants.lower_leg.position.y);
       this.upper_leg = this.create_upper_leg(this.player_start.x + this.mirror * Constants.upper_leg.position.x, this.player_start.y + Constants.upper_leg.position.y);
       this.lower_arm = this.create_lower_arm(this.player_start.x + this.mirror * Constants.lower_arm.position.x, this.player_start.y + Constants.lower_arm.position.y);
       this.upper_arm = this.create_upper_arm(this.player_start.x + this.mirror * Constants.upper_arm.position.x, this.player_start.y + Constants.upper_arm.position.y);
+      this.neck_joint = this.create_neck_joint();
       this.ankle_joint = this.create_ankle_joint();
       this.wrist_joint = this.create_wrist_joint();
       this.knee_joint = this.create_knee_joint();
@@ -2648,6 +2691,26 @@
 
     Rider.prototype.position = function() {
       return this.moto.body.GetPosition();
+    };
+
+    Rider.prototype.create_head = function(x, y) {
+      var body, bodyDef, fixDef;
+      fixDef = new b2FixtureDef();
+      fixDef.shape = new b2CircleShape(0.18);
+      fixDef.density = Constants.head.density;
+      fixDef.restitution = Constants.head.restitution;
+      fixDef.friction = Constants.head.friction;
+      fixDef.filter.groupIndex = -1;
+      bodyDef = new b2BodyDef();
+      bodyDef.position.x = x;
+      bodyDef.position.y = y;
+      bodyDef.userData = {
+        name: 'rider-head'
+      };
+      bodyDef.type = b2Body.b2_dynamicBody;
+      body = this.level.world.CreateBody(bodyDef);
+      body.CreateFixture(fixDef);
+      return body;
     };
 
     Rider.prototype.create_torso = function(x, y) {
@@ -2771,6 +2834,19 @@
       return joint.enableLimit = true;
     };
 
+    Rider.prototype.create_neck_joint = function() {
+      var axe, jointDef, position;
+      position = this.head.GetWorldCenter();
+      axe = {
+        x: position.x + this.mirror * Constants.neck.axe_position.x,
+        y: position.y + Constants.neck.axe_position.y
+      };
+      jointDef = new b2RevoluteJointDef();
+      jointDef.Initialize(this.head, this.torso, axe);
+      this.set_joint_commons(jointDef);
+      return this.level.world.CreateJoint(jointDef);
+    };
+
     Rider.prototype.create_ankle_joint = function() {
       var axe, jointDef, position;
       position = this.lower_leg.GetWorldCenter();
@@ -2849,64 +2925,87 @@
       return this.level.world.CreateJoint(jointDef);
     };
 
-    Rider.prototype.display_torso = function() {
-      var angle, position;
-      position = this.torso.GetPosition();
-      angle = this.torso.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playertorso'), -0.25, -0.575, 0.5, 1.15);
-      return this.level.ctx.restore();
+    Rider.prototype.display_torso_head = function() {
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.display_normal_part(this.hip_joint, this.shoulder_joint, this.assets.get('playertorso'), this.mirror, -0.27, -0.80, 0.5, 1.15);
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        return this.display_ugly_part(this.hip_joint, this.shoulder_joint);
+      }
     };
 
     Rider.prototype.display_lower_leg = function() {
-      var angle, position;
-      position = this.lower_leg.GetPosition();
-      angle = this.lower_leg.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerlowerleg'), -0.2, -0.33, 0.40, 0.66);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.display_normal_part(this.ankle_joint, this.knee_joint, this.assets.get('playerlowerleg'), this.mirror, -0.17, -0.33, 0.40, 0.66);
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        return this.display_ugly_part(this.ankle_joint, this.knee_joint);
+      }
     };
 
     Rider.prototype.display_upper_leg = function() {
-      var angle, position;
-      position = this.upper_leg.GetPosition();
-      angle = this.upper_leg.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerupperleg'), -0.40, -0.14, 0.80, 0.28);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.display_normal_part(this.hip_joint, this.knee_joint, this.assets.get('playerupperleg'), this.mirror, -0.48, -0.15, 0.80, 0.28, 1);
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        return this.display_ugly_part(this.hip_joint, this.knee_joint);
+      }
     };
 
     Rider.prototype.display_lower_arm = function() {
-      var angle, position;
-      position = this.lower_arm.GetPosition();
-      angle = this.lower_arm.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, 1);
-      this.level.ctx.rotate(this.mirror * angle);
-      this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.28, -0.10, 0.56, 0.20);
-      return this.level.ctx.restore();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.display_normal_part(this.elbow_joint, this.wrist_joint, this.assets.get('playerlowerarm'), -this.mirror, -0.30, -0.12, 0.56, 0.20, 1);
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        return this.display_ugly_part(this.elbow_joint, this.wrist_joint);
+      }
     };
 
     Rider.prototype.display_upper_arm = function() {
-      var angle, position;
-      position = this.upper_arm.GetPosition();
-      angle = this.upper_arm.GetAngle();
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        this.display_normal_part(this.elbow_joint, this.shoulder_joint, this.assets.get('playerupperarm'), this.mirror, -0.13, -0.3, 0.25, 0.56);
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        return this.display_ugly_part(this.shoulder_joint, this.elbow_joint);
+      }
+    };
+
+    Rider.prototype.display_ugly_part = function(joint1, joint2) {
+      var anchor1, anchor2;
+      this.level.ctx.beginPath();
+      this.level.ctx.strokeStyle = "#00FF00";
+      this.level.ctx.lineWidth = 0.04;
+      anchor1 = joint1.GetAnchorA();
+      anchor2 = joint2.GetAnchorA();
+      this.level.ctx.moveTo(anchor1.x, anchor1.y);
+      this.level.ctx.lineTo(anchor2.x, anchor2.y);
+      return this.level.ctx.stroke();
+    };
+
+    Rider.prototype.display_normal_part = function(joint1, joint2, texture, mirror, x, y, sx, sy, i90rot) {
+      var anchor1, anchor2, angle, centerX, centerY;
+      if (i90rot == null) {
+        i90rot = 0;
+      }
       this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerupperarm'), -0.125, -0.28, 0.25, 0.56);
+      anchor1 = joint1.GetAnchorA();
+      anchor2 = joint2.GetAnchorA();
+      centerX = (anchor1.x + anchor2.x) / 2;
+      centerY = (anchor1.y + anchor2.y) / 2;
+      angle = this.pointsToAngle(anchor1, anchor2) + mirror * i90rot * Math.PI / 2.0;
+      this.level.ctx.translate(centerX, centerY);
+      this.level.ctx.scale(-mirror, 1);
+      this.level.ctx.rotate(-mirror * angle);
+      this.level.ctx.drawImage(texture, x, y, sx, sy);
       return this.level.ctx.restore();
+    };
+
+    Rider.prototype.pointsToAngle = function(a, b) {
+      if (a.y > b.y) {
+        return -Math.atan((a.x - b.x) / (a.y - b.y));
+      } else {
+        return -Math.atan((b.x - a.x) / (b.y - a.y)) + Math.PI;
+      }
     };
 
     return Rider;

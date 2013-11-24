@@ -241,13 +241,20 @@ class Moto
     @level.ctx.translate(position.x, position.y)
     @level.ctx.rotate(angle)
 
-    @level.ctx.drawImage(
-      @assets.get('playerbikerwheel'), # texture
-      -radius,   # x
-      -radius,   # y
-       radius*2, # size-x
-       radius*2  # size-y
-    )
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      @level.ctx.drawImage(
+        @assets.get('playerbikerwheel'), # texture
+        -radius,   # x
+        -radius,   # y
+         radius*2, # size-x
+         radius*2  # size-y
+      )
+    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
+      @level.ctx.beginPath()
+      @level.ctx.strokeStyle="#FF0000"
+      @level.ctx.lineWidth = 0.05
+      @level.ctx.arc(0, 0, radius, 0, 2*Math.PI)
+      @level.ctx.stroke()
 
     @level.ctx.restore()
 
@@ -259,20 +266,21 @@ class Moto
     angle = @body.GetAngle()
 
     # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(1*@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
-
-    @level.ctx.drawImage(
-      @assets.get('playerbikerbody'), # texture
-      -1.0, # x
-      -0.5, # y
-       2.0, # size-x
-       1.0  # size-y
-    )
-
-    @level.ctx.restore()
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      @level.ctx.save()
+      @level.ctx.translate(position.x, position.y)
+      @level.ctx.scale(1*@mirror, -1)
+      @level.ctx.rotate(@mirror*(-angle))
+      
+      @level.ctx.drawImage(
+        @assets.get('playerbikerbody'), # texture
+        -1.0, # x
+        -0.5, # y
+         2.0, # size-x
+         1.0  # size-y
+      )
+      
+      @level.ctx.restore()
 
   display_left_axle: ->
     axle_thickness = 0.09
@@ -298,20 +306,21 @@ class Moto
     angle = Math2D.angle_between_points(left_axle_adjusted_position, left_wheel_position) + @mirror * Math.PI/2
 
     # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(left_wheel_position.x, left_wheel_position.y)
-    @level.ctx.scale(1*@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
-
-    @level.ctx.drawImage(
-      @assets.get('rear1'), # texture
-      0.0,               # x
-      -axle_thickness/2, # y
-      distance,          # size-x
-      axle_thickness     # size-y
-    )
-
-    @level.ctx.restore()
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      @level.ctx.save()
+      @level.ctx.translate(left_wheel_position.x, left_wheel_position.y)
+      @level.ctx.scale(1*@mirror, -1)
+      @level.ctx.rotate(@mirror*(-angle))
+      
+      @level.ctx.drawImage(
+        @assets.get('rear1'), # texture
+        0.0,               # x
+        -axle_thickness/2, # y
+        distance,          # size-x
+        axle_thickness     # size-y
+      )
+      
+      @level.ctx.restore()
 
   display_right_axle: ->
     axle_thickness = 0.07
@@ -337,17 +346,18 @@ class Moto
     angle = Math2D.angle_between_points(right_axle_adjusted_position, right_wheel_position) + @mirror * Math.PI/2
 
     # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(right_wheel_position.x, right_wheel_position.y)
-    @level.ctx.scale(1*@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
-
-    @level.ctx.drawImage(
-      @assets.get('front1'), # texture
-      0.0,               # x
-      -axle_thickness/2, # y
-      distance,          # size-x
-      axle_thickness     # size-y
-    )
-
-    @level.ctx.restore()
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      @level.ctx.save()
+      @level.ctx.translate(right_wheel_position.x, right_wheel_position.y)
+      @level.ctx.scale(1*@mirror, -1)
+      @level.ctx.rotate(@mirror*(-angle))
+      
+      @level.ctx.drawImage(
+        @assets.get('front1'), # texture
+        0.0,               # x
+        -axle_thickness/2, # y
+        distance,          # size-x
+        axle_thickness     # size-y
+      )
+      
+      @level.ctx.restore()

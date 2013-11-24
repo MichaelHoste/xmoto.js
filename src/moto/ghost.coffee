@@ -123,30 +123,8 @@ class Ghost
       @level.ctx.restore()
 
   display_torso: ->
-    torso = @frame.torso
-
-    # Position
-    position = torso.position
-
-    # Angle
-    angle = torso.angle
-
-    # Draw texture
     if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @level.ctx.save()
-      @level.ctx.translate(position.x, position.y)
-      @level.ctx.scale(1*@mirror, -1)
-      @level.ctx.rotate(@mirror * (-angle))
-
-      @level.ctx.drawImage(
-        @assets.get('playertorso'), # texture
-        -0.25,  # x
-        -0.575, # y
-         0.5,   # size-x
-         1.15   # size-y
-      )
-
-      @level.ctx.restore()
+      @display_normal_part(@frame.anchors.hip, @frame.anchors.shoulder, @assets.get('playertorso'), @mirror, -0.27, -0.80, 0.5, 1.15)
 
     if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
       @level.ctx.beginPath()
@@ -154,110 +132,45 @@ class Ghost
       @level.ctx.lineWidth = 0.05
       frame = @replay.frame(@current_frame)
       @level.ctx.moveTo(frame.anchors.shoulder.x, frame.anchors.shoulder.y)
-      @level.ctx.lineTo(frame.anchors.lowerBody.x, frame.anchors.lowerBody.y)
+      @level.ctx.lineTo(frame.anchors.hip.x, frame.anchors.hip.y)
       @level.ctx.stroke()
 
       @level.ctx.beginPath()
       @level.ctx.strokeStyle="#00FF00"
       @level.ctx.lineWidth = 0.05
-      @level.ctx.arc(frame.anchors.head.x, frame.anchors.head.y, Constants.cpp.rider_head_size, 0, 2*Math.PI)
+      @level.ctx.arc(frame.anchors.neck.x, frame.anchors.neck.y, Constants.cpp.rider_head_size, 0, 2*Math.PI)
       @level.ctx.stroke()
 
   display_lower_leg: ->
-    lower_leg = @frame.lower_leg
-
-    # Position
-    position = lower_leg.position
-
-    # Angle
-    angle = lower_leg.angle
-
-    # Draw texture
     if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @level.ctx.save()
-      @level.ctx.translate(position.x, position.y)
-      @level.ctx.scale(1*@mirror, -1)
-      @level.ctx.rotate(@mirror * (-angle))
-
-      @level.ctx.drawImage(
-        @assets.get('playerlowerleg'), # texture
-        -0.2,  # x
-        -0.33, # y
-         0.40, # size-x
-         0.66  # size-y
-      )
-
-      @level.ctx.restore()
+      @display_normal_part(@frame.anchors.ankle, @frame.anchors.knee, @assets.get('playerlowerleg'), @mirror, -0.17, -0.33, 0.40, 0.66)
 
     if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
       @level.ctx.beginPath()
       @level.ctx.strokeStyle="#00FF00"
       @level.ctx.lineWidth = 0.05
       frame = @replay.frame(@current_frame)
-      @level.ctx.moveTo(frame.anchors.foot.x, frame.anchors.foot.y)
+      @level.ctx.moveTo(frame.anchors.ankle.x, frame.anchors.ankle.y)
       @level.ctx.lineTo(frame.anchors.knee.x, frame.anchors.knee.y)
       @level.ctx.stroke()
 
   display_upper_leg: ->
-    upper_leg = @frame.upper_leg
-
-    # Position
-    position = upper_leg.position
-
-    # Angle
-    angle = upper_leg.angle
-
-    # Draw texture
     if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @level.ctx.save()
-      @level.ctx.translate(position.x, position.y)
-      @level.ctx.scale(1*@mirror, -1)
-      @level.ctx.rotate(@mirror * (-angle))
-
-      @level.ctx.drawImage(
-        @assets.get('playerupperleg'), # texture
-        -0.40, # x
-        -0.14, # y
-         0.80, # size-x
-         0.28  # size-y
-      )
-
-      @level.ctx.restore()
+      @display_normal_part(@frame.anchors.hip, @frame.anchors.knee, @assets.get('playerupperleg'), @mirror, -0.48, -0.15, 0.80, 0.28, 1)
 
     if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
       @level.ctx.beginPath()
       @level.ctx.strokeStyle="#00FF00"
       @level.ctx.lineWidth = 0.05
       frame = @replay.frame(@current_frame)
-      @level.ctx.moveTo(frame.anchors.lowerBody.x, frame.anchors.lowerBody.y)
+      @level.ctx.moveTo(frame.anchors.hip.x, frame.anchors.hip.y)
       @level.ctx.lineTo(frame.anchors.knee.x, frame.anchors.knee.y)
       @level.ctx.stroke()
 
   display_lower_arm: ->
-    lower_arm = @frame.lower_arm
-
-    # Position
-    position = lower_arm.position
-
-    # Angle
-    angle = lower_arm.angle
-
     # Draw texture
     if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @level.ctx.save()
-      @level.ctx.translate(position.x, position.y)
-      @level.ctx.scale(1*@mirror, 1)
-      @level.ctx.rotate(@mirror * angle)
-
-      @level.ctx.drawImage(
-        @assets.get('playerlowerarm'), # texture
-        -0.28,  # x
-        -0.10, # y
-         0.56, # size-x
-         0.20  # size-y
-      )
-
-      @level.ctx.restore()
+      @display_normal_part(@frame.anchors.elbow, @frame.anchors.wrist, @assets.get('playerlowerarm'), -@mirror, -0.30, -0.12, 0.56, 0.20, 1)
 
     if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
       @level.ctx.beginPath()
@@ -265,34 +178,12 @@ class Ghost
       @level.ctx.lineWidth = 0.05
       frame = @replay.frame(@current_frame)
       @level.ctx.moveTo(frame.anchors.elbow.x, frame.anchors.elbow.y)
-      @level.ctx.lineTo(frame.anchors.hand.x, frame.anchors.hand.y)
+      @level.ctx.lineTo(frame.anchors.wrist.x, frame.anchors.wrist.y)
       @level.ctx.stroke()
 
   display_upper_arm: ->
-    upper_arm = @frame.upper_arm
-
-    # Position
-    position = upper_arm.position
-
-    # Angle
-    angle = upper_arm.angle
-
-    # Draw texture
     if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @level.ctx.save()
-      @level.ctx.translate(position.x, position.y)
-      @level.ctx.scale(1*@mirror, -1)
-      @level.ctx.rotate(@mirror * (-angle))
-
-      @level.ctx.drawImage(
-        @assets.get('playerupperarm'), # texture
-        -0.125, # x
-        -0.28, # y
-         0.25, # size-x
-         0.56  # size-y
-      )
-
-      @level.ctx.restore()
+      @display_normal_part(@frame.anchors.elbow, @frame.anchors.shoulder, @assets.get('playerupperarm'), -@mirror, -0.13, -0.3, 0.25, 0.56)
 
     if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
       @level.ctx.beginPath()
@@ -305,3 +196,20 @@ class Ghost
 
   position: ->
     @replay.frame(@current_frame).body.position
+
+  pointsToAngle: (a, b) ->
+    if a.y > b.y
+      return -Math.atan((a.x-b.x)/(a.y-b.y))
+    else
+      return -Math.atan((b.x-a.x)/(b.y-a.y)) + Math.PI
+
+  display_normal_part: (anchor1, anchor2, texture, mirror, x, y, sx, sy, i90rot = 0) ->
+    @level.ctx.save()
+    centerX = (anchor1.x + anchor2.x)/2
+    centerY = (anchor1.y + anchor2.y)/2
+    angle   = @pointsToAngle(anchor1, anchor2) + mirror*i90rot*Math.PI/2.0
+    @level.ctx.translate(centerX, centerY)
+    @level.ctx.scale(-mirror, 1)
+    @level.ctx.rotate(-mirror * angle)
+    @level.ctx.drawImage(texture, x, y, sx, sy)
+    @level.ctx.restore()
