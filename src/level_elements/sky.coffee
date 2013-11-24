@@ -23,14 +23,15 @@ class Sky
 
   display: (ctx) ->
     ctx.beginPath()
-    ctx.moveTo(@level.limits.screen.left + @level.limits.size.x, @level.limits.screen.bottom)
-    ctx.lineTo(@level.limits.screen.left + @level.limits.size.x, @level.limits.screen.bottom + @level.limits.size.y)
-    ctx.lineTo(@level.limits.screen.left,                        @level.limits.screen.bottom + @level.limits.size.y)
-    ctx.lineTo(@level.limits.screen.left,                        @level.limits.screen.bottom)
+    ctx.moveTo(@level.canvas_width, @level.canvas_height)
+    ctx.lineTo(0,                   @level.canvas_height)
+    ctx.lineTo(0,                   0)
+    ctx.lineTo(@level.canvas_width, 0)
     ctx.closePath()
 
     ctx.save()
-    ctx.scale(1.0 / 15.0, -1.0 / 15.0)
+    ctx.scale(4.0, 4.0)
+    ctx.translate(-@level.moto.position().x*6, @level.moto.position().y*3)
     ctx.fillStyle = ctx.createPattern(@assets.get(@name), "repeat")
     ctx.fill()
     ctx.restore()

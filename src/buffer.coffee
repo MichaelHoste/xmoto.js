@@ -60,6 +60,7 @@ class Buffer
     # (don't show anything outside of these limits when the buffer redraw)
     @compute_visibility()
 
+    @ctx.clearRect(0, 0, @canvas_width, @canvas_height)
     @ctx.save()
 
     # initialize position of camera
@@ -67,8 +68,7 @@ class Buffer
     @ctx.scale(@buffer_scale.x, @buffer_scale.y)                  # Scale (zoom)
     @ctx.translate(-moto.position().x, -moto.position().y - 0.25) # Camera on moto
 
-    # Display sky, limits, entities and blocks/edges (moto/ghost is drawn on each frame)
-    @sky     .display(@ctx)
+    # Display limits, entities and blocks/edges (moto/ghost is drawn on each frame)
     @limits  .display(@ctx)
     @entities.display_sprites(@ctx)
     @blocks  .display(@ctx)

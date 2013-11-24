@@ -66,11 +66,11 @@
         y: this.level.scale.y < -70 ? -70 : this.level.scale.y
       };
       this.compute_visibility();
+      this.ctx.clearRect(0, 0, this.canvas_width, this.canvas_height);
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(this.buffer_scale.x, this.buffer_scale.y);
       this.ctx.translate(-moto.position().x, -moto.position().y - 0.25);
-      this.sky.display(this.ctx);
       this.limits.display(this.ctx);
       this.entities.display_sprites(this.ctx);
       this.blocks.display(this.ctx);
@@ -541,9 +541,8 @@
       }
       this.update_timer();
       this.compute_visibility();
-      if (this.buffer.redraw_needed()) {
-        this.buffer.redraw();
-      }
+      this.sky.display(this.ctx);
+      this.buffer.redraw();
       this.buffer.display();
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
@@ -1627,13 +1626,14 @@
 
     Sky.prototype.display = function(ctx) {
       ctx.beginPath();
-      ctx.moveTo(this.level.limits.screen.left + this.level.limits.size.x, this.level.limits.screen.bottom);
-      ctx.lineTo(this.level.limits.screen.left + this.level.limits.size.x, this.level.limits.screen.bottom + this.level.limits.size.y);
-      ctx.lineTo(this.level.limits.screen.left, this.level.limits.screen.bottom + this.level.limits.size.y);
-      ctx.lineTo(this.level.limits.screen.left, this.level.limits.screen.bottom);
+      ctx.moveTo(this.level.canvas_width, this.level.canvas_height);
+      ctx.lineTo(0, this.level.canvas_height);
+      ctx.lineTo(0, 0);
+      ctx.lineTo(this.level.canvas_width, 0);
       ctx.closePath();
       ctx.save();
-      ctx.scale(1.0 / 15.0, -1.0 / 15.0);
+      ctx.scale(4.0, 4.0);
+      ctx.translate(-this.level.moto.position().x * 6, this.level.moto.position().y * 3);
       ctx.fillStyle = ctx.createPattern(this.assets.get(this.name), "repeat");
       ctx.fill();
       return ctx.restore();
