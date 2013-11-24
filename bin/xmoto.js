@@ -530,8 +530,8 @@
       this.ctx = this.canvas.getContext('2d');
       this.render_mode = "uglyOver";
       this.scale = {
-        x: 90,
-        y: -90
+        x: 50,
+        y: -50
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
@@ -541,7 +541,6 @@
       this.replay = new Replay(this);
       this.ghost = new Ghost(this, null);
       this.moto = new Moto(this);
-      this.engine_sound = new EngineSound(this);
       this.infos = new Infos(this);
       this.sky = new Sky(this);
       this.blocks = new Blocks(this);
@@ -550,8 +549,6 @@
       this.script = new Script(this);
       this.entities = new Entities(this);
       this.buffer = new Buffer(this);
-      this.start_time = new Date().getTime();
-      this.current_time = 0;
       this.paused = false;
     }
 
@@ -589,7 +586,9 @@
       this.moto.init();
       this.ghost.init();
       this.input.init();
-      return this.listeners.init();
+      this.listeners.init();
+      this.start_time = new Date().getTime();
+      return this.current_time = 0;
     };
 
     Level.prototype.get_render_mode = function() {
@@ -617,7 +616,7 @@
       if (!this.canvas_width) {
         this.init_canvas();
       }
-      this.current_time = new Date().getTime() - this.start_time;
+      this.update_timer();
       this.compute_visibility();
       if (this.buffer.redraw_needed()) {
         this.buffer.redraw();
@@ -645,6 +644,23 @@
       }
       this.ctx.restore();
       return this.replay.add_frame();
+    };
+
+    Level.prototype.update_timer = function(now) {
+      var minutes, new_time, seconds;
+      if (now == null) {
+        now = false;
+      }
+      new_time = new Date().getTime() - this.start_time;
+      if (now || Math.floor(new_time / 1000) > Math.floor(this.current_time / 1000)) {
+        minutes = Math.floor(new_time / 1000 / 60);
+        seconds = Math.floor(new_time / 1000) % 60;
+        if (seconds < 10) {
+          seconds = "0" + seconds;
+        }
+        $("#chrono").text("" + minutes + ":" + seconds);
+      }
+      return this.current_time = new_time;
     };
 
     Level.prototype.compute_visibility = function() {
@@ -695,6 +711,7 @@
       }
       this.start_time = new Date().getTime();
       this.current_time = 0;
+      this.update_timer(true);
       _ref = this.entities.strawberries;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -802,7 +819,6 @@
       createjs.Sound.setMute(true);
       update = function() {
         level.input.move_moto();
-        level.engine_sound.play();
         level.world.Step(1.0 / 60.0, 10, 10);
         level.world.ClearForces();
         return level.display(false);
@@ -1275,6 +1291,8 @@
   b2FixtureDef = Box2D.Dynamics.b2FixtureDef;
 
   Entities = (function() {
+    var entity_AABB, entity_texture_name, frame_name, visible_entity;
+
     function Entities(level) {
       this.level = level;
       this.assets = level.assets;
@@ -1311,7 +1329,7 @@
           };
           entity.params.push(param);
         }
-        texture_name = Entities.texture_name(entity);
+        texture_name = entity_texture_name(entity);
         if (texture_name) {
           sprite = this.assets.theme.sprite_params(texture_name);
           if (!entity.size.width) {
@@ -1333,6 +1351,7 @@
           entity.delay = sprite.delay;
           entity.frames = sprite.frames;
           entity.display = true;
+          entity.aabb = entity_AABB(entity);
         }
         this.list.push(entity);
       }
@@ -1345,13 +1364,13 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
-        texture_name = Entities.texture_name(entity);
+        texture_name = entity_texture_name(entity);
         if (texture_name) {
           if (entity.frames === 0) {
             this.assets.anims.push(texture_name);
           } else {
             for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-              this.assets.anims.push(Entities.frame_name(texture_name, i));
+              this.assets.anims.push(frame_name(texture_name, i));
             }
           }
         }
@@ -1398,7 +1417,11 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
         if (entity.type_id === 'Sprite') {
-          _results.push(this.display_entity(ctx, entity));
+          if (visible_entity(this.level.buffer.visible, entity)) {
+            _results.push(this.display_entity(ctx, entity));
+          } else {
+            _results.push(void 0);
+          }
         } else {
           _results.push(void 0);
         }
@@ -1413,7 +1436,11 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
         if (entity.type_id === 'EndOfLevel' || entity.type_id === "Strawberry") {
-          _results.push(this.display_entity(ctx, entity));
+          if (visible_entity(this.level.visible, entity)) {
+            _results.push(this.display_entity(ctx, entity));
+          } else {
+            _results.push(void 0);
+          }
         } else {
           _results.push(void 0);
         }
@@ -1422,34 +1449,32 @@
     };
 
     Entities.prototype.display_entity = function(ctx, entity) {
-      var i, texture_name;
-      if (entity.display) {
-        if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
-          texture_name = Entities.texture_name(entity);
+      var num, texture_name;
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        texture_name = entity_texture_name(entity);
+        if (entity.frames) {
+          num = this.level.current_time % (entity.frames * entity.delay * 1000);
+          num = Math.floor(num / (entity.delay * 1000));
           if (entity.frames) {
-            i = this.level.current_time % (entity.frames * entity.delay * 1000);
-            i = Math.floor(i / (entity.delay * 1000));
-            if (entity.frames) {
-              texture_name = Entities.frame_name(texture_name, i);
-            }
+            texture_name = frame_name(texture_name, num);
           }
-          ctx.save();
-          ctx.translate(entity.position.x, entity.position.y);
-          ctx.scale(1, -1);
-          ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
-          ctx.restore();
         }
-        if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
-          this.level.ctx.beginPath();
-          this.level.ctx.strokeStyle = "#0000FF";
-          this.level.ctx.lineWidth = 0.05;
-          this.level.ctx.arc(entity.position.x + entity.center.x - entity.size.width / 2, entity.position.y + entity.center.y - entity.size.height / 2, entity.size.r, 0, 2 * Math.PI);
-          return this.level.ctx.stroke();
-        }
+        ctx.save();
+        ctx.translate(entity.position.x, entity.position.y);
+        ctx.scale(1, -1);
+        ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
+        ctx.restore();
+      }
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#0000FF";
+        this.level.ctx.lineWidth = 0.05;
+        this.level.ctx.arc(entity.position.x + entity.center.x - entity.size.width / 2, entity.position.y + entity.center.y - entity.size.height / 2, entity.size.r, 0, 2 * Math.PI);
+        return this.level.ctx.stroke();
       }
     };
 
-    Entities.texture_name = function(entity) {
+    entity_texture_name = function(entity) {
       var param, _i, _len, _ref;
       if (entity.type_id === 'Sprite') {
         _ref = entity.params;
@@ -1466,8 +1491,26 @@
       }
     };
 
-    Entities.frame_name = function(texture_name, frame_number) {
+    frame_name = function(texture_name, frame_number) {
       return ("" + texture_name + "_") + (frame_number / 100.0).toFixed(2).toString().substring(2);
+    };
+
+    entity_AABB = function(entity) {
+      var aabb, lower_bound, upper_bound;
+      lower_bound = {};
+      upper_bound = {};
+      lower_bound.x = entity.position.x - entity.size.width + entity.center.x;
+      lower_bound.y = entity.position.y - entity.center.y;
+      upper_bound.x = lower_bound.x + entity.size.width;
+      upper_bound.y = lower_bound.y + entity.size.height;
+      aabb = new b2AABB();
+      aabb.lowerBound.Set(lower_bound.x, lower_bound.y);
+      aabb.upperBound.Set(upper_bound.x, upper_bound.y);
+      return aabb;
+    };
+
+    visible_entity = function(zone, entity) {
+      return entity.display && entity.aabb.TestOverlap(zone.aabb);
     };
 
     return Entities;
@@ -3024,7 +3067,7 @@
     }
 
     Assets.prototype.load = function(callback) {
-      var item, items, rpm, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4;
+      var item, items, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
       items = [];
       _ref = this.textures;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -3070,14 +3113,6 @@
         id: "EndOfLevel",
         src: "data/Sounds/EndOfLevel.ogg"
       });
-      _ref4 = ['0000', '1000', '2000', '3000', '4000', '5000', '6000'];
-      for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
-        rpm = _ref4[_m];
-        createjs.Sound.registerSound({
-          id: "engine_" + rpm,
-          src: "data/Sounds/engine_" + rpm + ".ogg"
-        });
-      }
       items = this.remove_duplicate_textures(items);
       this.queue.addEventListener("complete", callback);
       return this.queue.loadManifest(items);

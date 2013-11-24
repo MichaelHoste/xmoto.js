@@ -49,11 +49,11 @@ class Assets
       src: "data/Sounds/EndOfLevel.ogg"
     )
 
-    for rpm in ['0000', '1000', '2000', '3000', '4000', '5000', '6000']
-      createjs.Sound.registerSound(
-        id:  "engine_#{rpm}"
-        src: "data/Sounds/engine_#{rpm}.ogg"
-      )
+    #for rpm in ['0000', '1000', '2000', '3000', '4000', '5000', '6000']
+    #  createjs.Sound.registerSound(
+    #    id:  "engine_#{rpm}"
+    #    src: "data/Sounds/engine_#{rpm}.ogg"
+    #  )
 
     items = @remove_duplicate_textures(items)
 
@@ -71,6 +71,5 @@ class Assets
       for unique_image in unique
         found = true if image.id == unique_image.id
       unique.push(image) if not found
-
     unique
 

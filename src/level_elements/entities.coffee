@@ -35,7 +35,7 @@ class Entities
         entity.params.push(param)
 
       # Get default values for sprite from theme
-      texture_name = Entities.texture_name(entity)
+      texture_name = entity_texture_name(entity)
       if texture_name
         sprite = @assets.theme.sprite_params(texture_name)
 
@@ -48,7 +48,9 @@ class Entities
         entity.center.y = entity.size.height/2 if not entity.center.y
         entity.delay    = sprite.delay
         entity.frames   = sprite.frames
-        entity.display  = true
+        entity.display  = true # if an entity has a texture, it needs to be displayed
+
+        entity.aabb = entity_AABB(entity)
 
       @list.push(entity)
 
@@ -57,14 +59,14 @@ class Entities
   init: ->
     for entity in @list
 
-      texture_name = Entities.texture_name(entity)
+      texture_name = entity_texture_name(entity)
 
       if texture_name
         if entity.frames == 0
           @assets.anims.push(texture_name)
         else
           for i in [0..entity.frames-1]
-            @assets.anims.push(Entities.frame_name(texture_name, i))
+            @assets.anims.push(frame_name(texture_name, i))
 
       # End of level
       if entity.type_id == 'EndOfLevel'
@@ -110,40 +112,41 @@ class Entities
   display_sprites: (ctx) ->
     for entity in @list
       if entity.type_id == 'Sprite'
-        @display_entity(ctx, entity)
+        if visible_entity(@level.buffer.visible, entity)
+          @display_entity(ctx, entity)
 
   display_items: (ctx) ->
     for entity in @list
       if entity.type_id == 'EndOfLevel' or entity.type_id == "Strawberry"
-        @display_entity(ctx, entity)
+        if visible_entity(@level.visible, entity)
+          @display_entity(ctx, entity)
 
   display_entity: (ctx, entity) ->
-    if entity.display
-      if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-        texture_name = Entities.texture_name(entity)
-        if entity.frames
-          i = @level.current_time % (entity.frames * entity.delay * 1000)
-          i = Math.floor(i / (entity.delay * 1000))
-          texture_name = Entities.frame_name(texture_name, i) if entity.frames
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      texture_name = entity_texture_name(entity)
+      if entity.frames
+        num = @level.current_time % (entity.frames * entity.delay * 1000)
+        num = Math.floor(num / (entity.delay * 1000))
+        texture_name = frame_name(texture_name, num) if entity.frames
+      
+      ctx.save()
+      ctx.translate(entity.position.x, entity.position.y)
+      ctx.scale(1, -1)
+      ctx.drawImage(@assets.get(texture_name),
+                    -entity.size.width  + entity.center.x,
+                    -entity.size.height + entity.center.y,
+                    entity.size.width,
+                    entity.size.height)
+      
+      ctx.restore()
+    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
+      @level.ctx.beginPath()
+      @level.ctx.strokeStyle="#0000FF"
+      @level.ctx.lineWidth = 0.05
+      @level.ctx.arc(entity.position.x+entity.center.x-entity.size.width/2, entity.position.y+entity.center.y-entity.size.height/2, entity.size.r, 0, 2*Math.PI)
+      @level.ctx.stroke()
 
-        ctx.save()
-        ctx.translate(entity.position.x, entity.position.y)
-        ctx.scale(1, -1)
-        ctx.drawImage(@assets.get(texture_name),
-                      -entity.size.width  + entity.center.x,
-                      -entity.size.height + entity.center.y,
-                      entity.size.width,
-                      entity.size.height)
-        ctx.restore()
-
-      if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
-        @level.ctx.beginPath()
-        @level.ctx.strokeStyle="#0000FF"
-        @level.ctx.lineWidth = 0.05
-        @level.ctx.arc(entity.position.x+entity.center.x-entity.size.width/2, entity.position.y+entity.center.y-entity.size.height/2, entity.size.r, 0, 2*Math.PI)
-        @level.ctx.stroke()
-
-  @texture_name = (entity) ->
+  entity_texture_name = (entity) ->
     if entity.type_id == 'Sprite'
       for param in entity.params
         if param.name == 'name'
@@ -152,6 +155,23 @@ class Entities
       return 'checkball'
     else if entity.type_id == 'Strawberry'
       return 'cog2'
-
-  @frame_name = (texture_name, frame_number) ->
+  
+  frame_name = (texture_name, frame_number) ->
     "#{texture_name}_" + (frame_number/100.0).toFixed(2).toString().substring(2)
+  
+  entity_AABB = (entity) ->
+    lower_bound = {}
+    upper_bound = {}
+    lower_bound.x = entity.position.x - entity.size.width + entity.center.x
+    lower_bound.y = entity.position.y - entity.center.y
+    upper_bound.x = lower_bound.x + entity.size.width
+    upper_bound.y = lower_bound.y + entity.size.height
+  
+    aabb = new b2AABB()
+    aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
+    aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+  
+    return aabb
+  
+  visible_entity = (zone, entity) ->
+    entity.display and entity.aabb.TestOverlap(zone.aabb)
