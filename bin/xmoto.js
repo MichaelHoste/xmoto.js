@@ -542,7 +542,9 @@
       this.update_timer();
       this.compute_visibility();
       this.sky.display(this.ctx);
-      this.buffer.redraw();
+      if (this.buffer.redraw_needed()) {
+        this.buffer.redraw();
+      }
       this.buffer.display();
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
