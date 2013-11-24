@@ -48,8 +48,6 @@ class Level
     # Buffer
     @buffer        = new Buffer(this)
 
-    #@need_to_restart = true
-
   load_from_file: (file_name) ->
     $.ajax({
       type:     "GET",
@@ -76,6 +74,9 @@ class Level
 
     @input.init()
     @listeners.init()
+
+    @start_time   = new Date().getTime()
+    @current_time = 0
 
   init_canvas: ->
     @canvas_width  = parseFloat(@canvas.width)

@@ -517,7 +517,9 @@
       this.moto.init();
       this.ghost.init();
       this.input.init();
-      return this.listeners.init();
+      this.listeners.init();
+      this.start_time = new Date().getTime();
+      return this.current_time = 0;
     };
 
     Level.prototype.init_canvas = function() {
