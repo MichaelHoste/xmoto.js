@@ -7,6 +7,7 @@ class Level
     # Context
     @canvas = $('#game').get(0)
     @ctx    = @canvas.getContext('2d')
+    @render_mode = "normal" # normal / ugly / uglyOver
 
     # level unities * scale = pixels
     @scale =
@@ -78,6 +79,11 @@ class Level
     @start_time   = new Date().getTime()
     @current_time = 0
 
+  get_render_mode: ->
+    @render_mode
+
+  set_render_mode: (@render_mode) ->
+
   init_canvas: ->
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height)
@@ -107,7 +113,7 @@ class Level
     # initialize position of camera
     @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
     @ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
-    @ctx.translate(-@moto.position().x, -@moto.position().y - 0.25) # Camera on moto
+    @ctx.translate(-@object_to_follow().position().x, -@object_to_follow().position().y - 0.25) # Camera on moto
 
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
     @entities.display_items(@ctx)
@@ -134,10 +140,10 @@ class Level
 
   compute_visibility: ->
     @visible =
-      left:   @moto.position().x - (@canvas_width  / 2) / @scale.x
-      right:  @moto.position().x + (@canvas_width  / 2) / @scale.x
-      bottom: @moto.position().y + (@canvas_height / 2) / @scale.y
-      top:    @moto.position().y - (@canvas_height / 2) / @scale.y
+      left:   @object_to_follow().position().x - (@canvas_width  / 2) / @scale.x
+      right:  @object_to_follow().position().x + (@canvas_width  / 2) / @scale.x
+      bottom: @object_to_follow().position().y + (@canvas_height / 2) / @scale.y
+      top:    @object_to_follow().position().y - (@canvas_height / 2) / @scale.y
     @visible.aabb = new b2AABB()
     @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
     @visible.aabb.upperBound.Set(@visible.right, @visible.top)
@@ -168,3 +174,6 @@ class Level
 
     for entity in @entities.strawberries
       entity.display = true
+
+  object_to_follow: ->
+    @moto

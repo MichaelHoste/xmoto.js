@@ -34,7 +34,7 @@
         return true;
       }
       if (this.visible) {
-        moto = this.level.moto;
+        moto = this.level.object_to_follow();
         if (this.visible.right < moto.position().x + (this.level.canvas_width / 2) / this.scale.x) {
           return true;
         }
@@ -53,7 +53,7 @@
 
     Buffer.prototype.redraw = function() {
       var moto;
-      moto = this.level.moto;
+      moto = this.level.object_to_follow();
       if (!this.canvas_width) {
         this.init_canvas();
       }
@@ -79,7 +79,7 @@
 
     Buffer.prototype.compute_visibility = function() {
       var moto;
-      moto = this.level.moto;
+      moto = this.level.object_to_follow();
       this.visible = {
         left: moto.position().x - (this.canvas_width / 2) / this.buffer_scale.x,
         right: moto.position().x + (this.canvas_width / 2) / this.buffer_scale.x,
@@ -93,7 +93,7 @@
 
     Buffer.prototype.display = function() {
       var buffer_center_x, buffer_center_y, canvas_center_x, canvas_center_y, clipped_height, clipped_width, margin_zoom_x, margin_zoom_y, moto, translate_x, translate_y;
-      moto = this.level.moto;
+      moto = this.level.object_to_follow();
       buffer_center_x = this.canvas_width / 2;
       canvas_center_x = this.level.canvas_width / 2;
       translate_x = (moto.position().x - this.moto_position.x) * this.buffer_scale.x;
@@ -378,6 +378,16 @@
             if (!_this.level.moto.dead) {
               return _this.level.flip_moto();
             }
+            break;
+          case 85:
+            switch (_this.level.get_render_mode()) {
+              case "normal":
+                return _this.level.set_render_mode("ugly");
+              case "ugly":
+                return _this.level.set_render_mode("uglyOver");
+              case "uglyOver":
+                return _this.level.set_render_mode("normal");
+            }
         }
       });
       return $(document).on('keyup', function(event) {
@@ -473,6 +483,7 @@
     function Level() {
       this.canvas = $('#game').get(0);
       this.ctx = this.canvas.getContext('2d');
+      this.render_mode = "normal";
       this.scale = {
         x: 70,
         y: -70
@@ -522,6 +533,14 @@
       return this.current_time = 0;
     };
 
+    Level.prototype.get_render_mode = function() {
+      return this.render_mode;
+    };
+
+    Level.prototype.set_render_mode = function(render_mode) {
+      this.render_mode = render_mode;
+    };
+
     Level.prototype.init_canvas = function() {
       this.canvas_width = parseFloat(this.canvas.width);
       this.canvas_height = parseFloat(this.canvas.height);
@@ -549,7 +568,7 @@
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(this.scale.x, this.scale.y);
-      this.ctx.translate(-this.moto.position().x, -this.moto.position().y - 0.25);
+      this.ctx.translate(-this.object_to_follow().position().x, -this.object_to_follow().position().y - 0.25);
       this.entities.display_items(this.ctx);
       this.moto.display(this.ctx);
       if (this.ghost) {
@@ -581,10 +600,10 @@
 
     Level.prototype.compute_visibility = function() {
       this.visible = {
-        left: this.moto.position().x - (this.canvas_width / 2) / this.scale.x,
-        right: this.moto.position().x + (this.canvas_width / 2) / this.scale.x,
-        bottom: this.moto.position().y + (this.canvas_height / 2) / this.scale.y,
-        top: this.moto.position().y - (this.canvas_height / 2) / this.scale.y
+        left: this.object_to_follow().position().x - (this.canvas_width / 2) / this.scale.x,
+        right: this.object_to_follow().position().x + (this.canvas_width / 2) / this.scale.x,
+        bottom: this.object_to_follow().position().y + (this.canvas_height / 2) / this.scale.y,
+        top: this.object_to_follow().position().y - (this.canvas_height / 2) / this.scale.y
       };
       this.visible.aabb = new b2AABB();
       this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
@@ -632,6 +651,10 @@
         _results.push(entity.display = true);
       }
       return _results;
+    };
+
+    Level.prototype.object_to_follow = function() {
+      return this.moto;
     };
 
     return Level;
@@ -1335,19 +1358,28 @@
 
     Entities.prototype.display_entity = function(ctx, entity) {
       var num, texture_name;
-      texture_name = entity_texture_name(entity);
-      if (entity.frames) {
-        num = this.level.current_time % (entity.frames * entity.delay * 1000);
-        num = Math.floor(num / (entity.delay * 1000));
+      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
+        texture_name = entity_texture_name(entity);
         if (entity.frames) {
-          texture_name = frame_name(texture_name, num);
+          num = this.level.current_time % (entity.frames * entity.delay * 1000);
+          num = Math.floor(num / (entity.delay * 1000));
+          if (entity.frames) {
+            texture_name = frame_name(texture_name, num);
+          }
         }
+        ctx.save();
+        ctx.translate(entity.position.x, entity.position.y);
+        ctx.scale(1, -1);
+        ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
+        ctx.restore();
       }
-      ctx.save();
-      ctx.translate(entity.position.x, entity.position.y);
-      ctx.scale(1, -1);
-      ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
-      return ctx.restore();
+      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
+        this.level.ctx.beginPath();
+        this.level.ctx.strokeStyle = "#0000FF";
+        this.level.ctx.lineWidth = 0.05;
+        this.level.ctx.arc(entity.position.x + entity.center.x - entity.size.width / 2, entity.position.y + entity.center.y - entity.size.height / 2, entity.size.r, 0, 2 * Math.PI);
+        return this.level.ctx.stroke();
+      }
     };
 
     return Entities;

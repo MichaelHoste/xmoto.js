@@ -122,22 +122,32 @@ class Entities
           @display_entity(ctx, entity)
 
   display_entity: (ctx, entity) ->
-    texture_name = entity_texture_name(entity)
-    if entity.frames
-      num = @level.current_time % (entity.frames * entity.delay * 1000)
-      num = Math.floor(num / (entity.delay * 1000))
-      texture_name = frame_name(texture_name, num) if entity.frames
+    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+      texture_name = entity_texture_name(entity)
+      if entity.frames
+        num = @level.current_time % (entity.frames * entity.delay * 1000)
+        num = Math.floor(num / (entity.delay * 1000))
+        texture_name = frame_name(texture_name, num) if entity.frames
 
-    ctx.save()
-    ctx.translate(entity.position.x, entity.position.y)
-    ctx.scale(1, -1)
-    ctx.drawImage(@assets.get(texture_name),
-                  -entity.size.width  + entity.center.x,
-                  -entity.size.height + entity.center.y,
-                  entity.size.width,
-                  entity.size.height)
+      ctx.save()
+      ctx.translate(entity.position.x, entity.position.y)
+      ctx.scale(1, -1)
+      ctx.drawImage(@assets.get(texture_name),
+                    -entity.size.width  + entity.center.x,
+                    -entity.size.height + entity.center.y,
+                    entity.size.width,
+                    entity.size.height)
 
-    ctx.restore()
+      ctx.restore()
+
+    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
+      @level.ctx.beginPath()
+      @level.ctx.strokeStyle="#0000FF"
+      @level.ctx.lineWidth = 0.05
+      @level.ctx.arc(entity.position.x+entity.center.x-entity.size.width/2,
+                     entity.position.y+entity.center.y-entity.size.height/2,
+                     entity.size.r, 0, 2*Math.PI)
+      @level.ctx.stroke()
 
 entity_texture_name = (entity) ->
   if entity.type_id == 'Sprite'
