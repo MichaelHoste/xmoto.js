@@ -5,7 +5,6 @@ class Level
 
   constructor: ->
     # Context
-
     @canvas = $('#game').get(0)
     @ctx    = @canvas.getContext('2d')
     @render_mode = "uglyOver" # normal / ugly / uglyOver
@@ -91,10 +90,10 @@ class Level
     @start_time   = new Date().getTime()
     @current_time = 0
 
-  get_render_mode: ->	
+  get_render_mode: ->
     @render_mode
 
-  set_render_mode: (@render_mode) ->	
+  set_render_mode: (@render_mode) ->
 
   init_canvas: ->
     @canvas_width  = parseFloat(@canvas.width)
@@ -123,7 +122,6 @@ class Level
     # initialize position of camera
     @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
     @ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
-
     @ctx.translate(-@object_to_follow().position().x, -@object_to_follow().position().y - 0.25) # Camera on moto
 
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
