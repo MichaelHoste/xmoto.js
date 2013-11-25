@@ -112,6 +112,8 @@ class Level
     # visible screen limits of the world (don't show anything outside of these limits)
     @compute_visibility()
 
+    @sky.display(@ctx)
+
     # Redraw buffer if needed (the buffer is bigger than the canvas)
     # And display it (copy the right pixels from the buffer to the canvas)
     @buffer.redraw() if @buffer.redraw_needed()

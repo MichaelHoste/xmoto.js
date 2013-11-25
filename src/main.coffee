@@ -12,14 +12,22 @@ play_level = (name) ->
   level.assets.load( ->
     createjs.Sound.setMute(true)
 
-    update = ->
-      level.input.move_moto()
-      level.world.Step(1.0 / 60.0, 10, 10)
-      level.world.ClearForces()
-      level.display(false)
+    last_step    = new Date().getTime()
+    physics_step = 1000.0/60.0
 
-    # Render 2D environment
-    window.game_loop = setInterval(update, 1000 / 60)
+    update_physics = ->
+      while (new Date()).getTime() - last_step > physics_step
+        level.input.move()
+        level.world.Step(1.0/60.0, 10, 10)
+        level.world.ClearForces()
+        last_step += physics_step
+
+    update = ->
+      update_physics()
+      level.display(false)
+      window.requestAnimationFrame(update)
+
+    update()
 
     hide_loading()
   )
@@ -31,11 +39,10 @@ hide_loading = ->
   $(".xmoto-loading").hide()
 
 full_screen = ->
-  $("#game").width($("body").width())
-  $("#game").height($("body").height())
   window.onresize = ->
     $("#game").width($("body").width())
     $("#game").height($("body").height())
+  window.onresize()
 
 $ ->
   play_level($("#levels option:selected").val())
