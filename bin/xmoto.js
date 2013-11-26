@@ -718,6 +718,10 @@
       createjs.Sound.setMute(true);
       last_step = new Date().getTime();
       physics_step = 1000.0 / 60.0;
+      if (window.game_loop) {
+        window.cancelAnimationFrame(window.game_loop);
+        window.game_loop = void 0;
+      }
       update_physics = function() {
         var _results;
         _results = [];
@@ -732,7 +736,7 @@
       update = function() {
         update_physics();
         level.display(false);
-        return window.requestAnimationFrame(update);
+        return window.game_loop = window.requestAnimationFrame(update);
       };
       update();
       return hide_loading();

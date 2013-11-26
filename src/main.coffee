@@ -9,6 +9,10 @@ play_level = (name) ->
     last_step    = new Date().getTime()
     physics_step = 1000.0/60.0
 
+    if window.game_loop
+      window.cancelAnimationFrame(window.game_loop)
+      window.game_loop = undefined
+
     update_physics = ->
       while (new Date()).getTime() - last_step > physics_step
         level.input.move()
@@ -19,7 +23,7 @@ play_level = (name) ->
     update = ->
       update_physics()
       level.display(false)
-      window.requestAnimationFrame(update)
+      window.game_loop = window.requestAnimationFrame(update)
 
     update()
 
