@@ -50,6 +50,14 @@ class Entities
           y: sprite.center.y
         entity.center.x = entity.size.width/2  if not entity.center.x
         entity.center.y = entity.size.height/2 if not entity.center.y
+
+        # no size informations into the theme or into the level
+        entity.size.width  = 2*entity.size.r   if not entity.size.width
+        entity.size.height = 2*entity.size.r   if not entity.size.height
+        entity.center.x    = entity.size.r     if not entity.center.x
+        entity.center.y    = entity.size.r     if not entity.center.y
+
+
         entity.delay    = sprite.delay
         entity.frames   = sprite.frames
         entity.display  = true # if an entity has a texture, it needs to be displayed
@@ -145,7 +153,6 @@ class Entities
                     -entity.size.height + entity.center.y,
                     entity.size.width,
                     entity.size.height)
-
       ctx.restore()
 
     if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
@@ -177,6 +184,10 @@ entity_AABB = (entity) ->
   lower_bound.y = entity.position.y - entity.center.y
   upper_bound.x = lower_bound.x + entity.size.width
   upper_bound.y = lower_bound.y + entity.size.height
+
+  if entity.type_id == 'EndOfLevel'
+    console.log(upper_bound)
+    console.log(lower_bound)
 
   aabb = new b2AABB()
   aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
