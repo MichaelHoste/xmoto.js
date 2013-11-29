@@ -31,10 +31,10 @@ play_level = (name) ->
   )
 
 show_loading = ->
-  $(".xmoto-loading").show()
+  $("#loading").show()
 
 hide_loading = ->
-  $(".xmoto-loading").hide()
+  $("#loading").hide()
 
 full_screen = ->
   window.onresize = ->
@@ -42,13 +42,24 @@ full_screen = ->
     $("#game").height($("body").height())
   window.onresize()
 
-$ ->
-  play_level($("#levels option:selected").val())
-
+bind_select = ->
   $("#levels").on('change', ->
     show_loading()
-    clearInterval(window.game_loop)
+    location.search = $(this).val()
     play_level($(this).val())
   )
+
+select_level_from_url = ->
+  level = location.search.substr(1)
+  $("#levels").val(level)
+  $("#levels").trigger("change")
+
+$ ->
+  bind_select()
+
+  if location.search != ''
+    select_level_from_url()
+  else
+    play_level($("#levels option:selected").val())
 
   #full_screen()
