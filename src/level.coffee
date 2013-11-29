@@ -68,7 +68,7 @@ class Level
   load_replay: ->
     replayFile = new ReplayFile()
     replayFile.load_from_file(@replay_name)
-    @replayPlayer = new Ghost(this, replayFile.clone(this))
+    @replayPlayer = new Ghost(this, replayFile.clone(this), "player")
 
   load_level: (xml) ->
     # Level dependent objects

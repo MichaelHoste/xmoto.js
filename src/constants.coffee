@@ -21,6 +21,7 @@ class Constants
                      new b2Vec2(-0.35, -0.3) ]
 
   @wheels =
+    radius:      0.35
     density:     2.0
     restitution: 0.5
     friction:    1.3
@@ -189,3 +190,18 @@ class Constants
       y: -0.37
     rider_head_size: 0.18
     rider_neck_length: 0.22
+
+# start point :
+# Vector2f Tp;          /* Point on the ground, exactly between the wheels */
+#  Vector2f C(i_position - m_bikeState->Anchors()->GroundPoint());
+#  prepareBikePhysics(C);
+#    /* Place and define the frame */
+#    dBodySetPosition(m_FrameBodyID,StartPos.x,StartPos.y,0.0f);
+#    /* Place and define the front wheel */
+#    dBodySetPosition(m_FrontWheelBodyID,StartPos.x + m_bikeState->Anchors()->Fp.x,StartPos.y + m_bikeState->Anchors()->Fp.y,0.0f);
+#  Vector2f Fp;          /* Center of front wheel */
+#  Fp = Tp + Vector2f( 0.5f*i_bikeParameters->Wb, i_bikeParameters->WR );
+#<parameter name="bike_wheel_radius" 	     	 value="0.35"     />
+#<parameter name="bike_wheel_base"   	     	 value="1.4"      />
+#  Rp = Tp + Vector2f( -0.5f*i_bikeParameters->Wb, i_bikeParameters->WR );
+#  Fp = Tp + Vector2f( 0.5f*i_bikeParameters->Wb, i_bikeParameters->WR );

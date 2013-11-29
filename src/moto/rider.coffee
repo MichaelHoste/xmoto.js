@@ -15,6 +15,7 @@ class Rider
     @assets = level.assets
     @moto   = moto
     @mirror = @moto.mirror
+    @rider_style = @assets.get_rider_style("player")
 
   destroy: ->
     world = @level.world
@@ -33,17 +34,10 @@ class Rider
     world.DestroyJoint(@shoulder_joint)
     world.DestroyJoint(@hip_joint)
 
-  display: ->
-    @display_torso_head()
-    @display_upper_leg()
-    @display_lower_leg()
-    @display_upper_arm()
-    @display_lower_arm()
-
   init: ->
     # Assets
-    textures = [ 'playerlowerarm', 'playerlowerleg', 'playertorso',
-                 'playerupperarm', 'playerupperleg' ]
+    textures = [ @rider_style.torso,    @rider_style.upperleg, @rider_style.lowerleg
+                 @rider_style.upperarm, @rider_style.lowerarm ]
     for texture in textures
       @assets.moto.push(texture)
 
@@ -296,6 +290,8 @@ class Rider
   create_ankle_joint: ->
     position = @lower_leg.GetWorldCenter()
     axe =
+      #x: position.x + @mirror * Constants.ankle.axe_position.x
+      #y: position.y + Constants.ankle.axe_position.y
       x: position.x + @mirror * Constants.ankle.axe_position.x
       y: position.y + Constants.ankle.axe_position.y
 
@@ -359,61 +355,58 @@ class Rider
     @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
-  display_torso_head: ->
-    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @display_normal_part(@hip_joint, @shoulder_joint, @assets.get('playertorso'), @mirror, -0.27, -0.80, 0.5, 1.15)
-    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
-      @display_ugly_part(@hip_joint, @shoulder_joint)
+  display: ->
+    Rider.display_rider(@mirror,
+                        @wrist_joint.GetAnchorA(),
+                        @elbow_joint.GetAnchorA(),
+                        @shoulder_joint.GetAnchorA(),
+                        @hip_joint.GetAnchorA(),
+                        @knee_joint.GetAnchorA(),
+                        @ankle_joint.GetAnchorA(),
+                        @level.ctx, @assets, @rider_style, @level.get_render_mode())
 
-  display_lower_leg: ->
-    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @display_normal_part(@ankle_joint, @knee_joint, @assets.get('playerlowerleg'), @mirror, -0.17, -0.33, 0.40, 0.66)
-    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
-      @display_ugly_part(@ankle_joint, @knee_joint)
+  @display_rider: (mirror, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, mode) ->
+    if mode == "normal" or mode == "uglyOver"
+      Rider.display_rider_members(mirror, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, false)
+    if mode == "ugly"   or mode == "uglyOver"
+      Rider.display_rider_members(mirror, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, true)
 
-  display_upper_leg: ->
-    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @display_normal_part(@hip_joint, @knee_joint, @assets.get('playerupperleg'), @mirror, -0.48, -0.15, 0.80, 0.28, 1)
-    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
-      @display_ugly_part(@hip_joint, @knee_joint)
+  @display_rider_members: (mirror, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, ugly) ->
+    if ugly
+      Rider.display_ugly_part(ctx, hip_anchor,      shoulder_anchor) # display_torso
+      Rider.display_ugly_part(ctx, hip_anchor,      knee_anchor)     # display_upper_leg
+      Rider.display_ugly_part(ctx, ankle_anchor,    knee_anchor)     # display_lower_leg
+      Rider.display_ugly_part(ctx, shoulder_anchor, elbow_anchor)    # display_upper_arm
+      Rider.display_ugly_part(ctx, elbow_anchor,    wrist_anchor)    # display_lower_arm
+    else
+      Rider.display_normal_part(ctx, hip_anchor,   shoulder_anchor, assets.get(rider_style.torso),     mirror, -0.27, -0.80, 0.50, 1.15)
+      Rider.display_normal_part(ctx, hip_anchor,   knee_anchor,     assets.get(rider_style.upperleg),  mirror, -0.48, -0.15, 0.80, 0.28, 1)
+      Rider.display_normal_part(ctx, ankle_anchor, knee_anchor,     assets.get(rider_style.lowerleg),  mirror, -0.17, -0.33, 0.40, 0.66)
+      Rider.display_normal_part(ctx, elbow_anchor, shoulder_anchor, assets.get(rider_style.upperarm),  mirror, -0.13, -0.30, 0.25, 0.56)
+      Rider.display_normal_part(ctx, elbow_anchor, wrist_anchor,    assets.get(rider_style.lowerarm), -mirror, -0.30, -0.12, 0.56, 0.20, 1)
 
-  display_lower_arm: ->
-    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @display_normal_part(@elbow_joint, @wrist_joint, @assets.get('playerlowerarm'), -@mirror, -0.30, -0.12, 0.56, 0.20, 1)
-    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
-      @display_ugly_part(@elbow_joint, @wrist_joint)
+  @display_ugly_head: (neck_anchor, ctx) ->
+    ctx.beginPath()
+    ctx.strokeStyle="#00FF00"
+    ctx.lineWidth = 0.05
+    ctx.arc(neck.x, neck.y, Constants.cpp.rider_head_size, 0, 2*Math.PI)
+    ctx.stroke()
 
-  display_upper_arm: ->
-    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      @display_normal_part(@elbow_joint, @shoulder_joint, @assets.get('playerupperarm'), @mirror, -0.13, -0.3, 0.25, 0.56)
-    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
-      @display_ugly_part(@shoulder_joint, @elbow_joint)
+  @display_ugly_part: (ctx, anchor1, anchor2) ->
+    ctx.beginPath()
+    ctx.strokeStyle="#00FF00"
+    ctx.lineWidth = 0.04
+    ctx.moveTo(anchor1.x, anchor1.y)
+    ctx.lineTo(anchor2.x, anchor2.y)
+    ctx.stroke()
 
-  display_ugly_part: (joint1, joint2) ->
-    @level.ctx.beginPath()
-    @level.ctx.strokeStyle="#00FF00"
-    @level.ctx.lineWidth = 0.04
-    anchor1 = joint1.GetAnchorA()
-    anchor2 = joint2.GetAnchorA()
-    @level.ctx.moveTo(anchor1.x, anchor1.y)
-    @level.ctx.lineTo(anchor2.x, anchor2.y)
-    @level.ctx.stroke()
-
-  display_normal_part: (joint1, joint2, texture, mirror, x, y, sx, sy, i90rot = 0) ->
-    @level.ctx.save()
-    anchor1 = joint1.GetAnchorA()
-    anchor2 = joint2.GetAnchorA()
+  @display_normal_part: (ctx, anchor1, anchor2, texture, mirror, x, y, sx, sy, i90rot = 0) ->
+    ctx.save()
     centerX = (anchor1.x + anchor2.x)/2
     centerY = (anchor1.y + anchor2.y)/2
-    angle   = @pointsToAngle(anchor1, anchor2) + mirror*i90rot*Math.PI/2.0
-    @level.ctx.translate(centerX, centerY)
-    @level.ctx.scale(-mirror, 1)
-    @level.ctx.rotate(-mirror * angle)
-    @level.ctx.drawImage(texture, x, y, sx, sy)
-    @level.ctx.restore()
-
-  pointsToAngle: (a, b) ->
-    if a.y > b.y
-      return -Math.atan((a.x-b.x)/(a.y-b.y))
-    else
-      return -Math.atan((b.x-a.x)/(b.y-a.y)) + Math.PI
+    angle   = Math2D.angle_between_points(anchor1, anchor2) + mirror*i90rot*Math.PI/2.0
+    ctx.translate(centerX, centerY)
+    ctx.scale(-mirror, 1)
+    ctx.rotate(-mirror * angle)
+    ctx.drawImage(texture, x, y, sx, sy)
+    ctx.restore()

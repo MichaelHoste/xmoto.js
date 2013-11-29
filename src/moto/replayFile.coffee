@@ -134,6 +134,11 @@ class ReplayFile
       kneeY      = @map8BitsToCoord(frameY, maxYDiff, chunk.getInt8())
       unused     = chunk.getBytes(1)
 
+      backdiff =
+        x: shoulderX-lowerBodyX
+        y: shoulderY-lowerBodyY
+      backdiff_norm = Math2D.normalize(backdiff)
+
       if flags == 1
         sensmult = -1
       else
@@ -156,36 +161,6 @@ class ReplayFile
             x: centerPx
             y: centerPy
           angle: fFrameRot
-        torso:
-          position:
-            x: (shoulderX-Constants.shoulder.axe_position.x + lowerBodyX-Constants.hip.axe_position.x)/2
-            y: (shoulderY-Constants.shoulder.axe_position.y + lowerBodyY-Constants.hip.axe_position.y)/2
-          angle: @pointsToAngle(shoulderX, shoulderY, lowerBodyX, lowerBodyY, 0)
-
-        upper_leg:
-          position:
-            x: (lowerBodyX-Constants.hip.axe_position.x + kneeX-Constants.knee.axe_position.x)/2
-            y: (lowerBodyY-Constants.hip.axe_position.y + kneeY-Constants.knee.axe_position.y)/2
-          angle: @pointsToAngle(lowerBodyX, lowerBodyY, kneeX, kneeY, 1)
-
-        lower_leg:
-          position:
-            x: (kneeX+Constants.ankle.axe_position.x+centerPx)/2
-            y: (kneeY+Constants.ankle.axe_position.y+centerPy)/2
-          angle: @pointsToAngle(kneeX, kneeY, centerPx, centerPy, 0)
-
-        upper_arm:
-          position:
-            x: (shoulderX+elbowX)/2
-            y: (shoulderY+elbowY)/2
-          angle: @pointsToAngle(shoulderX, shoulderY, elbowX, elbowY, 0)
-
-        lower_arm:
-          position:
-            x: (elbowX+centerPx)/2
-            y: (elbowY+centerPy)/2
-          angle: @pointsToAngle(elbowX, elbowY, centerPx, centerPy, 0)
-
         anchors:
           elbow:
             x: elbowX
@@ -206,11 +181,10 @@ class ReplayFile
             x: centerPx+sensmult*Constants.cpp.rider_foot.x*Math.cos(fFrameRot)-Constants.cpp.rider_foot.y*Math.sin(fFrameRot)
             y: centerPy+sensmult*Constants.cpp.rider_foot.x*Math.sin(fFrameRot)+Constants.cpp.rider_foot.y*Math.cos(fFrameRot)
           neck:
-            x: shoulderX + Constants.cpp.rider_neck_length*@normalizeX(shoulderX-lowerBodyX, shoulderY-lowerBodyY)
-            y: shoulderY + Constants.cpp.rider_neck_length*@normalizeY(shoulderX-lowerBodyX, shoulderY-lowerBodyY)
+            x: shoulderX + Constants.cpp.rider_neck_length*backdiff_norm.x
+            y: shoulderY + Constants.cpp.rider_neck_length*backdiff_norm.y
 
-      for i in [0..1]
-        @frames.push(frame)
+      @frames.push(frame)
 
   length: (x, y) ->
     Math.sqrt(x*x + y*y)
