@@ -20,7 +20,7 @@ class Theme
     for xml_sprite in xml_sprites
 
       if $(xml_sprite).attr('type') == 'Entity'
-        @sprites[$(xml_sprite).attr('name').toLowerCase()] =
+        @sprites[$(xml_sprite).attr('name')] =
           file:      $(xml_sprite).attr('file')
           file_base: $(xml_sprite).attr('fileBase')
           file_ext:  $(xml_sprite).attr('fileExtension')

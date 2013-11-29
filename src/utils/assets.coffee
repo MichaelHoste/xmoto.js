@@ -2,7 +2,7 @@ class Assets
 
   constructor: ->
     @queue    = new createjs.LoadQueue()
-    @theme    = new Theme('modern.xml')
+    @theme    = new Theme('modern.xml') # or "original.xml"
 
     @textures = [] # texture list
     @anims    = [] # anim list
@@ -16,17 +16,17 @@ class Assets
     for item in @textures
       items.push(
         id:  item
-        src: "data/Textures/Textures/#{item}" # In /Textures/, we can find png AND jpg. The extension is on the modern.xml file
+        src: "data/Textures/Textures/#{item}"
       )
     for item in @anims
       items.push(
         id:  item
-        src: "data/Textures/Anims/#{item}.png"
+        src: "data/Textures/Anims/#{item}"
       )
     for item in @effects
       items.push(
         id:  item
-        src: "data/Textures/Effects/#{item}" # In /Effects/, we can find png AND jpg. The extension is on the modern.xml file
+        src: "data/Textures/Effects/#{item}"
       )
     for item in @moto
       items.push(
