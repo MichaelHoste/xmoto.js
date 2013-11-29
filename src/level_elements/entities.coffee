@@ -185,10 +185,6 @@ entity_AABB = (entity) ->
   upper_bound.x = lower_bound.x + entity.size.width
   upper_bound.y = lower_bound.y + entity.size.height
 
-  if entity.type_id == 'EndOfLevel'
-    console.log(upper_bound)
-    console.log(lower_bound)
-
   aabb = new b2AABB()
   aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
   aabb.upperBound.Set(upper_bound.x, upper_bound.y)
