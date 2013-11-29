@@ -762,7 +762,6 @@
   bind_select = function() {
     return $("#levels").on('change', function() {
       show_loading();
-      location.search = $(this).val();
       return play_level($(this).val());
     });
   };
@@ -1591,6 +1590,24 @@
         x: this.player.right,
         y: this.screen.bottom
       });
+      this.level.physics.create_polygon(vertices, 'ground');
+      vertices = [];
+      vertices.push({
+        x: this.player.right,
+        y: this.screen.top
+      });
+      vertices.push({
+        x: this.player.left,
+        y: this.screen.top
+      });
+      vertices.push({
+        x: this.player.left,
+        y: this.player.top
+      });
+      vertices.push({
+        x: this.player.right,
+        y: this.player.top
+      });
       return this.level.physics.create_polygon(vertices, 'ground');
     };
 
@@ -1614,6 +1631,13 @@
       ctx.lineTo(this.player.left, this.player.bottom);
       ctx.lineTo(this.player.left, this.screen.bottom);
       ctx.lineTo(this.player.right, this.screen.bottom);
+      ctx.closePath();
+      this.save_apply_texture_and_restore(ctx);
+      ctx.beginPath();
+      ctx.moveTo(this.player.right, this.screen.top);
+      ctx.lineTo(this.player.left, this.screen.top);
+      ctx.lineTo(this.player.left, this.player.top);
+      ctx.lineTo(this.player.right, this.player.top);
       ctx.closePath();
       return this.save_apply_texture_and_restore(ctx);
     };

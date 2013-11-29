@@ -45,7 +45,6 @@ full_screen = ->
 bind_select = ->
   $("#levels").on('change', ->
     show_loading()
-    location.search = $(this).val()
     play_level($(this).val())
   )
 

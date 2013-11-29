@@ -58,6 +58,15 @@ class Limits
     vertices.push({ x: @player.right, y: @screen.bottom })
     @level.physics.create_polygon(vertices, 'ground')
 
+    # Bottom
+    vertices = []
+    vertices.push({ x: @player.right, y: @screen.top })
+    vertices.push({ x: @player.left,  y: @screen.top })
+    vertices.push({ x: @player.left,  y: @player.top })
+    vertices.push({ x: @player.right, y: @player.top })
+
+    @level.physics.create_polygon(vertices, 'ground')
+
   display: (ctx) ->
     # Left border
     ctx.beginPath()
@@ -85,6 +94,16 @@ class Limits
     ctx.lineTo(@player.left,  @player.bottom)
     ctx.lineTo(@player.left,  @screen.bottom)
     ctx.lineTo(@player.right, @screen.bottom)
+    ctx.closePath()
+
+    @save_apply_texture_and_restore(ctx)
+
+    # Top border
+    ctx.beginPath()
+    ctx.moveTo(@player.right, @screen.top)
+    ctx.lineTo(@player.left,  @screen.top)
+    ctx.lineTo(@player.left,  @player.top)
+    ctx.lineTo(@player.right, @player.top)
     ctx.closePath()
 
     @save_apply_texture_and_restore(ctx)
