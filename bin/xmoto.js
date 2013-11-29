@@ -691,18 +691,26 @@
               return _this.level.need_to_restart = true;
             }
           } else if (a === 'rider' && b === 'ground') {
-            moto.dead = true;
-            createjs.Sound.play('Headcrash');
-            _this.level.world.DestroyJoint(moto.rider.ankle_joint);
-            _this.level.world.DestroyJoint(moto.rider.wrist_joint);
-            moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 1.5;
-            moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 1.5;
-            moto.rider.shoulder_joint.m_upperAngle = moto.rider.shoulder_joint.m_upperAngle * 1.5;
-            return moto.rider.hip_joint.m_lowerAngle = moto.rider.hip_joint.m_lowerAngle * 1.5;
+            return _this.kill_moto();
+          } else if ((a === 'rider' && b === 'wrecker') || (a === 'moto' && b === 'wrecker')) {
+            return _this.kill_moto();
           }
         }
       };
       return this.level.world.SetContactListener(listener);
+    };
+
+    Listeners.prototype.kill_moto = function() {
+      var moto;
+      moto = this.level.moto;
+      moto.dead = true;
+      createjs.Sound.play('Headcrash');
+      this.level.world.DestroyJoint(moto.rider.ankle_joint);
+      this.level.world.DestroyJoint(moto.rider.wrist_joint);
+      moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 1.5;
+      moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 1.5;
+      moto.rider.shoulder_joint.m_upperAngle = moto.rider.shoulder_joint.m_upperAngle * 1.5;
+      return moto.rider.hip_joint.m_lowerAngle = moto.rider.hip_joint.m_lowerAngle * 1.5;
     };
 
     return Listeners;
