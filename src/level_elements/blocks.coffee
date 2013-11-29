@@ -1,11 +1,12 @@
-b2Vec2          = Box2D.Common.Math.b2Vec2
-b2AABB          = Box2D.Collision.b2AABB
+b2Vec2 = Box2D.Common.Math.b2Vec2
+b2AABB = Box2D.Collision.b2AABB
 
 class Blocks
 
   constructor: (level) ->
     @level  = level
     @assets = level.assets
+    @theme  = @assets.theme
     @list       = [] # total list
     @back_list  = [] # background list
     @front_list = [] # front list (collisions)
@@ -32,6 +33,7 @@ class Blocks
         vertices:     []
 
       block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
+      block.texture_name = @theme.texture_params(block.usetexture.id).file
 
       xml_materials = $(xml_block).find('edges material')
       for xml_material in xml_materials
@@ -75,7 +77,8 @@ class Blocks
   init: ->
     # Assets
     for block in @list
-      @assets.textures.push(block.usetexture.id)
+      texture_file = block.texture_name
+      @assets.textures.push(texture_file)
 
     # Collisions for blocks
     for block in @front_list
@@ -100,7 +103,7 @@ class Blocks
 
         ctx.save()
         ctx.scale(1.0 / 40.0, -1.0 / 40.0)
-        ctx.fillStyle = ctx.createPattern(@assets.get(block.usetexture.id), 'repeat')
+        ctx.fillStyle = ctx.createPattern(@assets.get(block.texture_name), 'repeat')
         ctx.fill()
         ctx.restore()
 

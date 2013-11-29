@@ -908,6 +908,7 @@
     function Blocks(level) {
       this.level = level;
       this.assets = level.assets;
+      this.theme = this.assets.theme;
       this.list = [];
       this.back_list = [];
       this.front_list = [];
@@ -942,6 +943,7 @@
         if (block.usetexture.id === 'default') {
           block.usetexture.id = 'dirt';
         }
+        block.texture_name = this.theme.texture_params(block.usetexture.id).file;
         xml_materials = $(xml_block).find('edges material');
         for (_j = 0, _len1 = xml_materials.length; _j < _len1; _j++) {
           xml_material = xml_materials[_j];
@@ -984,11 +986,12 @@
     };
 
     Blocks.prototype.init = function() {
-      var block, _i, _j, _len, _len1, _ref, _ref1;
+      var block, texture_file, _i, _j, _len, _len1, _ref, _ref1;
       _ref = this.list;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
-        this.assets.textures.push(block.usetexture.id);
+        texture_file = block.texture_name;
+        this.assets.textures.push(texture_file);
       }
       _ref1 = this.front_list;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -1017,7 +1020,7 @@
           ctx.closePath();
           ctx.save();
           ctx.scale(1.0 / 40.0, -1.0 / 40.0);
-          ctx.fillStyle = ctx.createPattern(this.assets.get(block.usetexture.id), 'repeat');
+          ctx.fillStyle = ctx.createPattern(this.assets.get(block.texture_name), 'repeat');
           ctx.fill();
           ctx.restore();
         }
@@ -1088,7 +1091,7 @@
 
   Edges = (function() {
     function Edges(level, blocks) {
-      var block, edge, i, vertex, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
+      var block, edge, i, texture_file, vertex, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
       this.level = level;
       this.assets = this.level.assets;
       this.theme = this.assets.theme;
@@ -1101,7 +1104,8 @@
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           vertex = _ref1[_j];
           if (vertex.edge) {
-            this.assets.effects.push(this.theme.edge_params(vertex.edge).file);
+            texture_file = this.theme.edge_params(vertex.edge).file;
+            this.assets.effects.push(texture_file);
           }
         }
       }
@@ -1506,41 +1510,48 @@
 
   })();
 
+  b2Vec2 = Box2D.Common.Math.b2Vec2;
+
+  b2AABB = Box2D.Collision.b2AABB;
+
   Limits = (function() {
     function Limits(level) {
       this.level = level;
       this.assets = level.assets;
+      this.theme = this.assets.theme;
     }
 
     Limits.prototype.parse = function(xml) {
       var xml_limits;
       xml_limits = $(xml).find('limits');
-      this.screen = {
-        left: parseFloat(xml_limits.attr('left')) * 2,
-        right: parseFloat(xml_limits.attr('right')) * 2,
-        top: parseFloat(xml_limits.attr('top')) * 2,
-        bottom: parseFloat(xml_limits.attr('bottom')) * 2
-      };
       this.player = {
         left: parseFloat(xml_limits.attr('left')),
         right: parseFloat(xml_limits.attr('right')),
         top: parseFloat(xml_limits.attr('top')),
         bottom: parseFloat(xml_limits.attr('bottom'))
       };
+      this.screen = {
+        left: parseFloat(xml_limits.attr('left')) - 20,
+        right: parseFloat(xml_limits.attr('right')) + 20,
+        top: parseFloat(xml_limits.attr('top')) + 20,
+        bottom: parseFloat(xml_limits.attr('bottom')) - 20
+      };
       this.size = {
         x: this.screen.right - this.screen.left,
         y: this.screen.top - this.screen.bottom
       };
+      this.texture = 'dirt';
+      this.texture_name = this.theme.texture_params('dirt').file;
       return this;
     };
 
     Limits.prototype.init = function() {
       var vertices;
-      this.assets.textures.push('dirt');
+      this.assets.textures.push(this.texture_name);
       vertices = [];
       vertices.push({
         x: this.screen.left,
-        y: this.screen.top * 5
+        y: this.screen.top
       });
       vertices.push({
         x: this.screen.left,
@@ -1552,13 +1563,13 @@
       });
       vertices.push({
         x: this.player.left,
-        y: this.screen.top * 5
+        y: this.screen.top
       });
       this.level.physics.create_polygon(vertices, 'ground');
       vertices = [];
       vertices.push({
         x: this.player.right,
-        y: this.screen.top * 5
+        y: this.screen.top
       });
       vertices.push({
         x: this.player.right,
@@ -1570,7 +1581,7 @@
       });
       vertices.push({
         x: this.screen.right,
-        y: this.screen.top * 5
+        y: this.screen.top
       });
       this.level.physics.create_polygon(vertices, 'ground');
       vertices = [];
@@ -1645,7 +1656,7 @@
     Limits.prototype.save_apply_texture_and_restore = function(ctx) {
       ctx.save();
       ctx.scale(1.0 / 40.0, -1.0 / 40.0);
-      ctx.fillStyle = ctx.createPattern(this.assets.get('dirt'), "repeat");
+      ctx.fillStyle = ctx.createPattern(this.assets.get(this.texture_name), "repeat");
       ctx.fill();
       return ctx.restore();
     };
@@ -1679,6 +1690,7 @@
     function Sky(level) {
       this.level = level;
       this.assets = level.assets;
+      this.theme = this.assets.theme;
     }
 
     Sky.prototype.parse = function(xml) {
@@ -1694,11 +1706,12 @@
       if (this.name === '') {
         this.name = 'sky1';
       }
+      this.file_name = this.theme.texture_params(this.name).file;
       return this;
     };
 
     Sky.prototype.init = function() {
-      return this.assets.textures.push(this.name);
+      return this.assets.textures.push(this.file_name);
     };
 
     Sky.prototype.display = function(ctx) {
@@ -1711,7 +1724,7 @@
       ctx.save();
       ctx.scale(4.0, 4.0);
       ctx.translate(-this.level.object_to_follow().position().x * 4, this.level.object_to_follow().position().y * 2);
-      ctx.fillStyle = ctx.createPattern(this.assets.get(this.name), "repeat");
+      ctx.fillStyle = ctx.createPattern(this.assets.get(this.file_name), "repeat");
       ctx.fill();
       return ctx.restore();
     };
@@ -2556,7 +2569,7 @@
         item = _ref[_i];
         items.push({
           id: item,
-          src: "data/Textures/Textures/" + item + ".jpg"
+          src: "data/Textures/Textures/" + item
         });
       }
       _ref1 = this.anims;
@@ -2804,6 +2817,7 @@
     function Theme(file_name) {
       this.sprites = [];
       this.edges = [];
+      this.textures = [];
       $.ajax({
         type: "GET",
         url: "data/Themes/" + file_name,
@@ -2842,6 +2856,14 @@
             scale: parseFloat($(xml_sprite).attr('scale')),
             depth: parseFloat($(xml_sprite).attr('depth'))
           });
+        } else if ($(xml_sprite).attr('type') === 'Texture') {
+          _results.push(this.textures[$(xml_sprite).attr('name').toLowerCase()] = {
+            file: $(xml_sprite).attr('file') ? $(xml_sprite).attr('file').toLowerCase() : void 0,
+            file_base: $(xml_sprite).attr('fileBase'),
+            file_ext: $(xml_sprite).attr('fileExtension'),
+            frames: $(xml_sprite).find('frame').length,
+            delay: parseFloat($(xml_sprite).attr('delay'))
+          });
         } else {
           _results.push(void 0);
         }
@@ -2855,6 +2877,10 @@
 
     Theme.prototype.edge_params = function(name) {
       return this.edges[name];
+    };
+
+    Theme.prototype.texture_params = function(name) {
+      return this.textures[name];
     };
 
     return Theme;

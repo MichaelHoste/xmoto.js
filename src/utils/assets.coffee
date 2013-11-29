@@ -16,12 +16,12 @@ class Assets
     for item in @textures
       items.push(
         id:  item
-        src: "data/Textures/Textures/#{item}.jpg"
+        src: "data/Textures/Textures/#{item}" # In /Textures/, we can find png AND jpg. The extension is on the modern.xml file
       )
     for item in @anims
       items.push(
-        id:   item
-        src:  "data/Textures/Anims/#{item}.png"
+        id:  item
+        src: "data/Textures/Anims/#{item}.png"
       )
     for item in @effects
       items.push(

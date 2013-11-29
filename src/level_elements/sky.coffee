@@ -3,6 +3,7 @@ class Sky
   constructor: (level) ->
     @level  = level
     @assets = level.assets
+    @theme  = @assets.theme
 
   parse: (xml) ->
     xml_sky    = $(xml).find('level info sky')
@@ -15,11 +16,12 @@ class Sky
     @offset    = parseFloat(xml_sky.attr('offset'))
 
     @name = 'sky1' if @name == ''
+    @file_name = @theme.texture_params(@name).file
 
     return this
 
   init: ->
-    @assets.textures.push(@name)
+    @assets.textures.push(@file_name)
 
   display: (ctx) ->
     ctx.beginPath()
@@ -32,6 +34,6 @@ class Sky
     ctx.save()
     ctx.scale(4.0, 4.0)
     ctx.translate(-@level.object_to_follow().position().x*4, @level.object_to_follow().position().y*2)
-    ctx.fillStyle = ctx.createPattern(@assets.get(@name), "repeat")
+    ctx.fillStyle = ctx.createPattern(@assets.get(@file_name), "repeat")
     ctx.fill()
     ctx.restore()

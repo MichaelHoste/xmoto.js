@@ -1,8 +1,12 @@
+b2Vec2 = Box2D.Common.Math.b2Vec2
+b2AABB = Box2D.Collision.b2AABB
+
 class Limits
 
   constructor: (level) ->
     @level  = level
     @assets = level.assets
+    @theme  = @assets.theme
 
   parse: (xml) ->
     xml_limits = $(xml).find('limits')
@@ -10,44 +14,47 @@ class Limits
     # CAREFUL ! The limits on files are not real, some polygons could
     # be in the limits (maybe it's the limits where the player can go)
 
-    @screen =
-      left:   parseFloat(xml_limits.attr('left'))   * 2
-      right:  parseFloat(xml_limits.attr('right'))  * 2
-      top:    parseFloat(xml_limits.attr('top'))    * 2
-      bottom: parseFloat(xml_limits.attr('bottom')) * 2
-
     @player =
       left:   parseFloat(xml_limits.attr('left'))
       right:  parseFloat(xml_limits.attr('right'))
       top:    parseFloat(xml_limits.attr('top'))
       bottom: parseFloat(xml_limits.attr('bottom'))
 
+    @screen =
+      left:   parseFloat(xml_limits.attr('left'))   - 20
+      right:  parseFloat(xml_limits.attr('right'))  + 20
+      top:    parseFloat(xml_limits.attr('top'))    + 20
+      bottom: parseFloat(xml_limits.attr('bottom')) - 20
+
     @size =
       x: @screen.right - @screen.left
       y: @screen.top   - @screen.bottom
+
+    @texture = 'dirt'
+    @texture_name = @theme.texture_params('dirt').file
 
     return this
 
   init: ->
     # Assets
-    @assets.textures.push('dirt')
+    @assets.textures.push(@texture_name)
 
     # Collisions with borders
 
     # Left
     vertices = []
-    vertices.push({ x: @screen.left, y: @screen.top * 5 })
+    vertices.push({ x: @screen.left, y: @screen.top })
     vertices.push({ x: @screen.left, y: @screen.bottom })
     vertices.push({ x: @player.left, y: @screen.bottom })
-    vertices.push({ x: @player.left, y: @screen.top * 5})
+    vertices.push({ x: @player.left, y: @screen.top })
     @level.physics.create_polygon(vertices, 'ground')
 
     # Right
     vertices = []
-    vertices.push({ x: @player.right, y: @screen.top * 5})
+    vertices.push({ x: @player.right, y: @screen.top })
     vertices.push({ x: @player.right, y: @screen.bottom })
     vertices.push({ x: @screen.right, y: @screen.bottom })
-    vertices.push({ x: @screen.right, y: @screen.top * 5})
+    vertices.push({ x: @screen.right, y: @screen.top })
     @level.physics.create_polygon(vertices, 'ground')
 
     # Bottom
@@ -111,7 +118,7 @@ class Limits
   save_apply_texture_and_restore: (ctx) ->
     ctx.save()
     ctx.scale(1.0 / 40.0, -1.0 / 40.0)
-    ctx.fillStyle = ctx.createPattern(@assets.get('dirt'), "repeat")
+    ctx.fillStyle = ctx.createPattern(@assets.get(@texture_name), "repeat")
     ctx.fill()
     ctx.restore()
 
