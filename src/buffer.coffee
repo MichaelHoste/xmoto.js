@@ -33,8 +33,8 @@ class Buffer
 
     if @visible
       moto = @level.object_to_follow()
-      return true if @visible.right < moto.position().x + (@level.canvas_width/2) / @scale.x
-      return true if @visible.left  > moto.position().x - (@level.canvas_width/2) / @scale.x
+      return true if @visible.right  < moto.position().x + (@level.canvas_width/2)  / @scale.x
+      return true if @visible.left   > moto.position().x - (@level.canvas_width/2)  / @scale.x
       return true if @visible.top    < moto.position().y - (@level.canvas_height/2) / @scale.y
       return true if @visible.bottom > moto.position().y + (@level.canvas_height/2) / @scale.y
 

@@ -75,45 +75,47 @@ class Limits
     @level.physics.create_polygon(vertices, 'ground')
 
   display: (ctx) ->
-    # Left border
-    ctx.beginPath()
-    ctx.moveTo(@screen.left, @screen.top   )
-    ctx.lineTo(@screen.left, @screen.bottom)
-    ctx.lineTo(@player.left, @screen.bottom)
-    ctx.lineTo(@player.left, @screen.top   )
-    ctx.closePath()
+    buffer = @level.buffer
 
-    @save_apply_texture_and_restore(ctx)
+    # Left border
+    if @player.left > buffer.visible.left
+      ctx.beginPath()
+      ctx.moveTo(@screen.left, @screen.top   )
+      ctx.lineTo(@screen.left, @screen.bottom)
+      ctx.lineTo(@player.left, @screen.bottom)
+      ctx.lineTo(@player.left, @screen.top   )
+      ctx.closePath()
+      @save_apply_texture_and_restore(ctx)
 
     # Right border
-    ctx.beginPath()
-    ctx.moveTo(@screen.right, @screen.top   )
-    ctx.lineTo(@screen.right, @screen.bottom)
-    ctx.lineTo(@player.right, @screen.bottom)
-    ctx.lineTo(@player.right, @screen.top   )
-    ctx.closePath()
-
-    @save_apply_texture_and_restore(ctx)
+    if @player.right < buffer.visible.right
+      ctx.beginPath()
+      ctx.moveTo(@screen.right, @screen.top   )
+      ctx.lineTo(@screen.right, @screen.bottom)
+      ctx.lineTo(@player.right, @screen.bottom)
+      ctx.lineTo(@player.right, @screen.top   )
+      ctx.closePath()
+      @save_apply_texture_and_restore(ctx)
 
     # Bottom border
-    ctx.beginPath()
-    ctx.moveTo(@player.right, @player.bottom)
-    ctx.lineTo(@player.left,  @player.bottom)
-    ctx.lineTo(@player.left,  @screen.bottom)
-    ctx.lineTo(@player.right, @screen.bottom)
-    ctx.closePath()
-
-    @save_apply_texture_and_restore(ctx)
+    if @player.bottom > buffer.visible.bottom
+      ctx.beginPath()
+      ctx.moveTo(@player.right, @player.bottom)
+      ctx.lineTo(@player.left,  @player.bottom)
+      ctx.lineTo(@player.left,  @screen.bottom)
+      ctx.lineTo(@player.right, @screen.bottom)
+      ctx.closePath()
+      @save_apply_texture_and_restore(ctx)
 
     # Top border
-    ctx.beginPath()
-    ctx.moveTo(@player.right, @screen.top)
-    ctx.lineTo(@player.left,  @screen.top)
-    ctx.lineTo(@player.left,  @player.top)
-    ctx.lineTo(@player.right, @player.top)
-    ctx.closePath()
-
-    @save_apply_texture_and_restore(ctx)
+    if @player.top < buffer.visible.top
+      ctx.beginPath()
+      ctx.moveTo(@player.right, @screen.top)
+      ctx.lineTo(@player.left,  @screen.top)
+      ctx.lineTo(@player.left,  @player.top)
+      ctx.lineTo(@player.right, @player.top)
+      ctx.closePath()
+      @save_apply_texture_and_restore(ctx)
 
   save_apply_texture_and_restore: (ctx) ->
     ctx.save()

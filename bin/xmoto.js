@@ -1623,34 +1623,44 @@
     };
 
     Limits.prototype.display = function(ctx) {
-      ctx.beginPath();
-      ctx.moveTo(this.screen.left, this.screen.top);
-      ctx.lineTo(this.screen.left, this.screen.bottom);
-      ctx.lineTo(this.player.left, this.screen.bottom);
-      ctx.lineTo(this.player.left, this.screen.top);
-      ctx.closePath();
-      this.save_apply_texture_and_restore(ctx);
-      ctx.beginPath();
-      ctx.moveTo(this.screen.right, this.screen.top);
-      ctx.lineTo(this.screen.right, this.screen.bottom);
-      ctx.lineTo(this.player.right, this.screen.bottom);
-      ctx.lineTo(this.player.right, this.screen.top);
-      ctx.closePath();
-      this.save_apply_texture_and_restore(ctx);
-      ctx.beginPath();
-      ctx.moveTo(this.player.right, this.player.bottom);
-      ctx.lineTo(this.player.left, this.player.bottom);
-      ctx.lineTo(this.player.left, this.screen.bottom);
-      ctx.lineTo(this.player.right, this.screen.bottom);
-      ctx.closePath();
-      this.save_apply_texture_and_restore(ctx);
-      ctx.beginPath();
-      ctx.moveTo(this.player.right, this.screen.top);
-      ctx.lineTo(this.player.left, this.screen.top);
-      ctx.lineTo(this.player.left, this.player.top);
-      ctx.lineTo(this.player.right, this.player.top);
-      ctx.closePath();
-      return this.save_apply_texture_and_restore(ctx);
+      var buffer;
+      buffer = this.level.buffer;
+      if (this.player.left > buffer.visible.left) {
+        ctx.beginPath();
+        ctx.moveTo(this.screen.left, this.screen.top);
+        ctx.lineTo(this.screen.left, this.screen.bottom);
+        ctx.lineTo(this.player.left, this.screen.bottom);
+        ctx.lineTo(this.player.left, this.screen.top);
+        ctx.closePath();
+        this.save_apply_texture_and_restore(ctx);
+      }
+      if (this.player.right < buffer.visible.right) {
+        ctx.beginPath();
+        ctx.moveTo(this.screen.right, this.screen.top);
+        ctx.lineTo(this.screen.right, this.screen.bottom);
+        ctx.lineTo(this.player.right, this.screen.bottom);
+        ctx.lineTo(this.player.right, this.screen.top);
+        ctx.closePath();
+        this.save_apply_texture_and_restore(ctx);
+      }
+      if (this.player.bottom > buffer.visible.bottom) {
+        ctx.beginPath();
+        ctx.moveTo(this.player.right, this.player.bottom);
+        ctx.lineTo(this.player.left, this.player.bottom);
+        ctx.lineTo(this.player.left, this.screen.bottom);
+        ctx.lineTo(this.player.right, this.screen.bottom);
+        ctx.closePath();
+        this.save_apply_texture_and_restore(ctx);
+      }
+      if (this.player.top < buffer.visible.top) {
+        ctx.beginPath();
+        ctx.moveTo(this.player.right, this.screen.top);
+        ctx.lineTo(this.player.left, this.screen.top);
+        ctx.lineTo(this.player.left, this.player.top);
+        ctx.lineTo(this.player.right, this.player.top);
+        ctx.closePath();
+        return this.save_apply_texture_and_restore(ctx);
+      }
     };
 
     Limits.prototype.save_apply_texture_and_restore = function(ctx) {
