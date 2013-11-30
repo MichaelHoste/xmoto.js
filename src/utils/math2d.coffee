@@ -6,21 +6,16 @@ class Math2D
     Math.sqrt(a+b)
 
   @angle_between_points: (point1, point2) ->
-    adj = point2.x - point1.x
-    opp = point2.y - point1.y
-
-    angle = Math.abs(Math.atan(opp/adj) * 180/Math.PI)
-
-    if adj > 0 && opp < 0
-      angle = 90 - angle
-    else if adj >= 0 && opp >= 0
-      angle += 90
-    else if adj < 0 && opp >= 0
-      angle = 180 + (90 - angle)
+    if point1.y-point2.y == 0
+      if point1.y > point2.y
+        return Math.PI/2
+      else
+        return -Math.PI/2
     else
-      angle += 270
-
-    angle * Math.PI / 180.0 # radians
+      if point1.y > point2.y
+        return -Math.atan((point1.x-point2.x)/(point1.y-point2.y))
+      else
+        return -Math.atan((point2.x-point1.x)/(point2.y-point1.y)) + Math.PI
 
   # Rotate point from angle around axe
   @rotate_point: (point, angle, rotation_axe) ->
