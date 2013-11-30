@@ -593,18 +593,22 @@
     };
 
     Level.prototype.update_timer = function(now) {
-      var minutes, new_time, seconds;
+      var cents, minutes, new_time, seconds;
       if (now == null) {
         now = false;
       }
       new_time = new Date().getTime() - this.start_time;
-      if (now || Math.floor(new_time / 1000) > Math.floor(this.current_time / 1000)) {
+      if (now || Math.floor(new_time / 10) > Math.floor(this.current_time / 10)) {
         minutes = Math.floor(new_time / 1000 / 60);
         seconds = Math.floor(new_time / 1000) % 60;
         if (seconds < 10) {
           seconds = "0" + seconds;
         }
-        $("#chrono").text("" + minutes + ":" + seconds);
+        cents = Math.floor(new_time / 10) % 100;
+        if (cents < 10) {
+          cents = "0" + cents;
+        }
+        $("#chrono").text("" + minutes + ":" + seconds + ":" + cents);
       }
       return this.current_time = new_time;
     };

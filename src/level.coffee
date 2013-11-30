@@ -132,11 +132,13 @@ class Level
   update_timer: (now = false) ->
     new_time = new Date().getTime() - @start_time
 
-    if now or Math.floor(new_time/1000) > Math.floor(@current_time/1000)
+    if now or Math.floor(new_time/10) > Math.floor(@current_time/10)
       minutes = Math.floor(new_time / 1000 / 60)
       seconds = Math.floor(new_time / 1000) % 60
       seconds = "0#{seconds}" if seconds < 10
-      $("#chrono").text("#{minutes}:#{seconds}")
+      cents   = Math.floor(new_time / 10) % 100
+      cents   = "0#{cents}" if cents < 10
+      $("#chrono").text("#{minutes}:#{seconds}:#{cents}")
 
     @current_time = new_time
 
