@@ -7,6 +7,7 @@ class Entities
     @assets       = level.assets
     @list         = []
     @strawberries = []
+    @wreckers     = []
 
   parse: (xml) ->
     xml_entities = $(xml).find('entity')
@@ -31,14 +32,17 @@ class Entities
       for xml_param in xml_params
         param =
           name:  $(xml_param).attr('name')
-          value: $(xml_param).attr('value').toLowerCase()
+          value: $(xml_param).attr('value')
         entity.params.push(param)
 
       # Get default values for sprite from theme
-      texture_name = entity_texture_name(entity)
+      texture_name = @entity_texture_name(entity)
       if texture_name
         sprite = @assets.theme.sprite_params(texture_name)
 
+        entity.file        = sprite.file
+        entity.file_base   = sprite.file_base
+        entity.file_ext    = sprite.file_ext
         entity.size.width  = sprite.size.width  if not entity.size.width
         entity.size.height = sprite.size.height if not entity.size.height
         entity.center =
@@ -46,6 +50,14 @@ class Entities
           y: sprite.center.y
         entity.center.x = entity.size.width/2  if not entity.center.x
         entity.center.y = entity.size.height/2 if not entity.center.y
+
+        # no size informations into the theme or into the level
+        entity.size.width  = 2*entity.size.r   if not entity.size.width
+        entity.size.height = 2*entity.size.r   if not entity.size.height
+        entity.center.x    = entity.size.r     if not entity.center.x
+        entity.center.y    = entity.size.r     if not entity.center.y
+
+
         entity.delay    = sprite.delay
         entity.frames   = sprite.frames
         entity.display  = true # if an entity has a texture, it needs to be displayed
@@ -59,14 +71,12 @@ class Entities
   init: ->
     for entity in @list
 
-      texture_name = entity_texture_name(entity)
-
-      if texture_name
+      if entity.display
         if entity.frames == 0
-          @assets.anims.push(texture_name)
+          @assets.anims.push(entity.file)
         else
           for i in [0..entity.frames-1]
-            @assets.anims.push(frame_name(texture_name, i))
+            @assets.anims.push(frame_name(entity, i))
 
       # End of level
       if entity.type_id == 'EndOfLevel'
@@ -77,6 +87,10 @@ class Entities
       else if entity.type_id == 'Strawberry'
         @create_entity(entity, 'strawberry')
         @strawberries.push(entity)
+
+      else if entity.type_id == 'Wrecker'
+        @create_entity(entity, 'wrecker')
+        @wreckers.push(entity)
 
       # Player start
       else if entity.type_id == 'PlayerStart'
@@ -117,17 +131,19 @@ class Entities
 
   display_items: (ctx) ->
     for entity in @list
-      if entity.type_id == 'EndOfLevel' or entity.type_id == "Strawberry"
+      if entity.type_id == 'EndOfLevel' or entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
         if visible_entity(@level.visible, entity)
           @display_entity(ctx, entity)
 
   display_entity: (ctx, entity) ->
     if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
-      texture_name = entity_texture_name(entity)
+
       if entity.frames
         num = @level.current_time % (entity.frames * entity.delay * 1000)
         num = Math.floor(num / (entity.delay * 1000))
-        texture_name = frame_name(texture_name, num) if entity.frames
+        texture_name = frame_name(entity, num)
+      else
+        texture_name = entity.file
 
       ctx.save()
       ctx.translate(entity.position.x, entity.position.y)
@@ -137,7 +153,6 @@ class Entities
                     -entity.size.height + entity.center.y,
                     entity.size.width,
                     entity.size.height)
-
       ctx.restore()
 
     if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
@@ -149,18 +164,18 @@ class Entities
                      entity.size.r, 0, 2*Math.PI)
       @level.ctx.stroke()
 
-entity_texture_name = (entity) ->
-  if entity.type_id == 'Sprite'
-    for param in entity.params
-      if param.name == 'name'
-        return param.value
-  else if entity.type_id == 'EndOfLevel'
-    return 'checkball'
-  else if entity.type_id == 'Strawberry'
-    return 'cog2'
+  entity_texture_name: (entity) ->
+    if entity.type_id == 'Sprite'
+      for param in entity.params
+        if param.name == 'name'
+          return param.value
+    else if entity.type_id == 'EndOfLevel'
+      return 'Flower'
+    else if entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
+      return entity.type_id
 
-frame_name = (texture_name, frame_number) ->
-  "#{texture_name}_" + (frame_number/100.0).toFixed(2).toString().substring(2)
+frame_name = (entity, frame_number) ->
+  "#{entity.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{entity.file_ext}"
 
 entity_AABB = (entity) ->
   lower_bound = {}

@@ -29,18 +29,25 @@ class Listeners
             @level.need_to_restart = true
 
         # Fall of rider
-        else if a == 'rider' and b == 'ground'
-          moto.dead = true
+        else if (a == 'rider' and b == 'ground')
+          @kill_moto()
 
-          createjs.Sound.play('Headcrash')
-
-          @level.world.DestroyJoint(moto.rider.ankle_joint)
-          @level.world.DestroyJoint(moto.rider.wrist_joint)
-
-          moto.rider.knee_joint.m_lowerAngle     = moto.rider.knee_joint.m_lowerAngle     * 1.5
-          moto.rider.elbow_joint.m_upperAngle    = moto.rider.elbow_joint.m_upperAngle    * 1.5
-          moto.rider.shoulder_joint.m_upperAngle = moto.rider.shoulder_joint.m_upperAngle * 1.5
-          moto.rider.hip_joint.m_lowerAngle      = moto.rider.hip_joint.m_lowerAngle      * 1.5
+        # Wrecker contact
+        else if (a == 'rider' and b == 'wrecker') or (a == 'moto' and b == 'wrecker')
+          @kill_moto()
 
     @level.world.SetContactListener(listener)
 
+  kill_moto: ->
+    moto = @level.moto
+    moto.dead = true
+
+    createjs.Sound.play('Headcrash')
+
+    @level.world.DestroyJoint(moto.rider.ankle_joint)
+    @level.world.DestroyJoint(moto.rider.wrist_joint)
+
+    moto.rider.knee_joint.m_lowerAngle     = moto.rider.knee_joint.m_lowerAngle     * 1.5
+    moto.rider.elbow_joint.m_upperAngle    = moto.rider.elbow_joint.m_upperAngle    * 1.5
+    moto.rider.shoulder_joint.m_upperAngle = moto.rider.shoulder_joint.m_upperAngle * 1.5
+    moto.rider.hip_joint.m_lowerAngle      = moto.rider.hip_joint.m_lowerAngle      * 1.5

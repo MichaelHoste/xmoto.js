@@ -15,7 +15,8 @@ class Edges
     for block in @blocks
       for vertex in block.vertices
         if vertex.edge
-          @assets.effects.push(@theme.edge_params(vertex.edge).file)
+          texture_file = @theme.edge_params(vertex.edge).file
+          @assets.effects.push(texture_file)
 
     # Create edges
     for block in @blocks

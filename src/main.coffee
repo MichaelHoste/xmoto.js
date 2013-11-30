@@ -1,17 +1,17 @@
 play_level = (name) ->
   level = new Level()
-  level.pause()
+  #level.pause()
 
   #level.load_from_file(name)
 
-  #level.load_from_file("l1.lvl")
+  level.load_from_file("l1.lvl")
   #level.load_as_replay("replay_1383574.rpl")
 
   #level.load_from_file("l2813.lvl")
   #level.load_as_replay("credits.rpl")
 
-  level.load_from_file("l24.lvl")
-  level.load_as_replay("replay_1436520.rpl")
+  #level.load_from_file("l24.lvl")
+  #level.load_as_replay("replay_1436520.rpl")
 
   # Load assets for this level before doing anything else
   level.assets.load( ->
@@ -19,6 +19,8 @@ play_level = (name) ->
 
     last_step    = new Date().getTime()
     physics_step = 1000.0/60.0
+
+    window.cancelAnimationFrame(window.game_loop)
 
     update_physics = ->
       while (new Date()).getTime() - last_step > physics_step
@@ -31,7 +33,7 @@ play_level = (name) ->
       if level.is_paused() == false
         update_physics()
         level.display(false)
-      window.requestAnimationFrame(update)
+      window.game_loop = window.requestAnimationFrame(update)
 
     update()
 
@@ -41,10 +43,10 @@ play_level = (name) ->
   )
 
 show_loading = ->
-  $(".xmoto-loading").show()
+  $("#loading").show()
 
 hide_loading = ->
-  $(".xmoto-loading").hide()
+  $("#loading").hide()
 
 full_screen = ->
   window.onresize = ->
@@ -52,13 +54,23 @@ full_screen = ->
     $("#game").height($("body").height())
   window.onresize()
 
-$ ->
-  play_level($("#levels option:selected").val())
-  
+bind_select = ->
   $("#levels").on('change', ->
     show_loading()
-    clearInterval(window.game_loop)
     play_level($(this).val())
   )
+
+select_level_from_url = ->
+  level = location.search.substr(1)
+  $("#levels").val(level)
+  $("#levels").trigger("change")
+
+$ ->
+  bind_select()
+
+  if location.search != ''
+    select_level_from_url()
+  else
+    play_level($("#levels option:selected").val())
 
   #full_screen()

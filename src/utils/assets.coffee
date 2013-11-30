@@ -2,7 +2,7 @@ class Assets
 
   constructor: ->
     @queue    = new createjs.LoadQueue()
-    @theme    = new Theme('modern.xml')
+    @theme    = new Theme('modern.xml') # or "original.xml"
 
     @textures = [] # texture list
     @anims    = [] # anim list
@@ -16,22 +16,22 @@ class Assets
     for item in @textures
       items.push(
         id:  item
-        src: "data/Textures/Textures/#{item}.jpg"
+        src: "data/Textures/Textures/#{item.toLowerCase()}"
       )
     for item in @anims
       items.push(
-        id:   item
-        src:  "data/Textures/Anims/#{item}.png"
+        id:  item
+        src: "data/Textures/Anims/#{item.toLowerCase()}"
       )
     for item in @effects
       items.push(
         id:  item
-        src: "data/Textures/Effects/#{item}" # In /Effects/, we can find png AND jpg. The extension is on the modern.xml file
+        src: "data/Textures/Effects/#{item.toLowerCase()}"
       )
     for item in @moto
       items.push(
         id:  item
-        src: "data/Textures/Riders/#{item}.png"
+        src: "data/Textures/Riders/#{item.toLowerCase()}.png"
       )
 
     createjs.Sound.registerSound(
