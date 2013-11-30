@@ -583,6 +583,7 @@
       this.moto.display(this.ctx);
       if (this.ghost) {
         this.ghost.display(this.ctx);
+        this.ghost.next_state();
       }
       if (debug) {
         this.world.DrawDebugData();
@@ -661,6 +662,12 @@
         _results.push(entity.display = true);
       }
       return _results;
+    };
+
+    Level.prototype.gameTime = function() {
+      var current_time;
+      current_time = new Date().getTime();
+      return (current_time - this.start_time) / 10;
     };
 
     Level.prototype.object_to_follow = function() {
@@ -1792,8 +1799,30 @@
         this.frame = this.replay.frame(this.current_frame);
         this.mirror = this.frame.mirror ? -1 : 1;
         Rider.display_rider(this.mirror, this.frame.anchors.wrist, this.frame.anchors.elbow, this.frame.anchors.shoulder, this.frame.anchors.hip, this.frame.anchors.knee, this.frame.anchors.ankle, this.level.ctx, this.level.assets, this.rider_style, this.level.get_render_mode());
-        Moto.display_moto(this.mirror, this.frame.left_wheel.position, this.frame.left_wheel.angle, this.frame.right_wheel.position, this.frame.right_wheel.angle, this.frame.body.position, this.frame.body.angle, this.level.ctx, this.level.assets, this.rider_style, this.level.get_render_mode());
-        return this.current_frame = this.current_frame + 1;
+        return Moto.display_moto(this.mirror, this.frame.left_wheel.position, this.frame.left_wheel.angle, this.frame.right_wheel.position, this.frame.right_wheel.angle, this.frame.body.position, this.frame.body.angle, this.level.ctx, this.level.assets, this.rider_style, this.level.get_render_mode());
+      }
+    };
+
+    Ghost.prototype.next_state = function() {
+      var find_next_frame, gameTime, next_current_frame, next_current_frame_n, _results;
+      if (this.replay) {
+        gameTime = this.level.gameTime();
+        find_next_frame = true;
+        _results = [];
+        while (find_next_frame) {
+          if (this.current_frame >= this.replay.frames_count() - 1) {
+            _results.push(find_next_frame = false);
+          } else {
+            next_current_frame_n = this.current_frame + 1;
+            next_current_frame = this.replay.frame(next_current_frame_n);
+            if (next_current_frame.gameTime * 100 >= gameTime) {
+              _results.push(find_next_frame = false);
+            } else {
+              _results.push(this.current_frame = next_current_frame_n);
+            }
+          }
+        }
+        return _results;
       }
     };
 
@@ -2146,6 +2175,7 @@
       moto = this.level.moto;
       rider = this.level.moto.rider;
       frame = {
+        gameTime: this.level.gameTime() / 100.0,
         mirror: this.level.moto.mirror === -1,
         left_wheel: position_2d(moto.left_wheel),
         right_wheel: position_2d(moto.right_wheel),

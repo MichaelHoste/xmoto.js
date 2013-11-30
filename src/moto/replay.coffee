@@ -15,6 +15,7 @@ class Replay
     rider  = @level.moto.rider
 
     frame =
+      gameTime:    @level.gameTime() / 100.0 # time in seconds
       mirror    :  @level.moto.mirror == -1 # true if moto is reversed
       left_wheel:  position_2d(moto.left_wheel)
       right_wheel: position_2d(moto.right_wheel)

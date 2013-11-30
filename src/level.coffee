@@ -118,7 +118,9 @@ class Level
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
     @entities.display_items(@ctx)
     @moto    .display(@ctx)
-    @ghost   .display(@ctx) if @ghost
+    if @ghost
+      @ghost.display(@ctx)
+      @ghost.next_state()
 
     @world.DrawDebugData() if debug
 
@@ -174,6 +176,11 @@ class Level
 
     for entity in @entities.strawberries
       entity.display = true
+
+  # time, in centiseconds
+  gameTime: ->
+    current_time = new Date().getTime()
+    (current_time - @start_time) / 10
 
   object_to_follow: ->
     @moto
