@@ -451,7 +451,7 @@
     };
 
     Input.prototype.init_zoom = function() {
-      var canvas, scroll,
+      var canvas, mouse_down, scroll,
         _this = this;
       scroll = function(event) {
         var delta;
@@ -478,9 +478,15 @@
         }
         return event.preventDefault() && false;
       };
+      mouse_down = function(event) {
+        if (_this.level.mode() === "replay") {
+          return _this.level.pause();
+        }
+      };
       canvas = $('#game').get(0);
       canvas.addEventListener('DOMMouseScroll', scroll, false);
-      return canvas.addEventListener('mousewheel', scroll, false);
+      canvas.addEventListener('mousewheel', scroll, false);
+      return canvas.addEventListener('mousedown', mouse_down, false);
     };
 
     Input.prototype.move = function() {
@@ -589,7 +595,8 @@
       this.input.init();
       this.listeners.init();
       this.start_time = new Date().getTime();
-      return this.current_time = 0;
+      this.current_time = 0;
+      return this.pause_begin = this.start_time;
     };
 
     Level.prototype.get_render_mode = function() {
@@ -719,6 +726,7 @@
       }
       this.start_time = new Date().getTime();
       this.current_time = 0;
+      this.pause_begin = this.start_time;
       this.update_timer(true);
       _ref = this.entities.strawberries;
       _results = [];
@@ -744,30 +752,38 @@
 
     Level.prototype.rewind = function(x) {
       var current_time;
-      current_time = new Date().getTime();
-      this.start_time += 1000 * x;
-      if (this.start_time > current_time) {
-        this.start_time = current_time;
-      }
-      this.update_timer(true);
-      if (this.replayPlayer) {
-        return this.replayPlayer.rewind(x);
+      if (!this.paused) {
+        this.start_time += 1000 * x;
+        current_time = new Date().getTime();
+        if (this.start_time > current_time) {
+          this.start_time = current_time;
+        }
+        this.update_timer(true);
+        if (this.replayPlayer) {
+          return this.replayPlayer.rewind(x);
+        }
       }
     };
 
     Level.prototype.forward = function(x) {
-      this.start_time -= 1000 * x;
-      this.update_timer(true);
-      if (this.replayPlayer) {
-        this.replayPlayer.current_frame += x;
-        if (this.replayPlayer.current_frame > this.replayPlayer.replay.frames_count() - 1) {
-          return this.replayPlayer.current_frame = this.replayPlayer.replay.frames_count() - 1;
+      if (!this.paused) {
+        this.start_time -= 1000 * x;
+        this.update_timer(true);
+        if (this.replayPlayer) {
+          return this.replayPlayer.rewind(x);
         }
       }
     };
 
     Level.prototype.pause = function() {
-      return this.paused = !this.paused;
+      var current_time;
+      this.paused = !this.paused;
+      if (this.paused) {
+        return this.pause_begin = new Date().getTime();
+      } else {
+        current_time = new Date().getTime();
+        return this.start_time += current_time - this.pause_begin;
+      }
     };
 
     Level.prototype.is_paused = function() {
@@ -836,6 +852,7 @@
   play_level = function(name) {
     var level;
     level = new Level();
+    level.pause();
     level.load_from_file("l24.lvl");
     level.load_as_replay("replay_1436520.rpl");
     return level.assets.load(function() {
@@ -862,7 +879,8 @@
         return window.requestAnimationFrame(update);
       };
       update();
-      return hide_loading();
+      hide_loading();
+      return level.display(false);
     });
   };
 
@@ -1827,6 +1845,10 @@
 
     Ghost.prototype.rewind = function(x) {
       this.current_frame = 0;
+      return this.next_state();
+    };
+
+    Ghost.prototype.forward = function(x) {
       return this.next_state();
     };
 

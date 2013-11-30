@@ -1,5 +1,7 @@
 play_level = (name) ->
   level = new Level()
+  level.pause()
+
   #level.load_from_file(name)
 
   #level.load_from_file("l1.lvl")
@@ -34,6 +36,8 @@ play_level = (name) ->
     update()
 
     hide_loading()
+    # display at least one time the buffer in case the level is started in pause mode
+    level.display(false)
   )
 
 show_loading = ->

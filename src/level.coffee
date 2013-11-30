@@ -89,6 +89,7 @@ class Level
 
     @start_time   = new Date().getTime()
     @current_time = 0
+    @pause_begin = @start_time
 
   get_render_mode: ->
     @render_mode
@@ -192,6 +193,7 @@ class Level
 
     @start_time   = new Date().getTime()
     @current_time = 0
+    @pause_begin  = @start_time
     @update_timer(true)
 
     for entity in @entities.strawberries
@@ -207,22 +209,28 @@ class Level
     (current_time - @start_time) / 10
 
   rewind: (x) ->
-    current_time = new Date().getTime()
-    @start_time += 1000 * x
-    @start_time = current_time if @start_time > current_time
-    @update_timer(true)
-    if @replayPlayer
-      @replayPlayer.rewind(x)
+    if not @paused # don't change during the pause for the moment
+      @start_time += 1000 * x
+      current_time = new Date().getTime()
+      @start_time = current_time if @start_time > current_time
+      @update_timer(true)
+      if @replayPlayer
+        @replayPlayer.rewind(x)
 
   forward: (x) ->
-    @start_time -= 1000 * x
-    @update_timer(true)
-    if @replayPlayer
-      @replayPlayer.current_frame += x
-      @replayPlayer.current_frame = @replayPlayer.replay.frames_count()-1 if @replayPlayer.current_frame > @replayPlayer.replay.frames_count()-1
+    if not @paused # don't change during the pause for the moment
+      @start_time -= 1000 * x
+      @update_timer(true)
+      if @replayPlayer
+        @replayPlayer.rewind(x)
 
   pause: ->
     @paused = not @paused
+    if @paused
+      @pause_begin = new Date().getTime()
+    else
+      current_time = new Date().getTime()
+      @start_time += current_time - @pause_begin
 
   is_paused: ->
     @paused

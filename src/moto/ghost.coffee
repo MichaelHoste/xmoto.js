@@ -33,6 +33,9 @@ class Ghost
     @current_frame = 0
     @next_state() # find the next correct state
 
+  forward: (x) ->
+    @next_state() # find the next correct state
+
   next_state: ->
     if @replay
       gameTime = @level.gameTime()

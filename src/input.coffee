@@ -96,9 +96,14 @@ class Input
 
       return event.preventDefault() && false
 
+    mouse_down = (event) =>
+      if @level.mode() == "replay"
+        @level.pause()
+
     canvas = $('#game').get(0)
     canvas.addEventListener('DOMMouseScroll', scroll, false)
     canvas.addEventListener('mousewheel',     scroll, false)
+    canvas.addEventListener('mousedown',      mouse_down, false)
 
   move: ->
     force = 24.1
