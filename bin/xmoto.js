@@ -421,7 +421,7 @@
         if (event.wheelDelta) {
           delta = event.wheelDelta / 40;
         } else if (event.detail) {
-          delta = event.detail;
+          delta = -event.detail;
         } else {
           delta = 0;
         }
