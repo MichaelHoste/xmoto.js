@@ -84,9 +84,10 @@ class Moto
     fixDef.density     = Constants.body.density
     fixDef.restitution = Constants.body.restitution
     fixDef.friction    = Constants.body.friction
+    fixDef.isSensor    = not Constants.body.collisions
     fixDef.filter.groupIndex = -1
 
-    Physics.create_shape(fixDef, Constants.body.collision_box, @mirror == -1)
+    Physics.create_shape(fixDef, Constants.body.shape, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
@@ -114,6 +115,7 @@ class Moto
     fixDef.density     = Constants.wheels.density
     fixDef.restitution = Constants.wheels.restitution
     fixDef.friction    = Constants.wheels.friction
+    fixDef.isSensor    = not Constants.wheels.collisions
     fixDef.filter.groupIndex = -1
 
     # Create body
@@ -142,9 +144,10 @@ class Moto
     fixDef.density     = Constants.left_axle.density
     fixDef.restitution = Constants.left_axle.restitution
     fixDef.friction    = Constants.left_axle.friction
+    fixDef.isSensor    = not Constants.left_axle.collisions
     fixDef.filter.groupIndex = -1
 
-    Physics.create_shape(fixDef, Constants.left_axle.collision_box, @mirror == -1)
+    Physics.create_shape(fixDef, Constants.left_axle.shape, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
@@ -172,9 +175,10 @@ class Moto
     fixDef.density     = Constants.right_axle.density
     fixDef.restitution = Constants.right_axle.restitution
     fixDef.friction    = Constants.right_axle.friction
+    fixDef.isSensor    = not Constants.right_axle.collisions
     fixDef.filter.groupIndex = -1
 
-    Physics.create_shape(fixDef, Constants.right_axle.collision_box, @mirror == -1)
+    Physics.create_shape(fixDef, Constants.right_axle.shape, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()

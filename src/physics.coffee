@@ -102,14 +102,14 @@ class Physics
       # Assign fixture (line) to body
       body.CreateFixture(fixDef)
 
-  @create_shape: (fix_def, collision_box, mirror = false) ->
+  @create_shape: (fix_def, shape, mirror = false) ->
     b2vertices = []
 
     if mirror == false
-      for vertex in collision_box
+      for vertex in shape
         b2vertices.push(new b2Vec2(vertex.x, vertex.y))
     else
-      for vertex in collision_box
+      for vertex in shape
         b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y))
 
     fix_def.shape.SetAsArray(b2vertices)
