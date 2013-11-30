@@ -16,22 +16,22 @@ class Assets
     for item in @textures
       items.push(
         id:  item
-        src: "data/Textures/Textures/#{item}"
+        src: "data/Textures/Textures/#{item.toLowerCase()}"
       )
     for item in @anims
       items.push(
         id:  item
-        src: "data/Textures/Anims/#{item}"
+        src: "data/Textures/Anims/#{item.toLowerCase()}"
       )
     for item in @effects
       items.push(
         id:  item
-        src: "data/Textures/Effects/#{item}"
+        src: "data/Textures/Effects/#{item.toLowerCase()}"
       )
     for item in @moto
       items.push(
         id:  item
-        src: "data/Textures/Riders/#{item}.png"
+        src: "data/Textures/Riders/#{item.toLowerCase()}.png"
       )
 
     createjs.Sound.registerSound(

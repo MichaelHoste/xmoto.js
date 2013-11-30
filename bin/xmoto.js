@@ -2619,7 +2619,7 @@
         item = _ref[_i];
         items.push({
           id: item,
-          src: "data/Textures/Textures/" + item
+          src: "data/Textures/Textures/" + (item.toLowerCase())
         });
       }
       _ref1 = this.anims;
@@ -2627,7 +2627,7 @@
         item = _ref1[_j];
         items.push({
           id: item,
-          src: "data/Textures/Anims/" + item
+          src: "data/Textures/Anims/" + (item.toLowerCase())
         });
       }
       _ref2 = this.effects;
@@ -2635,7 +2635,7 @@
         item = _ref2[_k];
         items.push({
           id: item,
-          src: "data/Textures/Effects/" + item
+          src: "data/Textures/Effects/" + (item.toLowerCase())
         });
       }
       _ref3 = this.moto;
@@ -2643,7 +2643,7 @@
         item = _ref3[_l];
         items.push({
           id: item,
-          src: "data/Textures/Riders/" + item + ".png"
+          src: "data/Textures/Riders/" + (item.toLowerCase()) + ".png"
         });
       }
       createjs.Sound.registerSound({
