@@ -22,6 +22,7 @@ class Constants
     collisions: true
 
   @wheels =
+    radius:      0.35
     density:     2.0
     restitution: 0.5
     friction:    1.3

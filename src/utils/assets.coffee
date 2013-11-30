@@ -73,3 +73,30 @@ class Assets
       unique.push(image) if not found
     unique
 
+  get_rider_style: (style) ->
+    if style == "ghost"
+      new_style =
+        torso:    "ghosttorso"
+        upperleg: "ghostupperleg"
+        lowerleg: "ghostlowerleg"
+        upperarm: "ghostupperarm"
+        lowerarm: "ghostlowerarm"
+        body:     "ghostbikerbody"
+        wheel:    "ghostbikerwheel"
+        front:    "front_ghost"
+        rear:     "rear_ghost"
+      return new_style
+    if style == "player"
+      new_style =
+        torso:    "playertorso"
+        upperleg: "playerupperleg"
+        lowerleg: "playerlowerleg"
+        upperarm: "playerupperarm"
+        lowerarm: "playerlowerarm"
+        body:     "playerbikerbody"
+        wheel:    "playerbikerwheel"
+        front:    "front1"
+        rear:     "rear1"
+      return new_style
+
+
