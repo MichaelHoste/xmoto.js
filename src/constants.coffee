@@ -15,9 +15,9 @@ class Constants
     position:
       x: 0.0
       y: 1.0
-    collision_box: [ new b2Vec2( 0.4, -0.3)
-                     new b2Vec2( 0.56,  0.45)
-                     new b2Vec2(-0.83,  0.2)
+    collision_box: [ new b2Vec2( 0.4,  -0.3)
+                     new b2Vec2( 0.50,  0.40)
+                     new b2Vec2(-0.75,  0.16)
                      new b2Vec2(-0.35, -0.3) ]
 
   @wheels =
