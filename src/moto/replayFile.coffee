@@ -145,6 +145,7 @@ class ReplayFile
         sensmult = 1
 
       frame =
+        gameTime: gameTime
         mirror: flags == 1
         left_wheel:
           position:

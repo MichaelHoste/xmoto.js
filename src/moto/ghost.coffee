@@ -29,10 +29,26 @@ class Ghost
                         @frame.body.angle
                         @level.ctx, @level.assets, @rider_style, @level.get_render_mode())
 
+  rewind: (x) ->
+    @current_frame = 0
+    @next_state() # find the next correct state
+
   next_state: ->
     if @replay
-      if @current_frame < @replay.frames_count()-1
-        @current_frame = @current_frame + 1
+      gameTime = @level.gameTime()
+      find_next_frame = true
+      while find_next_frame
+        # if no more frame, don't continue
+        if @current_frame >= @replay.frames_count()-1
+          find_next_frame = false
+        else
+          next_current_frame_n = @current_frame + 1
+          next_current_frame   = @replay.frame(next_current_frame_n)
+          # next frame is in the future, don't continue
+          if next_current_frame.gameTime*100 >= gameTime
+            find_next_frame = false
+          else
+            @current_frame = next_current_frame_n
 
   init: ->
     # Assets

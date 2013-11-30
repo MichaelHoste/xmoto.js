@@ -40,12 +40,12 @@ class Input
           if @level.mode() == "play"
             @left = true
           else if @level.mode() == "replay"
-            @level.rewind(30)
+            @level.rewind(5)
         when 39
           if @level.mode() == "play"
             @right = true
           else if @level.mode() == "replay"
-            @level.forward(30)
+            @level.forward(5)
         when 13
           @level.restart()
         when 32

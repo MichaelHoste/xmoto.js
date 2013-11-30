@@ -7,7 +7,7 @@ class Level
     # Context
     @canvas = $('#game').get(0)
     @ctx    = @canvas.getContext('2d')
-    @render_mode = "uglyOver" # normal / ugly / uglyOver
+    @render_mode = "normal" # normal / ugly / uglyOver
 
     # level unities * scale = pixels
     @scale =
@@ -107,7 +107,7 @@ class Level
 
     @init_canvas() if not @canvas_width
 
-    @update_timer()
+    @update_timer() if not @paused
 
     # visible screen limits of the world (don't show anything outside of these limits)
     @compute_visibility()
@@ -148,11 +148,13 @@ class Level
   update_timer: (now = false) ->
     new_time = new Date().getTime() - @start_time
 
-    if now or Math.floor(new_time/1000) > Math.floor(@current_time/1000)
+    if now or Math.floor(new_time/10) > Math.floor(@current_time/10)
       minutes = Math.floor(new_time / 1000 / 60)
       seconds = Math.floor(new_time / 1000) % 60
       seconds = "0#{seconds}" if seconds < 10
-      $("#chrono").text("#{minutes}:#{seconds}")
+      cents   = Math.floor(new_time / 10) % 100
+      cents   = "0#{cents}" if cents < 10
+      $("#chrono").text("#{minutes}:#{seconds}:#{cents}")
 
     @current_time = new_time
 
@@ -199,19 +201,31 @@ class Level
     return "replay" if @replayPlayer
     "play"
 
+  # time, in centiseconds
+  gameTime: ->
+    current_time = new Date().getTime()
+    (current_time - @start_time) / 10
+
   rewind: (x) ->
+    current_time = new Date().getTime()
+    @start_time += 1000 * x
+    @start_time = current_time if @start_time > current_time
+    @update_timer(true)
     if @replayPlayer
-      @replayPlayer.current_frame -= x
-      if @replayPlayer.current_frame < 0
-        @replayPlayer.current_frame = 0
+      @replayPlayer.rewind(x)
 
   forward: (x) ->
+    @start_time -= 1000 * x
+    @update_timer(true)
     if @replayPlayer
       @replayPlayer.current_frame += x
       @replayPlayer.current_frame = @replayPlayer.replay.frames_count()-1 if @replayPlayer.current_frame > @replayPlayer.replay.frames_count()-1
 
   pause: ->
     @paused = not @paused
+
+  is_paused: ->
+    @paused
 
   object_to_follow: ->
     return @replayPlayer if @mode() == "replay"
