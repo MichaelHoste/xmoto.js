@@ -297,13 +297,6 @@
       }
     };
 
-    Constants.neck = {
-      axe_position: {
-        x: 0.0,
-        y: 0.0
-      }
-    };
-
     return Constants;
 
   })();
@@ -2468,8 +2461,8 @@
       var axe, jointDef, position;
       position = this.head.GetWorldCenter();
       axe = {
-        x: position.x + this.mirror * Constants.neck.axe_position.x,
-        y: position.y + Constants.neck.axe_position.y
+        x: position.x,
+        y: position.y
       };
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.head, this.torso, axe);
@@ -2807,7 +2800,7 @@
     function MotoFlip() {}
 
     MotoFlip.execute = function(moto) {
-      var body, left_axle, left_wheel, level, lower_arm, lower_leg, mirror, right_axle, right_wheel, torso, upper_arm, upper_leg;
+      var body, head, left_axle, left_wheel, level, lower_arm, lower_leg, mirror, right_axle, right_wheel, torso, upper_arm, upper_leg;
       body = {
         position: moto.body.GetPosition(),
         angle: moto.body.GetAngle(),
@@ -2837,6 +2830,12 @@
         angle: moto.right_axle.GetAngle(),
         linear: moto.right_axle.GetLinearVelocity(),
         angular: moto.right_axle.GetAngularVelocity()
+      };
+      head = {
+        position: moto.rider.head.GetPosition(),
+        angle: moto.rider.head.GetAngle(),
+        linear: moto.rider.head.GetLinearVelocity(),
+        angular: moto.rider.head.GetAngularVelocity()
       };
       torso = {
         position: moto.rider.torso.GetPosition(),
@@ -2893,6 +2892,10 @@
       moto.right_axle.SetAngle(right_axle.angle);
       moto.right_axle.SetLinearVelocity(right_axle.linear);
       moto.right_axle.SetAngularVelocity(right_axle.angular);
+      moto.rider.head.SetPosition(head.position);
+      moto.rider.head.SetAngle(head.angle);
+      moto.rider.head.SetLinearVelocity(head.linear);
+      moto.rider.head.SetAngularVelocity(head.angular);
       moto.rider.torso.SetPosition(torso.position);
       moto.rider.torso.SetAngle(torso.angle);
       moto.rider.torso.SetLinearVelocity(torso.linear);
