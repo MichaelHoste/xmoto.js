@@ -88,7 +88,7 @@ class Moto
     fixDef.density     = Constants.body.density
     fixDef.restitution = Constants.body.restitution
     fixDef.friction    = Constants.body.friction
-    fixDef.isSensor    = not Constants.body.collisions
+    fixDef.isSensor    = !Constants.body.collisions
     fixDef.filter.groupIndex = -1
 
     Physics.create_shape(fixDef, Constants.body.shape, @mirror == -1)
@@ -119,7 +119,7 @@ class Moto
     fixDef.density     = Constants.wheels.density
     fixDef.restitution = Constants.wheels.restitution
     fixDef.friction    = Constants.wheels.friction
-    fixDef.isSensor    = not Constants.wheels.collisions
+    fixDef.isSensor    = !Constants.wheels.collisions
     fixDef.filter.groupIndex = -1
 
     # Create body
@@ -148,7 +148,7 @@ class Moto
     fixDef.density     = Constants.left_axle.density
     fixDef.restitution = Constants.left_axle.restitution
     fixDef.friction    = Constants.left_axle.friction
-    fixDef.isSensor    = not Constants.left_axle.collisions
+    fixDef.isSensor    = !Constants.left_axle.collisions
     fixDef.filter.groupIndex = -1
 
     Physics.create_shape(fixDef, Constants.left_axle.shape, @mirror == -1)
@@ -179,7 +179,7 @@ class Moto
     fixDef.density     = Constants.right_axle.density
     fixDef.restitution = Constants.right_axle.restitution
     fixDef.friction    = Constants.right_axle.friction
-    fixDef.isSensor    = not Constants.right_axle.collisions
+    fixDef.isSensor    = !Constants.right_axle.collisions
     fixDef.filter.groupIndex = -1
 
     Physics.create_shape(fixDef, Constants.right_axle.shape, @mirror == -1)
@@ -304,7 +304,7 @@ class Moto
     position =
       x: wheel_position.x - mirror * axle_thickness/2.0
       y: wheel_position.y - 0.025
-    
+
     # Position relative to center of body
     axle_position =
       x: -0.17 * mirror
@@ -312,13 +312,13 @@ class Moto
 
     # Adjusted position depending of rotation of body
     axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position)
-    
+
     # Distance
     distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position)
-    
+
     # Angle
     angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + mirror * Math.PI/2
-    
+
     # Draw texture
     ctx.save()
     ctx.translate(wheel_position.x, wheel_position.y)
@@ -335,26 +335,26 @@ class Moto
 
   @display_normal_right_axle: (mirror, wheel_position, body_position, body_angle, ctx, assets, rider_style) ->
     axle_thickness = 0.07
-    
+
     # Position
     position =
       x: wheel_position.x + mirror * axle_thickness/2.0 - @mirror * 0.03
       y: wheel_position.y - 0.045
-    
+
     # Position relative to center of body
     axle_position =
       x: 0.52 * mirror
       y: 0.025
-    
+
     # Adjusted position depending of rotation of body
     axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position)
-    
+
     # Distance
     distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position)
-    
+
     # Angle
     angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + mirror * Math.PI/2
-    
+
     # Draw texture
     ctx.save()
     ctx.translate(wheel_position.x, wheel_position.y)

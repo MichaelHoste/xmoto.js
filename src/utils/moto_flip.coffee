@@ -89,15 +89,15 @@ class MotoFlip
 
     # !!! Position of right wheel, it's normal !
     moto.left_wheel     .SetPosition(right_wheel.position)
-    moto.left_wheel     .SetAngle(left_wheel.angle)
-    moto.left_wheel     .SetLinearVelocity(left_wheel.linear)
-    moto.left_wheel     .SetAngularVelocity(left_wheel.angular)
+    moto.left_wheel     .SetAngle(right_wheel.angle)
+    moto.left_wheel     .SetLinearVelocity(right_wheel.linear)
+    moto.left_wheel     .SetAngularVelocity(right_wheel.angular)
 
     # !!! Position of left wheel, it's normal !
     moto.right_wheel    .SetPosition(left_wheel.position)
-    moto.right_wheel    .SetAngle(right_wheel.angle)
-    moto.right_wheel    .SetLinearVelocity(right_wheel.linear)
-    moto.right_wheel    .SetAngularVelocity(right_wheel.angular)
+    moto.right_wheel    .SetAngle(left_wheel.angle)
+    moto.right_wheel    .SetLinearVelocity(left_wheel.linear)
+    moto.right_wheel    .SetAngularVelocity(left_wheel.angular)
 
     moto.left_axle      .SetPosition(left_axle.position)
     moto.left_axle      .SetAngle(left_axle.angle)
@@ -109,10 +109,10 @@ class MotoFlip
     moto.right_axle     .SetLinearVelocity(right_axle.linear)
     moto.right_axle     .SetAngularVelocity(right_axle.angular)
 
-    moto.rider.head    .SetPosition(head.position)
-    moto.rider.head    .SetAngle(head.angle)
-    moto.rider.head    .SetLinearVelocity(head.linear)
-    moto.rider.head    .SetAngularVelocity(head.angular)
+    moto.rider.head     .SetPosition(head.position)
+    moto.rider.head     .SetAngle(head.angle)
+    moto.rider.head     .SetLinearVelocity(head.linear)
+    moto.rider.head     .SetAngularVelocity(head.angular)
 
     moto.rider.torso    .SetPosition(torso.position)
     moto.rider.torso    .SetAngle(torso.angle)

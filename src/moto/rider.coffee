@@ -75,30 +75,30 @@ class Rider
   create_head: (x, y)  ->
     # Create fixture
     fixDef = new b2FixtureDef()
-  
+
     fixDef.shape       = new b2CircleShape(Constants.head.radius)
     fixDef.density     = Constants.head.density
     fixDef.restitution = Constants.head.restitution
     fixDef.friction    = Constants.head.friction
-    fixDef.isSensor    = not Constants.head.collisions
+    fixDef.isSensor    = !Constants.head.collisions
     fixDef.filter.groupIndex = -1
-  
+
     # Create body
     bodyDef = new b2BodyDef()
-  
+
     # Assign body position
     bodyDef.position.x = x
     bodyDef.position.y = y
-  
+
     bodyDef.userData =
       name: 'rider'
-  
+
     bodyDef.type = b2Body.b2_dynamicBody
-  
+
     ## Assign fixture to body and add body to 2D world
     body = @level.world.CreateBody(bodyDef)
     body.CreateFixture(fixDef)
-  
+
     body
 
   create_torso: (x, y)  ->
@@ -109,7 +109,7 @@ class Rider
     fixDef.density     = Constants.torso.density
     fixDef.restitution = Constants.torso.restitution
     fixDef.friction    = Constants.torso.friction
-    fixDef.isSensor    = not Constants.torso.collisions
+    fixDef.isSensor    = !Constants.torso.collisions
     fixDef.filter.groupIndex = -1
 
     Physics.create_shape(fixDef, Constants.torso.shape, @mirror == -1)
@@ -143,7 +143,7 @@ class Rider
     fixDef.density     = Constants.lower_leg.density
     fixDef.restitution = Constants.lower_leg.restitution
     fixDef.friction    = Constants.lower_leg.friction
-    fixDef.isSensor    = not Constants.lower_leg.collisions
+    fixDef.isSensor    = !Constants.lower_leg.collisions
     fixDef.filter.groupIndex = -1
 
     Physics.create_shape(fixDef, Constants.lower_leg.shape, @mirror == -1)
@@ -177,7 +177,7 @@ class Rider
     fixDef.density     = Constants.upper_leg.density
     fixDef.restitution = Constants.upper_leg.restitution
     fixDef.friction    = Constants.upper_leg.friction
-    fixDef.isSensor    = not Constants.upper_leg.collisions
+    fixDef.isSensor    = !Constants.upper_leg.collisions
     fixDef.filter.groupIndex = -1
 
     Physics.create_shape(fixDef, Constants.upper_leg.shape, @mirror == -1)
@@ -211,7 +211,7 @@ class Rider
     fixDef.density     = Constants.lower_arm.density
     fixDef.restitution = Constants.lower_arm.restitution
     fixDef.friction    = Constants.lower_arm.friction
-    fixDef.isSensor    = not Constants.lower_arm.collisions
+    fixDef.isSensor    = !Constants.lower_arm.collisions
     fixDef.filter.groupIndex = -1
 
     Physics.create_shape(fixDef, Constants.lower_arm.shape, @mirror == -1)
@@ -245,7 +245,7 @@ class Rider
     fixDef.density     = Constants.upper_arm.density
     fixDef.restitution = Constants.upper_arm.restitution
     fixDef.friction    = Constants.upper_arm.friction
-    fixDef.isSensor    = not Constants.upper_arm.collisions
+    fixDef.isSensor    = !Constants.upper_arm.collisions
     fixDef.filter.groupIndex = -1
 
     Physics.create_shape(fixDef, Constants.upper_arm.shape, @mirror == -1)
