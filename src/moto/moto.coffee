@@ -242,8 +242,8 @@ class Moto
 
   @display_moto_parts: (mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, ugly) ->
     if ugly
-      @display_ugly_wheel(mirror, left_wheel_position, left_wheel_angle, ctx)
-      @display_ugly_wheel(mirror, right_wheel_position, right_wheel_angle, ctx)
+      @display_ugly_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, rider_style)
+      @display_ugly_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, rider_style)
     else
       @display_normal_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, assets, rider_style)
       @display_normal_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, assets, rider_style)
@@ -251,9 +251,9 @@ class Moto
       @display_normal_left_axle(mirror, left_wheel_position, body_position, body_angle, ctx, assets, rider_style)
       @display_normal_body(mirror, body_position, body_angle, ctx, assets, rider_style)
 
-  @display_ugly_wheel: (mirror, wheel_position, wheel_angle, ctx) ->
+  @display_ugly_wheel: (mirror, wheel_position, wheel_angle, ctx, rider_style) ->
     ctx.save()
-    ctx.strokeStyle="#FF0000"
+    ctx.strokeStyle=rider_style.ugly_moto_color
     ctx.lineWidth = 0.05
     ctx.translate(wheel_position.x, wheel_position.y)
     ctx.rotate(wheel_angle)

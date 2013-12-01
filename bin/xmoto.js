@@ -178,6 +178,18 @@
       upper_translation: 0.20
     };
 
+    Constants.head = {
+      radius: 0.18,
+      density: 0.001,
+      restitution: 0.0,
+      friction: 0.0,
+      position: {
+        x: -0.3,
+        y: 2.3
+      },
+      collisions: true
+    };
+
     Constants.torso = {
       density: 0.4,
       restitution: 0.0,
@@ -186,7 +198,7 @@
         x: -0.24,
         y: 1.87
       },
-      shape: [new b2Vec2(0.16, -0.575), new b2Vec2(0.23, 0.50), new b2Vec2(-0.20, 0.48), new b2Vec2(-0.17, -0.575)],
+      shape: [new b2Vec2(0.16, -0.575), new b2Vec2(0.07, 0.20), new b2Vec2(-0.34, 0.24), new b2Vec2(-0.20, -0.575)],
       collisions: true,
       angle: -Math.PI / 20.0
     };
@@ -282,6 +294,13 @@
       axe_position: {
         x: -0.27,
         y: 0.10
+      }
+    };
+
+    Constants.neck = {
+      axe_position: {
+        x: 0.0,
+        y: 0.0
       }
     };
 
@@ -698,27 +717,34 @@
         a = contact.GetFixtureA().GetBody().GetUserData().name;
         b = contact.GetFixtureB().GetBody().GetUserData().name;
         if (!moto.dead) {
-          if ((a === 'moto' && b === 'strawberry') ||  (a === 'rider' && b === 'strawberry') ||  (a === 'rider-lower_leg' && b === 'strawberry')) {
+          if (Listeners.does_contact_moto_rider(a, b, 'strawberry')) {
             strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
             entity = strawberry.GetBody().GetUserData().entity;
             if (entity.display) {
               entity.display = false;
-              createjs.Sound.play('PickUpStrawberry');
+              return createjs.Sound.play('PickUpStrawberry');
             }
-          }
-          if ((a === 'moto' && b === 'end_of_level') ||  (a === 'rider' && b === 'end_of_level')) {
+          } else if (Listeners.does_contact_moto_rider(a, b, 'end_of_level')) {
             if (_this.level.got_strawberries()) {
               createjs.Sound.play('EndOfLevel');
               return _this.level.need_to_restart = true;
             }
-          } else if (a === 'rider' && b === 'ground') {
+          } else if (Listeners.does_contact(a, b, 'rider', 'ground')) {
             return _this.kill_moto();
-          } else if ((a === 'rider' && b === 'wrecker') || (a === 'moto' && b === 'wrecker')) {
+          } else if (Listeners.does_contact_moto_rider(a, b, 'wrecker')) {
             return _this.kill_moto();
           }
         }
       };
       return this.level.world.SetContactListener(listener);
+    };
+
+    Listeners.does_contact_moto_rider = function(a, b, obj) {
+      return Listeners.does_contact(a, b, obj, 'rider') || Listeners.does_contact(a, b, obj, 'moto');
+    };
+
+    Listeners.does_contact = function(a, b, obj1, obj2) {
+      return (a === obj1 && b === obj2) || (a === obj2 && b === obj1);
     };
 
     Listeners.prototype.kill_moto = function() {
@@ -1802,7 +1828,7 @@
       if (this.replay && this.current_frame < this.replay.frames_count()) {
         this.frame = this.replay.frame(this.current_frame);
         this.mirror = this.frame.mirror ? -1 : 1;
-        Rider.display_rider(this.mirror, this.frame.anchors.wrist, this.frame.anchors.elbow, this.frame.anchors.shoulder, this.frame.anchors.hip, this.frame.anchors.knee, this.frame.anchors.ankle, this.level.ctx, this.level.assets, this.rider_style, this.level.get_render_mode());
+        Rider.display_rider(this.mirror, this.frame.anchors.neck, this.frame.anchors.wrist, this.frame.anchors.elbow, this.frame.anchors.shoulder, this.frame.anchors.hip, this.frame.anchors.knee, this.frame.anchors.ankle, this.level.ctx, this.level.assets, this.rider_style, this.level.get_render_mode());
         return Moto.display_moto(this.mirror, this.frame.left_wheel.position, this.frame.left_wheel.angle, this.frame.right_wheel.position, this.frame.right_wheel.angle, this.frame.body.position, this.frame.body.angle, this.level.ctx, this.level.assets, this.rider_style, this.level.get_render_mode());
       }
     };
@@ -2061,8 +2087,8 @@
 
     Moto.display_moto_parts = function(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, ugly) {
       if (ugly) {
-        this.display_ugly_wheel(mirror, left_wheel_position, left_wheel_angle, ctx);
-        return this.display_ugly_wheel(mirror, right_wheel_position, right_wheel_angle, ctx);
+        this.display_ugly_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, rider_style);
+        return this.display_ugly_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, rider_style);
       } else {
         this.display_normal_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, assets, rider_style);
         this.display_normal_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, assets, rider_style);
@@ -2072,9 +2098,9 @@
       }
     };
 
-    Moto.display_ugly_wheel = function(mirror, wheel_position, wheel_angle, ctx) {
+    Moto.display_ugly_wheel = function(mirror, wheel_position, wheel_angle, ctx, rider_style) {
       ctx.save();
-      ctx.strokeStyle = "#FF0000";
+      ctx.strokeStyle = rider_style.ugly_moto_color;
       ctx.lineWidth = 0.05;
       ctx.translate(wheel_position.x, wheel_position.y);
       ctx.rotate(wheel_angle);
@@ -2185,6 +2211,7 @@
         right_wheel: position_2d(moto.right_wheel),
         body: position_2d(moto.body),
         anchors: {
+          neck: this.level.moto.rider.neck_joint.GetAnchorA(),
           elbow: this.level.moto.rider.elbow_joint.GetAnchorA(),
           shoulder: this.level.moto.rider.shoulder_joint.GetAnchorA(),
           hip: this.level.moto.rider.hip_joint.GetAnchorA(),
@@ -2248,11 +2275,13 @@
     Rider.prototype.destroy = function() {
       var world;
       world = this.level.world;
+      world.DestroyBody(this.head);
       world.DestroyBody(this.torso);
       world.DestroyBody(this.lower_leg);
       world.DestroyBody(this.upper_leg);
       world.DestroyBody(this.lower_arm);
       world.DestroyBody(this.upper_arm);
+      world.DestroyJoint(this.neck_joint);
       world.DestroyJoint(this.ankle_joint);
       world.DestroyJoint(this.wrist_joint);
       world.DestroyJoint(this.knee_joint);
@@ -2269,11 +2298,13 @@
         this.assets.moto.push(texture);
       }
       this.player_start = this.level.entities.player_start;
+      this.head = this.create_head(this.player_start.x + this.mirror * Constants.head.position.x, this.player_start.y + Constants.head.position.y);
       this.torso = this.create_torso(this.player_start.x + this.mirror * Constants.torso.position.x, this.player_start.y + Constants.torso.position.y);
       this.lower_leg = this.create_lower_leg(this.player_start.x + this.mirror * Constants.lower_leg.position.x, this.player_start.y + Constants.lower_leg.position.y);
       this.upper_leg = this.create_upper_leg(this.player_start.x + this.mirror * Constants.upper_leg.position.x, this.player_start.y + Constants.upper_leg.position.y);
       this.lower_arm = this.create_lower_arm(this.player_start.x + this.mirror * Constants.lower_arm.position.x, this.player_start.y + Constants.lower_arm.position.y);
       this.upper_arm = this.create_upper_arm(this.player_start.x + this.mirror * Constants.upper_arm.position.x, this.player_start.y + Constants.upper_arm.position.y);
+      this.neck_joint = this.create_neck_joint();
       this.ankle_joint = this.create_ankle_joint();
       this.wrist_joint = this.create_wrist_joint();
       this.knee_joint = this.create_knee_joint();
@@ -2284,6 +2315,27 @@
 
     Rider.prototype.position = function() {
       return this.moto.body.GetPosition();
+    };
+
+    Rider.prototype.create_head = function(x, y) {
+      var body, bodyDef, fixDef;
+      fixDef = new b2FixtureDef();
+      fixDef.shape = new b2CircleShape(Constants.head.radius);
+      fixDef.density = Constants.head.density;
+      fixDef.restitution = Constants.head.restitution;
+      fixDef.friction = Constants.head.friction;
+      fixDef.isSensor = !Constants.head.collisions;
+      fixDef.filter.groupIndex = -1;
+      bodyDef = new b2BodyDef();
+      bodyDef.position.x = x;
+      bodyDef.position.y = y;
+      bodyDef.userData = {
+        name: 'rider'
+      };
+      bodyDef.type = b2Body.b2_dynamicBody;
+      body = this.level.world.CreateBody(bodyDef);
+      body.CreateFixture(fixDef);
+      return body;
     };
 
     Rider.prototype.create_torso = function(x, y) {
@@ -2324,7 +2376,7 @@
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_leg.angle;
       bodyDef.userData = {
-        name: 'rider-lower_leg'
+        name: 'rider'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2412,6 +2464,19 @@
       return joint.enableLimit = true;
     };
 
+    Rider.prototype.create_neck_joint = function() {
+      var axe, jointDef, position;
+      position = this.head.GetWorldCenter();
+      axe = {
+        x: position.x + this.mirror * Constants.neck.axe_position.x,
+        y: position.y + Constants.neck.axe_position.y
+      };
+      jointDef = new b2RevoluteJointDef();
+      jointDef.Initialize(this.head, this.torso, axe);
+      this.set_joint_commons(jointDef);
+      return this.level.world.CreateJoint(jointDef);
+    };
+
     Rider.prototype.create_ankle_joint = function() {
       var axe, jointDef, position;
       position = this.lower_leg.GetWorldCenter();
@@ -2491,25 +2556,26 @@
     };
 
     Rider.prototype.display = function() {
-      return Rider.display_rider(this.mirror, this.wrist_joint.GetAnchorA(), this.elbow_joint.GetAnchorA(), this.shoulder_joint.GetAnchorA(), this.hip_joint.GetAnchorA(), this.knee_joint.GetAnchorA(), this.ankle_joint.GetAnchorA(), this.level.ctx, this.assets, this.rider_style, this.level.get_render_mode());
+      return Rider.display_rider(this.mirror, this.neck_joint.GetAnchorA(), this.wrist_joint.GetAnchorA(), this.elbow_joint.GetAnchorA(), this.shoulder_joint.GetAnchorA(), this.hip_joint.GetAnchorA(), this.knee_joint.GetAnchorA(), this.ankle_joint.GetAnchorA(), this.level.ctx, this.assets, this.rider_style, this.level.get_render_mode());
     };
 
-    Rider.display_rider = function(mirror, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, mode) {
+    Rider.display_rider = function(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, mode) {
       if (mode === "normal" || mode === "uglyOver") {
-        Rider.display_rider_members(mirror, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, false);
+        Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, false);
       }
       if (mode === "ugly" || mode === "uglyOver") {
-        return Rider.display_rider_members(mirror, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, true);
+        return Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, true);
       }
     };
 
-    Rider.display_rider_members = function(mirror, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, ugly) {
+    Rider.display_rider_members = function(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, ugly) {
       if (ugly) {
-        Rider.display_ugly_part(ctx, hip_anchor, shoulder_anchor);
-        Rider.display_ugly_part(ctx, hip_anchor, knee_anchor);
-        Rider.display_ugly_part(ctx, ankle_anchor, knee_anchor);
-        Rider.display_ugly_part(ctx, shoulder_anchor, elbow_anchor);
-        return Rider.display_ugly_part(ctx, elbow_anchor, wrist_anchor);
+        Rider.display_ugly_head(ctx, rider_style, neck_anchor);
+        Rider.display_ugly_part(ctx, rider_style, hip_anchor, shoulder_anchor);
+        Rider.display_ugly_part(ctx, rider_style, hip_anchor, knee_anchor);
+        Rider.display_ugly_part(ctx, rider_style, ankle_anchor, knee_anchor);
+        Rider.display_ugly_part(ctx, rider_style, shoulder_anchor, elbow_anchor);
+        return Rider.display_ugly_part(ctx, rider_style, elbow_anchor, wrist_anchor);
       } else {
         Rider.display_normal_part(ctx, hip_anchor, shoulder_anchor, assets.get(rider_style.torso), mirror, -0.27, -0.80, 0.50, 1.15);
         Rider.display_normal_part(ctx, hip_anchor, knee_anchor, assets.get(rider_style.upperleg), mirror, -0.48, -0.15, 0.80, 0.28, 1);
@@ -2519,9 +2585,17 @@
       }
     };
 
-    Rider.display_ugly_part = function(ctx, anchor1, anchor2) {
+    Rider.display_ugly_head = function(ctx, rider_style, neck_anchor) {
       ctx.beginPath();
-      ctx.strokeStyle = "#00FF00";
+      ctx.strokeStyle = rider_style.ugly_rider_color;
+      ctx.lineWidth = 0.05;
+      ctx.arc(neck_anchor.x, neck_anchor.y, Constants.head.radius, 0, 2 * Math.PI);
+      return ctx.stroke();
+    };
+
+    Rider.display_ugly_part = function(ctx, rider_style, anchor1, anchor2) {
+      ctx.beginPath();
+      ctx.strokeStyle = rider_style.ugly_rider_color;
       ctx.lineWidth = 0.04;
       ctx.moveTo(anchor1.x, anchor1.y);
       ctx.lineTo(anchor2.x, anchor2.y);
@@ -2646,7 +2720,9 @@
           body: "ghostbikerbody",
           wheel: "ghostbikerwheel",
           front: "front_ghost",
-          rear: "rear_ghost"
+          rear: "rear_ghost",
+          ugly_rider_color: "#008800",
+          ugly_moto_color: "#880000"
         };
         return new_style;
       }
@@ -2660,7 +2736,9 @@
           body: "playerbikerbody",
           wheel: "playerbikerwheel",
           front: "front1",
-          rear: "rear1"
+          rear: "rear1",
+          ugly_rider_color: "#00FF00",
+          ugly_moto_color: "#FF0000"
         };
         return new_style;
       }

@@ -21,6 +21,7 @@ class Replay
       right_wheel: position_2d(moto.right_wheel)
       body:        position_2d(moto.body)
       anchors:
+        neck:     @level.moto.rider.neck_joint.GetAnchorA()
         elbow:    @level.moto.rider.elbow_joint.GetAnchorA()
         shoulder: @level.moto.rider.shoulder_joint.GetAnchorA()
         hip:      @level.moto.rider.hip_joint.GetAnchorA()

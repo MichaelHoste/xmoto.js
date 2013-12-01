@@ -71,6 +71,16 @@ class Constants
 
   # RIDER PARTS
 
+  @head =
+    radius:      0.18
+    density:     0.001
+    restitution: 0.0
+    friction:    0.0
+    position:
+      x: -0.3
+      y: 2.3
+    collisions: true
+
   @torso =
     density:     0.4
     restitution: 0.0
@@ -79,9 +89,9 @@ class Constants
       x: -0.24
       y:  1.87
     shape: [ new b2Vec2( 0.16, -0.575)
-             new b2Vec2( 0.23,  0.50)
-             new b2Vec2(-0.20,  0.48)
-             new b2Vec2(-0.17, -0.575) ]
+             new b2Vec2( 0.07,  0.20)
+             new b2Vec2(-0.34,  0.24)
+             new b2Vec2(-0.20, -0.575) ]
     collisions: true
     angle: -Math.PI/20.0
 
