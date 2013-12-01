@@ -15,7 +15,7 @@ class Listeners
 
       if not moto.dead
         # Strawberries
-        if (a == 'moto' and b == 'strawberry') || (a == 'rider' and b == 'strawberry') || (a == 'rider-lower_leg' and b == 'strawberry')
+        if Listeners.does_contact_moto_rider(a, b, 'strawberry')
           strawberry = if a == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
           entity = strawberry.GetBody().GetUserData().entity
           if entity.display
@@ -23,20 +23,26 @@ class Listeners
             createjs.Sound.play('PickUpStrawberry')
 
         # End of level
-        if (a == 'moto' and b == 'end_of_level') || (a == 'rider' and b == 'end_of_level')
+        else if Listeners.does_contact_moto_rider(a, b, 'end_of_level')
           if @level.got_strawberries()
             createjs.Sound.play('EndOfLevel')
             @level.need_to_restart = true
 
         # Fall of rider
-        else if (a == 'rider' and b == 'ground')
+        else if Listeners.does_contact(a, b, 'rider', 'ground')
           @kill_moto()
 
         # Wrecker contact
-        else if (a == 'rider' and b == 'wrecker') or (a == 'moto' and b == 'wrecker')
+        else if Listeners.does_contact_moto_rider(a, b, 'wrecker')
           @kill_moto()
 
     @level.world.SetContactListener(listener)
+
+  @does_contact_moto_rider: (a, b, obj) ->
+    Listeners.does_contact(a, b, obj, 'rider') or Listeners.does_contact(a, b, obj, 'moto')
+
+  @does_contact: (a, b, obj1, obj2) ->
+    (a == obj1 and b == obj2) or (a == obj2 and b == obj1)
 
   kill_moto: ->
     moto = @level.moto

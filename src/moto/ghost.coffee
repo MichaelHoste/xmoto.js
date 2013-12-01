@@ -12,6 +12,7 @@ class Ghost
       @frame = @replay.frame(@current_frame)
       @mirror = if @frame.mirror then -1 else 1
       Rider.display_rider(@mirror,
+                          @frame.anchors.neck,
                           @frame.anchors.wrist,
                           @frame.anchors.elbow
                           @frame.anchors.shoulder
@@ -61,7 +62,5 @@ class Ghost
     for texture in textures
       @assets.moto.push(texture)
 
-
- 
   position: ->
     @replay.frame(@current_frame).body.position

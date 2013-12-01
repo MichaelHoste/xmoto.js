@@ -13,22 +13,21 @@ class Replay
   add_frame: ->
     moto   = @level.moto
     rider  = @level.moto.rider
-    current_time = new Date().getTime()
 
     frame =
-      gameTime:    (current_time - @level.start_time) / 1000.0 # time in seconds
+      gameTime:    @level.gameTime() / 100.0 # time in seconds
       mirror    :  @level.moto.mirror == -1 # true if moto is reversed
       left_wheel:  position_2d(moto.left_wheel)
       right_wheel: position_2d(moto.right_wheel)
       body:        position_2d(moto.body)
       anchors:
+        neck:     @level.moto.rider.neck_joint.GetAnchorA()
         elbow:    @level.moto.rider.elbow_joint.GetAnchorA()
         shoulder: @level.moto.rider.shoulder_joint.GetAnchorA()
         hip:      @level.moto.rider.hip_joint.GetAnchorA()
         knee:     @level.moto.rider.knee_joint.GetAnchorA()
         wrist:    @level.moto.rider.wrist_joint.GetAnchorA()
         ankle:    @level.moto.rider.ankle_joint.GetAnchorA()
-        neck:     @level.moto.rider.neck_joint.GetAnchorA()
 
     @frames.push(frame)
 

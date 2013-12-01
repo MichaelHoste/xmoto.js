@@ -85,6 +85,8 @@ class Assets
         wheel:    "ghostbikerwheel"
         front:    "front_ghost"
         rear:     "rear_ghost"
+        ugly_rider_color: "#008800"
+        ugly_moto_color: "#880000"
       return new_style
     if style == "player"
       new_style =
@@ -97,6 +99,8 @@ class Assets
         wheel:    "playerbikerwheel"
         front:    "front1"
         rear:     "rear1"
+        ugly_rider_color: "#00FF00"
+        ugly_moto_color: "#FF0000"
       return new_style
 
 
