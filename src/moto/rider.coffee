@@ -295,8 +295,6 @@ class Rider
   create_ankle_joint: ->
     position = @lower_leg.GetWorldCenter()
     axe =
-      #x: position.x + @mirror * Constants.ankle.axe_position.x
-      #y: position.y + Constants.ankle.axe_position.y
       x: position.x + @mirror * Constants.ankle.axe_position.x
       y: position.y + Constants.ankle.axe_position.y
 

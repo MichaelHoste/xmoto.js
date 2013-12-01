@@ -198,7 +198,6 @@
         y: 1.87
       },
       shape: [new b2Vec2(0.16, -0.575), new b2Vec2(0.23, 0.50), new b2Vec2(-0.20, 0.48), new b2Vec2(-0.17, -0.575)],
-      collision_box: [new b2Vec2(0.05, -0.575), new b2Vec2(0.08, 0.25), new b2Vec2(-0.32, 0.23), new b2Vec2(-0.22, -0.575)],
       collisions: true,
       angle: -Math.PI / 20.0
     };
@@ -870,7 +869,8 @@
   play_level = function(name) {
     var level;
     level = new Level();
-    level.load_from_file("l1.lvl");
+    level.load_from_file("l24.lvl");
+    level.load_as_replay("replay_1436520.rpl");
     return level.assets.load(function() {
       var last_step, physics_step, update, update_physics;
       createjs.Sound.setMute(true);
@@ -1980,65 +1980,6 @@
         _results.push(this.assets.moto.push(texture));
       }
       return _results;
-    };
-
-    Ghost.prototype.display_left_wheel = function() {
-      var angle, left_wheel, position, radius;
-      radius = 0.35;
-      left_wheel = this.frame.left_wheel;
-      position = left_wheel.position;
-      angle = left_wheel.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.rotate(angle);
-      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
-      }
-      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.beginPath();
-        this.level.ctx.strokeStyle = "#FF0000";
-        this.level.ctx.lineWidth = 0.05;
-        this.level.ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-        this.level.ctx.stroke();
-      }
-      return this.level.ctx.restore();
-    };
-
-    Ghost.prototype.display_right_wheel = function() {
-      var angle, position, radius, right_wheel;
-      radius = 0.35;
-      right_wheel = this.frame.right_wheel;
-      position = right_wheel.position;
-      angle = right_wheel.angle;
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.rotate(angle);
-      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.drawImage(this.assets.get('playerbikerwheel'), -radius, -radius, radius * 2, radius * 2);
-      }
-      if (this.level.get_render_mode() === "ugly" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.beginPath();
-        this.level.ctx.strokeStyle = "#FF0000";
-        this.level.ctx.lineWidth = 0.05;
-        this.level.ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-        this.level.ctx.stroke();
-      }
-      return this.level.ctx.restore();
-    };
-
-    Ghost.prototype.display_body = function() {
-      var angle, body, position;
-      body = this.frame.body;
-      position = body.position;
-      angle = body.angle;
-      if (this.level.get_render_mode() === "normal" || this.level.get_render_mode() === "uglyOver") {
-        this.level.ctx.save();
-        this.level.ctx.translate(position.x, position.y);
-        this.level.ctx.scale(1 * this.mirror, -1);
-        this.level.ctx.rotate(this.mirror * (-angle));
-        this.level.ctx.drawImage(this.assets.get('playerbikerbody'), -1.0, -0.5, 2.0, 1.0);
-        return this.level.ctx.restore();
-      }
     };
 
     Ghost.prototype.position = function() {

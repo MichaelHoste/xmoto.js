@@ -299,7 +299,7 @@ class Moto
 
   @display_normal_left_axle: (mirror, wheel_position, body_position, body_angle, ctx, assets, rider_style) ->
     axle_thickness = 0.09
-    
+
     # Position
     position =
       x: wheel_position.x - mirror * axle_thickness/2.0
@@ -309,7 +309,7 @@ class Moto
     axle_position =
       x: -0.17 * mirror
       y: -0.30
-    
+
     # Adjusted position depending of rotation of body
     axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position)
     

@@ -4,14 +4,14 @@ play_level = (name) ->
 
   #level.load_from_file(name)
 
-  level.load_from_file("l1.lvl")
+  #level.load_from_file("l1.lvl")
   #level.load_as_replay("replay_1383574.rpl")
 
   #level.load_from_file("l2813.lvl")
   #level.load_as_replay("credits.rpl")
 
-  #level.load_from_file("l24.lvl")
-  #level.load_as_replay("replay_1436520.rpl")
+  level.load_from_file("l24.lvl")
+  level.load_as_replay("replay_1436520.rpl")
 
   # Load assets for this level before doing anything else
   level.assets.load( ->

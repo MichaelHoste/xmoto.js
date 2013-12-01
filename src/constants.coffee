@@ -90,10 +90,6 @@ class Constants
              new b2Vec2( 0.23,  0.50)
              new b2Vec2(-0.20,  0.48)
              new b2Vec2(-0.17, -0.575) ]
-    collision_box: [ new b2Vec2( 0.05, -0.575)
-                     new b2Vec2( 0.08,  0.25)
-                     new b2Vec2(-0.32,  0.23)
-                     new b2Vec2(-0.22, -0.575) ]
     collisions: true
     angle: -Math.PI/20.0
 
@@ -156,13 +152,12 @@ class Constants
     angle: Math.PI/9.0
 
   # RIDER JOINTS
-  # cheville
+
   @ankle =
     axe_position:
       x: -0.2
       y: -0.2
 
-  # hand
   @wrist =
     axe_position:
       x:  0.25
