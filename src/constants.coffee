@@ -4,7 +4,9 @@ class Constants
 
   # GENERAL
 
-  @gravity = 9.81
+  @gravity            = 9.81
+  @max_rotation_speed = 0.38 # Max rotation speed of the wheels (x * PI). Limit the max speed of the moto
+  @air_density        = 0.03
 
   # MOTO PARTS
 
@@ -73,9 +75,9 @@ class Constants
 
   @head =
     radius:      0.18
-    density:     0.001
+    density:     0.4
     restitution: 0.0
-    friction:    0.0
+    friction:    1.0
     position:
       x: -0.3
       y: 2.3

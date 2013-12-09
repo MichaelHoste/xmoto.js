@@ -133,3 +133,10 @@ class Input
     # Right wheel suspension
     moto.right_prismatic_joint.SetMaxMotorForce(4+Math.abs(800*Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)))
     moto.right_prismatic_joint.SetMotorSpeed(-3*moto.right_prismatic_joint.GetJointTranslation())
+
+    # Drag (air resistance)
+    air_density        = Constants.air_density
+    object_penetration = 0.025
+    squared_speed      = Math.pow(moto.body.GetLinearVelocity().x, 2)
+    drag_force         = air_density * squared_speed * object_penetration
+    moto.body.SetLinearDamping(drag_force)

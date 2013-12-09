@@ -118,6 +118,10 @@
 
     Constants.gravity = 9.81;
 
+    Constants.max_rotation_speed = 0.38;
+
+    Constants.air_density = 0.03;
+
     Constants.body = {
       density: 1.5,
       restitution: 0.5,
@@ -180,9 +184,9 @@
 
     Constants.head = {
       radius: 0.18,
-      density: 0.001,
+      density: 0.4,
       restitution: 0.0,
-      friction: 0.0,
+      friction: 1.0,
       position: {
         x: -0.3,
         y: 2.3
@@ -460,7 +464,7 @@
     };
 
     Input.prototype.move = function() {
-      var force, moto, rider, v;
+      var air_density, drag_force, force, moto, object_penetration, rider, squared_speed, v;
       force = 24.1;
       moto = this.level.moto;
       rider = moto.rider;
@@ -490,7 +494,12 @@
       moto.left_prismatic_joint.SetMaxMotorForce(8 + Math.abs(800 * Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)));
       moto.left_prismatic_joint.SetMotorSpeed(-3 * moto.left_prismatic_joint.GetJointTranslation());
       moto.right_prismatic_joint.SetMaxMotorForce(4 + Math.abs(800 * Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)));
-      return moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
+      moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
+      air_density = Constants.air_density;
+      object_penetration = 0.025;
+      squared_speed = Math.pow(moto.body.GetLinearVelocity().x, 2);
+      drag_force = air_density * squared_speed * object_penetration;
+      return moto.body.SetLinearDamping(drag_force);
     };
 
     return Input;
@@ -780,7 +789,7 @@
       };
       update = function() {
         update_physics();
-        level.display(false);
+        level.display(true);
         return window.game_loop = window.requestAnimationFrame(update);
       };
       update();
@@ -864,7 +873,7 @@
       this.level = level;
       this.world = new b2World(new b2Vec2(0, -Constants.gravity), true);
       b2Settings.b2_linearSlop = 0.0025;
-      b2Settings.b2_maxRotation = 0.38 * b2Settings.b2_pi;
+      b2Settings.b2_maxRotation = Constants.max_rotation_speed * b2Settings.b2_pi;
       b2Settings.b2_maxRotationSquared = b2Settings.b2_maxRotation * b2Settings.b2_maxRotation;
       context = this.level.ctx;
       debugDraw = new b2DebugDraw();
@@ -2371,7 +2380,7 @@
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_leg.angle;
       bodyDef.userData = {
-        name: 'rider'
+        name: 'rider-lower_leg'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);

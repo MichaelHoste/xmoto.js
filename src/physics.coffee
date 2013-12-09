@@ -25,7 +25,7 @@ class Physics
     b2Settings.b2_linearSlop         = 0.0025
 
     # New value of max rotation speed (useful for the wheel to not look static when full speed)
-    b2Settings.b2_maxRotation        = 0.38 * b2Settings.b2_pi
+    b2Settings.b2_maxRotation        = Constants.max_rotation_speed * b2Settings.b2_pi
     b2Settings.b2_maxRotationSquared = b2Settings.b2_maxRotation * b2Settings.b2_maxRotation
 
     context = @level.ctx
