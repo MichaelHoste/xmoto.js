@@ -22,7 +22,11 @@ class Physics
     @world = new b2World(new b2Vec2(0, -Constants.gravity), true) # gravity vector, and doSleep
 
     # Double default precision between wheel and ground
-    b2Settings.b2_linearSlop = 0.0025;
+    b2Settings.b2_linearSlop         = 0.0025
+
+    # New value of max rotation speed (useful for the wheel to not look static when full speed)
+    b2Settings.b2_maxRotation        = 0.38 * b2Settings.b2_pi
+    b2Settings.b2_maxRotationSquared = b2Settings.b2_maxRotation * b2Settings.b2_maxRotation
 
     context = @level.ctx
 

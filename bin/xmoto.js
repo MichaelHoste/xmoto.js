@@ -864,6 +864,8 @@
       this.level = level;
       this.world = new b2World(new b2Vec2(0, -Constants.gravity), true);
       b2Settings.b2_linearSlop = 0.0025;
+      b2Settings.b2_maxRotation = 0.38 * b2Settings.b2_pi;
+      b2Settings.b2_maxRotationSquared = b2Settings.b2_maxRotation * b2Settings.b2_maxRotation;
       context = this.level.ctx;
       debugDraw = new b2DebugDraw();
       debugDraw.SetSprite(context);
