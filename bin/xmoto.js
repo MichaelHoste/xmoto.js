@@ -2427,7 +2427,7 @@
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_leg.angle;
       bodyDef.userData = {
-        name: 'rider'
+        name: 'rider-lower_leg'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2630,7 +2630,7 @@
       } else {
         Rider.display_normal_part(ctx, hip_anchor, shoulder_anchor, assets.get(rider_style.torso), mirror, -0.27, -0.80, 0.50, 1.15);
         Rider.display_normal_part(ctx, hip_anchor, knee_anchor, assets.get(rider_style.upperleg), mirror, -0.48, -0.15, 0.80, 0.28, 1);
-        Rider.display_normal_part(ctx, ankle_anchor, knee_anchor, assets.get(rider_style.lowerleg), mirror, -0.17, -0.33, 0.40, 0.66);
+        Rider.display_normal_part(ctx, ankle_anchor, knee_anchor, assets.get(rider_style.lowerleg), mirror, -0.07, -0.33, 0.40, 0.66);
         Rider.display_normal_part(ctx, elbow_anchor, shoulder_anchor, assets.get(rider_style.upperarm), mirror, -0.13, -0.30, 0.25, 0.56);
         return Rider.display_normal_part(ctx, elbow_anchor, wrist_anchor, assets.get(rider_style.lowerarm), -mirror, -0.30, -0.12, 0.56, 0.20, 1);
       }
