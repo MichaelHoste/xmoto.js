@@ -833,7 +833,6 @@
     var level;
     level = new Level();
     level.load_from_file(name);
-    level.pause();
     return level.assets.load(function() {
       createjs.Sound.setMute(true);
       level.animation_frame_update();

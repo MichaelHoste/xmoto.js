@@ -1,7 +1,7 @@
 play_level = (name) ->
   level = new Level()
   level.load_from_file(name)
-  level.pause()
+  #level.pause()
 
   # Load assets for this level before doing anything else
   level.assets.load( ->
