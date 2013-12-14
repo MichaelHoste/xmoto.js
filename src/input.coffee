@@ -46,6 +46,8 @@ class Input
           @level.flip_moto() if not @level.moto.dead
         when 80 # p
           @level.pause()
+          if @level.is_paused() == false
+            @level.animation_frame_update() # request animation frame
         when 85 # u
           switch(@level.get_render_mode())
             when "normal"   then @level.set_render_mode("ugly")

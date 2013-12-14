@@ -1,23 +1,16 @@
 play_level = (name) ->
   level = new Level()
   level.load_from_file(name)
-  #level.pause()
+  level.pause()
 
   # Load assets for this level before doing anything else
   level.assets.load( ->
     createjs.Sound.setMute(true)
-
-    window.cancelAnimationFrame(window.game_loop)
-
-    update = ->
-      level.update()
-      window.game_loop = window.requestAnimationFrame(update)
-
-    update()
+    level.animation_frame_update() # request animation frame
     hide_loading()
 
     # display at least one time the buffer in case the level is started in pause mode
-    if level.is_paused()
+    if level.is_beeing_displayed() == false
       level.display()
   )
 

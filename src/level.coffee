@@ -219,5 +219,14 @@ class Level
   is_paused: ->
     @paused
 
+  is_beeing_displayed: ->
+    @is_paused() == false # for the moment, we don't redisplay, only if level is paused
+
   object_to_follow: ->
     @moto
+
+  animation_frame_update: => # = is important
+    @update()
+    if @is_paused() == false # disable animation frame if not needed
+      window.cancelAnimationFrame(window.game_loop)
+      window.game_loop = window.requestAnimationFrame(@animation_frame_update)
