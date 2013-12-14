@@ -42,6 +42,7 @@ class Input
           @right = true
         when 13
           @level.restart()
+          @level.animation_frame_update() # request animation frame
         when 32
           @level.flip_moto() if not @level.moto.dead
         when 80 # p

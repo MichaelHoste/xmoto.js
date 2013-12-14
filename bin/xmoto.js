@@ -400,7 +400,8 @@
           case 39:
             return _this.right = true;
           case 13:
-            return _this.level.restart();
+            _this.level.restart();
+            return _this.level.animation_frame_update();
           case 32:
             if (!_this.level.moto.dead) {
               return _this.level.flip_moto();
