@@ -789,7 +789,7 @@
       };
       update = function() {
         update_physics();
-        level.display(true);
+        level.display(false);
         return window.game_loop = window.requestAnimationFrame(update);
       };
       update();

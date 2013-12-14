@@ -20,7 +20,7 @@ play_level = (name) ->
 
     update = ->
       update_physics()
-      level.display(true)
+      level.display(false)
       window.game_loop = window.requestAnimationFrame(update)
 
     update()
