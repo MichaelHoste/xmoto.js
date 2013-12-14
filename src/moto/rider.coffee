@@ -159,7 +159,7 @@ class Rider
     bodyDef.angle = @mirror * Constants.lower_leg.angle
 
     bodyDef.userData =
-      name: 'rider-lower_leg'
+      name: 'rider'
 
     bodyDef.type = b2Body.b2_dynamicBody
 

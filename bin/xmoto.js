@@ -405,6 +405,8 @@
               return _this.level.flip_moto();
             }
             break;
+          case 80:
+            return _this.level.pause();
           case 85:
             switch (_this.level.get_render_mode()) {
               case "normal":
@@ -537,6 +539,23 @@
       this.buffer = new Buffer(this);
     }
 
+    Level.prototype.reset = function() {
+      var entity, _i, _len, _ref, _results;
+      this.paused = false;
+      this.start_time = new Date().getTime();
+      this.current_time = 0;
+      this.pause_begin = this.start_time;
+      this.last_step = new Date().getTime();
+      this.physics_step = 1000.0 / 60.0;
+      _ref = this.entities.strawberries;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        entity = _ref[_i];
+        _results.push(entity.display = true);
+      }
+      return _results;
+    };
+
     Level.prototype.load_from_file = function(file_name) {
       return $.ajax({
         type: "GET",
@@ -560,8 +579,7 @@
       this.ghost.init();
       this.input.init();
       this.listeners.init();
-      this.start_time = new Date().getTime();
-      return this.current_time = 0;
+      return this.reset();
     };
 
     Level.prototype.get_render_mode = function() {
@@ -578,13 +596,33 @@
       return this.ctx.lineWidth = 0.01;
     };
 
-    Level.prototype.display = function(debug) {
+    Level.prototype.update = function(debug) {
       if (debug == null) {
         debug = false;
       }
+      if (this.is_paused()) {
+        return;
+      }
       if (this.need_to_restart) {
-        this.need_to_restart = false;
         this.restart(true);
+      }
+      this.update_physics();
+      return this.display(debug);
+    };
+
+    Level.prototype.update_physics = function() {
+      while ((new Date()).getTime() - this.last_step > this.physics_step) {
+        this.input.move();
+        this.world.Step(1.0 / 60.0, 10, 10);
+        this.world.ClearForces();
+        this.last_step += this.physics_step;
+      }
+      return this.replay.add_frame();
+    };
+
+    Level.prototype.display = function(debug) {
+      if (debug == null) {
+        debug = false;
       }
       if (!this.canvas_width) {
         this.init_canvas();
@@ -609,8 +647,7 @@
       if (debug) {
         this.world.DrawDebugData();
       }
-      this.ctx.restore();
-      return this.replay.add_frame();
+      return this.ctx.restore();
     };
 
     Level.prototype.update_timer = function(now) {
@@ -663,10 +700,10 @@
     };
 
     Level.prototype.restart = function(save_replay) {
-      var entity, _i, _len, _ref, _results;
       if (save_replay == null) {
         save_replay = false;
       }
+      this.need_to_restart = false;
       if (save_replay) {
         if ((!this.ghost.replay) || this.ghost.replay.frames_count() > this.replay.frames_count()) {
           this.ghost = new Ghost(this, this.replay.clone());
@@ -677,22 +714,30 @@
       this.moto.destroy();
       this.moto = new Moto(this, false);
       this.moto.init();
-      this.start_time = new Date().getTime();
-      this.current_time = 0;
-      this.update_timer(true);
-      _ref = this.entities.strawberries;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        entity = _ref[_i];
-        _results.push(entity.display = true);
-      }
-      return _results;
+      this.reset();
+      return this.update_timer(true);
     };
 
     Level.prototype.gameTime = function() {
       var current_time;
       current_time = new Date().getTime();
       return (current_time - this.start_time) / 10;
+    };
+
+    Level.prototype.pause = function() {
+      var current_time;
+      this.paused = !this.paused;
+      if (this.paused) {
+        return this.pause_begin = new Date().getTime();
+      } else {
+        current_time = new Date().getTime();
+        this.start_time += current_time - this.pause_begin;
+        return this.last_step += current_time - this.pause_begin;
+      }
+    };
+
+    Level.prototype.is_paused = function() {
+      return this.paused;
     };
 
     Level.prototype.object_to_follow = function() {
@@ -771,29 +816,18 @@
     level = new Level();
     level.load_from_file(name);
     return level.assets.load(function() {
-      var last_step, physics_step, update, update_physics;
+      var update;
       createjs.Sound.setMute(true);
-      last_step = new Date().getTime();
-      physics_step = 1000.0 / 60.0;
       window.cancelAnimationFrame(window.game_loop);
-      update_physics = function() {
-        var _results;
-        _results = [];
-        while ((new Date()).getTime() - last_step > physics_step) {
-          level.input.move();
-          level.world.Step(1.0 / 60.0, 10, 10);
-          level.world.ClearForces();
-          _results.push(last_step += physics_step);
-        }
-        return _results;
-      };
       update = function() {
-        update_physics();
-        level.display(false);
+        level.update();
         return window.game_loop = window.requestAnimationFrame(update);
       };
       update();
-      return hide_loading();
+      hide_loading();
+      if (level.is_paused()) {
+        return level.display();
+      }
     });
   };
 
@@ -2380,7 +2414,7 @@
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_leg.angle;
       bodyDef.userData = {
-        name: 'rider-lower_leg'
+        name: 'rider'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);

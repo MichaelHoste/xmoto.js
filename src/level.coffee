@@ -49,6 +49,21 @@ class Level
     # Buffer
     @buffer        = new Buffer(this)
 
+  reset: ->
+    # timers
+    @paused       = false
+    @start_time   = new Date().getTime()
+    @current_time = 0
+    @pause_begin  = @start_time
+
+    # physics
+    @last_step    = new Date().getTime()
+    @physics_step = 1000.0/60.0
+
+    # reset entities
+    for entity in @entities.strawberries
+      entity.display = true
+
   load_from_file: (file_name) ->
     $.ajax({
       type:     "GET",
@@ -76,8 +91,7 @@ class Level
     @input.init()
     @listeners.init()
 
-    @start_time   = new Date().getTime()
-    @current_time = 0
+    @reset()
 
   get_render_mode: ->
     @render_mode
@@ -89,11 +103,27 @@ class Level
     @canvas_height = parseFloat(@canvas.height)
     @ctx.lineWidth = 0.01
 
-  display: (debug = false) ->
+  update: (debug = false) ->
+    if @is_paused()
+      return
+
     if @need_to_restart
-      @need_to_restart = false
       @restart(true)
 
+    @update_physics()
+    @display(debug)
+
+  update_physics: ->
+    while (new Date()).getTime() - @last_step > @physics_step
+      @input.move()
+      @world.Step(1.0/60.0, 10, 10)
+      @world.ClearForces()
+      @last_step += @physics_step
+
+    # Save last step for replay
+    @replay.add_frame()
+
+  display: (debug = false) ->
     @init_canvas() if not @canvas_width
 
     @update_timer()
@@ -125,9 +155,6 @@ class Level
     @world.DrawDebugData() if debug
 
     @ctx.restore()
-
-    # Save last step for replay
-    @replay.add_frame()
 
   update_timer: (now = false) ->
     new_time = new Date().getTime() - @start_time
@@ -162,6 +189,7 @@ class Level
     return true
 
   restart: (save_replay = false) ->
+    @need_to_restart = false
     if save_replay
       if (not @ghost.replay) or @ghost.replay.frames_count() > @replay.frames_count()
         @ghost  = new Ghost(this, @replay.clone())
@@ -171,18 +199,25 @@ class Level
     @moto.destroy()
     @moto = new Moto(this, false)
     @moto.init()
-
-    @start_time   = new Date().getTime()
-    @current_time = 0
+    @reset()
     @update_timer(true)
-
-    for entity in @entities.strawberries
-      entity.display = true
 
   # time, in centiseconds
   gameTime: ->
     current_time = new Date().getTime()
     (current_time - @start_time) / 10
+
+  pause: ->
+    @paused = not @paused
+    if @paused
+      @pause_begin = new Date().getTime()
+    else
+      current_time = new Date().getTime()
+      @start_time += current_time - @pause_begin
+      @last_step  += current_time - @pause_begin
+
+  is_paused: ->
+    @paused
 
   object_to_follow: ->
     @moto

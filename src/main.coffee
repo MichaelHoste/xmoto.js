@@ -1,31 +1,24 @@
 play_level = (name) ->
   level = new Level()
   level.load_from_file(name)
+  #level.pause()
 
   # Load assets for this level before doing anything else
   level.assets.load( ->
     createjs.Sound.setMute(true)
 
-    last_step    = new Date().getTime()
-    physics_step = 1000.0/60.0
-
     window.cancelAnimationFrame(window.game_loop)
 
-    update_physics = ->
-      while (new Date()).getTime() - last_step > physics_step
-        level.input.move()
-        level.world.Step(1.0/60.0, 10, 10)
-        level.world.ClearForces()
-        last_step += physics_step
-
     update = ->
-      update_physics()
-      level.display(false)
+      level.update()
       window.game_loop = window.requestAnimationFrame(update)
 
     update()
-
     hide_loading()
+
+    # display at least one time the buffer in case the level is started in pause mode
+    if level.is_paused()
+      level.display()
   )
 
 show_loading = ->

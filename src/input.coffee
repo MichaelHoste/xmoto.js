@@ -44,6 +44,8 @@ class Input
           @level.restart()
         when 32
           @level.flip_moto() if not @level.moto.dead
+        when 80 # p
+          @level.pause()
         when 85 # u
           switch(@level.get_render_mode())
             when "normal"   then @level.set_render_mode("ugly")
