@@ -13,7 +13,7 @@ class Moto
   constructor: (level, mirror = false) ->
     @level    = level
     @assets   = level.assets
-    if mirror then @mirror = -1 else @mirror = 1
+    @mirror   = if mirror then -1 else 1
     @rider    = new Rider(level, this)
     @dead     = false
 
@@ -34,14 +34,11 @@ class Moto
     world.DestroyJoint(@right_prismatic_joint)
 
   display: ->
-    Moto.display_moto(@mirror,
-                      @left_wheel.GetPosition(),
-                      @left_wheel.GetAngle(),
-                      @right_wheel.GetPosition(),
-                      @right_wheel.GetAngle(),
-                      @body.GetPosition(),
-                      @body.GetAngle(),
-                      @level.ctx, @level.assets, @rider.rider_style, @level.render_mode)
+    @display_wheel(@left_wheel)
+    @display_wheel(@right_wheel)
+    @display_left_axle()
+    @display_right_axle()
+    @display_body()
     @rider.display()
 
   init: ->
@@ -234,137 +231,121 @@ class Moto
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
-  @display_moto: (mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, mode) ->
-    if mode == "normal" or mode == "uglyOver"
-      Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, false)
-    if mode == "ugly"   or mode == "uglyOver"
-      Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, true)
+  display_wheel: (wheel) ->
+    # Get angle and position
+    position = wheel.GetPosition()
+    angle    = wheel.GetAngle()
 
-  @display_moto_parts: (mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, ugly) ->
-    if ugly
-      @display_ugly_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, rider_style)
-      @display_ugly_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, rider_style)
-    else
-      @display_normal_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, assets, rider_style)
-      @display_normal_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, assets, rider_style)
-      @display_normal_right_axle(mirror, right_wheel_position, body_position, body_angle, ctx, assets, rider_style)
-      @display_normal_left_axle(mirror, left_wheel_position, body_position, body_angle, ctx, assets, rider_style)
-      @display_normal_body(mirror, body_position, body_angle, ctx, assets, rider_style)
+    # Draw Texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.rotate(angle)
 
-  @display_ugly_wheel: (mirror, wheel_position, wheel_angle, ctx, rider_style) ->
-    ctx.save()
-    ctx.strokeStyle=rider_style.ugly_moto_color
-    ctx.lineWidth = 0.05
-    ctx.translate(wheel_position.x, wheel_position.y)
-    ctx.rotate(wheel_angle)
-    ctx.beginPath()
-    ctx.arc(0, 0, Constants.wheels.radius, 0, 2*Math.PI)
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.moveTo(-Constants.wheels.radius, 0.0)
-    ctx.lineTo( Constants.wheels.radius, 0.0)
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.moveTo(0.0, -Constants.wheels.radius, 0.0)
-    ctx.lineTo(0.0,  Constants.wheels.radius, 0.0)
-    ctx.stroke()
-    ctx.restore()
-
-  @display_normal_wheel: (mirror, wheel_position, wheel_angle, ctx, assets, rider_style) ->
-    ctx.save()
-    ctx.translate(wheel_position.x, wheel_position.y)
-    ctx.rotate(wheel_angle)
-    ctx.drawImage(
-      assets.get(rider_style.wheel), # texture
-      -Constants.wheels.radius,   # x
-      -Constants.wheels.radius,   # y
-       Constants.wheels.radius*2, # size-x
-       Constants.wheels.radius*2  # size-y
+    @level.ctx.drawImage(
+      @assets.get(@rider.rider_style.wheel), # texture
+      -Constants.wheels.radius,      # x
+      -Constants.wheels.radius,      # y
+       Constants.wheels.radius*2,    # size-x
+       Constants.wheels.radius*2     # size-y
     )
-    ctx.restore()
 
-  @display_normal_body: (mirror, body_position, body_angle, ctx, assets, rider_style) ->
-    ctx.save()
-    ctx.translate(body_position.x, body_position.y)
-    ctx.scale(1*mirror, -1)
-    ctx.rotate(mirror*(-body_angle))
-    ctx.drawImage(
-      assets.get(rider_style.body), # texture
+    @level.ctx.restore()
+
+  display_body: ->
+    # Get angle and position
+    position = @body.GetPosition()
+    angle    = @body.GetAngle()
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(@mirror, -1)
+    @level.ctx.rotate(@mirror*(-angle))
+
+    @level.ctx.drawImage(
+      @assets.get(@rider.rider_style.body), # texture
       -1.0, # x
       -0.5, # y
        2.0, # size-x
        1.0  # size-y
     )
-    ctx.restore()
 
-  @display_normal_left_axle: (mirror, wheel_position, body_position, body_angle, ctx, assets, rider_style) ->
+    @level.ctx.restore()
+
+  display_left_axle: ->
     axle_thickness = 0.09
 
     # Position
-    position =
-      x: wheel_position.x - mirror * axle_thickness/2.0
+    wheel_position = @left_wheel.GetPosition()
+    wheel_position =
+      x: wheel_position.x - @mirror * axle_thickness/2.0
       y: wheel_position.y - 0.025
 
     # Position relative to center of body
     axle_position =
-      x: -0.17 * mirror
+      x: -0.17 * @mirror
       y: -0.30
 
     # Adjusted position depending of rotation of body
-    axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position)
+    axle_adjusted_position = Math2D.rotate_point(axle_position, @body.GetAngle(), @body.GetPosition())
 
     # Distance
     distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position)
 
     # Angle
-    angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + mirror * Math.PI/2
+    angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + @mirror * Math.PI/2
 
     # Draw texture
-    ctx.save()
-    ctx.translate(wheel_position.x, wheel_position.y)
-    ctx.scale(1*mirror, -1)
-    ctx.rotate(mirror*(-angle))
-    ctx.drawImage(
-      assets.get(rider_style.rear), # texture
+    @level.ctx.save()
+    @level.ctx.translate(wheel_position.x, wheel_position.y)
+    @level.ctx.scale(@mirror, -1)
+    @level.ctx.rotate(@mirror*(-angle))
+
+    @level.ctx.drawImage(
+      @assets.get(@rider.rider_style.rear), # texture
       0.0,               # x
       -axle_thickness/2, # y
       distance,          # size-x
       axle_thickness     # size-y
     )
-    ctx.restore()
 
-  @display_normal_right_axle: (mirror, wheel_position, body_position, body_angle, ctx, assets, rider_style) ->
+    @level.ctx.restore()
+
+  display_right_axle: ->
     axle_thickness = 0.07
 
     # Position
+    wheel_position = @right_wheel.GetPosition()
     position =
-      x: wheel_position.x + mirror * axle_thickness/2.0 - @mirror * 0.03
+      x: wheel_position.x + @mirror * axle_thickness/2.0 - @mirror * 0.03
       y: wheel_position.y - 0.045
 
     # Position relative to center of body
     axle_position =
-      x: 0.52 * mirror
+      x: 0.52 * @mirror
       y: 0.025
 
     # Adjusted position depending of rotation of body
-    axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position)
+    axle_adjusted_position = Math2D.rotate_point(axle_position, @body.GetAngle(), @body.GetPosition())
 
     # Distance
     distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position)
 
     # Angle
-    angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + mirror * Math.PI/2
+    angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + @mirror * Math.PI/2
 
     # Draw texture
-    ctx.save()
-    ctx.translate(wheel_position.x, wheel_position.y)
-    ctx.scale(1*mirror, -1)
-    ctx.rotate(mirror*(-angle))
-    ctx.drawImage(
-      assets.get(rider_style.front), # texture
+    @level.ctx.save()
+    @level.ctx.translate(wheel_position.x, wheel_position.y)
+    @level.ctx.scale(@mirror, -1)
+    @level.ctx.rotate(@mirror*(-angle))
+
+    @level.ctx.drawImage(
+      @assets.get(@rider.rider_style.front), # texture
       0.0,               # x
       -axle_thickness/2, # y
       distance,          # size-x
       axle_thickness     # size-y
     )
-    ctx.restore()
+
+    @level.ctx.restore()

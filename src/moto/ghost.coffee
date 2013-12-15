@@ -29,7 +29,6 @@ class Ghost
                         @frame.body.angle
                         @level.ctx, @level.assets, @rider_style, @level.render_mode)
 
-
   next_state: ->
     if @replay
       gameTime = @level.gameTime()
