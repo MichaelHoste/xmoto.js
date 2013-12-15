@@ -4,12 +4,10 @@ play_level = (name) ->
 
   # Load assets for this level before doing anything else
   level.assets.load( ->
-    createjs.Sound.setMute(true)
-
-    last_step    = new Date().getTime()
-    physics_step = 1000.0/60.0
-
-    window.cancelAnimationFrame(window.game_loop)
+    update = ->
+      update_physics()
+      level.display(false)
+      window.game_loop = window.requestAnimationFrame(update)
 
     update_physics = ->
       while (new Date()).getTime() - last_step > physics_step
@@ -18,14 +16,18 @@ play_level = (name) ->
         level.world.ClearForces()
         last_step += physics_step
 
-    update = ->
-      update_physics()
-      level.display(false)
-      window.game_loop = window.requestAnimationFrame(update)
+    createjs.Sound.setMute(true)
+
+    last_step    = new Date().getTime()
+    physics_step = 1000.0/60.0
+
+    level.start_time   = new Date().getTime()
+    level.current_time = 0
+
+    window.cancelAnimationFrame(window.game_loop)
+    hide_loading()
 
     update()
-
-    hide_loading()
   )
 
 show_loading = ->

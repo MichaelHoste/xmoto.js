@@ -34,9 +34,6 @@ class Level
     # Moto (level independant)
     @moto          = new Moto(this)
 
-    # Engine sound
-    #@engine_sound  = new EngineSound(this)
-
     # Level dependent objects
     @infos         = new Infos(this)
     @sky           = new Sky(this)
@@ -76,14 +73,6 @@ class Level
     @input.init()
     @listeners.init()
 
-    @start_time   = new Date().getTime()
-    @current_time = 0
-
-  get_render_mode: ->
-    @render_mode
-
-  set_render_mode: (@render_mode) ->
-
   init_canvas: ->
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height)
@@ -91,7 +80,6 @@ class Level
 
   display: (debug = false) ->
     if @need_to_restart
-      @need_to_restart = false
       @restart(true)
 
     @init_canvas() if not @canvas_width
@@ -178,6 +166,8 @@ class Level
 
     for entity in @entities.strawberries
       entity.display = true
+
+    @need_to_restart = false
 
   # time, in centiseconds
   gameTime: ->

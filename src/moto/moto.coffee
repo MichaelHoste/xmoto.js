@@ -41,7 +41,7 @@ class Moto
                       @right_wheel.GetAngle(),
                       @body.GetPosition(),
                       @body.GetAngle(),
-                      @level.ctx, @level.assets, @rider.rider_style, @level.get_render_mode())
+                      @level.ctx, @level.assets, @rider.rider_style, @level.render_mode)
     @rider.display()
 
   init: ->

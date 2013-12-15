@@ -19,7 +19,7 @@ class Ghost
                           @frame.anchors.hip
                           @frame.anchors.knee
                           @frame.anchors.ankle
-                          @level.ctx, @level.assets, @rider_style, @level.get_render_mode())
+                          @level.ctx, @level.assets, @rider_style, @level.render_mode)
       Moto.display_moto(@mirror,
                         @frame.left_wheel.position,
                         @frame.left_wheel.angle,
@@ -27,7 +27,7 @@ class Ghost
                         @frame.right_wheel.angle,
                         @frame.body.position,
                         @frame.body.angle
-                        @level.ctx, @level.assets, @rider_style, @level.get_render_mode())
+                        @level.ctx, @level.assets, @rider_style, @level.render_mode)
 
 
   next_state: ->

@@ -136,7 +136,7 @@ class Entities
           @display_entity(ctx, entity)
 
   display_entity: (ctx, entity) ->
-    if @level.get_render_mode() == "normal" or @level.get_render_mode() == "uglyOver"
+    if @level.render_mode == "normal" or @level.render_mode == "uglyOver"
 
       if entity.frames
         num = @level.current_time % (entity.frames * entity.delay * 1000)
@@ -155,7 +155,7 @@ class Entities
                     entity.size.height)
       ctx.restore()
 
-    if @level.get_render_mode() == "ugly" or @level.get_render_mode() == "uglyOver"
+    if @level.render_mode == "ugly" or @level.render_mode == "uglyOver"
       @level.ctx.beginPath()
       @level.ctx.strokeStyle="#0000FF"
       @level.ctx.lineWidth = 0.05

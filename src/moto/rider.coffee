@@ -368,7 +368,7 @@ class Rider
                         @hip_joint.GetAnchorA(),
                         @knee_joint.GetAnchorA(),
                         @ankle_joint.GetAnchorA(),
-                        @level.ctx, @assets, @rider_style, @level.get_render_mode())
+                        @level.ctx, @assets, @rider_style, @level.render_mode)
 
   @display_rider: (mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, mode) ->
     if mode == "normal" or mode == "uglyOver"
@@ -387,7 +387,7 @@ class Rider
     else
       Rider.display_normal_part(ctx, hip_anchor,   shoulder_anchor, assets.get(rider_style.torso),     mirror, -0.27, -0.80, 0.50, 1.15)
       Rider.display_normal_part(ctx, hip_anchor,   knee_anchor,     assets.get(rider_style.upperleg),  mirror, -0.48, -0.15, 0.80, 0.28, 1)
-      Rider.display_normal_part(ctx, ankle_anchor, knee_anchor,     assets.get(rider_style.lowerleg),  mirror, -0.17, -0.33, 0.40, 0.66)
+      Rider.display_normal_part(ctx, ankle_anchor, knee_anchor,     assets.get(rider_style.lowerleg),  mirror, -0.07, -0.33, 0.40, 0.66)
       Rider.display_normal_part(ctx, elbow_anchor, shoulder_anchor, assets.get(rider_style.upperarm),  mirror, -0.13, -0.30, 0.25, 0.56)
       Rider.display_normal_part(ctx, elbow_anchor, wrist_anchor,    assets.get(rider_style.lowerarm), -mirror, -0.30, -0.12, 0.56, 0.20, 1)
 
