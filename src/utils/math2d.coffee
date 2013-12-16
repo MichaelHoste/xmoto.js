@@ -23,6 +23,16 @@ class Math2D
       x: rotation_axe.x + point.x * Math.cos(angle) - point.y * Math.sin(angle)
       y: rotation_axe.y + point.x * Math.sin(angle) + point.y * Math.cos(angle)
 
+  @vlength: (point) ->
+    Math.sqrt(point.x*point.x + point.y*point.y)
+
+  @normalize: (point) ->
+    v = @vlength(point)
+    return 0 if v == 0
+    new_point =
+      x: point.x/v
+      y: point.y/v
+
   # If shape has 3 collinear vertices, move them around to avoid that
   @not_collinear_vertices: (vertices) ->
     size = vertices.length

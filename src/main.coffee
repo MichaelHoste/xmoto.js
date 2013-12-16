@@ -38,6 +38,9 @@ select_level_from_url = ->
   $("#levels").trigger("change")
 
 $ ->
+  CppConstants.init()
+  Constants.init()
+
   bind_select()
 
   if location.search != ''
