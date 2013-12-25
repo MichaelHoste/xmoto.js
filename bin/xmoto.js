@@ -131,7 +131,9 @@
         y: 1.0
       },
       shape: [new b2Vec2(0.4, -0.3), new b2Vec2(0.50, 0.40), new b2Vec2(-0.75, 0.16), new b2Vec2(-0.35, -0.3)],
-      collisions: true
+      collisions: true,
+      texture: 'playerbikerbody',
+      ghost_texture: 'ghostbikerbody'
     };
 
     Constants.wheels = {
@@ -143,7 +145,9 @@
         x: 0.70,
         y: 0.48
       },
-      collisions: true
+      collisions: true,
+      texture: 'playerbikerwheel',
+      ghost_texture: 'ghostbikerwheel'
     };
 
     Constants.left_axle = {
@@ -155,7 +159,9 @@
         y: 1.0
       },
       shape: [new b2Vec2(-0.10, -0.30), new b2Vec2(-0.25, -0.30), new b2Vec2(-0.80, -0.58), new b2Vec2(-0.65, -0.58)],
-      collisions: true
+      collisions: true,
+      texture: 'rear1',
+      ghost_texture: 'rear_ghost'
     };
 
     Constants.right_axle = {
@@ -167,7 +173,9 @@
         y: 1.0
       },
       shape: [new b2Vec2(0.58, -0.02), new b2Vec2(0.48, -0.02), new b2Vec2(0.66, -0.58), new b2Vec2(0.76, -0.58)],
-      collisions: true
+      collisions: true,
+      texture: 'front1',
+      ghost_texture: 'front_ghost'
     };
 
     Constants.left_suspension = {
@@ -202,9 +210,11 @@
         x: -0.24,
         y: 1.87
       },
+      angle: -Math.PI / 20.0,
       shape: [new b2Vec2(0.16, -0.575), new b2Vec2(0.07, 0.20), new b2Vec2(-0.34, 0.24), new b2Vec2(-0.20, -0.575)],
       collisions: true,
-      angle: -Math.PI / 20.0
+      texture: 'playertorso',
+      ghost_texture: 'ghosttorso'
     };
 
     Constants.lower_leg = {
@@ -215,9 +225,11 @@
         x: 0.15,
         y: 0.90
       },
+      angle: -Math.PI / 6.0,
       shape: [new b2Vec2(0.2, -0.33), new b2Vec2(0.2, -0.27), new b2Vec2(0.00, -0.2), new b2Vec2(0.02, 0.33), new b2Vec2(-0.17, 0.33), new b2Vec2(-0.14, -0.33)],
       collisions: true,
-      angle: -Math.PI / 6.0
+      texture: 'playerlowerleg',
+      ghost_texture: 'ghostlowerleg'
     };
 
     Constants.upper_leg = {
@@ -228,9 +240,11 @@
         x: -0.09,
         y: 1.27
       },
+      angle: -Math.PI / 12.0,
       shape: [new b2Vec2(0.4, -0.14), new b2Vec2(0.4, 0.07), new b2Vec2(-0.4, 0.14), new b2Vec2(-0.4, -0.08)],
       collisions: true,
-      angle: -Math.PI / 12.0
+      texture: 'playerupperleg',
+      ghost_texture: 'ghostupperleg'
     };
 
     Constants.lower_arm = {
@@ -241,9 +255,11 @@
         x: 0.07,
         y: 1.52
       },
+      angle: -Math.PI / 10.0,
       shape: [new b2Vec2(0.28, -0.055), new b2Vec2(0.28, 0.055), new b2Vec2(-0.28, 0.08), new b2Vec2(-0.28, -0.05)],
       collisions: true,
-      angle: -Math.PI / 10.0
+      texture: 'playerlowerarm',
+      ghost_texture: 'ghostlowerarm'
     };
 
     Constants.upper_arm = {
@@ -254,9 +270,11 @@
         x: -0.17,
         y: 1.83
       },
+      angle: Math.PI / 9.0,
       shape: [new b2Vec2(0.09, -0.26), new b2Vec2(0.09, 0.26), new b2Vec2(-0.11, 0.26), new b2Vec2(-0.11, -0.26)],
       collisions: true,
-      angle: Math.PI / 9.0
+      texture: 'playerupperarm',
+      ghost_texture: 'ghostupperarm'
     };
 
     Constants.ankle = {
@@ -1825,15 +1843,14 @@
       this.assets = level.assets;
       this.replay = replay;
       this.current_frame = 0;
-      this.rider_style = this.assets.get_rider_style(style);
     }
 
     Ghost.prototype.display = function() {
       if (this.replay && this.current_frame < this.replay.frames_count()) {
         this.frame = this.replay.frame(this.current_frame);
         this.mirror = this.frame.mirror ? -1 : 1;
-        Rider.display_rider(this.mirror, this.frame.anchors.neck, this.frame.anchors.wrist, this.frame.anchors.elbow, this.frame.anchors.shoulder, this.frame.anchors.hip, this.frame.anchors.knee, this.frame.anchors.ankle, this.level.ctx, this.level.assets, this.rider_style, this.level.get_render_mode());
-        return Moto.display_moto(this.mirror, this.frame.left_wheel.position, this.frame.left_wheel.angle, this.frame.right_wheel.position, this.frame.right_wheel.angle, this.frame.body.position, this.frame.body.angle, this.level.ctx, this.level.assets, this.rider_style, this.level.get_render_mode());
+        Rider.display_rider(this.mirror, this.frame.anchors.neck, this.frame.anchors.wrist, this.frame.anchors.elbow, this.frame.anchors.shoulder, this.frame.anchors.hip, this.frame.anchors.knee, this.frame.anchors.ankle, this.level.ctx, this.level.assets, this.level.get_render_mode());
+        return Moto.display_moto(this.mirror, this.frame.left_wheel.position, this.frame.left_wheel.angle, this.frame.right_wheel.position, this.frame.right_wheel.angle, this.frame.body.position, this.frame.body.angle, this.level.ctx, this.level.assets, this.level.get_render_mode());
       }
     };
 
@@ -1861,12 +1878,12 @@
     };
 
     Ghost.prototype.init = function() {
-      var texture, textures, _i, _len, _results;
-      textures = [this.rider_style.torso, this.rider_style.upperleg, this.rider_style.lowerleg, this.rider_style.upperarm, this.rider_style.lowerarm, this.rider_style.body, this.rider_style.wheel, this.rider_style.front, this.rider_style.rear];
+      var part, parts, _i, _len, _results;
+      parts = [Constants.torso, Constants.upperleg, Constants.lowerleg, Constants.upperarm, Constants.lowerarm, Constants.body, Constants.wheel, Constants.left_wheel, Constants.right_wheel];
       _results = [];
-      for (_i = 0, _len = textures.length; _i < _len; _i++) {
-        texture = textures[_i];
-        _results.push(this.assets.moto.push(texture));
+      for (_i = 0, _len = parts.length; _i < _len; _i++) {
+        part = parts[_i];
+        _results.push(this.assets.moto.push(part.texture));
       }
       return _results;
     };
@@ -1925,16 +1942,16 @@
     };
 
     Moto.prototype.display = function() {
-      Moto.display_moto(this.mirror, this.left_wheel.GetPosition(), this.left_wheel.GetAngle(), this.right_wheel.GetPosition(), this.right_wheel.GetAngle(), this.body.GetPosition(), this.body.GetAngle(), this.level.ctx, this.level.assets, this.rider.rider_style, this.level.get_render_mode());
+      Moto.display_moto(this.mirror, this.left_wheel.GetPosition(), this.left_wheel.GetAngle(), this.right_wheel.GetPosition(), this.right_wheel.GetAngle(), this.body.GetPosition(), this.body.GetAngle(), this.level.ctx, this.level.assets, this.level.get_render_mode());
       return this.rider.display();
     };
 
     Moto.prototype.init = function() {
-      var texture, textures, _i, _len;
-      textures = [this.rider.rider_style.body, this.rider.rider_style.wheel, this.rider.rider_style.front, this.rider.rider_style.rear];
-      for (_i = 0, _len = textures.length; _i < _len; _i++) {
-        texture = textures[_i];
-        this.assets.moto.push(texture);
+      var part, parts, _i, _len;
+      parts = [Constants.body, Constants.wheel, Constants.left_wheel, Constants.right_wheel];
+      for (_i = 0, _len = parts.length; _i < _len; _i++) {
+        part = parts[_i];
+        this.assets.moto.push(part.texture);
       }
       this.player_start = this.level.entities.player_start;
       this.body = this.create_body(this.player_start.x + this.mirror * Constants.body.position.x, this.player_start.y + Constants.body.position.y);
@@ -2080,31 +2097,30 @@
       return this.level.world.CreateJoint(jointDef);
     };
 
-    Moto.display_moto = function(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, mode) {
+    Moto.display_moto = function(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, mode) {
       if (mode === "normal" || mode === "uglyOver") {
-        Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, false);
+        Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, false);
       }
       if (mode === "ugly" || mode === "uglyOver") {
-        return Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, true);
+        return Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, true);
       }
     };
 
-    Moto.display_moto_parts = function(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, ugly) {
+    Moto.display_moto_parts = function(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, ugly) {
       if (ugly) {
-        this.display_ugly_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, rider_style);
-        return this.display_ugly_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, rider_style);
+        this.display_ugly_wheel(mirror, left_wheel_position, left_wheel_angle, ctx);
+        return this.display_ugly_wheel(mirror, right_wheel_position, right_wheel_angle, ctx);
       } else {
-        this.display_normal_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, assets, rider_style);
-        this.display_normal_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, assets, rider_style);
-        this.display_normal_right_axle(mirror, right_wheel_position, body_position, body_angle, ctx, assets, rider_style);
-        this.display_normal_left_axle(mirror, left_wheel_position, body_position, body_angle, ctx, assets, rider_style);
-        return this.display_normal_body(mirror, body_position, body_angle, ctx, assets, rider_style);
+        this.display_normal_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, assets);
+        this.display_normal_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, assets);
+        this.display_normal_right_axle(mirror, right_wheel_position, body_position, body_angle, ctx, assets);
+        this.display_normal_left_axle(mirror, left_wheel_position, body_position, body_angle, ctx, assets);
+        return this.display_normal_body(mirror, body_position, body_angle, ctx, assets);
       }
     };
 
-    Moto.display_ugly_wheel = function(mirror, wheel_position, wheel_angle, ctx, rider_style) {
+    Moto.display_ugly_wheel = function(mirror, wheel_position, wheel_angle, ctx) {
       ctx.save();
-      ctx.strokeStyle = rider_style.ugly_moto_color;
       ctx.lineWidth = 0.05;
       ctx.translate(wheel_position.x, wheel_position.y);
       ctx.rotate(wheel_angle);
@@ -2122,7 +2138,7 @@
       return ctx.restore();
     };
 
-    Moto.display_normal_wheel = function(mirror, wheel_position, wheel_angle, ctx, assets, rider_style) {
+    Moto.display_normal_wheel = function(mirror, wheel_position, wheel_angle, ctx, assets) {
       ctx.save();
       ctx.translate(wheel_position.x, wheel_position.y);
       ctx.rotate(wheel_angle);
@@ -2273,7 +2289,6 @@
       this.assets = level.assets;
       this.moto = moto;
       this.mirror = this.moto.mirror;
-      this.rider_style = this.assets.get_rider_style("player");
     }
 
     Rider.prototype.destroy = function() {
@@ -2295,11 +2310,11 @@
     };
 
     Rider.prototype.init = function() {
-      var texture, textures, _i, _len;
-      textures = [this.rider_style.torso, this.rider_style.upperleg, this.rider_style.lowerleg, this.rider_style.upperarm, this.rider_style.lowerarm];
-      for (_i = 0, _len = textures.length; _i < _len; _i++) {
-        texture = textures[_i];
-        this.assets.moto.push(texture);
+      var part, parts, _i, _len;
+      parts = [Constants.torso, Constants.upperleg, Constants.lowerleg, Constants.upperarm, Constants.lowerarm];
+      for (_i = 0, _len = parts.length; _i < _len; _i++) {
+        part = parts[_i];
+        this.assets.moto.push(part.texture);
       }
       this.player_start = this.level.entities.player_start;
       this.head = this.create_head(this.player_start.x + this.mirror * Constants.head.position.x, this.player_start.y + Constants.head.position.y);
@@ -2560,46 +2575,44 @@
     };
 
     Rider.prototype.display = function() {
-      return Rider.display_rider(this.mirror, this.neck_joint.GetAnchorA(), this.wrist_joint.GetAnchorA(), this.elbow_joint.GetAnchorA(), this.shoulder_joint.GetAnchorA(), this.hip_joint.GetAnchorA(), this.knee_joint.GetAnchorA(), this.ankle_joint.GetAnchorA(), this.level.ctx, this.assets, this.rider_style, this.level.get_render_mode());
+      return Rider.display_rider(this.mirror, this.neck_joint.GetAnchorA(), this.wrist_joint.GetAnchorA(), this.elbow_joint.GetAnchorA(), this.shoulder_joint.GetAnchorA(), this.hip_joint.GetAnchorA(), this.knee_joint.GetAnchorA(), this.ankle_joint.GetAnchorA(), this.level.ctx, this.assets, this.level.get_render_mode());
     };
 
-    Rider.display_rider = function(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, mode) {
+    Rider.display_rider = function(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, mode) {
       if (mode === "normal" || mode === "uglyOver") {
-        Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, false);
+        Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, false);
       }
       if (mode === "ugly" || mode === "uglyOver") {
-        return Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, true);
+        return Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, true);
       }
     };
 
-    Rider.display_rider_members = function(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, ugly) {
+    Rider.display_rider_members = function(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, ugly) {
       if (ugly) {
-        Rider.display_ugly_head(ctx, rider_style, neck_anchor);
-        Rider.display_ugly_part(ctx, rider_style, hip_anchor, shoulder_anchor);
-        Rider.display_ugly_part(ctx, rider_style, hip_anchor, knee_anchor);
-        Rider.display_ugly_part(ctx, rider_style, ankle_anchor, knee_anchor);
-        Rider.display_ugly_part(ctx, rider_style, shoulder_anchor, elbow_anchor);
-        return Rider.display_ugly_part(ctx, rider_style, elbow_anchor, wrist_anchor);
+        Rider.display_ugly_head(ctx, neck_anchor);
+        Rider.display_ugly_part(ctx, hip_anchor, shoulder_anchor);
+        Rider.display_ugly_part(ctx, hip_anchor, knee_anchor);
+        Rider.display_ugly_part(ctx, ankle_anchor, knee_anchor);
+        Rider.display_ugly_part(ctx, shoulder_anchor, elbow_anchor);
+        return Rider.display_ugly_part(ctx, elbow_anchor, wrist_anchor);
       } else {
-        Rider.display_normal_part(ctx, hip_anchor, shoulder_anchor, assets.get(rider_style.torso), mirror, -0.27, -0.80, 0.50, 1.15);
-        Rider.display_normal_part(ctx, hip_anchor, knee_anchor, assets.get(rider_style.upperleg), mirror, -0.48, -0.15, 0.80, 0.28, 1);
-        Rider.display_normal_part(ctx, ankle_anchor, knee_anchor, assets.get(rider_style.lowerleg), mirror, -0.17, -0.33, 0.40, 0.66);
-        Rider.display_normal_part(ctx, elbow_anchor, shoulder_anchor, assets.get(rider_style.upperarm), mirror, -0.13, -0.30, 0.25, 0.56);
-        return Rider.display_normal_part(ctx, elbow_anchor, wrist_anchor, assets.get(rider_style.lowerarm), -mirror, -0.30, -0.12, 0.56, 0.20, 1);
+        Rider.display_normal_part(ctx, hip_anchor, shoulder_anchor, assets.get(Constants.torso.texture), mirror, -0.27, -0.80, 0.50, 1.15);
+        Rider.display_normal_part(ctx, hip_anchor, knee_anchor, assets.get(Constants.upperleg.texture), mirror, -0.48, -0.15, 0.80, 0.28, 1);
+        Rider.display_normal_part(ctx, ankle_anchor, knee_anchor, assets.get(Constants.lowerleg.texture), mirror, -0.17, -0.33, 0.40, 0.66);
+        Rider.display_normal_part(ctx, elbow_anchor, shoulder_anchor, assets.get(Constants.upperarm.texture), mirror, -0.13, -0.30, 0.25, 0.56);
+        return Rider.display_normal_part(ctx, elbow_anchor, wrist_anchor, assets.get(Constants.lowerarm.texture), -mirror, -0.30, -0.12, 0.56, 0.20, 1);
       }
     };
 
-    Rider.display_ugly_head = function(ctx, rider_style, neck_anchor) {
+    Rider.display_ugly_head = function(ctx, neck_anchor) {
       ctx.beginPath();
-      ctx.strokeStyle = rider_style.ugly_rider_color;
       ctx.lineWidth = 0.05;
       ctx.arc(neck_anchor.x, neck_anchor.y, Constants.head.radius, 0, 2 * Math.PI);
       return ctx.stroke();
     };
 
-    Rider.display_ugly_part = function(ctx, rider_style, anchor1, anchor2) {
+    Rider.display_ugly_part = function(ctx, anchor1, anchor2) {
       ctx.beginPath();
-      ctx.strokeStyle = rider_style.ugly_rider_color;
       ctx.lineWidth = 0.04;
       ctx.moveTo(anchor1.x, anchor1.y);
       ctx.lineTo(anchor2.x, anchor2.y);
@@ -2710,42 +2723,6 @@
         }
       }
       return unique;
-    };
-
-    Assets.prototype.get_rider_style = function(style) {
-      var new_style;
-      if (style === "ghost") {
-        new_style = {
-          torso: "ghosttorso",
-          upperleg: "ghostupperleg",
-          lowerleg: "ghostlowerleg",
-          upperarm: "ghostupperarm",
-          lowerarm: "ghostlowerarm",
-          body: "ghostbikerbody",
-          wheel: "ghostbikerwheel",
-          front: "front_ghost",
-          rear: "rear_ghost",
-          ugly_rider_color: "#008800",
-          ugly_moto_color: "#880000"
-        };
-        return new_style;
-      }
-      if (style === "player") {
-        new_style = {
-          torso: "playertorso",
-          upperleg: "playerupperleg",
-          lowerleg: "playerlowerleg",
-          upperarm: "playerupperarm",
-          lowerarm: "playerlowerarm",
-          body: "playerbikerbody",
-          wheel: "playerbikerwheel",
-          front: "front1",
-          rear: "rear1",
-          ugly_rider_color: "#00FF00",
-          ugly_moto_color: "#FF0000"
-        };
-        return new_style;
-      }
     };
 
     return Assets;

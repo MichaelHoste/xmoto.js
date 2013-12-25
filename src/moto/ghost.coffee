@@ -5,7 +5,6 @@ class Ghost
     @assets = level.assets
     @replay = replay
     @current_frame = 0
-    @rider_style = @assets.get_rider_style(style)
 
   display: ->
     if @replay and @current_frame < @replay.frames_count()
@@ -19,7 +18,7 @@ class Ghost
                           @frame.anchors.hip
                           @frame.anchors.knee
                           @frame.anchors.ankle
-                          @level.ctx, @level.assets, @rider_style, @level.get_render_mode())
+                          @level.ctx, @level.assets, @level.get_render_mode())
       Moto.display_moto(@mirror,
                         @frame.left_wheel.position,
                         @frame.left_wheel.angle,
@@ -27,7 +26,7 @@ class Ghost
                         @frame.right_wheel.angle,
                         @frame.body.position,
                         @frame.body.angle
-                        @level.ctx, @level.assets, @rider_style, @level.get_render_mode())
+                        @level.ctx, @level.assets, @level.get_render_mode())
 
 
   next_state: ->
@@ -49,13 +48,9 @@ class Ghost
 
   init: ->
     # Assets
-    textures = [ @rider_style.torso,    @rider_style.upperleg, @rider_style.lowerleg
-                 @rider_style.upperarm, @rider_style.lowerarm
-                 @rider_style.body,     @rider_style.wheel
-                 @rider_style.front,    @rider_style.rear ]
-    for texture in textures
-      @assets.moto.push(texture)
+    parts = [ Constants.torso, Constants.upperleg, Constants.lowerleg,
+              Constants.upperarm, Constants.lowerarm,
+              Constants.body,  Constants.wheel, Constants.left_wheel, Constants.right_wheel ]
 
-
-
-
+    for part in parts
+      @assets.moto.push(part.texture)

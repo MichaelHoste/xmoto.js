@@ -15,7 +15,6 @@ class Rider
     @assets = level.assets
     @moto   = moto
     @mirror = @moto.mirror
-    @rider_style = @assets.get_rider_style("player")
 
   destroy: ->
     world = @level.world
@@ -36,10 +35,10 @@ class Rider
 
   init: ->
     # Assets
-    textures = [ @rider_style.torso,    @rider_style.upperleg, @rider_style.lowerleg
-                 @rider_style.upperarm, @rider_style.lowerarm ]
-    for texture in textures
-      @assets.moto.push(texture)
+    parts = [ Constants.torso, Constants.upperleg, Constants.lowerleg,
+              Constants.upperarm, Constants.lowerarm ]
+    for part in parts
+      @assets.moto.push(part.texture)
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
@@ -368,39 +367,37 @@ class Rider
                         @hip_joint.GetAnchorA(),
                         @knee_joint.GetAnchorA(),
                         @ankle_joint.GetAnchorA(),
-                        @level.ctx, @assets, @rider_style, @level.get_render_mode())
+                        @level.ctx, @assets, @level.get_render_mode())
 
-  @display_rider: (mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, mode) ->
+  @display_rider: (mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, mode) ->
     if mode == "normal" or mode == "uglyOver"
-      Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, false)
+      Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, false)
     if mode == "ugly"   or mode == "uglyOver"
-      Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, true)
+      Rider.display_rider_members(mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, true)
 
-  @display_rider_members: (mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, rider_style, ugly) ->
+  @display_rider_members: (mirror, neck_anchor, wrist_anchor, elbow_anchor, shoulder_anchor, hip_anchor, knee_anchor, ankle_anchor, ctx, assets, ugly) ->
     if ugly
-      Rider.display_ugly_head(ctx, rider_style, neck_anchor)                      # head
-      Rider.display_ugly_part(ctx, rider_style, hip_anchor,      shoulder_anchor) # display_torso
-      Rider.display_ugly_part(ctx, rider_style, hip_anchor,      knee_anchor)     # display_upper_leg
-      Rider.display_ugly_part(ctx, rider_style, ankle_anchor,    knee_anchor)     # display_lower_leg
-      Rider.display_ugly_part(ctx, rider_style, shoulder_anchor, elbow_anchor)    # display_upper_arm
-      Rider.display_ugly_part(ctx, rider_style, elbow_anchor,    wrist_anchor)    # display_lower_arm
+      Rider.display_ugly_head(ctx, neck_anchor)                      # head
+      Rider.display_ugly_part(ctx, hip_anchor,      shoulder_anchor) # display_torso
+      Rider.display_ugly_part(ctx, hip_anchor,      knee_anchor)     # display_upper_leg
+      Rider.display_ugly_part(ctx, ankle_anchor,    knee_anchor)     # display_lower_leg
+      Rider.display_ugly_part(ctx, shoulder_anchor, elbow_anchor)    # display_upper_arm
+      Rider.display_ugly_part(ctx, elbow_anchor,    wrist_anchor)    # display_lower_arm
     else
-      Rider.display_normal_part(ctx, hip_anchor,   shoulder_anchor, assets.get(rider_style.torso),     mirror, -0.27, -0.80, 0.50, 1.15)
-      Rider.display_normal_part(ctx, hip_anchor,   knee_anchor,     assets.get(rider_style.upperleg),  mirror, -0.48, -0.15, 0.80, 0.28, 1)
-      Rider.display_normal_part(ctx, ankle_anchor, knee_anchor,     assets.get(rider_style.lowerleg),  mirror, -0.17, -0.33, 0.40, 0.66)
-      Rider.display_normal_part(ctx, elbow_anchor, shoulder_anchor, assets.get(rider_style.upperarm),  mirror, -0.13, -0.30, 0.25, 0.56)
-      Rider.display_normal_part(ctx, elbow_anchor, wrist_anchor,    assets.get(rider_style.lowerarm), -mirror, -0.30, -0.12, 0.56, 0.20, 1)
+      Rider.display_normal_part(ctx, hip_anchor,   shoulder_anchor, assets.get(Constants.torso.texture),     mirror, -0.27, -0.80, 0.50, 1.15)
+      Rider.display_normal_part(ctx, hip_anchor,   knee_anchor,     assets.get(Constants.upperleg.texture),  mirror, -0.48, -0.15, 0.80, 0.28, 1)
+      Rider.display_normal_part(ctx, ankle_anchor, knee_anchor,     assets.get(Constants.lowerleg.texture),  mirror, -0.17, -0.33, 0.40, 0.66)
+      Rider.display_normal_part(ctx, elbow_anchor, shoulder_anchor, assets.get(Constants.upperarm.texture),  mirror, -0.13, -0.30, 0.25, 0.56)
+      Rider.display_normal_part(ctx, elbow_anchor, wrist_anchor,    assets.get(Constants.lowerarm.texture), -mirror, -0.30, -0.12, 0.56, 0.20, 1)
 
-  @display_ugly_head: (ctx, rider_style, neck_anchor) ->
+  @display_ugly_head: (ctx, neck_anchor) ->
     ctx.beginPath()
-    ctx.strokeStyle=rider_style.ugly_rider_color
     ctx.lineWidth = 0.05
     ctx.arc(neck_anchor.x, neck_anchor.y, Constants.head.radius, 0, 2*Math.PI)
     ctx.stroke()
 
-  @display_ugly_part: (ctx, rider_style, anchor1, anchor2) ->
+  @display_ugly_part: (ctx, anchor1, anchor2) ->
     ctx.beginPath()
-    ctx.strokeStyle=rider_style.ugly_rider_color
     ctx.lineWidth = 0.04
     ctx.moveTo(anchor1.x, anchor1.y)
     ctx.lineTo(anchor2.x, anchor2.y)

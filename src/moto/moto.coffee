@@ -41,15 +41,14 @@ class Moto
                       @right_wheel.GetAngle(),
                       @body.GetPosition(),
                       @body.GetAngle(),
-                      @level.ctx, @level.assets, @rider.rider_style, @level.get_render_mode())
+                      @level.ctx, @level.assets, @level.get_render_mode())
     @rider.display()
 
   init: ->
     # Assets
-    textures = [ @rider.rider_style.body,  @rider.rider_style.wheel
-                 @rider.rider_style.front, @rider.rider_style.rear ]
-    for texture in textures
-      @assets.moto.push(texture)
+    parts = [ Constants.body,  Constants.wheel, Constants.left_wheel, Constants.right_wheel ]
+    for part in parts
+      @assets.moto.push(part.texture)
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
@@ -234,26 +233,25 @@ class Moto
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
-  @display_moto: (mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, mode) ->
+  @display_moto: (mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, mode) ->
     if mode == "normal" or mode == "uglyOver"
-      Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, false)
+      Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, false)
     if mode == "ugly"   or mode == "uglyOver"
-      Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, true)
+      Moto.display_moto_parts(mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, true)
 
-  @display_moto_parts: (mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, rider_style, ugly) ->
+  @display_moto_parts: (mirror, left_wheel_position, left_wheel_angle, right_wheel_position, right_wheel_angle, body_position, body_angle, ctx, assets, ugly) ->
     if ugly
-      @display_ugly_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, rider_style)
-      @display_ugly_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, rider_style)
+      @display_ugly_wheel(mirror, left_wheel_position, left_wheel_angle, ctx)
+      @display_ugly_wheel(mirror, right_wheel_position, right_wheel_angle, ctx)
     else
-      @display_normal_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, assets, rider_style)
-      @display_normal_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, assets, rider_style)
-      @display_normal_right_axle(mirror, right_wheel_position, body_position, body_angle, ctx, assets, rider_style)
-      @display_normal_left_axle(mirror, left_wheel_position, body_position, body_angle, ctx, assets, rider_style)
-      @display_normal_body(mirror, body_position, body_angle, ctx, assets, rider_style)
+      @display_normal_wheel(mirror, left_wheel_position, left_wheel_angle, ctx, assets)
+      @display_normal_wheel(mirror, right_wheel_position, right_wheel_angle, ctx, assets)
+      @display_normal_right_axle(mirror, right_wheel_position, body_position, body_angle, ctx, assets)
+      @display_normal_left_axle(mirror, left_wheel_position, body_position, body_angle, ctx, assets)
+      @display_normal_body(mirror, body_position, body_angle, ctx, assets)
 
-  @display_ugly_wheel: (mirror, wheel_position, wheel_angle, ctx, rider_style) ->
+  @display_ugly_wheel: (mirror, wheel_position, wheel_angle, ctx) ->
     ctx.save()
-    ctx.strokeStyle=rider_style.ugly_moto_color
     ctx.lineWidth = 0.05
     ctx.translate(wheel_position.x, wheel_position.y)
     ctx.rotate(wheel_angle)
@@ -270,7 +268,7 @@ class Moto
     ctx.stroke()
     ctx.restore()
 
-  @display_normal_wheel: (mirror, wheel_position, wheel_angle, ctx, assets, rider_style) ->
+  @display_normal_wheel: (mirror, wheel_position, wheel_angle, ctx, assets) ->
     ctx.save()
     ctx.translate(wheel_position.x, wheel_position.y)
     ctx.rotate(wheel_angle)
