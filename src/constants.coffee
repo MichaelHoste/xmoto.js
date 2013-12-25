@@ -4,9 +4,9 @@ class Constants
 
   # GENERAL
 
-  @gravity            = 9.81
+  @gravity            = 9.81 # Default gravity of the game
   @max_rotation_speed = 0.38 # Max rotation speed of the wheels (x * PI). Limit the max speed of the moto
-  @air_density        = 0.03
+  @air_density        = 0.03 # Friction of air
 
   # MOTO PARTS
 
@@ -22,6 +22,8 @@ class Constants
              new b2Vec2(-0.75,  0.16)
              new b2Vec2(-0.35, -0.3) ]
     collisions: true
+    texture:       'playerbikerbody'
+    ghost_texture: 'ghostbikerbody'
 
   @wheels =
     radius:      0.35
@@ -32,6 +34,8 @@ class Constants
       x: 0.70
       y: 0.48
     collisions: true
+    texture:       'playerbikerwheel'
+    ghost_texture: 'ghostbikerwheel'
 
   @left_axle =
     density:     1.0
@@ -45,6 +49,8 @@ class Constants
              new b2Vec2(-0.80, -0.58)
              new b2Vec2(-0.65, -0.58) ]
     collisions: true
+    texture:       'rear1'
+    ghost_texture: 'rear_ghost'
 
   @right_axle =
     density:     1.5
@@ -58,6 +64,8 @@ class Constants
              new b2Vec2(0.66, -0.58)
              new b2Vec2(0.76, -0.58) ]
     collisions: true
+    texture:       'front1'
+    ghost_texture: 'front_ghost'
 
   # MOTO JOINTS
 
@@ -90,12 +98,14 @@ class Constants
     position:
       x: -0.24
       y:  1.87
+    angle: -Math.PI/20.0
     shape: [ new b2Vec2( 0.16, -0.575)
              new b2Vec2( 0.07,  0.20)
              new b2Vec2(-0.34,  0.24)
              new b2Vec2(-0.20, -0.575) ]
     collisions: true
-    angle: -Math.PI/20.0
+    texture:       'playertorso'
+    ghost_texture: 'ghosttorso'
 
   @lower_leg =
     density:     0.4
@@ -104,6 +114,7 @@ class Constants
     position:
       x: 0.15
       y: 0.90
+    angle: -Math.PI/6.0
     shape: [ new b2Vec2( 0.2,  -0.33)
              new b2Vec2( 0.2,  -0.27)
              new b2Vec2( 0.00, -0.2)
@@ -111,7 +122,8 @@ class Constants
              new b2Vec2(-0.17,  0.33)
              new b2Vec2(-0.14, -0.33) ]
     collisions: true
-    angle: -Math.PI/6.0
+    texture:       'playerlowerleg'
+    ghost_texture: 'ghostlowerleg'
 
   @upper_leg =
     density:     0.4
@@ -120,12 +132,14 @@ class Constants
     position:
       x: - 0.09
       y:   1.27
+    angle: -Math.PI/12.0
     shape: [ new b2Vec2( 0.4, -0.14)
              new b2Vec2( 0.4,  0.07)
              new b2Vec2(-0.4,  0.14)
              new b2Vec2(-0.4, -0.08) ]
     collisions: true
-    angle: -Math.PI/12.0
+    texture:       'playerupperleg'
+    ghost_texture: 'ghostupperleg'
 
   @lower_arm =
     density:     0.4
@@ -134,12 +148,14 @@ class Constants
     position:
       x: 0.07
       y: 1.52
+    angle: -Math.PI/10.0
     shape: [ new b2Vec2( 0.28, -0.055)
              new b2Vec2( 0.28,  0.055)
              new b2Vec2(-0.28,  0.08)
              new b2Vec2(-0.28, -0.05) ]
     collisions: true
-    angle: -Math.PI/10.0
+    texture:       'playerlowerarm'
+    ghost_texture: 'ghostlowerarm'
 
   @upper_arm =
     density:     0.4
@@ -148,12 +164,14 @@ class Constants
     position:
       x: -0.17
       y:  1.83
+    angle: Math.PI/9.0
     shape: [ new b2Vec2( 0.09, -0.26)
              new b2Vec2( 0.09,  0.26)
              new b2Vec2(-0.11,  0.26)
              new b2Vec2(-0.11, -0.26) ]
     collisions: true
-    angle: Math.PI/9.0
+    texture:       'playerupperarm'
+    ghost_texture: 'ghostupperarm'
 
   # RIDER JOINTS
 

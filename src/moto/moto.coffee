@@ -43,10 +43,9 @@ class Moto
 
   init: ->
     # Assets
-    textures = [ @rider.rider_style.body,  @rider.rider_style.wheel
-                 @rider.rider_style.front, @rider.rider_style.rear ]
-    for texture in textures
-      @assets.moto.push(texture)
+    parts = [ Constants.body, Constants.wheels, Constants.left_axle, Constants.right_axle ]
+    for part in parts
+      @assets.moto.push(part.texture)
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
@@ -242,7 +241,7 @@ class Moto
     @level.ctx.rotate(angle)
 
     @level.ctx.drawImage(
-      @assets.get(@rider.rider_style.wheel), # texture
+      @assets.get(Constants.wheels.texture), # texture
       -Constants.wheels.radius,      # x
       -Constants.wheels.radius,      # y
        Constants.wheels.radius*2,    # size-x
@@ -263,7 +262,7 @@ class Moto
     @level.ctx.rotate(@mirror*(-angle))
 
     @level.ctx.drawImage(
-      @assets.get(@rider.rider_style.body), # texture
+      @assets.get(Constants.body.texture), # texture
       -1.0, # x
       -0.5, # y
        2.0, # size-x
@@ -302,7 +301,7 @@ class Moto
     @level.ctx.rotate(@mirror*(-angle))
 
     @level.ctx.drawImage(
-      @assets.get(@rider.rider_style.rear), # texture
+      @assets.get(Constants.left_axle.texture), # texture
       0.0,               # x
       -axle_thickness/2, # y
       distance,          # size-x
@@ -341,7 +340,7 @@ class Moto
     @level.ctx.rotate(@mirror*(-angle))
 
     @level.ctx.drawImage(
-      @assets.get(@rider.rider_style.front), # texture
+      @assets.get(Constants.right_axle.texture), # texture
       0.0,               # x
       -axle_thickness/2, # y
       distance,          # size-x

@@ -66,35 +66,3 @@ class Assets
         found = true if image.id == unique_image.id
       unique.push(image) if not found
     unique
-
-  get_rider_style: (style) ->
-    if style == "ghost"
-      new_style =
-        torso:    "ghosttorso"
-        upperleg: "ghostupperleg"
-        lowerleg: "ghostlowerleg"
-        upperarm: "ghostupperarm"
-        lowerarm: "ghostlowerarm"
-        body:     "ghostbikerbody"
-        wheel:    "ghostbikerwheel"
-        front:    "front_ghost"
-        rear:     "rear_ghost"
-        ugly_rider_color: "#008800"
-        ugly_moto_color: "#880000"
-      return new_style
-    if style == "player"
-      new_style =
-        torso:    "playertorso"
-        upperleg: "playerupperleg"
-        lowerleg: "playerlowerleg"
-        upperarm: "playerupperarm"
-        lowerarm: "playerlowerarm"
-        body:     "playerbikerbody"
-        wheel:    "playerbikerwheel"
-        front:    "front1"
-        rear:     "rear1"
-        ugly_rider_color: "#00FF00"
-        ugly_moto_color: "#FF0000"
-      return new_style
-
-

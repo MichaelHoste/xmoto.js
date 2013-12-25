@@ -6,7 +6,7 @@ play_level = (name) ->
   level.assets.load( ->
     update = ->
       update_physics()
-      level.display(true)
+      level.display(false)
       window.game_loop = window.requestAnimationFrame(update)
 
     update_physics = ->
