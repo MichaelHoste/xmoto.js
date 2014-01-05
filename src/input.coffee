@@ -110,12 +110,16 @@ class Input
       # Back wheeling
       if @left
         moto.body.ApplyTorque(force/3.0)
-        moto.rider.torso.ApplyTorque(force/3.0)
+        moto.rider.torso.ApplyTorque(force/8.0)
+        moto.rider.torso.ApplyForce({x: -force/4.0, y:0},  moto.rider.torso.GetWorldCenter())
+        moto.rider.lower_leg.ApplyForce({x: force/4.0, y:0},  moto.rider.lower_leg.GetWorldCenter())
 
       # Front wheeling
       if @right
         moto.body.ApplyTorque(-force/3.0)
-        moto.rider.torso.ApplyTorque(-force/3.0)
+        moto.rider.torso.ApplyTorque(-force/8.0)
+        moto.rider.torso.ApplyForce({x: force/4.0, y:0},  moto.rider.torso.GetWorldCenter())
+        moto.rider.lower_leg.ApplyForce({x: -force/4.0, y:0},  moto.rider.lower_leg.GetWorldCenter())
 
     if not @up and not @down
       # Engine brake

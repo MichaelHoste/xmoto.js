@@ -54,6 +54,6 @@ class Listeners
     @level.world.DestroyJoint(moto.rider.wrist_joint)
     moto.rider.shoulder_joint.m_enableLimit = false
 
-    moto.rider.knee_joint.m_lowerAngle     = moto.rider.knee_joint.m_lowerAngle     * 3
-    moto.rider.elbow_joint.m_upperAngle    = moto.rider.elbow_joint.m_upperAngle    * 3
-    moto.rider.hip_joint.m_lowerAngle      = moto.rider.hip_joint.m_lowerAngle      * 1.5
+    moto.rider.knee_joint.m_lowerAngle     = moto.rider.knee_joint.m_lowerAngle  * 3
+    moto.rider.elbow_joint.m_upperAngle    = moto.rider.elbow_joint.m_upperAngle * 3
+    moto.rider.hip_joint.m_lowerAngle      = moto.rider.hip_joint.m_lowerAngle   * 3

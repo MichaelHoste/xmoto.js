@@ -4,7 +4,7 @@ class Constants
 
   # GENERAL
 
-  @debug              = true
+  @debug              = false
 
   @gravity            = 9.81 # Default gravity of the game
   @max_rotation_speed = 0.38 # Max rotation speed of the wheels (x * PI). Limit the max speed of the moto
@@ -179,7 +179,7 @@ class Constants
 
   @ankle =
     axe_position:
-      x: -0.2
+      x: -0.18
       y: -0.2
 
   @wrist =
@@ -205,4 +205,4 @@ class Constants
   @hip =
     axe_position:
       x: -0.25
-      y:  0.15
+      y:  0.14

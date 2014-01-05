@@ -116,7 +116,7 @@
   Constants = (function() {
     function Constants() {}
 
-    Constants.debug = true;
+    Constants.debug = false;
 
     Constants.gravity = 9.81;
 
@@ -281,7 +281,7 @@
 
     Constants.ankle = {
       axe_position: {
-        x: -0.2,
+        x: -0.18,
         y: -0.2
       }
     };
@@ -317,7 +317,7 @@
     Constants.hip = {
       axe_position: {
         x: -0.25,
-        y: 0.15
+        y: 0.14
       }
     };
 
@@ -453,11 +453,27 @@
         }
         if (this.left) {
           moto.body.ApplyTorque(force / 3.0);
-          moto.rider.torso.ApplyTorque(force / 3.0);
+          moto.rider.torso.ApplyTorque(force / 8.0);
+          moto.rider.torso.ApplyForce({
+            x: -force / 4.0,
+            y: 0
+          }, moto.rider.torso.GetWorldCenter());
+          moto.rider.lower_leg.ApplyForce({
+            x: force / 4.0,
+            y: 0
+          }, moto.rider.lower_leg.GetWorldCenter());
         }
         if (this.right) {
           moto.body.ApplyTorque(-force / 3.0);
-          moto.rider.torso.ApplyTorque(-force / 3.0);
+          moto.rider.torso.ApplyTorque(-force / 8.0);
+          moto.rider.torso.ApplyForce({
+            x: force / 4.0,
+            y: 0
+          }, moto.rider.torso.GetWorldCenter());
+          moto.rider.lower_leg.ApplyForce({
+            x: -force / 4.0,
+            y: 0
+          }, moto.rider.lower_leg.GetWorldCenter());
         }
       }
       if (!this.up && !this.down) {
@@ -719,7 +735,7 @@
       moto.rider.shoulder_joint.m_enableLimit = false;
       moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 3;
       moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3;
-      return moto.rider.hip_joint.m_lowerAngle = moto.rider.hip_joint.m_lowerAngle * 1.5;
+      return moto.rider.hip_joint.m_lowerAngle = moto.rider.hip_joint.m_lowerAngle * 3;
     };
 
     return Listeners;
