@@ -116,6 +116,8 @@
   Constants = (function() {
     function Constants() {}
 
+    Constants.debug = true;
+
     Constants.gravity = 9.81;
 
     Constants.max_rotation_speed = 0.38;
@@ -196,8 +198,8 @@
       restitution: 0.0,
       friction: 1.0,
       position: {
-        x: -0.3,
-        y: 2.3
+        x: -0.27,
+        y: 2.26
       },
       collisions: true
     };
@@ -207,11 +209,11 @@
       restitution: 0.0,
       friction: 1.0,
       position: {
-        x: -0.24,
-        y: 1.87
+        x: -0.31,
+        y: 1.89
       },
-      angle: -Math.PI / 20.0,
-      shape: [new b2Vec2(0.16, -0.575), new b2Vec2(0.07, 0.20), new b2Vec2(-0.34, 0.24), new b2Vec2(-0.20, -0.575)],
+      angle: -Math.PI / 30.0,
+      shape: [new b2Vec2(0.10, -0.55), new b2Vec2(0.13, 0.15), new b2Vec2(-0.20, 0.22), new b2Vec2(-0.18, -0.55)],
       collisions: true,
       texture: 'playertorso',
       ghost_texture: 'ghosttorso'
@@ -222,7 +224,7 @@
       restitution: 0.0,
       friction: 1.0,
       position: {
-        x: 0.15,
+        x: 0.07,
         y: 0.90
       },
       angle: -Math.PI / 6.0,
@@ -237,10 +239,10 @@
       restitution: 0.0,
       friction: 1.0,
       position: {
-        x: -0.09,
+        x: -0.15,
         y: 1.27
       },
-      angle: -Math.PI / 12.0,
+      angle: -Math.PI / 11.0,
       shape: [new b2Vec2(0.4, -0.14), new b2Vec2(0.4, 0.07), new b2Vec2(-0.4, 0.14), new b2Vec2(-0.4, -0.08)],
       collisions: true,
       texture: 'playerupperleg',
@@ -252,11 +254,11 @@
       restitution: 0.0,
       friction: 1.0,
       position: {
-        x: 0.07,
+        x: 0.06,
         y: 1.52
       },
       angle: -Math.PI / 10.0,
-      shape: [new b2Vec2(0.28, -0.055), new b2Vec2(0.28, 0.055), new b2Vec2(-0.28, 0.08), new b2Vec2(-0.28, -0.05)],
+      shape: [new b2Vec2(0.28, -0.055), new b2Vec2(0.28, 0.055), new b2Vec2(-0.30, 0.08), new b2Vec2(-0.30, -0.05)],
       collisions: true,
       texture: 'playerlowerarm',
       ghost_texture: 'ghostlowerarm'
@@ -267,11 +269,11 @@
       restitution: 0.0,
       friction: 1.0,
       position: {
-        x: -0.17,
-        y: 1.83
+        x: -0.20,
+        y: 1.85
       },
-      angle: Math.PI / 9.0,
-      shape: [new b2Vec2(0.09, -0.26), new b2Vec2(0.09, 0.26), new b2Vec2(-0.11, 0.26), new b2Vec2(-0.11, -0.26)],
+      angle: Math.PI / 10.0,
+      shape: [new b2Vec2(0.09, -0.29), new b2Vec2(0.09, 0.22), new b2Vec2(-0.11, 0.26), new b2Vec2(-0.10, -0.29)],
       collisions: true,
       texture: 'playerupperarm',
       ghost_texture: 'ghostupperarm'
@@ -293,15 +295,15 @@
 
     Constants.knee = {
       axe_position: {
-        x: 0.07,
+        x: 0.12,
         y: 0.28
       }
     };
 
     Constants.elbow = {
       axe_position: {
-        x: 0.05,
-        y: -0.2
+        x: 0.04,
+        y: -0.22
       }
     };
 
@@ -314,8 +316,8 @@
 
     Constants.hip = {
       axe_position: {
-        x: -0.27,
-        y: 0.10
+        x: -0.25,
+        y: 0.15
       }
     };
 
@@ -541,10 +543,7 @@
       return this.ctx.lineWidth = 0.01;
     };
 
-    Level.prototype.display = function(debug) {
-      if (debug == null) {
-        debug = false;
-      }
+    Level.prototype.display = function() {
       if (this.need_to_restart) {
         this.restart(true);
       }
@@ -568,7 +567,7 @@
         this.ghost.display(this.ctx);
         this.ghost.next_state();
       }
-      if (debug) {
+      if (Constants.debug) {
         this.world.DrawDebugData();
       }
       this.ctx.restore();
@@ -717,9 +716,9 @@
       createjs.Sound.play('Headcrash');
       this.level.world.DestroyJoint(moto.rider.ankle_joint);
       this.level.world.DestroyJoint(moto.rider.wrist_joint);
-      moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 1.5;
-      moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 1.5;
-      moto.rider.shoulder_joint.m_upperAngle = moto.rider.shoulder_joint.m_upperAngle * 1.5;
+      moto.rider.shoulder_joint.m_enableLimit = false;
+      moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 3;
+      moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3;
       return moto.rider.hip_joint.m_lowerAngle = moto.rider.hip_joint.m_lowerAngle * 1.5;
     };
 
@@ -735,7 +734,7 @@
       var last_step, physics_step, update, update_physics;
       update = function() {
         update_physics();
-        level.display(false);
+        level.display();
         return window.game_loop = window.requestAnimationFrame(update);
       };
       update_physics = function() {
@@ -2487,11 +2486,71 @@
     };
 
     Rider.prototype.display = function() {
-      this.display_part(this.hip_joint, this.shoulder_joint, Constants.torso, this.mirror, -0.27, -0.80, 0.50, 1.15);
-      this.display_part(this.hip_joint, this.knee_joint, Constants.upper_leg, this.mirror, -0.48, -0.15, 0.80, 0.28, 1);
-      this.display_part(this.ankle_joint, this.knee_joint, Constants.lower_leg, this.mirror, -0.07, -0.33, 0.40, 0.66);
-      this.display_part(this.elbow_joint, this.shoulder_joint, Constants.upper_arm, this.mirror, -0.13, -0.30, 0.25, 0.56);
-      return this.display_part(this.elbow_joint, this.wrist_joint, Constants.lower_arm, -this.mirror, -0.30, -0.12, 0.56, 0.20, 1);
+      this.display_torso();
+      this.display_upper_leg();
+      this.display_lower_leg();
+      this.display_upper_arm();
+      return this.display_lower_arm();
+    };
+
+    Rider.prototype.display_torso = function() {
+      var angle, position;
+      position = this.torso.GetPosition();
+      angle = this.torso.GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(1 * this.mirror, -1);
+      this.level.ctx.rotate(this.mirror * (-angle));
+      this.level.ctx.drawImage(this.assets.get('playertorso'), -0.25, -0.60, 0.50, 1.20);
+      return this.level.ctx.restore();
+    };
+
+    Rider.prototype.display_lower_leg = function() {
+      var angle, position;
+      position = this.lower_leg.GetPosition();
+      angle = this.lower_leg.GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(1 * this.mirror, -1);
+      this.level.ctx.rotate(this.mirror * (-angle));
+      this.level.ctx.drawImage(this.assets.get('playerlowerleg'), -0.2, -0.33, 0.40, 0.66);
+      return this.level.ctx.restore();
+    };
+
+    Rider.prototype.display_upper_leg = function() {
+      var angle, position;
+      position = this.upper_leg.GetPosition();
+      angle = this.upper_leg.GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(1 * this.mirror, -1);
+      this.level.ctx.rotate(this.mirror * (-angle));
+      this.level.ctx.drawImage(this.assets.get('playerupperleg'), -0.39, -0.14, 0.78, 0.28);
+      return this.level.ctx.restore();
+    };
+
+    Rider.prototype.display_lower_arm = function() {
+      var angle, position;
+      position = this.lower_arm.GetPosition();
+      angle = this.lower_arm.GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(1 * this.mirror, 1);
+      this.level.ctx.rotate(this.mirror * angle);
+      this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.28, -0.10, 0.56, 0.20);
+      return this.level.ctx.restore();
+    };
+
+    Rider.prototype.display_upper_arm = function() {
+      var angle, position;
+      position = this.upper_arm.GetPosition();
+      angle = this.upper_arm.GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(1 * this.mirror, -1);
+      this.level.ctx.rotate(this.mirror * (-angle));
+      this.level.ctx.drawImage(this.assets.get('playerupperarm'), -0.12, -0.28, 0.24, 0.56);
+      return this.level.ctx.restore();
     };
 
     Rider.prototype.display_part = function(joint1, joint2, part, mirror, x, y, size_x, size_y, i90rot) {

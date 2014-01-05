@@ -359,11 +359,131 @@ class Rider
     @level.world.CreateJoint(jointDef)
 
   display: ->
-    @display_part(@hip_joint,   @shoulder_joint, Constants.torso,      @mirror, -0.27, -0.80, 0.50, 1.15)
-    @display_part(@hip_joint,   @knee_joint,     Constants.upper_leg,  @mirror, -0.48, -0.15, 0.80, 0.28, 1)
-    @display_part(@ankle_joint, @knee_joint,     Constants.lower_leg,  @mirror, -0.07, -0.33, 0.40, 0.66)
-    @display_part(@elbow_joint, @shoulder_joint, Constants.upper_arm,  @mirror, -0.13, -0.30, 0.25, 0.56)
-    @display_part(@elbow_joint, @wrist_joint,    Constants.lower_arm, -@mirror, -0.30, -0.12, 0.56, 0.20, 1)
+    #@display_part(@hip_joint,   @shoulder_joint, Constants.torso,      @mirror, -0.27, -0.80, 0.50, 1.15)
+    #@display_part(@hip_joint,   @knee_joint,     Constants.upper_leg,  @mirror, -0.48, -0.15, 0.80, 0.28, 1)
+    #@display_part(@ankle_joint, @knee_joint,     Constants.lower_leg,  @mirror, -0.07, -0.33, 0.40, 0.66)
+    #@display_part(@elbow_joint, @shoulder_joint, Constants.upper_arm,  @mirror, -0.13, -0.30, 0.25, 0.56)
+    #@display_part(@elbow_joint, @wrist_joint,    Constants.lower_arm, -@mirror, -0.30, -0.12, 0.56, 0.20, 1)
+    @display_torso()
+    @display_upper_leg()
+    @display_lower_leg()
+    @display_upper_arm()
+    @display_lower_arm()
+
+  display_torso: ->
+    # Position
+    position = @torso.GetPosition()
+
+    # Angle
+    angle = @torso.GetAngle()
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1*@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
+
+    @level.ctx.drawImage(
+      @assets.get('playertorso'), # texture
+      -0.25, # x
+      -0.60, # y
+       0.50, # size-x
+       1.20  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_lower_leg: ->
+    # Position
+    position = @lower_leg.GetPosition()
+
+    # Angle
+    angle = @lower_leg.GetAngle()
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1*@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
+
+    @level.ctx.drawImage(
+      @assets.get('playerlowerleg'), # texture
+      -0.2,  # x
+      -0.33, # y
+       0.40, # size-x
+       0.66  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_upper_leg: ->
+    # Position
+    position = @upper_leg.GetPosition()
+
+    # Angle
+    angle = @upper_leg.GetAngle()
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1*@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
+
+    @level.ctx.drawImage(
+      @assets.get('playerupperleg'), # texture
+      -0.39, # x
+      -0.14, # y
+       0.78, # size-x
+       0.28  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_lower_arm: ->
+    # Position
+    position = @lower_arm.GetPosition()
+
+    # Angle
+    angle = @lower_arm.GetAngle()
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1*@mirror, 1)
+    @level.ctx.rotate(@mirror * angle)
+
+    @level.ctx.drawImage(
+      @assets.get('playerlowerarm'), # texture
+      -0.28, # x
+      -0.10, # y
+       0.56, # size-x
+       0.20  # size-y
+    )
+
+    @level.ctx.restore()
+
+  display_upper_arm: ->
+    # Position
+    position = @upper_arm.GetPosition()
+
+    # Angle
+    angle = @upper_arm.GetAngle()
+
+    # Draw texture
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(1*@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
+
+    @level.ctx.drawImage(
+      @assets.get('playerupperarm'), # texture
+      -0.12, # x
+      -0.28, # y
+       0.24, # size-x
+       0.56  # size-y
+    )
+
+    @level.ctx.restore()
 
   display_part: (joint1, joint2, part, mirror, x, y, size_x, size_y, i90rot = 0) ->
     anchor1 = joint1.GetAnchorA()

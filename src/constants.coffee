@@ -4,6 +4,8 @@ class Constants
 
   # GENERAL
 
+  @debug              = true
+
   @gravity            = 9.81 # Default gravity of the game
   @max_rotation_speed = 0.38 # Max rotation speed of the wheels (x * PI). Limit the max speed of the moto
   @air_density        = 0.03 # Friction of air
@@ -87,8 +89,8 @@ class Constants
     restitution: 0.0
     friction:    1.0
     position:
-      x: -0.3
-      y: 2.3
+      x: -0.27
+      y:  2.26
     collisions: true
 
   @torso =
@@ -96,13 +98,13 @@ class Constants
     restitution: 0.0
     friction:    1.0
     position:
-      x: -0.24
-      y:  1.87
-    angle: -Math.PI/20.0
-    shape: [ new b2Vec2( 0.16, -0.575)
-             new b2Vec2( 0.07,  0.20)
-             new b2Vec2(-0.34,  0.24)
-             new b2Vec2(-0.20, -0.575) ]
+      x: -0.31
+      y:  1.89
+    angle: -Math.PI/30.0
+    shape: [ new b2Vec2( 0.10, -0.55)
+             new b2Vec2( 0.13,  0.15)
+             new b2Vec2(-0.20,  0.22)
+             new b2Vec2(-0.18, -0.55) ]
     collisions: true
     texture:       'playertorso'
     ghost_texture: 'ghosttorso'
@@ -112,7 +114,7 @@ class Constants
     restitution: 0.0
     friction:    1.0
     position:
-      x: 0.15
+      x: 0.07
       y: 0.90
     angle: -Math.PI/6.0
     shape: [ new b2Vec2( 0.2,  -0.33)
@@ -130,9 +132,9 @@ class Constants
     restitution: 0.0
     friction:    1.0
     position:
-      x: - 0.09
-      y:   1.27
-    angle: -Math.PI/12.0
+      x: -0.15
+      y:  1.27
+    angle: -Math.PI/11.0
     shape: [ new b2Vec2( 0.4, -0.14)
              new b2Vec2( 0.4,  0.07)
              new b2Vec2(-0.4,  0.14)
@@ -146,13 +148,13 @@ class Constants
     restitution: 0.0
     friction:    1.0
     position:
-      x: 0.07
+      x: 0.06
       y: 1.52
     angle: -Math.PI/10.0
     shape: [ new b2Vec2( 0.28, -0.055)
              new b2Vec2( 0.28,  0.055)
-             new b2Vec2(-0.28,  0.08)
-             new b2Vec2(-0.28, -0.05) ]
+             new b2Vec2(-0.30,  0.08)
+             new b2Vec2(-0.30, -0.05) ]
     collisions: true
     texture:       'playerlowerarm'
     ghost_texture: 'ghostlowerarm'
@@ -162,13 +164,13 @@ class Constants
     restitution: 0.0
     friction:    1.0
     position:
-      x: -0.17
-      y:  1.83
-    angle: Math.PI/9.0
-    shape: [ new b2Vec2( 0.09, -0.26)
-             new b2Vec2( 0.09,  0.26)
+      x: -0.20
+      y:  1.85
+    angle: Math.PI/10.0
+    shape: [ new b2Vec2( 0.09, -0.29)
+             new b2Vec2( 0.09,  0.22)
              new b2Vec2(-0.11,  0.26)
-             new b2Vec2(-0.11, -0.26) ]
+             new b2Vec2(-0.10, -0.29) ]
     collisions: true
     texture:       'playerupperarm'
     ghost_texture: 'ghostupperarm'
@@ -187,13 +189,13 @@ class Constants
 
   @knee =
     axe_position:
-      x:  0.07
+      x:  0.12
       y:  0.28
 
   @elbow =
     axe_position:
-      x:  0.05
-      y: -0.2
+      x:  0.04
+      y: -0.22
 
   @shoulder =
     axe_position:
@@ -202,5 +204,5 @@ class Constants
 
   @hip =
     axe_position:
-      x: -0.27
-      y:  0.10
+      x: -0.25
+      y:  0.15

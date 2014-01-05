@@ -79,7 +79,7 @@ class Level
     @canvas_height = parseFloat(@canvas.height)
     @ctx.lineWidth = 0.01
 
-  display: (debug = false) ->
+  display: ->
     if @need_to_restart
       @restart(true)
 
@@ -111,7 +111,7 @@ class Level
       @ghost.display(@ctx)
       @ghost.next_state()
 
-    @world.DrawDebugData() if debug
+    @world.DrawDebugData() if Constants.debug
 
     @ctx.restore()
 
