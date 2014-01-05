@@ -135,7 +135,11 @@
       shape: [new b2Vec2(0.4, -0.3), new b2Vec2(0.50, 0.40), new b2Vec2(-0.75, 0.16), new b2Vec2(-0.35, -0.3)],
       collisions: true,
       texture: 'playerbikerbody',
-      ghost_texture: 'ghostbikerbody'
+      ghost_texture: 'ghostbikerbody',
+      texture_size: {
+        x: 2.0,
+        y: 1.0
+      }
     };
 
     Constants.wheels = {
@@ -193,7 +197,6 @@
     };
 
     Constants.head = {
-      radius: 0.18,
       density: 0.4,
       restitution: 0.0,
       friction: 1.0,
@@ -201,6 +204,7 @@
         x: -0.27,
         y: 2.26
       },
+      radius: 0.18,
       collisions: true
     };
 
@@ -216,7 +220,11 @@
       shape: [new b2Vec2(0.10, -0.55), new b2Vec2(0.13, 0.15), new b2Vec2(-0.20, 0.22), new b2Vec2(-0.18, -0.55)],
       collisions: true,
       texture: 'playertorso',
-      ghost_texture: 'ghosttorso'
+      ghost_texture: 'ghosttorso',
+      texture_size: {
+        x: 0.50,
+        y: 1.20
+      }
     };
 
     Constants.lower_leg = {
@@ -231,7 +239,11 @@
       shape: [new b2Vec2(0.2, -0.33), new b2Vec2(0.2, -0.27), new b2Vec2(0.00, -0.2), new b2Vec2(0.02, 0.33), new b2Vec2(-0.17, 0.33), new b2Vec2(-0.14, -0.33)],
       collisions: true,
       texture: 'playerlowerleg',
-      ghost_texture: 'ghostlowerleg'
+      ghost_texture: 'ghostlowerleg',
+      texture_size: {
+        x: 0.40,
+        y: 0.66
+      }
     };
 
     Constants.upper_leg = {
@@ -246,7 +258,11 @@
       shape: [new b2Vec2(0.4, -0.14), new b2Vec2(0.4, 0.07), new b2Vec2(-0.4, 0.14), new b2Vec2(-0.4, -0.08)],
       collisions: true,
       texture: 'playerupperleg',
-      ghost_texture: 'ghostupperleg'
+      ghost_texture: 'ghostupperleg',
+      texture_size: {
+        x: 0.78,
+        y: 0.28
+      }
     };
 
     Constants.lower_arm = {
@@ -254,14 +270,18 @@
       restitution: 0.0,
       friction: 1.0,
       position: {
-        x: 0.06,
-        y: 1.52
+        x: 0.07,
+        y: 1.54
       },
       angle: -Math.PI / 10.0,
-      shape: [new b2Vec2(0.28, -0.055), new b2Vec2(0.28, 0.055), new b2Vec2(-0.30, 0.08), new b2Vec2(-0.30, -0.05)],
+      shape: [new b2Vec2(0.28, -0.07), new b2Vec2(0.28, 0.04), new b2Vec2(-0.30, 0.07), new b2Vec2(-0.30, -0.06)],
       collisions: true,
       texture: 'playerlowerarm',
-      ghost_texture: 'ghostlowerarm'
+      ghost_texture: 'ghostlowerarm',
+      texture_size: {
+        x: 0.53,
+        y: 0.20
+      }
     };
 
     Constants.upper_arm = {
@@ -276,7 +296,11 @@
       shape: [new b2Vec2(0.09, -0.29), new b2Vec2(0.09, 0.22), new b2Vec2(-0.11, 0.26), new b2Vec2(-0.10, -0.29)],
       collisions: true,
       texture: 'playerupperarm',
-      ghost_texture: 'ghostupperarm'
+      ghost_texture: 'ghostupperarm',
+      texture_size: {
+        x: 0.24,
+        y: 0.56
+      }
     };
 
     Constants.ankle = {
@@ -302,8 +326,8 @@
 
     Constants.elbow = {
       axe_position: {
-        x: 0.04,
-        y: -0.22
+        x: 0.03,
+        y: -0.21
       }
     };
 
@@ -692,8 +716,8 @@
       listener.BeginContact = function(contact) {
         var a, b, entity, moto, strawberry;
         moto = _this.level.moto;
-        a = contact.GetFixtureA().GetBody().GetUserData().name;
-        b = contact.GetFixtureB().GetBody().GetUserData().name;
+        a = contact.GetFixtureA().GetBody().GetUserData();
+        b = contact.GetFixtureB().GetBody().GetUserData();
         if (!moto.dead) {
           if (Listeners.does_contact_moto_rider(a, b, 'strawberry')) {
             strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
@@ -707,7 +731,7 @@
               createjs.Sound.play('EndOfLevel');
               return _this.level.need_to_restart = true;
             }
-          } else if (Listeners.does_contact(a, b, 'rider', 'ground')) {
+          } else if (Listeners.does_contact(a, b, 'rider', 'ground') && a.part !== 'lower_leg' && b.part !== 'lower_leg') {
             return _this.kill_moto();
           } else if (Listeners.does_contact_moto_rider(a, b, 'wrecker')) {
             return _this.kill_moto();
@@ -722,7 +746,7 @@
     };
 
     Listeners.does_contact = function(a, b, obj1, obj2) {
-      return (a === obj1 && b === obj2) || (a === obj2 && b === obj1);
+      return (a.name === obj1 && b.name === obj2) || (a.name === obj2 && b.name === obj1);
     };
 
     Listeners.prototype.kill_moto = function() {
@@ -2076,7 +2100,7 @@
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get(Constants.body.texture), -1.0, -0.5, 2.0, 1.0);
+      this.level.ctx.drawImage(this.assets.get(Constants.body.texture), -Constants.body.texture_size.x / 2, -Constants.body.texture_size.y / 2, Constants.body.texture_size.x, Constants.body.texture_size.y);
       return this.level.ctx.restore();
     };
 
@@ -2276,7 +2300,8 @@
       bodyDef.position.x = x;
       bodyDef.position.y = y;
       bodyDef.userData = {
-        name: 'rider'
+        name: 'rider',
+        part: 'head'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2299,7 +2324,8 @@
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.torso.angle;
       bodyDef.userData = {
-        name: 'rider'
+        name: 'rider',
+        part: 'torso'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2322,7 +2348,8 @@
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_leg.angle;
       bodyDef.userData = {
-        name: 'rider-lower_leg'
+        name: 'rider',
+        part: 'lower_leg'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2345,7 +2372,8 @@
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.upper_leg.angle;
       bodyDef.userData = {
-        name: 'rider'
+        name: 'rider',
+        part: 'upper_leg'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2368,7 +2396,8 @@
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.lower_arm.angle;
       bodyDef.userData = {
-        name: 'rider'
+        name: 'rider',
+        part: 'lower_arm'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2391,7 +2420,8 @@
       bodyDef.position.y = y;
       bodyDef.angle = this.mirror * Constants.upper_arm.angle;
       bodyDef.userData = {
-        name: 'rider'
+        name: 'rider',
+        part: 'upper_arm'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2502,90 +2532,22 @@
     };
 
     Rider.prototype.display = function() {
-      this.display_torso();
-      this.display_upper_leg();
-      this.display_lower_leg();
-      this.display_upper_arm();
-      return this.display_lower_arm();
+      this.display_part(this.torso, Constants.torso);
+      this.display_part(this.upper_leg, Constants.upper_leg);
+      this.display_part(this.lower_leg, Constants.lower_leg);
+      this.display_part(this.upper_arm, Constants.upper_arm);
+      return this.display_part(this.lower_arm, Constants.lower_arm);
     };
 
-    Rider.prototype.display_torso = function() {
+    Rider.prototype.display_part = function(part, part_constant) {
       var angle, position;
-      position = this.torso.GetPosition();
-      angle = this.torso.GetAngle();
+      position = part.GetPosition();
+      angle = part.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
+      this.level.ctx.scale(this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playertorso'), -0.25, -0.60, 0.50, 1.20);
-      return this.level.ctx.restore();
-    };
-
-    Rider.prototype.display_lower_leg = function() {
-      var angle, position;
-      position = this.lower_leg.GetPosition();
-      angle = this.lower_leg.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerlowerleg'), -0.2, -0.33, 0.40, 0.66);
-      return this.level.ctx.restore();
-    };
-
-    Rider.prototype.display_upper_leg = function() {
-      var angle, position;
-      position = this.upper_leg.GetPosition();
-      angle = this.upper_leg.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerupperleg'), -0.39, -0.14, 0.78, 0.28);
-      return this.level.ctx.restore();
-    };
-
-    Rider.prototype.display_lower_arm = function() {
-      var angle, position;
-      position = this.lower_arm.GetPosition();
-      angle = this.lower_arm.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, 1);
-      this.level.ctx.rotate(this.mirror * angle);
-      this.level.ctx.drawImage(this.assets.get('playerlowerarm'), -0.28, -0.10, 0.56, 0.20);
-      return this.level.ctx.restore();
-    };
-
-    Rider.prototype.display_upper_arm = function() {
-      var angle, position;
-      position = this.upper_arm.GetPosition();
-      angle = this.upper_arm.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(1 * this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get('playerupperarm'), -0.12, -0.28, 0.24, 0.56);
-      return this.level.ctx.restore();
-    };
-
-    Rider.prototype.display_part = function(joint1, joint2, part, mirror, x, y, size_x, size_y, i90rot) {
-      var anchor1, anchor2, angle, center;
-      if (i90rot == null) {
-        i90rot = 0;
-      }
-      anchor1 = joint1.GetAnchorA();
-      anchor2 = joint2.GetAnchorA();
-      angle = Math2D.angle_between_points(anchor1, anchor2) + mirror * i90rot * Math.PI / 2.0;
-      center = {
-        x: (anchor1.x + anchor2.x) / 2,
-        y: (anchor1.y + anchor2.y) / 2
-      };
-      this.level.ctx.save();
-      this.level.ctx.translate(center.x, center.y);
-      this.level.ctx.scale(-mirror, 1);
-      this.level.ctx.rotate(-mirror * angle);
-      this.level.ctx.drawImage(this.assets.get(part.texture), x, y, size_x, size_y);
+      this.level.ctx.drawImage(this.assets.get(part_constant.texture), -part_constant.texture_size.x / 2, -part_constant.texture_size.y / 2, part_constant.texture_size.x, part_constant.texture_size.y);
       return this.level.ctx.restore();
     };
 

@@ -242,10 +242,10 @@ class Moto
 
     @level.ctx.drawImage(
       @assets.get(Constants.wheels.texture), # texture
-      -Constants.wheels.radius,      # x
-      -Constants.wheels.radius,      # y
-       Constants.wheels.radius*2,    # size-x
-       Constants.wheels.radius*2     # size-y
+      -Constants.wheels.radius,   # x
+      -Constants.wheels.radius,   # y
+       Constants.wheels.radius*2, # size-x
+       Constants.wheels.radius*2  # size-y
     )
 
     @level.ctx.restore()
@@ -263,10 +263,10 @@ class Moto
 
     @level.ctx.drawImage(
       @assets.get(Constants.body.texture), # texture
-      -1.0, # x
-      -0.5, # y
-       2.0, # size-x
-       1.0  # size-y
+      -Constants.body.texture_size.x/2, # x
+      -Constants.body.texture_size.y/2, # y
+       Constants.body.texture_size.x,   # size-x
+       Constants.body.texture_size.y    # size-y
     )
 
     @level.ctx.restore()

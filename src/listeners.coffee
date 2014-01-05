@@ -10,8 +10,8 @@ class Listeners
 
     listener.BeginContact = (contact) =>
       moto = @level.moto
-      a = contact.GetFixtureA().GetBody().GetUserData().name
-      b = contact.GetFixtureB().GetBody().GetUserData().name
+      a = contact.GetFixtureA().GetBody().GetUserData()
+      b = contact.GetFixtureB().GetBody().GetUserData()
 
       if not moto.dead
         # Strawberries
@@ -29,7 +29,7 @@ class Listeners
             @level.need_to_restart = true
 
         # Fall of rider
-        else if Listeners.does_contact(a, b, 'rider', 'ground')
+        else if Listeners.does_contact(a, b, 'rider', 'ground') and a.part != 'lower_leg' and b.part != 'lower_leg'
           @kill_moto()
 
         # Wrecker contact
@@ -42,7 +42,7 @@ class Listeners
     Listeners.does_contact(a, b, obj, 'rider') or Listeners.does_contact(a, b, obj, 'moto')
 
   @does_contact: (a, b, obj1, obj2) ->
-    (a == obj1 and b == obj2) or (a == obj2 and b == obj1)
+    (a.name == obj1 and b.name == obj2) or (a.name == obj2 and b.name == obj1)
 
   kill_moto: ->
     moto = @level.moto

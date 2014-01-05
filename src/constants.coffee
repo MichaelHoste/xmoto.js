@@ -26,6 +26,9 @@ class Constants
     collisions: true
     texture:       'playerbikerbody'
     ghost_texture: 'ghostbikerbody'
+    texture_size:
+      x: 2.0
+      y: 1.0
 
   @wheels =
     radius:      0.35
@@ -84,13 +87,13 @@ class Constants
   # RIDER PARTS
 
   @head =
-    radius:      0.18
     density:     0.4
     restitution: 0.0
     friction:    1.0
     position:
       x: -0.27
       y:  2.26
+    radius:     0.18
     collisions: true
 
   @torso =
@@ -108,6 +111,9 @@ class Constants
     collisions: true
     texture:       'playertorso'
     ghost_texture: 'ghosttorso'
+    texture_size:
+      x: 0.50
+      y: 1.20
 
   @lower_leg =
     density:     0.4
@@ -126,6 +132,9 @@ class Constants
     collisions: true
     texture:       'playerlowerleg'
     ghost_texture: 'ghostlowerleg'
+    texture_size:
+      x: 0.40
+      y: 0.66
 
   @upper_leg =
     density:     0.4
@@ -142,22 +151,28 @@ class Constants
     collisions: true
     texture:       'playerupperleg'
     ghost_texture: 'ghostupperleg'
+    texture_size:
+      x: 0.78
+      y: 0.28
 
   @lower_arm =
     density:     0.4
     restitution: 0.0
     friction:    1.0
     position:
-      x: 0.06
-      y: 1.52
+      x: 0.07
+      y: 1.54
     angle: -Math.PI/10.0
-    shape: [ new b2Vec2( 0.28, -0.055)
-             new b2Vec2( 0.28,  0.055)
-             new b2Vec2(-0.30,  0.08)
-             new b2Vec2(-0.30, -0.05) ]
+    shape: [ new b2Vec2( 0.28, -0.07)
+             new b2Vec2( 0.28,  0.04)
+             new b2Vec2(-0.30,  0.07)
+             new b2Vec2(-0.30, -0.06) ]
     collisions: true
     texture:       'playerlowerarm'
     ghost_texture: 'ghostlowerarm'
+    texture_size:
+      x: 0.53
+      y: 0.20
 
   @upper_arm =
     density:     0.4
@@ -174,6 +189,9 @@ class Constants
     collisions: true
     texture:       'playerupperarm'
     ghost_texture: 'ghostupperarm'
+    texture_size:
+      x: 0.24
+      y: 0.56
 
   # RIDER JOINTS
 
@@ -194,8 +212,8 @@ class Constants
 
   @elbow =
     axe_position:
-      x:  0.04
-      y: -0.22
+      x:  0.03
+      y: -0.21
 
   @shoulder =
     axe_position:
