@@ -42,23 +42,13 @@ class Rider
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
-    @head         = @create_head(@player_start.x + @mirror * Constants.head.position.x,
-                                 @player_start.y + Constants.head.position.y)
 
-    @torso        = @create_torso(@player_start.x + @mirror * Constants.torso.position.x,
-                                  @player_start.y + Constants.torso.position.y)
-
-    @lower_leg    = @create_lower_leg(@player_start.x + @mirror * Constants.lower_leg.position.x,
-                                      @player_start.y + Constants.lower_leg.position.y)
-
-    @upper_leg    = @create_upper_leg(@player_start.x + @mirror * Constants.upper_leg.position.x,
-                                      @player_start.y + Constants.upper_leg.position.y)
-
-    @lower_arm    = @create_lower_arm(@player_start.x + @mirror * Constants.lower_arm.position.x,
-                                      @player_start.y + Constants.lower_arm.position.y)
-
-    @upper_arm    = @create_upper_arm(@player_start.x + @mirror * Constants.upper_arm.position.x,
-                                      @player_start.y + Constants.upper_arm.position.y)
+    @head      = @create_head(Constants.head,      'head')
+    @torso     = @create_part(Constants.torso,     'torso')
+    @lower_leg = @create_part(Constants.lower_leg, 'lower_leg')
+    @upper_leg = @create_part(Constants.upper_leg, 'upper_leg')
+    @lower_arm = @create_part(Constants.lower_arm, 'lower_arm')
+    @upper_arm = @create_part(Constants.upper_arm, 'upper_arm')
 
     @neck_joint     = @create_neck_joint()
     @ankle_joint    = @create_ankle_joint()
@@ -71,27 +61,27 @@ class Rider
   position: ->
     @moto.body.GetPosition()
 
-  create_head: (x, y)  ->
+  create_head: (part_constants, name)  ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    fixDef.shape       = new b2CircleShape(Constants.head.radius)
-    fixDef.density     = Constants.head.density
-    fixDef.restitution = Constants.head.restitution
-    fixDef.friction    = Constants.head.friction
-    fixDef.isSensor    = !Constants.head.collisions
+    fixDef.shape       =  new b2CircleShape(part_constants.radius)
+    fixDef.density     =  part_constants.density
+    fixDef.restitution =  part_constants.restitution
+    fixDef.friction    =  part_constants.friction
+    fixDef.isSensor    = !part_constants.collisions
     fixDef.filter.groupIndex = -1
 
     # Create body
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
+    bodyDef.position.x = @player_start.x + @mirror * part_constants.position.x
+    bodyDef.position.y = @player_start.y +           part_constants.position.y
 
     bodyDef.userData =
       name: 'rider'
-      part: 'head'
+      part: name
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -101,172 +91,32 @@ class Rider
 
     body
 
-  create_torso: (x, y)  ->
+  create_part: (part_constants, name) ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = Constants.torso.density
-    fixDef.restitution = Constants.torso.restitution
-    fixDef.friction    = Constants.torso.friction
-    fixDef.isSensor    = !Constants.torso.collisions
+    fixDef.shape       =  new b2PolygonShape()
+    fixDef.density     =  part_constants.density
+    fixDef.restitution =  part_constants.restitution
+    fixDef.friction    =  part_constants.friction
+    fixDef.isSensor    = !part_constants.collisions
     fixDef.filter.groupIndex = -1
 
-    Physics.create_shape(fixDef, Constants.torso.shape, @mirror == -1)
+    Physics.create_shape(fixDef, part_constants.shape, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
+    bodyDef.position.x = @player_start.x + @mirror * part_constants.position.x
+    bodyDef.position.y = @player_start.y +           part_constants.position.y
 
     # Assign body angle
-    bodyDef.angle = @mirror * Constants.torso.angle
+    bodyDef.angle = @mirror * part_constants.angle
 
     bodyDef.userData =
       name: 'rider'
-      part: 'torso'
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
-
-    body
-
-  create_lower_leg: (x, y) ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
-
-    fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = Constants.lower_leg.density
-    fixDef.restitution = Constants.lower_leg.restitution
-    fixDef.friction    = Constants.lower_leg.friction
-    fixDef.isSensor    = !Constants.lower_leg.collisions
-    fixDef.filter.groupIndex = -1
-
-    Physics.create_shape(fixDef, Constants.lower_leg.shape, @mirror == -1)
-
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
-
-    # Assign body angle
-    bodyDef.angle = @mirror * Constants.lower_leg.angle
-
-    bodyDef.userData =
-      name: 'rider'
-      part: 'lower_leg'
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
-
-    body
-
-  create_upper_leg: (x, y) ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
-
-    fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = Constants.upper_leg.density
-    fixDef.restitution = Constants.upper_leg.restitution
-    fixDef.friction    = Constants.upper_leg.friction
-    fixDef.isSensor    = !Constants.upper_leg.collisions
-    fixDef.filter.groupIndex = -1
-
-    Physics.create_shape(fixDef, Constants.upper_leg.shape, @mirror == -1)
-
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
-
-    # Assign body angle
-    bodyDef.angle = @mirror * Constants.upper_leg.angle
-
-    bodyDef.userData =
-      name: 'rider'
-      part: 'upper_leg'
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
-
-    body
-
-  create_lower_arm: (x, y) ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
-
-    fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = Constants.lower_arm.density
-    fixDef.restitution = Constants.lower_arm.restitution
-    fixDef.friction    = Constants.lower_arm.friction
-    fixDef.isSensor    = !Constants.lower_arm.collisions
-    fixDef.filter.groupIndex = -1
-
-    Physics.create_shape(fixDef, Constants.lower_arm.shape, @mirror == -1)
-
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
-
-    # Assign body angle
-    bodyDef.angle = @mirror * Constants.lower_arm.angle
-
-    bodyDef.userData =
-      name: 'rider'
-      part: 'lower_arm'
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
-
-    body
-
-  create_upper_arm: (x, y) ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
-
-    fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = Constants.upper_arm.density
-    fixDef.restitution = Constants.upper_arm.restitution
-    fixDef.friction    = Constants.upper_arm.friction
-    fixDef.isSensor    = !Constants.upper_arm.collisions
-    fixDef.filter.groupIndex = -1
-
-    Physics.create_shape(fixDef, Constants.upper_arm.shape, @mirror == -1)
-
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
-
-    # Assign body angle
-    bodyDef.angle = @mirror * Constants.upper_arm.angle
-
-    bodyDef.userData =
-      name: 'rider'
-      part: 'upper_arm'
+      part: name
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -371,7 +221,7 @@ class Rider
     @display_part(@upper_arm, Constants.upper_arm)
     @display_part(@lower_arm, Constants.lower_arm)
 
-  display_part: (part, part_constant) ->
+  display_part: (part, part_constants) ->
     # Position
     position = part.GetPosition()
 
@@ -385,11 +235,11 @@ class Rider
     @level.ctx.rotate(@mirror * (-angle))
 
     @level.ctx.drawImage(
-      @assets.get(part_constant.texture), # texture
-      -part_constant.texture_size.x/2,    # x
-      -part_constant.texture_size.y/2,    # y
-       part_constant.texture_size.x,      # size-x
-       part_constant.texture_size.y       # size-y
+      @assets.get(part_constants.texture), # texture
+      -part_constants.texture_size.x/2,    # x
+      -part_constants.texture_size.y/2,    # y
+       part_constants.texture_size.x,      # size-x
+       part_constants.texture_size.y       # size-y
     )
 
     @level.ctx.restore()

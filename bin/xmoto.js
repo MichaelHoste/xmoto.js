@@ -2268,12 +2268,12 @@
         this.assets.moto.push(part.texture);
       }
       this.player_start = this.level.entities.player_start;
-      this.head = this.create_head(this.player_start.x + this.mirror * Constants.head.position.x, this.player_start.y + Constants.head.position.y);
-      this.torso = this.create_torso(this.player_start.x + this.mirror * Constants.torso.position.x, this.player_start.y + Constants.torso.position.y);
-      this.lower_leg = this.create_lower_leg(this.player_start.x + this.mirror * Constants.lower_leg.position.x, this.player_start.y + Constants.lower_leg.position.y);
-      this.upper_leg = this.create_upper_leg(this.player_start.x + this.mirror * Constants.upper_leg.position.x, this.player_start.y + Constants.upper_leg.position.y);
-      this.lower_arm = this.create_lower_arm(this.player_start.x + this.mirror * Constants.lower_arm.position.x, this.player_start.y + Constants.lower_arm.position.y);
-      this.upper_arm = this.create_upper_arm(this.player_start.x + this.mirror * Constants.upper_arm.position.x, this.player_start.y + Constants.upper_arm.position.y);
+      this.head = this.create_head(Constants.head, 'head');
+      this.torso = this.create_part(Constants.torso, 'torso');
+      this.lower_leg = this.create_part(Constants.lower_leg, 'lower_leg');
+      this.upper_leg = this.create_part(Constants.upper_leg, 'upper_leg');
+      this.lower_arm = this.create_part(Constants.lower_arm, 'lower_arm');
+      this.upper_arm = this.create_part(Constants.upper_arm, 'upper_arm');
       this.neck_joint = this.create_neck_joint();
       this.ankle_joint = this.create_ankle_joint();
       this.wrist_joint = this.create_wrist_joint();
@@ -2287,21 +2287,21 @@
       return this.moto.body.GetPosition();
     };
 
-    Rider.prototype.create_head = function(x, y) {
+    Rider.prototype.create_head = function(part_constants, name) {
       var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
-      fixDef.shape = new b2CircleShape(Constants.head.radius);
-      fixDef.density = Constants.head.density;
-      fixDef.restitution = Constants.head.restitution;
-      fixDef.friction = Constants.head.friction;
-      fixDef.isSensor = !Constants.head.collisions;
+      fixDef.shape = new b2CircleShape(part_constants.radius);
+      fixDef.density = part_constants.density;
+      fixDef.restitution = part_constants.restitution;
+      fixDef.friction = part_constants.friction;
+      fixDef.isSensor = !part_constants.collisions;
       fixDef.filter.groupIndex = -1;
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
+      bodyDef.position.x = this.player_start.x + this.mirror * part_constants.position.x;
+      bodyDef.position.y = this.player_start.y + part_constants.position.y;
       bodyDef.userData = {
         name: 'rider',
-        part: 'head'
+        part: name
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2309,119 +2309,23 @@
       return body;
     };
 
-    Rider.prototype.create_torso = function(x, y) {
+    Rider.prototype.create_part = function(part_constants, name) {
       var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = Constants.torso.density;
-      fixDef.restitution = Constants.torso.restitution;
-      fixDef.friction = Constants.torso.friction;
-      fixDef.isSensor = !Constants.torso.collisions;
+      fixDef.density = part_constants.density;
+      fixDef.restitution = part_constants.restitution;
+      fixDef.friction = part_constants.friction;
+      fixDef.isSensor = !part_constants.collisions;
       fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, Constants.torso.shape, this.mirror === -1);
+      Physics.create_shape(fixDef, part_constants.shape, this.mirror === -1);
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
-      bodyDef.angle = this.mirror * Constants.torso.angle;
+      bodyDef.position.x = this.player_start.x + this.mirror * part_constants.position.x;
+      bodyDef.position.y = this.player_start.y + part_constants.position.y;
+      bodyDef.angle = this.mirror * part_constants.angle;
       bodyDef.userData = {
         name: 'rider',
-        part: 'torso'
-      };
-      bodyDef.type = b2Body.b2_dynamicBody;
-      body = this.level.world.CreateBody(bodyDef);
-      body.CreateFixture(fixDef);
-      return body;
-    };
-
-    Rider.prototype.create_lower_leg = function(x, y) {
-      var body, bodyDef, fixDef;
-      fixDef = new b2FixtureDef();
-      fixDef.shape = new b2PolygonShape();
-      fixDef.density = Constants.lower_leg.density;
-      fixDef.restitution = Constants.lower_leg.restitution;
-      fixDef.friction = Constants.lower_leg.friction;
-      fixDef.isSensor = !Constants.lower_leg.collisions;
-      fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, Constants.lower_leg.shape, this.mirror === -1);
-      bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
-      bodyDef.angle = this.mirror * Constants.lower_leg.angle;
-      bodyDef.userData = {
-        name: 'rider',
-        part: 'lower_leg'
-      };
-      bodyDef.type = b2Body.b2_dynamicBody;
-      body = this.level.world.CreateBody(bodyDef);
-      body.CreateFixture(fixDef);
-      return body;
-    };
-
-    Rider.prototype.create_upper_leg = function(x, y) {
-      var body, bodyDef, fixDef;
-      fixDef = new b2FixtureDef();
-      fixDef.shape = new b2PolygonShape();
-      fixDef.density = Constants.upper_leg.density;
-      fixDef.restitution = Constants.upper_leg.restitution;
-      fixDef.friction = Constants.upper_leg.friction;
-      fixDef.isSensor = !Constants.upper_leg.collisions;
-      fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, Constants.upper_leg.shape, this.mirror === -1);
-      bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
-      bodyDef.angle = this.mirror * Constants.upper_leg.angle;
-      bodyDef.userData = {
-        name: 'rider',
-        part: 'upper_leg'
-      };
-      bodyDef.type = b2Body.b2_dynamicBody;
-      body = this.level.world.CreateBody(bodyDef);
-      body.CreateFixture(fixDef);
-      return body;
-    };
-
-    Rider.prototype.create_lower_arm = function(x, y) {
-      var body, bodyDef, fixDef;
-      fixDef = new b2FixtureDef();
-      fixDef.shape = new b2PolygonShape();
-      fixDef.density = Constants.lower_arm.density;
-      fixDef.restitution = Constants.lower_arm.restitution;
-      fixDef.friction = Constants.lower_arm.friction;
-      fixDef.isSensor = !Constants.lower_arm.collisions;
-      fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, Constants.lower_arm.shape, this.mirror === -1);
-      bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
-      bodyDef.angle = this.mirror * Constants.lower_arm.angle;
-      bodyDef.userData = {
-        name: 'rider',
-        part: 'lower_arm'
-      };
-      bodyDef.type = b2Body.b2_dynamicBody;
-      body = this.level.world.CreateBody(bodyDef);
-      body.CreateFixture(fixDef);
-      return body;
-    };
-
-    Rider.prototype.create_upper_arm = function(x, y) {
-      var body, bodyDef, fixDef;
-      fixDef = new b2FixtureDef();
-      fixDef.shape = new b2PolygonShape();
-      fixDef.density = Constants.upper_arm.density;
-      fixDef.restitution = Constants.upper_arm.restitution;
-      fixDef.friction = Constants.upper_arm.friction;
-      fixDef.isSensor = !Constants.upper_arm.collisions;
-      fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, Constants.upper_arm.shape, this.mirror === -1);
-      bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
-      bodyDef.angle = this.mirror * Constants.upper_arm.angle;
-      bodyDef.userData = {
-        name: 'rider',
-        part: 'upper_arm'
+        part: name
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2539,7 +2443,7 @@
       return this.display_part(this.lower_arm, Constants.lower_arm);
     };
 
-    Rider.prototype.display_part = function(part, part_constant) {
+    Rider.prototype.display_part = function(part, part_constants) {
       var angle, position;
       position = part.GetPosition();
       angle = part.GetAngle();
@@ -2547,7 +2451,7 @@
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.scale(this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get(part_constant.texture), -part_constant.texture_size.x / 2, -part_constant.texture_size.y / 2, part_constant.texture_size.x, part_constant.texture_size.y);
+      this.level.ctx.drawImage(this.assets.get(part_constants.texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
       return this.level.ctx.restore();
     };
 
