@@ -33,57 +33,41 @@ class Moto
     world.DestroyJoint(@right_revolute_joint)
     world.DestroyJoint(@right_prismatic_joint)
 
-  display: ->
-    @display_wheel(@left_wheel)
-    @display_wheel(@right_wheel)
-    @display_left_axle()
-    @display_right_axle()
-    @display_body()
-    @rider.display()
-
   init: ->
     # Assets
-    parts = [ Constants.body, Constants.wheels, Constants.left_axle, Constants.right_axle ]
+    parts = [ Constants.body, Constants.left_wheel, Constants.right_wheel,
+              Constants.left_axle, Constants.right_axle ]
     for part in parts
       @assets.moto.push(part.texture)
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
 
-    @body         = @create_body(@player_start.x + @mirror * Constants.body.position.x,
-                                 @player_start.y + Constants.body.position.y)
+    @body         = @create_body()
+    @left_wheel   = @create_wheel(Constants.left_wheel)
+    @right_wheel  = @create_wheel(Constants.right_wheel)
+    @left_axle    = @create_axle(Constants.left_axle)
+    @right_axle   = @create_axle(Constants.right_axle)
 
-    @left_wheel   = @create_wheel(@player_start.x - @mirror * Constants.wheels.position.x,
-                                  @player_start.y + Constants.wheels.position.y)
+    @left_revolute_joint  = @create_revolute_joint(@left_axle,  @left_wheel)
+    @right_revolute_joint = @create_revolute_joint(@right_axle, @right_wheel)
 
-    @right_wheel  = @create_wheel(@player_start.x + @mirror * Constants.wheels.position.x,
-                                  @player_start.y + Constants.wheels.position.y)
-
-    @left_axle    = @create_left_axle( @player_start.x + @mirror * Constants.left_axle.position.x,
-                                       @player_start.y + Constants.left_axle.position.y)
-
-    @right_axle   = @create_right_axle(@player_start.x + @mirror * Constants.right_axle.position.x,
-                                       @player_start.y + Constants.right_axle.position.y)
-
-    @left_revolute_joint  = @create_left_revolute_joint()
-    @left_prismatic_joint = @create_left_prismatic_joint()
-
-    @right_revolute_joint  = @create_right_revolute_joint()
-    @right_prismatic_joint = @create_right_prismatic_joint()
+    @left_prismatic_joint  = @create_prismatic_joint(@left_axle,  Constants.left_suspension)
+    @right_prismatic_joint = @create_prismatic_joint(@right_axle, Constants.right_suspension)
 
     @rider.init()
 
   position: ->
     @body.GetPosition()
 
-  create_body: (x, y)  ->
+  create_body: ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = Constants.body.density
-    fixDef.restitution = Constants.body.restitution
-    fixDef.friction    = Constants.body.friction
+    fixDef.shape       =  new b2PolygonShape()
+    fixDef.density     =  Constants.body.density
+    fixDef.restitution =  Constants.body.restitution
+    fixDef.friction    =  Constants.body.friction
     fixDef.isSensor    = !Constants.body.collisions
     fixDef.filter.groupIndex = -1
 
@@ -93,8 +77,8 @@ class Moto
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
+    bodyDef.position.x = @player_start.x + @mirror * Constants.body.position.x
+    bodyDef.position.y = @player_start.y +           Constants.body.position.y
 
     bodyDef.userData =
       name: 'moto'
@@ -107,23 +91,23 @@ class Moto
 
     body
 
-  create_wheel: (x, y) ->
+  create_wheel: (part_constants) ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    fixDef.shape = new b2CircleShape(Constants.wheels.radius)
-    fixDef.density     = Constants.wheels.density
-    fixDef.restitution = Constants.wheels.restitution
-    fixDef.friction    = Constants.wheels.friction
-    fixDef.isSensor    = !Constants.wheels.collisions
+    fixDef.shape       =  new b2CircleShape(part_constants.radius)
+    fixDef.density     =  part_constants.density
+    fixDef.restitution =  part_constants.restitution
+    fixDef.friction    =  part_constants.friction
+    fixDef.isSensor    = !part_constants.collisions
     fixDef.filter.groupIndex = -1
 
     # Create body
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
+    bodyDef.position.x = @player_start.x + @mirror * part_constants.position.x
+    bodyDef.position.y = @player_start.y +           part_constants.position.y
 
     bodyDef.userData =
       name: 'moto'
@@ -136,25 +120,25 @@ class Moto
 
     wheel
 
-  create_left_axle: (x, y) ->
+  create_axle: (part_constants) ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = Constants.left_axle.density
-    fixDef.restitution = Constants.left_axle.restitution
-    fixDef.friction    = Constants.left_axle.friction
-    fixDef.isSensor    = !Constants.left_axle.collisions
+    fixDef.shape       =  new b2PolygonShape()
+    fixDef.density     =  part_constants.density
+    fixDef.restitution =  part_constants.restitution
+    fixDef.friction    =  part_constants.friction
+    fixDef.isSensor    = !part_constants.collisions
     fixDef.filter.groupIndex = -1
 
-    Physics.create_shape(fixDef, Constants.left_axle.shape, @mirror == -1)
+    Physics.create_shape(fixDef, part_constants.shape, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
+    bodyDef.position.x = @player_start.x + @mirror * part_constants.position.x
+    bodyDef.position.y = @player_start.y +           part_constants.position.y
 
     bodyDef.userData =
       name: 'moto'
@@ -167,73 +151,34 @@ class Moto
 
     body
 
-  create_right_axle: (x, y) ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
-
-    fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = Constants.right_axle.density
-    fixDef.restitution = Constants.right_axle.restitution
-    fixDef.friction    = Constants.right_axle.friction
-    fixDef.isSensor    = !Constants.right_axle.collisions
-    fixDef.filter.groupIndex = -1
-
-    Physics.create_shape(fixDef, Constants.right_axle.shape, @mirror == -1)
-
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = x
-    bodyDef.position.y = y
-
-    bodyDef.userData =
-      name: 'moto'
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
-
-    body
-
-  create_left_revolute_joint: ->
+  create_revolute_joint: (axle, wheel) ->
     jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@left_axle, @left_wheel, @left_wheel.GetWorldCenter())
+    jointDef.Initialize(axle, wheel, wheel.GetWorldCenter())
     @level.world.CreateJoint(jointDef)
 
-  create_right_revolute_joint: ->
-    jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@right_axle, @right_wheel, @right_wheel.GetWorldCenter())
-    @level.world.CreateJoint(jointDef)
-
-  create_left_prismatic_joint: ->
+  create_prismatic_joint: (axle, part_constants) ->
     jointDef = new b2PrismaticJointDef()
-    angle = Constants.left_suspension.angle
-    jointDef.Initialize(@body, @left_axle, @left_axle.GetWorldCenter(), new b2Vec2(@mirror * angle.x, angle.y))
+    angle = part_constants.angle
+    jointDef.Initialize(@body, axle, axle.GetWorldCenter(), new b2Vec2(@mirror * angle.x, angle.y))
     jointDef.enableLimit      = true
-    jointDef.lowerTranslation = Constants.left_suspension.lower_translation
-    jointDef.upperTranslation = Constants.left_suspension.upper_translation
+    jointDef.lowerTranslation = part_constants.lower_translation
+    jointDef.upperTranslation = part_constants.upper_translation
     jointDef.enableMotor      = true
     jointDef.collideConnected = false
     @level.world.CreateJoint(jointDef)
 
-  create_right_prismatic_joint: ->
-    jointDef = new b2PrismaticJointDef()
-    angle = Constants.right_suspension.angle
-    jointDef.Initialize(@body, @right_axle, @right_axle.GetWorldCenter(), new b2Vec2(@mirror * angle.x, angle.y))
-    jointDef.enableLimit      = true
-    jointDef.lowerTranslation = Constants.right_suspension.lower_translation
-    jointDef.upperTranslation = Constants.right_suspension.upper_translation
-    jointDef.enableMotor      = true
-    jointDef.collideConnected = false
-    @level.world.CreateJoint(jointDef)
+  display: ->
+    @display_wheel(@left_wheel,  Constants.left_wheel)
+    @display_wheel(@right_wheel, Constants.right_wheel)
+    @display_left_axle()
+    @display_right_axle()
+    @display_body()
+    @rider.display()
 
-  display_wheel: (wheel) ->
+  display_wheel: (part, part_constants) ->
     # Get angle and position
-    position = wheel.GetPosition()
-    angle    = wheel.GetAngle()
+    position = part.GetPosition()
+    angle    = part.GetAngle()
 
     # Draw Texture
     @level.ctx.save()
@@ -241,11 +186,11 @@ class Moto
     @level.ctx.rotate(angle)
 
     @level.ctx.drawImage(
-      @assets.get(Constants.wheels.texture), # texture
-      -Constants.wheels.radius,   # x
-      -Constants.wheels.radius,   # y
-       Constants.wheels.radius*2, # size-x
-       Constants.wheels.radius*2  # size-y
+      @assets.get(part_constants.texture), # texture
+      -part_constants.radius,              # x
+      -part_constants.radius,              # y
+       part_constants.radius*2,            # size-x
+       part_constants.radius*2             # size-y
     )
 
     @level.ctx.restore()
@@ -263,28 +208,15 @@ class Moto
 
     @level.ctx.drawImage(
       @assets.get(Constants.body.texture), # texture
-      -Constants.body.texture_size.x/2, # x
-      -Constants.body.texture_size.y/2, # y
-       Constants.body.texture_size.x,   # size-x
-       Constants.body.texture_size.y    # size-y
+      -Constants.body.texture_size.x/2,    # x
+      -Constants.body.texture_size.y/2,    # y
+       Constants.body.texture_size.x,      # size-x
+       Constants.body.texture_size.y       # size-y
     )
 
     @level.ctx.restore()
 
-  display_left_axle: ->
-    axle_thickness = 0.09
-
-    # Position
-    wheel_position = @left_wheel.GetPosition()
-    wheel_position =
-      x: wheel_position.x - @mirror * axle_thickness/2.0
-      y: wheel_position.y - 0.025
-
-    # Position relative to center of body
-    axle_position =
-      x: -0.17 * @mirror
-      y: -0.30
-
+  display_axle_common: (wheel_position, axle_position, axle_thickness) ->
     # Adjusted position depending of rotation of body
     axle_adjusted_position = Math2D.rotate_point(axle_position, @body.GetAngle(), @body.GetPosition())
 
@@ -310,6 +242,22 @@ class Moto
 
     @level.ctx.restore()
 
+  display_left_axle: ->
+    axle_thickness = 0.09
+
+    # Position
+    wheel_position = @left_wheel.GetPosition()
+    wheel_position =
+      x: wheel_position.x - @mirror * axle_thickness/2.0
+      y: wheel_position.y - 0.025
+
+    # Position relative to center of body
+    axle_position =
+      x: -0.17 * @mirror
+      y: -0.30
+
+    @display_axle_common(wheel_position, axle_position, axle_thickness)
+
   display_right_axle: ->
     axle_thickness = 0.07
 
@@ -324,27 +272,5 @@ class Moto
       x: 0.52 * @mirror
       y: 0.025
 
-    # Adjusted position depending of rotation of body
-    axle_adjusted_position = Math2D.rotate_point(axle_position, @body.GetAngle(), @body.GetPosition())
+    @display_axle_common(wheel_position, axle_position, axle_thickness)
 
-    # Distance
-    distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position)
-
-    # Angle
-    angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + @mirror * Math.PI/2
-
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(wheel_position.x, wheel_position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
-
-    @level.ctx.drawImage(
-      @assets.get(Constants.right_axle.texture), # texture
-      0.0,               # x
-      -axle_thickness/2, # y
-      distance,          # size-x
-      axle_thickness     # size-y
-    )
-
-    @level.ctx.restore()

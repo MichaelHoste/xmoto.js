@@ -1,6 +1,6 @@
 class Ghost
 
-  constructor: (level, replay, style = "ghost") ->
+  constructor: (level, replay) ->
     @level  = level
     @assets = level.assets
     @replay = replay
@@ -10,23 +10,23 @@ class Ghost
     if @replay and @current_frame < @replay.frames_count()
       @frame = @replay.frame(@current_frame)
       @mirror = if @frame.mirror then -1 else 1
-      Rider.display_rider(@mirror,
-                          @frame.anchors.neck,
-                          @frame.anchors.wrist,
-                          @frame.anchors.elbow
-                          @frame.anchors.shoulder
-                          @frame.anchors.hip
-                          @frame.anchors.knee
-                          @frame.anchors.ankle
-                          @level.ctx, @level.assets)
-      Moto.display_moto(@mirror,
-                        @frame.left_wheel.position,
-                        @frame.left_wheel.angle,
-                        @frame.right_wheel.position,
-                        @frame.right_wheel.angle,
-                        @frame.body.position,
-                        @frame.body.angle
-                        @level.ctx, @level.assets)
+      #Rider.display_rider(@mirror,
+      #                    @frame.anchors.neck,
+      #                    @frame.anchors.wrist,
+      #                    @frame.anchors.elbow
+      #                    @frame.anchors.shoulder
+      #                    @frame.anchors.hip
+      #                    @frame.anchors.knee
+      #                    @frame.anchors.ankle
+      #                    @level.ctx, @level.assets)
+      #Moto.display_moto(@mirror,
+      #                  @frame.left_wheel.position,
+      #                  @frame.left_wheel.angle,
+      #                  @frame.right_wheel.position,
+      #                  @frame.right_wheel.angle,
+      #                  @frame.body.position,
+      #                  @frame.body.angle
+      #                  @level.ctx, @level.assets)
 
   next_state: ->
     if @replay
@@ -49,6 +49,6 @@ class Ghost
     # Assets
     parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
               Constants.upper_arm, Constants.lower_arm,
-              Constants.body, Constants.wheels, Constants.left_axle, Constants.left_axle ]
+              Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.left_axle ]
     for part in parts
       @assets.moto.push(part.ghost_texture)

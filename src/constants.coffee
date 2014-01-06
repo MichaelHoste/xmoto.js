@@ -30,7 +30,19 @@ class Constants
       x: 2.0
       y: 1.0
 
-  @wheels =
+  @left_wheel =
+    radius:      0.35
+    density:     2.0
+    restitution: 0.5
+    friction:    1.3
+    position:
+      x: -0.70
+      y:  0.48
+    collisions: true
+    texture:       'playerbikerwheel'
+    ghost_texture: 'ghostbikerwheel'
+
+  @right_wheel =
     radius:      0.35
     density:     2.0
     restitution: 0.5

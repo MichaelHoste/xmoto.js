@@ -142,7 +142,21 @@
       }
     };
 
-    Constants.wheels = {
+    Constants.left_wheel = {
+      radius: 0.35,
+      density: 2.0,
+      restitution: 0.5,
+      friction: 1.3,
+      position: {
+        x: -0.70,
+        y: 0.48
+      },
+      collisions: true,
+      texture: 'playerbikerwheel',
+      ghost_texture: 'ghostbikerwheel'
+    };
+
+    Constants.right_wheel = {
       radius: 0.35,
       density: 2.0,
       restitution: 0.5,
@@ -1819,10 +1833,7 @@
   })();
 
   Ghost = (function() {
-    function Ghost(level, replay, style) {
-      if (style == null) {
-        style = "ghost";
-      }
+    function Ghost(level, replay) {
       this.level = level;
       this.assets = level.assets;
       this.replay = replay;
@@ -1832,9 +1843,7 @@
     Ghost.prototype.display = function() {
       if (this.replay && this.current_frame < this.replay.frames_count()) {
         this.frame = this.replay.frame(this.current_frame);
-        this.mirror = this.frame.mirror ? -1 : 1;
-        Rider.display_rider(this.mirror, this.frame.anchors.neck, this.frame.anchors.wrist, this.frame.anchors.elbow, this.frame.anchors.shoulder, this.frame.anchors.hip, this.frame.anchors.knee, this.frame.anchors.ankle, this.level.ctx, this.level.assets);
-        return Moto.display_moto(this.mirror, this.frame.left_wheel.position, this.frame.left_wheel.angle, this.frame.right_wheel.position, this.frame.right_wheel.angle, this.frame.body.position, this.frame.body.angle, this.level.ctx, this.level.assets);
+        return this.mirror = this.frame.mirror ? -1 : 1;
       }
     };
 
@@ -1863,7 +1872,7 @@
 
     Ghost.prototype.init = function() {
       var part, parts, _i, _len, _results;
-      parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.wheels, Constants.left_axle, Constants.left_axle];
+      parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.left_axle];
       _results = [];
       for (_i = 0, _len = parts.length; _i < _len; _i++) {
         part = parts[_i];
@@ -1921,32 +1930,23 @@
       return world.DestroyJoint(this.right_prismatic_joint);
     };
 
-    Moto.prototype.display = function() {
-      this.display_wheel(this.left_wheel);
-      this.display_wheel(this.right_wheel);
-      this.display_left_axle();
-      this.display_right_axle();
-      this.display_body();
-      return this.rider.display();
-    };
-
     Moto.prototype.init = function() {
       var part, parts, _i, _len;
-      parts = [Constants.body, Constants.wheels, Constants.left_axle, Constants.right_axle];
+      parts = [Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
       for (_i = 0, _len = parts.length; _i < _len; _i++) {
         part = parts[_i];
         this.assets.moto.push(part.texture);
       }
       this.player_start = this.level.entities.player_start;
-      this.body = this.create_body(this.player_start.x + this.mirror * Constants.body.position.x, this.player_start.y + Constants.body.position.y);
-      this.left_wheel = this.create_wheel(this.player_start.x - this.mirror * Constants.wheels.position.x, this.player_start.y + Constants.wheels.position.y);
-      this.right_wheel = this.create_wheel(this.player_start.x + this.mirror * Constants.wheels.position.x, this.player_start.y + Constants.wheels.position.y);
-      this.left_axle = this.create_left_axle(this.player_start.x + this.mirror * Constants.left_axle.position.x, this.player_start.y + Constants.left_axle.position.y);
-      this.right_axle = this.create_right_axle(this.player_start.x + this.mirror * Constants.right_axle.position.x, this.player_start.y + Constants.right_axle.position.y);
-      this.left_revolute_joint = this.create_left_revolute_joint();
-      this.left_prismatic_joint = this.create_left_prismatic_joint();
-      this.right_revolute_joint = this.create_right_revolute_joint();
-      this.right_prismatic_joint = this.create_right_prismatic_joint();
+      this.body = this.create_body();
+      this.left_wheel = this.create_wheel(Constants.left_wheel);
+      this.right_wheel = this.create_wheel(Constants.right_wheel);
+      this.left_axle = this.create_axle(Constants.left_axle);
+      this.right_axle = this.create_axle(Constants.right_axle);
+      this.left_revolute_joint = this.create_revolute_joint(this.left_axle, this.left_wheel);
+      this.right_revolute_joint = this.create_revolute_joint(this.right_axle, this.right_wheel);
+      this.left_prismatic_joint = this.create_prismatic_joint(this.left_axle, Constants.left_suspension);
+      this.right_prismatic_joint = this.create_prismatic_joint(this.right_axle, Constants.right_suspension);
       return this.rider.init();
     };
 
@@ -1954,7 +1954,7 @@
       return this.body.GetPosition();
     };
 
-    Moto.prototype.create_body = function(x, y) {
+    Moto.prototype.create_body = function() {
       var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
@@ -1965,8 +1965,8 @@
       fixDef.filter.groupIndex = -1;
       Physics.create_shape(fixDef, Constants.body.shape, this.mirror === -1);
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
+      bodyDef.position.x = this.player_start.x + this.mirror * Constants.body.position.x;
+      bodyDef.position.y = this.player_start.y + Constants.body.position.y;
       bodyDef.userData = {
         name: 'moto'
       };
@@ -1976,18 +1976,18 @@
       return body;
     };
 
-    Moto.prototype.create_wheel = function(x, y) {
+    Moto.prototype.create_wheel = function(part_constants) {
       var bodyDef, fixDef, wheel;
       fixDef = new b2FixtureDef();
-      fixDef.shape = new b2CircleShape(Constants.wheels.radius);
-      fixDef.density = Constants.wheels.density;
-      fixDef.restitution = Constants.wheels.restitution;
-      fixDef.friction = Constants.wheels.friction;
-      fixDef.isSensor = !Constants.wheels.collisions;
+      fixDef.shape = new b2CircleShape(part_constants.radius);
+      fixDef.density = part_constants.density;
+      fixDef.restitution = part_constants.restitution;
+      fixDef.friction = part_constants.friction;
+      fixDef.isSensor = !part_constants.collisions;
       fixDef.filter.groupIndex = -1;
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
+      bodyDef.position.x = this.player_start.x + this.mirror * part_constants.position.x;
+      bodyDef.position.y = this.player_start.y + part_constants.position.y;
       bodyDef.userData = {
         name: 'moto'
       };
@@ -1997,19 +1997,19 @@
       return wheel;
     };
 
-    Moto.prototype.create_left_axle = function(x, y) {
+    Moto.prototype.create_axle = function(part_constants) {
       var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = Constants.left_axle.density;
-      fixDef.restitution = Constants.left_axle.restitution;
-      fixDef.friction = Constants.left_axle.friction;
-      fixDef.isSensor = !Constants.left_axle.collisions;
+      fixDef.density = part_constants.density;
+      fixDef.restitution = part_constants.restitution;
+      fixDef.friction = part_constants.friction;
+      fixDef.isSensor = !part_constants.collisions;
       fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, Constants.left_axle.shape, this.mirror === -1);
+      Physics.create_shape(fixDef, part_constants.shape, this.mirror === -1);
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
+      bodyDef.position.x = this.player_start.x + this.mirror * part_constants.position.x;
+      bodyDef.position.y = this.player_start.y + part_constants.position.y;
       bodyDef.userData = {
         name: 'moto'
       };
@@ -2019,76 +2019,43 @@
       return body;
     };
 
-    Moto.prototype.create_right_axle = function(x, y) {
-      var body, bodyDef, fixDef;
-      fixDef = new b2FixtureDef();
-      fixDef.shape = new b2PolygonShape();
-      fixDef.density = Constants.right_axle.density;
-      fixDef.restitution = Constants.right_axle.restitution;
-      fixDef.friction = Constants.right_axle.friction;
-      fixDef.isSensor = !Constants.right_axle.collisions;
-      fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, Constants.right_axle.shape, this.mirror === -1);
-      bodyDef = new b2BodyDef();
-      bodyDef.position.x = x;
-      bodyDef.position.y = y;
-      bodyDef.userData = {
-        name: 'moto'
-      };
-      bodyDef.type = b2Body.b2_dynamicBody;
-      body = this.level.world.CreateBody(bodyDef);
-      body.CreateFixture(fixDef);
-      return body;
-    };
-
-    Moto.prototype.create_left_revolute_joint = function() {
+    Moto.prototype.create_revolute_joint = function(axle, wheel) {
       var jointDef;
       jointDef = new b2RevoluteJointDef();
-      jointDef.Initialize(this.left_axle, this.left_wheel, this.left_wheel.GetWorldCenter());
+      jointDef.Initialize(axle, wheel, wheel.GetWorldCenter());
       return this.level.world.CreateJoint(jointDef);
     };
 
-    Moto.prototype.create_right_revolute_joint = function() {
-      var jointDef;
-      jointDef = new b2RevoluteJointDef();
-      jointDef.Initialize(this.right_axle, this.right_wheel, this.right_wheel.GetWorldCenter());
-      return this.level.world.CreateJoint(jointDef);
-    };
-
-    Moto.prototype.create_left_prismatic_joint = function() {
+    Moto.prototype.create_prismatic_joint = function(axle, part_constants) {
       var angle, jointDef;
       jointDef = new b2PrismaticJointDef();
-      angle = Constants.left_suspension.angle;
-      jointDef.Initialize(this.body, this.left_axle, this.left_axle.GetWorldCenter(), new b2Vec2(this.mirror * angle.x, angle.y));
+      angle = part_constants.angle;
+      jointDef.Initialize(this.body, axle, axle.GetWorldCenter(), new b2Vec2(this.mirror * angle.x, angle.y));
       jointDef.enableLimit = true;
-      jointDef.lowerTranslation = Constants.left_suspension.lower_translation;
-      jointDef.upperTranslation = Constants.left_suspension.upper_translation;
+      jointDef.lowerTranslation = part_constants.lower_translation;
+      jointDef.upperTranslation = part_constants.upper_translation;
       jointDef.enableMotor = true;
       jointDef.collideConnected = false;
       return this.level.world.CreateJoint(jointDef);
     };
 
-    Moto.prototype.create_right_prismatic_joint = function() {
-      var angle, jointDef;
-      jointDef = new b2PrismaticJointDef();
-      angle = Constants.right_suspension.angle;
-      jointDef.Initialize(this.body, this.right_axle, this.right_axle.GetWorldCenter(), new b2Vec2(this.mirror * angle.x, angle.y));
-      jointDef.enableLimit = true;
-      jointDef.lowerTranslation = Constants.right_suspension.lower_translation;
-      jointDef.upperTranslation = Constants.right_suspension.upper_translation;
-      jointDef.enableMotor = true;
-      jointDef.collideConnected = false;
-      return this.level.world.CreateJoint(jointDef);
+    Moto.prototype.display = function() {
+      this.display_wheel(this.left_wheel, Constants.left_wheel);
+      this.display_wheel(this.right_wheel, Constants.right_wheel);
+      this.display_left_axle();
+      this.display_right_axle();
+      this.display_body();
+      return this.rider.display();
     };
 
-    Moto.prototype.display_wheel = function(wheel) {
+    Moto.prototype.display_wheel = function(part, part_constants) {
       var angle, position;
-      position = wheel.GetPosition();
-      angle = wheel.GetAngle();
+      position = part.GetPosition();
+      angle = part.GetAngle();
       this.level.ctx.save();
       this.level.ctx.translate(position.x, position.y);
       this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get(Constants.wheels.texture), -Constants.wheels.radius, -Constants.wheels.radius, Constants.wheels.radius * 2, Constants.wheels.radius * 2);
+      this.level.ctx.drawImage(this.assets.get(part_constants.texture), -part_constants.radius, -part_constants.radius, part_constants.radius * 2, part_constants.radius * 2);
       return this.level.ctx.restore();
     };
 
@@ -2104,18 +2071,8 @@
       return this.level.ctx.restore();
     };
 
-    Moto.prototype.display_left_axle = function() {
-      var angle, axle_adjusted_position, axle_position, axle_thickness, distance, wheel_position;
-      axle_thickness = 0.09;
-      wheel_position = this.left_wheel.GetPosition();
-      wheel_position = {
-        x: wheel_position.x - this.mirror * axle_thickness / 2.0,
-        y: wheel_position.y - 0.025
-      };
-      axle_position = {
-        x: -0.17 * this.mirror,
-        y: -0.30
-      };
+    Moto.prototype.display_axle_common = function(wheel_position, axle_position, axle_thickness) {
+      var angle, axle_adjusted_position, distance;
       axle_adjusted_position = Math2D.rotate_point(axle_position, this.body.GetAngle(), this.body.GetPosition());
       distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position);
       angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + this.mirror * Math.PI / 2;
@@ -2127,8 +2084,23 @@
       return this.level.ctx.restore();
     };
 
+    Moto.prototype.display_left_axle = function() {
+      var axle_position, axle_thickness, wheel_position;
+      axle_thickness = 0.09;
+      wheel_position = this.left_wheel.GetPosition();
+      wheel_position = {
+        x: wheel_position.x - this.mirror * axle_thickness / 2.0,
+        y: wheel_position.y - 0.025
+      };
+      axle_position = {
+        x: -0.17 * this.mirror,
+        y: -0.30
+      };
+      return this.display_axle_common(wheel_position, axle_position, axle_thickness);
+    };
+
     Moto.prototype.display_right_axle = function() {
-      var angle, axle_adjusted_position, axle_position, axle_thickness, distance, position, wheel_position;
+      var axle_position, axle_thickness, position, wheel_position;
       axle_thickness = 0.07;
       wheel_position = this.right_wheel.GetPosition();
       position = {
@@ -2139,15 +2111,7 @@
         x: 0.52 * this.mirror,
         y: 0.025
       };
-      axle_adjusted_position = Math2D.rotate_point(axle_position, this.body.GetAngle(), this.body.GetPosition());
-      distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position);
-      angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + this.mirror * Math.PI / 2;
-      this.level.ctx.save();
-      this.level.ctx.translate(wheel_position.x, wheel_position.y);
-      this.level.ctx.scale(this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get(Constants.right_axle.texture), 0.0, -axle_thickness / 2, distance, axle_thickness);
-      return this.level.ctx.restore();
+      return this.display_axle_common(wheel_position, axle_position, axle_thickness);
     };
 
     return Moto;
@@ -2181,15 +2145,11 @@
         left_wheel: position_2d(moto.left_wheel),
         right_wheel: position_2d(moto.right_wheel),
         body: position_2d(moto.body),
-        anchors: {
-          neck: this.level.moto.rider.neck_joint.GetAnchorA(),
-          elbow: this.level.moto.rider.elbow_joint.GetAnchorA(),
-          shoulder: this.level.moto.rider.shoulder_joint.GetAnchorA(),
-          hip: this.level.moto.rider.hip_joint.GetAnchorA(),
-          knee: this.level.moto.rider.knee_joint.GetAnchorA(),
-          wrist: this.level.moto.rider.wrist_joint.GetAnchorA(),
-          ankle: this.level.moto.rider.ankle_joint.GetAnchorA()
-        }
+        torso: position_2d(moto.rider.torso),
+        upper_leg: position_2d(moto.rider.upper_leg),
+        lower_leg: position_2d(moto.rider.lower_leg),
+        upper_arm: position_2d(moto.rider.upper_arm),
+        lower_arm: position_2d(moto.rider.lower_arm)
       };
       return this.frames.push(frame);
     };
@@ -2268,40 +2228,40 @@
         this.assets.moto.push(part.texture);
       }
       this.player_start = this.level.entities.player_start;
-      this.head = this.create_head(Constants.head, 'head');
+      this.head = this.create_head();
       this.torso = this.create_part(Constants.torso, 'torso');
       this.lower_leg = this.create_part(Constants.lower_leg, 'lower_leg');
       this.upper_leg = this.create_part(Constants.upper_leg, 'upper_leg');
       this.lower_arm = this.create_part(Constants.lower_arm, 'lower_arm');
       this.upper_arm = this.create_part(Constants.upper_arm, 'upper_arm');
       this.neck_joint = this.create_neck_joint();
-      this.ankle_joint = this.create_ankle_joint();
-      this.wrist_joint = this.create_wrist_joint();
-      this.knee_joint = this.create_knee_joint();
-      this.elbow_joint = this.create_elbow_joint();
-      this.shoulder_joint = this.create_shoulder_joint();
-      return this.hip_joint = this.create_hip_joint();
+      this.ankle_joint = this.create_joint(Constants.ankle, this.lower_leg, this.moto.body);
+      this.wrist_joint = this.create_joint(Constants.wrist, this.lower_arm, this.moto.body);
+      this.knee_joint = this.create_joint(Constants.knee, this.lower_leg, this.upper_leg);
+      this.elbow_joint = this.create_joint(Constants.elbow, this.upper_arm, this.lower_arm);
+      this.shoulder_joint = this.create_joint(Constants.shoulder, this.upper_arm, this.torso, true);
+      return this.hip_joint = this.create_joint(Constants.hip, this.upper_leg, this.torso, true);
     };
 
     Rider.prototype.position = function() {
       return this.moto.body.GetPosition();
     };
 
-    Rider.prototype.create_head = function(part_constants, name) {
+    Rider.prototype.create_head = function() {
       var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
-      fixDef.shape = new b2CircleShape(part_constants.radius);
-      fixDef.density = part_constants.density;
-      fixDef.restitution = part_constants.restitution;
-      fixDef.friction = part_constants.friction;
-      fixDef.isSensor = !part_constants.collisions;
+      fixDef.shape = new b2CircleShape(Constants.head.radius);
+      fixDef.density = Constants.head.density;
+      fixDef.restitution = Constants.head.restitution;
+      fixDef.friction = Constants.head.friction;
+      fixDef.isSensor = !Constants.head.collisions;
       fixDef.filter.groupIndex = -1;
       bodyDef = new b2BodyDef();
-      bodyDef.position.x = this.player_start.x + this.mirror * part_constants.position.x;
-      bodyDef.position.y = this.player_start.y + part_constants.position.y;
+      bodyDef.position.x = this.player_start.x + this.mirror * Constants.head.position.x;
+      bodyDef.position.y = this.player_start.y + Constants.head.position.y;
       bodyDef.userData = {
         name: 'rider',
-        part: name
+        part: 'head'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.level.world.CreateBody(bodyDef);
@@ -2336,9 +2296,9 @@
     Rider.prototype.set_joint_commons = function(joint) {
       if (this.mirror === 1) {
         joint.lowerAngle = -Math.PI / 15;
-        joint.upperAngle = Math.PI / 180;
+        joint.upperAngle = Math.PI / 108;
       } else if (this.mirror === -1) {
-        joint.lowerAngle = -Math.PI / 180;
+        joint.lowerAngle = -Math.PI / 108;
         joint.upperAngle = Math.PI / 15;
       }
       return joint.enableLimit = true;
@@ -2353,84 +2313,25 @@
       };
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.head, this.torso, axe);
-      this.set_joint_commons(jointDef);
       return this.level.world.CreateJoint(jointDef);
     };
 
-    Rider.prototype.create_ankle_joint = function() {
+    Rider.prototype.create_joint = function(joint_constants, part1, part2, invert) {
       var axe, jointDef, position;
-      position = this.lower_leg.GetWorldCenter();
+      if (invert == null) {
+        invert = false;
+      }
+      position = part1.GetWorldCenter();
       axe = {
-        x: position.x + this.mirror * Constants.ankle.axe_position.x,
-        y: position.y + Constants.ankle.axe_position.y
+        x: position.x + this.mirror * joint_constants.axe_position.x,
+        y: position.y + joint_constants.axe_position.y
       };
       jointDef = new b2RevoluteJointDef();
-      jointDef.Initialize(this.lower_leg, this.moto.body, axe);
-      this.set_joint_commons(jointDef);
-      return this.level.world.CreateJoint(jointDef);
-    };
-
-    Rider.prototype.create_knee_joint = function() {
-      var axe, jointDef, position;
-      position = this.lower_leg.GetWorldCenter();
-      axe = {
-        x: position.x + this.mirror * Constants.knee.axe_position.x,
-        y: position.y + Constants.knee.axe_position.y
-      };
-      jointDef = new b2RevoluteJointDef();
-      jointDef.Initialize(this.lower_leg, this.upper_leg, axe);
-      this.set_joint_commons(jointDef);
-      return this.level.world.CreateJoint(jointDef);
-    };
-
-    Rider.prototype.create_wrist_joint = function() {
-      var axe, jointDef, position;
-      position = this.lower_arm.GetWorldCenter();
-      axe = {
-        x: position.x + this.mirror * Constants.wrist.axe_position.x,
-        y: position.y + Constants.wrist.axe_position.y
-      };
-      jointDef = new b2RevoluteJointDef();
-      jointDef.Initialize(this.lower_arm, this.moto.body, axe);
-      this.set_joint_commons(jointDef);
-      return this.level.world.CreateJoint(jointDef);
-    };
-
-    Rider.prototype.create_elbow_joint = function() {
-      var axe, jointDef, position;
-      position = this.upper_arm.GetWorldCenter();
-      axe = {
-        x: position.x + this.mirror * Constants.elbow.axe_position.x,
-        y: position.y + Constants.elbow.axe_position.y
-      };
-      jointDef = new b2RevoluteJointDef();
-      jointDef.Initialize(this.upper_arm, this.lower_arm, axe);
-      this.set_joint_commons(jointDef);
-      return this.level.world.CreateJoint(jointDef);
-    };
-
-    Rider.prototype.create_shoulder_joint = function() {
-      var axe, jointDef, position;
-      position = this.upper_arm.GetWorldCenter();
-      axe = {
-        x: position.x + this.mirror * Constants.shoulder.axe_position.x,
-        y: position.y + Constants.shoulder.axe_position.y
-      };
-      jointDef = new b2RevoluteJointDef();
-      jointDef.Initialize(this.torso, this.upper_arm, axe);
-      this.set_joint_commons(jointDef);
-      return this.level.world.CreateJoint(jointDef);
-    };
-
-    Rider.prototype.create_hip_joint = function() {
-      var axe, jointDef, position;
-      position = this.upper_leg.GetWorldCenter();
-      axe = {
-        x: position.x + this.mirror * Constants.hip.axe_position.x,
-        y: position.y + Constants.hip.axe_position.y
-      };
-      jointDef = new b2RevoluteJointDef();
-      jointDef.Initialize(this.torso, this.upper_leg, axe);
+      if (invert) {
+        jointDef.Initialize(part2, part1, axe);
+      } else {
+        jointDef.Initialize(part1, part2, axe);
+      }
       this.set_joint_commons(jointDef);
       return this.level.world.CreateJoint(jointDef);
     };

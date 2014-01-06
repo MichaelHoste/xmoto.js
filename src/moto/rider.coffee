@@ -43,7 +43,7 @@ class Rider
     # Creation of moto parts
     @player_start = @level.entities.player_start
 
-    @head      = @create_head(Constants.head,      'head')
+    @head      = @create_head()
     @torso     = @create_part(Constants.torso,     'torso')
     @lower_leg = @create_part(Constants.lower_leg, 'lower_leg')
     @upper_leg = @create_part(Constants.upper_leg, 'upper_leg')
@@ -51,37 +51,37 @@ class Rider
     @upper_arm = @create_part(Constants.upper_arm, 'upper_arm')
 
     @neck_joint     = @create_neck_joint()
-    @ankle_joint    = @create_ankle_joint()
-    @wrist_joint    = @create_wrist_joint()
-    @knee_joint     = @create_knee_joint()
-    @elbow_joint    = @create_elbow_joint()
-    @shoulder_joint = @create_shoulder_joint()
-    @hip_joint      = @create_hip_joint()
+    @ankle_joint    = @create_joint(Constants.ankle,    @lower_leg, @moto.body)
+    @wrist_joint    = @create_joint(Constants.wrist,    @lower_arm, @moto.body)
+    @knee_joint     = @create_joint(Constants.knee,     @lower_leg, @upper_leg)
+    @elbow_joint    = @create_joint(Constants.elbow,    @upper_arm, @lower_arm)
+    @shoulder_joint = @create_joint(Constants.shoulder, @upper_arm, @torso, true)
+    @hip_joint      = @create_joint(Constants.hip,      @upper_leg, @torso, true)
 
   position: ->
     @moto.body.GetPosition()
 
-  create_head: (part_constants, name)  ->
+  create_head: ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    fixDef.shape       =  new b2CircleShape(part_constants.radius)
-    fixDef.density     =  part_constants.density
-    fixDef.restitution =  part_constants.restitution
-    fixDef.friction    =  part_constants.friction
-    fixDef.isSensor    = !part_constants.collisions
+    fixDef.shape       =  new b2CircleShape(Constants.head.radius)
+    fixDef.density     =  Constants.head.density
+    fixDef.restitution =  Constants.head.restitution
+    fixDef.friction    =  Constants.head.friction
+    fixDef.isSensor    = !Constants.head.collisions
     fixDef.filter.groupIndex = -1
 
     # Create body
     bodyDef = new b2BodyDef()
 
     # Assign body position
-    bodyDef.position.x = @player_start.x + @mirror * part_constants.position.x
-    bodyDef.position.y = @player_start.y +           part_constants.position.y
+    bodyDef.position.x = @player_start.x + @mirror * Constants.head.position.x
+    bodyDef.position.y = @player_start.y +           Constants.head.position.y
 
     bodyDef.userData =
       name: 'rider'
-      part: name
+      part: 'head'
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -129,13 +129,11 @@ class Rider
   set_joint_commons: (joint) ->
     if @mirror == 1
       joint.lowerAngle     = - Math.PI/15
-      joint.upperAngle     =   Math.PI/180
+      joint.upperAngle     =   Math.PI/108
     else if @mirror == -1
-      joint.lowerAngle     = - Math.PI/180
+      joint.lowerAngle     = - Math.PI/108
       joint.upperAngle     =   Math.PI/15
     joint.enableLimit    = true
-    #joint.maxMotorTorque = 1.0
-    #joint.enableMotor    = true
 
   create_neck_joint: ->
     position = @head.GetWorldCenter()
@@ -145,72 +143,19 @@ class Rider
 
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@head, @torso, axe)
-    @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
-  create_ankle_joint: ->
-    position = @lower_leg.GetWorldCenter()
+  create_joint: (joint_constants, part1, part2, invert=false) ->
+    position = part1.GetWorldCenter()
     axe =
-      x: position.x + @mirror * Constants.ankle.axe_position.x
-      y: position.y + Constants.ankle.axe_position.y
+      x: position.x + @mirror * joint_constants.axe_position.x
+      y: position.y +           joint_constants.axe_position.y
 
     jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@lower_leg, @moto.body, axe)
-    @set_joint_commons(jointDef)
-    @level.world.CreateJoint(jointDef)
-
-  create_knee_joint: ->
-    position = @lower_leg.GetWorldCenter()
-    axe =
-      x: position.x + @mirror * Constants.knee.axe_position.x
-      y: position.y + Constants.knee.axe_position.y
-
-    jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@lower_leg, @upper_leg, axe)
-    @set_joint_commons(jointDef)
-    @level.world.CreateJoint(jointDef)
-
-  create_wrist_joint: ->
-    position = @lower_arm.GetWorldCenter()
-    axe =
-      x: position.x + @mirror * Constants.wrist.axe_position.x
-      y: position.y + Constants.wrist.axe_position.y
-
-    jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@lower_arm, @moto.body, axe)
-    @set_joint_commons(jointDef)
-    @level.world.CreateJoint(jointDef)
-
-  create_elbow_joint: ->
-    position = @upper_arm.GetWorldCenter()
-    axe =
-      x: position.x + @mirror * Constants.elbow.axe_position.x
-      y: position.y + Constants.elbow.axe_position.y
-
-    jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@upper_arm, @lower_arm, axe)
-    @set_joint_commons(jointDef)
-    @level.world.CreateJoint(jointDef)
-
-  create_shoulder_joint: ->
-    position = @upper_arm.GetWorldCenter()
-    axe =
-      x: position.x + @mirror * Constants.shoulder.axe_position.x
-      y: position.y + Constants.shoulder.axe_position.y
-
-    jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@torso, @upper_arm, axe)
-    @set_joint_commons(jointDef)
-    @level.world.CreateJoint(jointDef)
-
-  create_hip_joint: ->
-    position = @upper_leg.GetWorldCenter()
-    axe =
-      x: position.x + @mirror * Constants.hip.axe_position.x
-      y: position.y + Constants.hip.axe_position.y
-
-    jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@torso, @upper_leg, axe)
+    if invert
+      jointDef.Initialize(part2, part1, axe)
+    else
+      jointDef.Initialize(part1, part2, axe)
     @set_joint_commons(jointDef)
     @level.world.CreateJoint(jointDef)
 
