@@ -172,91 +172,100 @@ class Moto
     @display_wheel(@right_wheel, Constants.right_wheel)
     @display_left_axle()
     @display_right_axle()
-    @display_body()
+    @display_body(@body, Constants.body)
     @rider.display()
 
   display_wheel: (part, part_constants) ->
-    # Get angle and position
-    position = part.GetPosition()
-    angle    = part.GetAngle()
+    Moto.display_wheel(@level, part, part_constants, @mirror)
 
-    # Draw Texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.rotate(angle)
+  @display_wheel: (level, part, part_constants, mirror, texture_prefix = '') ->
+    # Get position from box2D object of replay
+    position = if part.GetPosition then part.GetPosition() else part.position
+    angle    = if part.GetAngle    then part.GetAngle()    else part.angle
+    texture  = part_constants["#{texture_prefix}texture"]
 
-    @level.ctx.drawImage(
-      @assets.get(part_constants.texture), # texture
-      -part_constants.radius,              # x
-      -part_constants.radius,              # y
-       part_constants.radius*2,            # size-x
-       part_constants.radius*2             # size-y
+    level.ctx.save()
+    level.ctx.translate(position.x, position.y)
+    level.ctx.rotate(angle)
+
+    level.ctx.drawImage(
+      level.assets.get(texture), # texture
+      -part_constants.radius,    # x
+      -part_constants.radius,    # y
+       part_constants.radius*2,  # size-x
+       part_constants.radius*2   # size-y
     )
 
-    @level.ctx.restore()
+    level.ctx.restore()
 
-  display_body: ->
-    # Get angle and position
-    position = @body.GetPosition()
-    angle    = @body.GetAngle()
+  display_body: (part, part_constants) ->
+    Moto.display_body(@level, part, part_constants, @mirror)
 
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
+  @display_body: (level, part, part_constants, mirror, texture_prefix = '') ->
+    # Get position from box2D object of replay
+    position = if part.GetPosition then part.GetPosition() else part.position
+    angle    = if part.GetAngle    then part.GetAngle()    else part.angle
+    texture  = part_constants["#{texture_prefix}texture"]
 
-    @level.ctx.drawImage(
-      @assets.get(Constants.body.texture), # texture
-      -Constants.body.texture_size.x/2,    # x
-      -Constants.body.texture_size.y/2,    # y
-       Constants.body.texture_size.x,      # size-x
-       Constants.body.texture_size.y       # size-y
+    level.ctx.save()
+    level.ctx.translate(position.x, position.y)
+    level.ctx.scale(mirror, -1)
+    level.ctx.rotate(mirror*(-angle))
+
+    level.ctx.drawImage(
+      level.assets.get(texture),        # texture
+      -part_constants.texture_size.x/2, # x
+      -part_constants.texture_size.y/2, # y
+       part_constants.texture_size.x,   # size-x
+       part_constants.texture_size.y    # size-y
     )
 
-    @level.ctx.restore()
+    level.ctx.restore()
 
-  display_axle_common: (wheel_position, axle_position, axle_thickness) ->
+  @display_axle_common: (level, body, wheel_position, axle_position, axle_thickness, mirror) ->
     # Adjusted position depending of rotation of body
-    axle_adjusted_position = Math2D.rotate_point(axle_position, @body.GetAngle(), @body.GetPosition())
+    axle_adjusted_position = Math2D.rotate_point(axle_position, body.GetAngle(), body.GetPosition())
 
     # Distance
     distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position)
 
     # Angle
-    angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + @mirror * Math.PI/2
+    angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + mirror * Math.PI/2
 
     # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(wheel_position.x, wheel_position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
+    level.ctx.save()
+    level.ctx.translate(wheel_position.x, wheel_position.y)
+    level.ctx.scale(mirror, -1)
+    level.ctx.rotate(mirror*(-angle))
 
-    @level.ctx.drawImage(
-      @assets.get(Constants.left_axle.texture), # texture
+    level.ctx.drawImage(
+      level.assets.get(Constants.left_axle.texture), # texture
       0.0,               # x
       -axle_thickness/2, # y
       distance,          # size-x
       axle_thickness     # size-y
     )
 
-    @level.ctx.restore()
+    level.ctx.restore()
 
-  display_left_axle: ->
+  display_left_axle: (part, part_constants) ->
+    Moto.display_left_axle(@level, part, part_constants, @body, @left_wheel, @mirror)
+
+  @display_left_axle: (level, part, part_constants, body, wheel, mirror, texture_prefix = '') ->
+    # Get position from box2D object of replay
     axle_thickness = 0.09
 
-    # Position
-    wheel_position = @left_wheel.GetPosition()
+    wheel_position = if wheel.GetPosition then wheel.GetPosition() else wheel.position
     wheel_position =
-      x: wheel_position.x - @mirror * axle_thickness/2.0
+      x: wheel_position.x - mirror * axle_thickness/2.0
       y: wheel_position.y - 0.025
 
     # Position relative to center of body
     axle_position =
-      x: -0.17 * @mirror
+      x: -0.17 * mirror
       y: -0.30
 
-    @display_axle_common(wheel_position, axle_position, axle_thickness)
+    Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror)
 
   display_right_axle: ->
     axle_thickness = 0.07
@@ -272,5 +281,5 @@ class Moto
       x: 0.52 * @mirror
       y: 0.025
 
-    @display_axle_common(wheel_position, axle_position, axle_thickness)
+    Moto.display_axle_common(@level, @body, wheel_position, axle_position, axle_thickness, @mirror)
 

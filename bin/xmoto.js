@@ -1843,7 +1843,15 @@
     Ghost.prototype.display = function() {
       if (this.replay && this.current_frame < this.replay.frames_count()) {
         this.frame = this.replay.frame(this.current_frame);
-        return this.mirror = this.frame.mirror ? -1 : 1;
+        this.mirror = this.frame.mirror ? -1 : 1;
+        Moto.display_wheel(this.level, this.frame.left_wheel, Constants.left_wheel, this.mirror, 'ghost_');
+        Moto.display_wheel(this.level, this.frame.right_wheel, Constants.right_wheel, this.mirror, 'ghost_');
+        Moto.display_body(this.level, this.frame.body, Constants.body, this.mirror, 'ghost_');
+        Rider.display_part(this.level, this.frame.torso, Constants.torso, this.mirror, 'ghost_');
+        Rider.display_part(this.level, this.frame.upper_leg, Constants.upper_leg, this.mirror, 'ghost_');
+        Rider.display_part(this.level, this.frame.lower_leg, Constants.lower_leg, this.mirror, 'ghost_');
+        Rider.display_part(this.level, this.frame.upper_arm, Constants.upper_arm, this.mirror, 'ghost_');
+        return Rider.display_part(this.level, this.frame.lower_arm, Constants.lower_arm, this.mirror, 'ghost_');
       }
     };
 
@@ -2044,59 +2052,82 @@
       this.display_wheel(this.right_wheel, Constants.right_wheel);
       this.display_left_axle();
       this.display_right_axle();
-      this.display_body();
+      this.display_body(this.body, Constants.body);
       return this.rider.display();
     };
 
     Moto.prototype.display_wheel = function(part, part_constants) {
-      var angle, position;
-      position = part.GetPosition();
-      angle = part.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.rotate(angle);
-      this.level.ctx.drawImage(this.assets.get(part_constants.texture), -part_constants.radius, -part_constants.radius, part_constants.radius * 2, part_constants.radius * 2);
-      return this.level.ctx.restore();
+      return Moto.display_wheel(this.level, part, part_constants, this.mirror);
     };
 
-    Moto.prototype.display_body = function() {
-      var angle, position;
-      position = this.body.GetPosition();
-      angle = this.body.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get(Constants.body.texture), -Constants.body.texture_size.x / 2, -Constants.body.texture_size.y / 2, Constants.body.texture_size.x, Constants.body.texture_size.y);
-      return this.level.ctx.restore();
+    Moto.display_wheel = function(level, part, part_constants, mirror, texture_prefix) {
+      var angle, position, texture;
+      if (texture_prefix == null) {
+        texture_prefix = '';
+      }
+      position = part.GetPosition ? part.GetPosition() : part.position;
+      angle = part.GetAngle ? part.GetAngle() : part.angle;
+      texture = part_constants["" + texture_prefix + "texture"];
+      level.ctx.save();
+      level.ctx.translate(position.x, position.y);
+      level.ctx.rotate(angle);
+      level.ctx.drawImage(level.assets.get(texture), -part_constants.radius, -part_constants.radius, part_constants.radius * 2, part_constants.radius * 2);
+      return level.ctx.restore();
     };
 
-    Moto.prototype.display_axle_common = function(wheel_position, axle_position, axle_thickness) {
+    Moto.prototype.display_body = function(part, part_constants) {
+      return Moto.display_body(this.level, part, part_constants, this.mirror);
+    };
+
+    Moto.display_body = function(level, part, part_constants, mirror, texture_prefix) {
+      var angle, position, texture;
+      if (texture_prefix == null) {
+        texture_prefix = '';
+      }
+      position = part.GetPosition ? part.GetPosition() : part.position;
+      angle = part.GetAngle ? part.GetAngle() : part.angle;
+      texture = part_constants["" + texture_prefix + "texture"];
+      level.ctx.save();
+      level.ctx.translate(position.x, position.y);
+      level.ctx.scale(mirror, -1);
+      level.ctx.rotate(mirror * (-angle));
+      level.ctx.drawImage(level.assets.get(texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
+      return level.ctx.restore();
+    };
+
+    Moto.display_axle_common = function(level, body, wheel_position, axle_position, axle_thickness, mirror) {
       var angle, axle_adjusted_position, distance;
-      axle_adjusted_position = Math2D.rotate_point(axle_position, this.body.GetAngle(), this.body.GetPosition());
+      axle_adjusted_position = Math2D.rotate_point(axle_position, body.GetAngle(), body.GetPosition());
       distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position);
-      angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + this.mirror * Math.PI / 2;
-      this.level.ctx.save();
-      this.level.ctx.translate(wheel_position.x, wheel_position.y);
-      this.level.ctx.scale(this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get(Constants.left_axle.texture), 0.0, -axle_thickness / 2, distance, axle_thickness);
-      return this.level.ctx.restore();
+      angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + mirror * Math.PI / 2;
+      level.ctx.save();
+      level.ctx.translate(wheel_position.x, wheel_position.y);
+      level.ctx.scale(mirror, -1);
+      level.ctx.rotate(mirror * (-angle));
+      level.ctx.drawImage(level.assets.get(Constants.left_axle.texture), 0.0, -axle_thickness / 2, distance, axle_thickness);
+      return level.ctx.restore();
     };
 
-    Moto.prototype.display_left_axle = function() {
+    Moto.prototype.display_left_axle = function(part, part_constants) {
+      return Moto.display_left_axle(this.level, part, part_constants, this.body, this.left_wheel, this.mirror);
+    };
+
+    Moto.display_left_axle = function(level, part, part_constants, body, wheel, mirror, texture_prefix) {
       var axle_position, axle_thickness, wheel_position;
+      if (texture_prefix == null) {
+        texture_prefix = '';
+      }
       axle_thickness = 0.09;
-      wheel_position = this.left_wheel.GetPosition();
+      wheel_position = wheel.GetPosition ? wheel.GetPosition() : wheel.position;
       wheel_position = {
-        x: wheel_position.x - this.mirror * axle_thickness / 2.0,
+        x: wheel_position.x - mirror * axle_thickness / 2.0,
         y: wheel_position.y - 0.025
       };
       axle_position = {
-        x: -0.17 * this.mirror,
+        x: -0.17 * mirror,
         y: -0.30
       };
-      return this.display_axle_common(wheel_position, axle_position, axle_thickness);
+      return Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror);
     };
 
     Moto.prototype.display_right_axle = function() {
@@ -2111,7 +2142,7 @@
         x: 0.52 * this.mirror,
         y: 0.025
       };
-      return this.display_axle_common(wheel_position, axle_position, axle_thickness);
+      return Moto.display_axle_common(this.level, this.body, wheel_position, axle_position, axle_thickness, this.mirror);
     };
 
     return Moto;
@@ -2316,10 +2347,10 @@
       return this.level.world.CreateJoint(jointDef);
     };
 
-    Rider.prototype.create_joint = function(joint_constants, part1, part2, invert) {
+    Rider.prototype.create_joint = function(joint_constants, part1, part2, invert_joint) {
       var axe, jointDef, position;
-      if (invert == null) {
-        invert = false;
+      if (invert_joint == null) {
+        invert_joint = false;
       }
       position = part1.GetWorldCenter();
       axe = {
@@ -2327,7 +2358,7 @@
         y: position.y + joint_constants.axe_position.y
       };
       jointDef = new b2RevoluteJointDef();
-      if (invert) {
+      if (invert_joint) {
         jointDef.Initialize(part2, part1, axe);
       } else {
         jointDef.Initialize(part1, part2, axe);
@@ -2345,15 +2376,23 @@
     };
 
     Rider.prototype.display_part = function(part, part_constants) {
-      var angle, position;
-      position = part.GetPosition();
-      angle = part.GetAngle();
-      this.level.ctx.save();
-      this.level.ctx.translate(position.x, position.y);
-      this.level.ctx.scale(this.mirror, -1);
-      this.level.ctx.rotate(this.mirror * (-angle));
-      this.level.ctx.drawImage(this.assets.get(part_constants.texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
-      return this.level.ctx.restore();
+      return Rider.display_part(this.level, part, part_constants, this.mirror);
+    };
+
+    Rider.display_part = function(level, part, part_constants, mirror, texture_prefix) {
+      var angle, position, texture;
+      if (texture_prefix == null) {
+        texture_prefix = '';
+      }
+      position = part.GetPosition ? part.GetPosition() : part.position;
+      angle = part.GetAngle ? part.GetAngle() : part.angle;
+      texture = part_constants["" + texture_prefix + "texture"];
+      level.ctx.save();
+      level.ctx.translate(position.x, position.y);
+      level.ctx.scale(mirror, -1);
+      level.ctx.rotate(mirror * (-angle));
+      level.ctx.drawImage(level.assets.get(texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
+      return level.ctx.restore();
     };
 
     return Rider;

@@ -145,14 +145,14 @@ class Rider
     jointDef.Initialize(@head, @torso, axe)
     @level.world.CreateJoint(jointDef)
 
-  create_joint: (joint_constants, part1, part2, invert=false) ->
+  create_joint: (joint_constants, part1, part2, invert_joint=false) ->
     position = part1.GetWorldCenter()
     axe =
       x: position.x + @mirror * joint_constants.axe_position.x
       y: position.y +           joint_constants.axe_position.y
 
     jointDef = new b2RevoluteJointDef()
-    if invert
+    if invert_joint
       jointDef.Initialize(part2, part1, axe)
     else
       jointDef.Initialize(part1, part2, axe)
@@ -167,24 +167,25 @@ class Rider
     @display_part(@lower_arm, Constants.lower_arm)
 
   display_part: (part, part_constants) ->
-    # Position
-    position = part.GetPosition()
+    Rider.display_part(@level, part, part_constants, @mirror)
 
-    # Angle
-    angle = part.GetAngle()
+  @display_part: (level, part, part_constants, mirror, texture_prefix = '') ->
+    # Get position from box2D object of replay
+    position = if part.GetPosition then part.GetPosition() else part.position
+    angle    = if part.GetAngle    then part.GetAngle()    else part.angle
+    texture  = part_constants["#{texture_prefix}texture"]
 
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror * (-angle))
+    level.ctx.save()
+    level.ctx.translate(position.x, position.y)
+    level.ctx.scale(mirror, -1)
+    level.ctx.rotate(mirror * (-angle))
 
-    @level.ctx.drawImage(
-      @assets.get(part_constants.texture), # texture
-      -part_constants.texture_size.x/2,    # x
-      -part_constants.texture_size.y/2,    # y
-       part_constants.texture_size.x,      # size-x
-       part_constants.texture_size.y       # size-y
+    level.ctx.drawImage(
+      level.assets.get(texture),        # texture
+      -part_constants.texture_size.x/2, # x
+      -part_constants.texture_size.y/2, # y
+       part_constants.texture_size.x,   # size-x
+       part_constants.texture_size.y    # size-y
     )
 
-    @level.ctx.restore()
+    level.ctx.restore()
