@@ -5,6 +5,7 @@ class Entities
   constructor: (level) ->
     @level        = level
     @assets       = level.assets
+    @world        = level.physics.world
     @list         = []
     @strawberries = []
     @wreckers     = []
@@ -118,7 +119,7 @@ class Entities
     bodyDef.type = b2Body.b2_staticBody
 
     # Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
+    body = @world.CreateBody(bodyDef)
     body.CreateFixture(fixDef)
 
     body

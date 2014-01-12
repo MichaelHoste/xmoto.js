@@ -16,9 +16,8 @@ class Level
     # Assets manager
     @assets        = new Assets()
 
-    # Box2D World
+    # Box2D physics
     @physics       = new Physics(this)
-    @world         = @physics.world
 
     # Inputs
     @input         = new Input(this)
@@ -110,7 +109,7 @@ class Level
     if @ghost
       @ghost.display(@ctx)
 
-    @world.DrawDebugData() if Constants.debug
+    @physics.display() if Constants.debug
 
     @ctx.restore()
 
@@ -159,6 +158,7 @@ class Level
 
     @start_time   = new Date().getTime()
     @current_time = 0
+    @physics.init()
     @update_timer(true)
 
     for entity in @entities.strawberries

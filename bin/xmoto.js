@@ -549,7 +549,6 @@
       };
       this.assets = new Assets();
       this.physics = new Physics(this);
-      this.world = this.physics.world;
       this.input = new Input(this);
       this.listeners = new Listeners(this);
       this.replay = new Replay(this);
@@ -621,7 +620,7 @@
         this.ghost.display(this.ctx);
       }
       if (Constants.debug) {
-        this.world.DrawDebugData();
+        this.physics.display();
       }
       return this.ctx.restore();
     };
@@ -692,6 +691,7 @@
       this.moto.init();
       this.start_time = new Date().getTime();
       this.current_time = 0;
+      this.physics.init();
       this.update_timer(true);
       _ref = this.entities.strawberries;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -713,6 +713,7 @@
     function Listeners(level) {
       this.level = level;
       this.assets = level.assets;
+      this.world = level.physics.world;
     }
 
     Listeners.prototype.init = function() {
@@ -744,7 +745,7 @@
           }
         }
       };
-      return this.level.world.SetContactListener(listener);
+      return this.world.SetContactListener(listener);
     };
 
     Listeners.does_contact_moto_rider = function(a, b, obj) {
@@ -760,8 +761,8 @@
       moto = this.level.moto;
       moto.dead = true;
       createjs.Sound.play('Headcrash');
-      this.level.world.DestroyJoint(moto.rider.ankle_joint);
-      this.level.world.DestroyJoint(moto.rider.wrist_joint);
+      this.world.DestroyJoint(moto.rider.ankle_joint);
+      this.world.DestroyJoint(moto.rider.wrist_joint);
       moto.rider.shoulder_joint.m_enableLimit = false;
       moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 3;
       moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3;
@@ -777,29 +778,16 @@
     level = new Level();
     level.load_from_file(name);
     return level.assets.load(function() {
-      var last_step, physics_step, update, update_physics;
+      var update;
       update = function() {
-        update_physics();
+        level.physics.update();
         level.display();
         return window.game_loop = window.requestAnimationFrame(update);
       };
-      update_physics = function() {
-        var _results;
-        _results = [];
-        while ((new Date()).getTime() - last_step > physics_step) {
-          level.input.move();
-          level.world.Step(1.0 / 60.0, 10, 10);
-          level.world.ClearForces();
-          last_step += physics_step;
-          _results.push(level.replay.add_frame());
-        }
-        return _results;
-      };
       createjs.Sound.setMute(true);
-      last_step = new Date().getTime();
-      physics_step = 1000.0 / 60.0;
       level.start_time = new Date().getTime();
       level.current_time = 0;
+      level.physics.init();
       window.cancelAnimationFrame(window.game_loop);
       hide_loading();
       return update();
@@ -891,6 +879,32 @@
       this.world.SetDebugDraw(debugDraw);
       this.world;
     }
+
+    Physics.prototype.init = function() {
+      this.last_step = new Date().getTime();
+      this.step = 1000.0 / 60.0;
+      return this.steps = 0;
+    };
+
+    Physics.prototype.update = function() {
+      var _results;
+      _results = [];
+      while ((new Date()).getTime() - this.last_step > this.step) {
+        this.level.input.move();
+        this.world.Step(1.0 / 60.0, 10, 10);
+        this.world.ClearForces();
+        this.last_step += this.step;
+        if (this.steps % 2 === 0) {
+          this.level.replay.add_frame();
+        }
+        _results.push(this.steps = this.steps + 1);
+      }
+      return _results;
+    };
+
+    Physics.prototype.display = function() {
+      return this.world.DrawDebugData();
+    };
 
     Physics.prototype.create_polygon = function(vertices, name) {
       var bodyDef, fixDef;
@@ -1289,6 +1303,7 @@
     function Entities(level) {
       this.level = level;
       this.assets = level.assets;
+      this.world = level.physics.world;
       this.list = [];
       this.strawberries = [];
       this.wreckers = [];
@@ -1416,7 +1431,7 @@
         entity: entity
       };
       bodyDef.type = b2Body.b2_staticBody;
-      body = this.level.world.CreateBody(bodyDef);
+      body = this.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
@@ -1889,24 +1904,23 @@
       }
       this.level = level;
       this.assets = level.assets;
+      this.world = level.physics.world;
       this.mirror = mirror ? -1 : 1;
       this.rider = new Rider(level, this);
       this.dead = false;
     }
 
     Moto.prototype.destroy = function() {
-      var world;
-      world = this.level.world;
       this.rider.destroy();
-      world.DestroyBody(this.body);
-      world.DestroyBody(this.left_wheel);
-      world.DestroyBody(this.right_wheel);
-      world.DestroyBody(this.left_axle);
-      world.DestroyBody(this.right_axle);
-      world.DestroyJoint(this.left_revolute_joint);
-      world.DestroyJoint(this.left_prismatic_joint);
-      world.DestroyJoint(this.right_revolute_joint);
-      return world.DestroyJoint(this.right_prismatic_joint);
+      this.world.DestroyBody(this.body);
+      this.world.DestroyBody(this.left_wheel);
+      this.world.DestroyBody(this.right_wheel);
+      this.world.DestroyBody(this.left_axle);
+      this.world.DestroyBody(this.right_axle);
+      this.world.DestroyJoint(this.left_revolute_joint);
+      this.world.DestroyJoint(this.left_prismatic_joint);
+      this.world.DestroyJoint(this.right_revolute_joint);
+      return this.world.DestroyJoint(this.right_prismatic_joint);
     };
 
     Moto.prototype.init = function() {
@@ -1950,7 +1964,7 @@
         name: 'moto'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
-      body = this.level.world.CreateBody(bodyDef);
+      body = this.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
@@ -1971,7 +1985,7 @@
         name: 'moto'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
-      wheel = this.level.world.CreateBody(bodyDef);
+      wheel = this.world.CreateBody(bodyDef);
       wheel.CreateFixture(fixDef);
       return wheel;
     };
@@ -1993,7 +2007,7 @@
         name: 'moto'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
-      body = this.level.world.CreateBody(bodyDef);
+      body = this.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
@@ -2002,7 +2016,7 @@
       var jointDef;
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(axle, wheel, wheel.GetWorldCenter());
-      return this.level.world.CreateJoint(jointDef);
+      return this.world.CreateJoint(jointDef);
     };
 
     Moto.prototype.create_prismatic_joint = function(axle, part_constants) {
@@ -2015,7 +2029,7 @@
       jointDef.upperTranslation = part_constants.upper_translation;
       jointDef.enableMotor = true;
       jointDef.collideConnected = false;
-      return this.level.world.CreateJoint(jointDef);
+      return this.world.CreateJoint(jointDef);
     };
 
     Moto.prototype.display = function() {
@@ -2211,26 +2225,25 @@
     function Rider(level, moto) {
       this.level = level;
       this.assets = level.assets;
+      this.world = level.physics.world;
       this.moto = moto;
       this.mirror = this.moto.mirror;
     }
 
     Rider.prototype.destroy = function() {
-      var world;
-      world = this.level.world;
-      world.DestroyBody(this.head);
-      world.DestroyBody(this.torso);
-      world.DestroyBody(this.lower_leg);
-      world.DestroyBody(this.upper_leg);
-      world.DestroyBody(this.lower_arm);
-      world.DestroyBody(this.upper_arm);
-      world.DestroyJoint(this.neck_joint);
-      world.DestroyJoint(this.ankle_joint);
-      world.DestroyJoint(this.wrist_joint);
-      world.DestroyJoint(this.knee_joint);
-      world.DestroyJoint(this.elbow_joint);
-      world.DestroyJoint(this.shoulder_joint);
-      return world.DestroyJoint(this.hip_joint);
+      this.world.DestroyBody(this.head);
+      this.world.DestroyBody(this.torso);
+      this.world.DestroyBody(this.lower_leg);
+      this.world.DestroyBody(this.upper_leg);
+      this.world.DestroyBody(this.lower_arm);
+      this.world.DestroyBody(this.upper_arm);
+      this.world.DestroyJoint(this.neck_joint);
+      this.world.DestroyJoint(this.ankle_joint);
+      this.world.DestroyJoint(this.wrist_joint);
+      this.world.DestroyJoint(this.knee_joint);
+      this.world.DestroyJoint(this.elbow_joint);
+      this.world.DestroyJoint(this.shoulder_joint);
+      return this.world.DestroyJoint(this.hip_joint);
     };
 
     Rider.prototype.init = function() {
@@ -2277,7 +2290,7 @@
         part: 'head'
       };
       bodyDef.type = b2Body.b2_dynamicBody;
-      body = this.level.world.CreateBody(bodyDef);
+      body = this.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
@@ -2301,7 +2314,7 @@
         part: name
       };
       bodyDef.type = b2Body.b2_dynamicBody;
-      body = this.level.world.CreateBody(bodyDef);
+      body = this.world.CreateBody(bodyDef);
       body.CreateFixture(fixDef);
       return body;
     };
@@ -2326,7 +2339,7 @@
       };
       jointDef = new b2RevoluteJointDef();
       jointDef.Initialize(this.head, this.torso, axe);
-      return this.level.world.CreateJoint(jointDef);
+      return this.world.CreateJoint(jointDef);
     };
 
     Rider.prototype.create_joint = function(joint_constants, part1, part2, invert_joint) {
@@ -2346,7 +2359,7 @@
         jointDef.Initialize(part1, part2, axe);
       }
       this.set_joint_commons(jointDef);
-      return this.level.world.CreateJoint(jointDef);
+      return this.world.CreateJoint(jointDef);
     };
 
     Rider.prototype.display = function() {

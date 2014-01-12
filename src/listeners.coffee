@@ -3,6 +3,7 @@ class Listeners
   constructor: (level) ->
     @level  = level
     @assets = level.assets
+    @world  = level.physics.world
 
   init: ->
     # Add listeners for end of level
@@ -36,7 +37,7 @@ class Listeners
         else if Listeners.does_contact_moto_rider(a, b, 'wrecker')
           @kill_moto()
 
-    @level.world.SetContactListener(listener)
+    @world.SetContactListener(listener)
 
   @does_contact_moto_rider: (a, b, obj) ->
     Listeners.does_contact(a, b, obj, 'rider') or Listeners.does_contact(a, b, obj, 'moto')
@@ -50,8 +51,8 @@ class Listeners
 
     createjs.Sound.play('Headcrash')
 
-    @level.world.DestroyJoint(moto.rider.ankle_joint)
-    @level.world.DestroyJoint(moto.rider.wrist_joint)
+    @world.DestroyJoint(moto.rider.ankle_joint)
+    @world.DestroyJoint(moto.rider.wrist_joint)
     moto.rider.shoulder_joint.m_enableLimit = false
 
     moto.rider.knee_joint.m_lowerAngle     = moto.rider.knee_joint.m_lowerAngle  * 3

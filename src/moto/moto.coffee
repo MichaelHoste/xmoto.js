@@ -13,25 +13,24 @@ class Moto
   constructor: (level, mirror = false) ->
     @level    = level
     @assets   = level.assets
+    @world    = level.physics.world
     @mirror   = if mirror then -1 else 1
     @rider    = new Rider(level, this)
     @dead     = false
 
   destroy: ->
-    world = @level.world
-
     @rider.destroy()
 
-    world.DestroyBody(@body)
-    world.DestroyBody(@left_wheel)
-    world.DestroyBody(@right_wheel)
-    world.DestroyBody(@left_axle)
-    world.DestroyBody(@right_axle)
+    @world.DestroyBody(@body)
+    @world.DestroyBody(@left_wheel)
+    @world.DestroyBody(@right_wheel)
+    @world.DestroyBody(@left_axle)
+    @world.DestroyBody(@right_axle)
 
-    world.DestroyJoint(@left_revolute_joint)
-    world.DestroyJoint(@left_prismatic_joint)
-    world.DestroyJoint(@right_revolute_joint)
-    world.DestroyJoint(@right_prismatic_joint)
+    @world.DestroyJoint(@left_revolute_joint)
+    @world.DestroyJoint(@left_prismatic_joint)
+    @world.DestroyJoint(@right_revolute_joint)
+    @world.DestroyJoint(@right_prismatic_joint)
 
   init: ->
     # Assets
@@ -86,7 +85,7 @@ class Moto
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
+    body = @world.CreateBody(bodyDef)
     body.CreateFixture(fixDef)
 
     body
@@ -115,7 +114,7 @@ class Moto
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
-    wheel = @level.world.CreateBody(bodyDef)
+    wheel = @world.CreateBody(bodyDef)
     wheel.CreateFixture(fixDef)
 
     wheel
@@ -146,7 +145,7 @@ class Moto
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
+    body = @world.CreateBody(bodyDef)
     body.CreateFixture(fixDef)
 
     body
@@ -154,7 +153,7 @@ class Moto
   create_revolute_joint: (axle, wheel) ->
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(axle, wheel, wheel.GetWorldCenter())
-    @level.world.CreateJoint(jointDef)
+    @world.CreateJoint(jointDef)
 
   create_prismatic_joint: (axle, part_constants) ->
     jointDef = new b2PrismaticJointDef()
@@ -165,7 +164,7 @@ class Moto
     jointDef.upperTranslation = part_constants.upper_translation
     jointDef.enableMotor      = true
     jointDef.collideConnected = false
-    @level.world.CreateJoint(jointDef)
+    @world.CreateJoint(jointDef)
 
   display: ->
     @display_wheel(      @left_wheel,  Constants.left_wheel)

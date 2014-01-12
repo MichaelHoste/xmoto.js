@@ -5,25 +5,15 @@ play_level = (name) ->
   # Load assets for this level before doing anything else
   level.assets.load( ->
     update = ->
-      update_physics()
+      level.physics.update()
       level.display()
       window.game_loop = window.requestAnimationFrame(update)
 
-    update_physics = ->
-      while (new Date()).getTime() - last_step > physics_step
-        level.input.move()
-        level.world.Step(1.0/60.0, 10, 10)
-        level.world.ClearForces()
-        last_step += physics_step
-        level.replay.add_frame()
-
     createjs.Sound.setMute(true)
-
-    last_step    = new Date().getTime()
-    physics_step = 1000.0/60.0
 
     level.start_time   = new Date().getTime()
     level.current_time = 0
+    level.physics.init()
 
     window.cancelAnimationFrame(window.game_loop)
     hide_loading()

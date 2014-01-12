@@ -13,25 +13,25 @@ class Rider
   constructor: (level, moto) ->
     @level  = level
     @assets = level.assets
+    @world  = level.physics.world
     @moto   = moto
     @mirror = @moto.mirror
 
   destroy: ->
-    world = @level.world
-    world.DestroyBody(@head)
-    world.DestroyBody(@torso)
-    world.DestroyBody(@lower_leg)
-    world.DestroyBody(@upper_leg)
-    world.DestroyBody(@lower_arm)
-    world.DestroyBody(@upper_arm)
+    @world.DestroyBody(@head)
+    @world.DestroyBody(@torso)
+    @world.DestroyBody(@lower_leg)
+    @world.DestroyBody(@upper_leg)
+    @world.DestroyBody(@lower_arm)
+    @world.DestroyBody(@upper_arm)
 
-    world.DestroyJoint(@neck_joint)
-    world.DestroyJoint(@ankle_joint)
-    world.DestroyJoint(@wrist_joint)
-    world.DestroyJoint(@knee_joint)
-    world.DestroyJoint(@elbow_joint)
-    world.DestroyJoint(@shoulder_joint)
-    world.DestroyJoint(@hip_joint)
+    @world.DestroyJoint(@neck_joint)
+    @world.DestroyJoint(@ankle_joint)
+    @world.DestroyJoint(@wrist_joint)
+    @world.DestroyJoint(@knee_joint)
+    @world.DestroyJoint(@elbow_joint)
+    @world.DestroyJoint(@shoulder_joint)
+    @world.DestroyJoint(@hip_joint)
 
   init: ->
     # Assets
@@ -86,7 +86,7 @@ class Rider
     bodyDef.type = b2Body.b2_dynamicBody
 
     ## Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
+    body = @world.CreateBody(bodyDef)
     body.CreateFixture(fixDef)
 
     body
@@ -121,7 +121,7 @@ class Rider
     bodyDef.type = b2Body.b2_dynamicBody
 
     # Assign fixture to body and add body to 2D world
-    body = @level.world.CreateBody(bodyDef)
+    body = @world.CreateBody(bodyDef)
     body.CreateFixture(fixDef)
 
     body
@@ -143,7 +143,7 @@ class Rider
 
     jointDef = new b2RevoluteJointDef()
     jointDef.Initialize(@head, @torso, axe)
-    @level.world.CreateJoint(jointDef)
+    @world.CreateJoint(jointDef)
 
   create_joint: (joint_constants, part1, part2, invert_joint=false) ->
     position = part1.GetWorldCenter()
@@ -157,7 +157,7 @@ class Rider
     else
       jointDef.Initialize(part1, part2, axe)
     @set_joint_commons(jointDef)
-    @level.world.CreateJoint(jointDef)
+    @world.CreateJoint(jointDef)
 
   display: ->
     @display_part(@torso,     Constants.torso)

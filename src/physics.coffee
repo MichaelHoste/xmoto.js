@@ -39,6 +39,24 @@ class Physics
 
     @world
 
+  init: ->
+    @last_step = new Date().getTime()
+    @step      = 1000.0/60.0
+    @steps     = 0
+
+  update: ->
+    while (new Date()).getTime() - @last_step > @step
+      @level.input.move()
+      @world.Step(1.0/60.0, 10, 10)
+      @world.ClearForces()
+      @last_step += @step
+      @level.replay.add_frame() if @steps%2 == 0
+      @steps = @steps + 1
+
+  # for debugging
+  display: ->
+    @world.DrawDebugData()
+
   create_polygon: (vertices, name) ->
     # Create fixture
     fixDef = new b2FixtureDef()
