@@ -877,15 +877,14 @@
 
   Physics = (function() {
     function Physics(level) {
-      var context, debugDraw;
+      var debugDraw;
       this.level = level;
       this.world = new b2World(new b2Vec2(0, -Constants.gravity), true);
       b2Settings.b2_linearSlop = 0.0025;
       b2Settings.b2_maxRotation = Constants.max_rotation_speed * b2Settings.b2_pi;
       b2Settings.b2_maxRotationSquared = b2Settings.b2_maxRotation * b2Settings.b2_maxRotation;
-      context = this.level.ctx;
       debugDraw = new b2DebugDraw();
-      debugDraw.SetSprite(context);
+      debugDraw.SetSprite(this.level.ctx);
       debugDraw.SetFillAlpha(0.3);
       debugDraw.SetLineThickness(1.0);
       debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);

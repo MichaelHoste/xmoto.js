@@ -27,11 +27,9 @@ class Physics
     b2Settings.b2_maxRotation        = Constants.max_rotation_speed * b2Settings.b2_pi
     b2Settings.b2_maxRotationSquared = b2Settings.b2_maxRotation * b2Settings.b2_maxRotation
 
-    context = @level.ctx
-
     # debug initialization
     debugDraw = new b2DebugDraw()
-    debugDraw.SetSprite(context)    # context
+    debugDraw.SetSprite(@level.ctx) # context
     debugDraw.SetFillAlpha(0.3)     # transparency
     debugDraw.SetLineThickness(1.0) # thickness of line
 
