@@ -619,13 +619,11 @@
       this.moto.display(this.ctx);
       if (this.ghost) {
         this.ghost.display(this.ctx);
-        this.ghost.next_state();
       }
       if (Constants.debug) {
         this.world.DrawDebugData();
       }
-      this.ctx.restore();
-      return this.replay.add_frame();
+      return this.ctx.restore();
     };
 
     Level.prototype.update_timer = function(now) {
@@ -701,12 +699,6 @@
         entity.display = true;
       }
       return this.need_to_restart = false;
-    };
-
-    Level.prototype.gameTime = function() {
-      var current_time;
-      current_time = new Date().getTime();
-      return (current_time - this.start_time) / 10;
     };
 
     Level.prototype.object_to_follow = function() {
@@ -798,7 +790,8 @@
           level.input.move();
           level.world.Step(1.0 / 60.0, 10, 10);
           level.world.ClearForces();
-          _results.push(last_step += physics_step);
+          last_step += physics_step;
+          _results.push(level.replay.add_frame());
         }
         return _results;
       };
@@ -885,7 +878,6 @@
   Physics = (function() {
     function Physics(level) {
       var context, debugDraw;
-      this.scale = level.scale.x;
       this.level = level;
       this.world = new b2World(new b2Vec2(0, -Constants.gravity), true);
       b2Settings.b2_linearSlop = 0.0025;
@@ -1853,30 +1845,8 @@
         Rider.display_part(this.level, this.frame.upper_leg, Constants.upper_leg, this.mirror, 'ghost_');
         Rider.display_part(this.level, this.frame.lower_leg, Constants.lower_leg, this.mirror, 'ghost_');
         Rider.display_part(this.level, this.frame.upper_arm, Constants.upper_arm, this.mirror, 'ghost_');
-        return Rider.display_part(this.level, this.frame.lower_arm, Constants.lower_arm, this.mirror, 'ghost_');
-      }
-    };
-
-    Ghost.prototype.next_state = function() {
-      var find_next_frame, gameTime, next_current_frame, next_current_frame_n, _results;
-      if (this.replay) {
-        gameTime = this.level.gameTime();
-        find_next_frame = true;
-        _results = [];
-        while (find_next_frame) {
-          if (this.current_frame >= this.replay.frames_count() - 1) {
-            _results.push(find_next_frame = false);
-          } else {
-            next_current_frame_n = this.current_frame + 1;
-            next_current_frame = this.replay.frame(next_current_frame_n);
-            if (next_current_frame.gameTime * 100 >= gameTime) {
-              _results.push(find_next_frame = false);
-            } else {
-              _results.push(this.current_frame = next_current_frame_n);
-            }
-          }
-        }
-        return _results;
+        Rider.display_part(this.level, this.frame.lower_arm, Constants.lower_arm, this.mirror, 'ghost_');
+        return this.current_frame = this.current_frame + 1;
       }
     };
 
@@ -2184,8 +2154,8 @@
       moto = this.level.moto;
       rider = this.level.moto.rider;
       frame = {
-        gameTime: this.level.gameTime() / 100.0,
-        mirror: this.level.moto.mirror === -1,
+        time: this.level.current_time,
+        mirror: moto.mirror === -1,
         left_wheel: position_2d(moto.left_wheel),
         right_wheel: position_2d(moto.right_wheel),
         body: position_2d(moto.body),

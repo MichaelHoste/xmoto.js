@@ -109,14 +109,10 @@ class Level
     @moto    .display(@ctx)
     if @ghost
       @ghost.display(@ctx)
-      @ghost.next_state()
 
     @world.DrawDebugData() if Constants.debug
 
     @ctx.restore()
-
-    # Save last step for replay
-    @replay.add_frame()
 
   update_timer: (now = false) ->
     new_time = new Date().getTime() - @start_time
@@ -169,11 +165,6 @@ class Level
       entity.display = true
 
     @need_to_restart = false
-
-  # time, in centiseconds
-  gameTime: ->
-    current_time = new Date().getTime()
-    (current_time - @start_time) / 10
 
   object_to_follow: ->
     @moto

@@ -15,6 +15,7 @@ play_level = (name) ->
         level.world.Step(1.0/60.0, 10, 10)
         level.world.ClearForces()
         last_step += physics_step
+        level.replay.add_frame()
 
     createjs.Sound.setMute(true)
 
