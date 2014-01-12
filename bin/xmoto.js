@@ -1846,6 +1846,8 @@
         this.mirror = this.frame.mirror ? -1 : 1;
         Moto.display_wheel(this.level, this.frame.left_wheel, Constants.left_wheel, this.mirror, 'ghost_');
         Moto.display_wheel(this.level, this.frame.right_wheel, Constants.right_wheel, this.mirror, 'ghost_');
+        Moto.display_left_axle(this.level, this.frame.left_axle, Constants.left_axle, this.frame.body, this.frame.left_wheel, this.mirror, 'ghost_');
+        Moto.display_right_axle(this.level, this.frame.right_axle, Constants.right_axle, this.frame.body, this.frame.right_wheel, this.mirror, 'ghost_');
         Moto.display_body(this.level, this.frame.body, Constants.body, this.mirror, 'ghost_');
         Rider.display_part(this.level, this.frame.torso, Constants.torso, this.mirror, 'ghost_');
         Rider.display_part(this.level, this.frame.upper_leg, Constants.upper_leg, this.mirror, 'ghost_');
@@ -1880,7 +1882,7 @@
 
     Ghost.prototype.init = function() {
       var part, parts, _i, _len, _results;
-      parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.left_axle];
+      parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
       _results = [];
       for (_i = 0, _len = parts.length; _i < _len; _i++) {
         part = parts[_i];
@@ -2050,8 +2052,8 @@
     Moto.prototype.display = function() {
       this.display_wheel(this.left_wheel, Constants.left_wheel);
       this.display_wheel(this.right_wheel, Constants.right_wheel);
-      this.display_left_axle();
-      this.display_right_axle();
+      this.display_left_axle(this.left_axle, Constants.left_axle);
+      this.display_right_axle(this.right_axle, Constants.right_axle);
       this.display_body(this.body, Constants.body);
       return this.rider.display();
     };
@@ -2095,16 +2097,18 @@
       return level.ctx.restore();
     };
 
-    Moto.display_axle_common = function(level, body, wheel_position, axle_position, axle_thickness, mirror) {
-      var angle, axle_adjusted_position, distance;
-      axle_adjusted_position = Math2D.rotate_point(axle_position, body.GetAngle(), body.GetPosition());
+    Moto.display_axle_common = function(level, body, wheel_position, axle_position, axle_thickness, mirror, texture) {
+      var angle, axle_adjusted_position, body_angle, body_position, distance;
+      body_position = body.GetPosition ? body.GetPosition() : body.position;
+      body_angle = body.GetAngle ? body.GetAngle() : body.angle;
+      axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position);
       distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position);
       angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + mirror * Math.PI / 2;
       level.ctx.save();
       level.ctx.translate(wheel_position.x, wheel_position.y);
       level.ctx.scale(mirror, -1);
       level.ctx.rotate(mirror * (-angle));
-      level.ctx.drawImage(level.assets.get(Constants.left_axle.texture), 0.0, -axle_thickness / 2, distance, axle_thickness);
+      level.ctx.drawImage(level.assets.get(texture), 0.0, -axle_thickness / 2, distance, axle_thickness);
       return level.ctx.restore();
     };
 
@@ -2113,7 +2117,7 @@
     };
 
     Moto.display_left_axle = function(level, part, part_constants, body, wheel, mirror, texture_prefix) {
-      var axle_position, axle_thickness, wheel_position;
+      var axle_position, axle_thickness, texture, wheel_position;
       if (texture_prefix == null) {
         texture_prefix = '';
       }
@@ -2127,22 +2131,31 @@
         x: -0.17 * mirror,
         y: -0.30
       };
-      return Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror);
+      texture = part_constants["" + texture_prefix + "texture"];
+      return Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror, texture);
     };
 
-    Moto.prototype.display_right_axle = function() {
-      var axle_position, axle_thickness, position, wheel_position;
+    Moto.prototype.display_right_axle = function(part, part_constants) {
+      return Moto.display_right_axle(this.level, part, part_constants, this.body, this.right_wheel, this.mirror);
+    };
+
+    Moto.display_right_axle = function(level, part, part_constants, body, wheel, mirror, texture_prefix) {
+      var axle_position, axle_thickness, texture, wheel_position;
+      if (texture_prefix == null) {
+        texture_prefix = '';
+      }
       axle_thickness = 0.07;
-      wheel_position = this.right_wheel.GetPosition();
-      position = {
-        x: wheel_position.x + this.mirror * axle_thickness / 2.0 - this.mirror * 0.03,
+      wheel_position = wheel.GetPosition ? wheel.GetPosition() : wheel.position;
+      wheel_position = {
+        x: wheel_position.x + mirror * axle_thickness / 2.0 - mirror * 0.03,
         y: wheel_position.y - 0.045
       };
       axle_position = {
-        x: 0.52 * this.mirror,
+        x: 0.52 * mirror,
         y: 0.025
       };
-      return Moto.display_axle_common(this.level, this.body, wheel_position, axle_position, axle_thickness, this.mirror);
+      texture = part_constants["" + texture_prefix + "texture"];
+      return Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror, texture);
     };
 
     return Moto;

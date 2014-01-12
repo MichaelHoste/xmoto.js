@@ -168,11 +168,11 @@ class Moto
     @level.world.CreateJoint(jointDef)
 
   display: ->
-    @display_wheel(@left_wheel,  Constants.left_wheel)
-    @display_wheel(@right_wheel, Constants.right_wheel)
-    @display_left_axle()
-    @display_right_axle()
-    @display_body(@body, Constants.body)
+    @display_wheel(      @left_wheel,  Constants.left_wheel)
+    @display_wheel(      @right_wheel, Constants.right_wheel)
+    @display_left_axle(  @left_axle,   Constants.left_axle)
+    @display_right_axle( @right_axle,  Constants.right_axle)
+    @display_body(       @body,        Constants.body)
     @rider.display()
 
   display_wheel: (part, part_constants) ->
@@ -222,9 +222,12 @@ class Moto
 
     level.ctx.restore()
 
-  @display_axle_common: (level, body, wheel_position, axle_position, axle_thickness, mirror) ->
+  @display_axle_common: (level, body, wheel_position, axle_position, axle_thickness, mirror, texture) ->
+    body_position = if body.GetPosition then body.GetPosition() else body.position
+    body_angle    = if body.GetAngle    then body.GetAngle()    else body.angle
+
     # Adjusted position depending of rotation of body
-    axle_adjusted_position = Math2D.rotate_point(axle_position, body.GetAngle(), body.GetPosition())
+    axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position)
 
     # Distance
     distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position)
@@ -239,11 +242,11 @@ class Moto
     level.ctx.rotate(mirror*(-angle))
 
     level.ctx.drawImage(
-      level.assets.get(Constants.left_axle.texture), # texture
-      0.0,               # x
-      -axle_thickness/2, # y
-      distance,          # size-x
-      axle_thickness     # size-y
+      level.assets.get(texture), # texture
+      0.0,                       # x
+      -axle_thickness/2,         # y
+      distance,                  # size-x
+      axle_thickness             # size-y
     )
 
     level.ctx.restore()
@@ -252,7 +255,6 @@ class Moto
     Moto.display_left_axle(@level, part, part_constants, @body, @left_wheel, @mirror)
 
   @display_left_axle: (level, part, part_constants, body, wheel, mirror, texture_prefix = '') ->
-    # Get position from box2D object of replay
     axle_thickness = 0.09
 
     wheel_position = if wheel.GetPosition then wheel.GetPosition() else wheel.position
@@ -265,21 +267,27 @@ class Moto
       x: -0.17 * mirror
       y: -0.30
 
-    Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror)
+    texture = part_constants["#{texture_prefix}texture"]
 
-  display_right_axle: ->
+    Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror, texture)
+
+  display_right_axle: (part, part_constants) ->
+    Moto.display_right_axle(@level, part, part_constants, @body, @right_wheel, @mirror)
+
+  @display_right_axle: (level, part, part_constants, body, wheel, mirror, texture_prefix = '') ->
     axle_thickness = 0.07
 
-    # Position
-    wheel_position = @right_wheel.GetPosition()
-    position =
-      x: wheel_position.x + @mirror * axle_thickness/2.0 - @mirror * 0.03
+    wheel_position = if wheel.GetPosition then wheel.GetPosition() else wheel.position
+    wheel_position =
+      x: wheel_position.x + mirror * axle_thickness/2.0 - mirror * 0.03
       y: wheel_position.y - 0.045
 
     # Position relative to center of body
     axle_position =
-      x: 0.52 * @mirror
+      x: 0.52 * mirror
       y: 0.025
 
-    Moto.display_axle_common(@level, @body, wheel_position, axle_position, axle_thickness, @mirror)
+    texture = part_constants["#{texture_prefix}texture"]
+
+    Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror, texture)
 
