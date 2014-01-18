@@ -47,17 +47,19 @@ class Replay
     @interpolate_frames(current_frame, next_frame, interpolation)
 
   interpolate_frames: (current_frame, next_frame, interpolation) ->
+    ratio_fps            = Constants.fps / Constants.replay_fps
+    current_frame_weight = (ratio_fps - interpolation) / ratio_fps
+    next_frame_weight    = interpolation               / ratio_fps
+
     frame =
-      time:        current_frame.time
-      mirror:      current_frame.mirror
-      left_wheel:  interpolate_position_2d(current_frame.left_wheel,  next_frame.left_wheel,  interpolation)
-      right_wheel: interpolate_position_2d(current_frame.right_wheel, next_frame.right_wheel, interpolation)
-      body:        interpolate_position_2d(current_frame.body,        next_frame.body,        interpolation)
-      torso:       interpolate_position_2d(current_frame.torso,       next_frame.torso,       interpolation)
-      upper_leg:   interpolate_position_2d(current_frame.upper_leg,   next_frame.upper_leg,   interpolation)
-      lower_leg:   interpolate_position_2d(current_frame.lower_leg,   next_frame.lower_leg,   interpolation)
-      upper_arm:   interpolate_position_2d(current_frame.upper_arm,   next_frame.upper_arm,   interpolation)
-      lower_arm:   interpolate_position_2d(current_frame.lower_arm,   next_frame.lower_arm,   interpolation)
+      time:   current_frame.time
+      mirror: current_frame.mirror
+
+    for part in ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg',
+                 'lower_leg', 'upper_arm', 'lower_arm']
+      frame[part] = weighted_position_2d(current_frame[part], next_frame[part],
+                                         current_frame_weight, next_frame_weight)
+    return frame
 
 position_2d = (object) ->
   position:
@@ -65,14 +67,8 @@ position_2d = (object) ->
     y:   object.GetPosition().y
   angle: object.GetAngle()
 
-interpolate_position_2d = (part_1, part_2, interpolation) ->
-  ratio_fps    = Constants.fps / Constants.replay_fps
-  part_1_ratio = (ratio_fps - interpolation) / ratio_fps
-  part_2_ratio = interpolation               / ratio_fps
-
-  return {
-    position:
-      x:   part_1.position.x * part_1_ratio + part_2.position.x * part_2_ratio
-      y:   part_1.position.y * part_1_ratio + part_2.position.y * part_2_ratio
-    angle: part_1.angle      * part_1_ratio + part_2.angle      * part_2_ratio
-  }
+weighted_position_2d = (part_1, part_2, part_1_weight, part_2_weight) ->
+  position:
+    x:   part_1.position.x * part_1_weight + part_2.position.x * part_2_weight
+    y:   part_1.position.y * part_1_weight + part_2.position.y * part_2_weight
+  angle: part_1.angle      * part_1_weight + part_2.angle      * part_2_weight

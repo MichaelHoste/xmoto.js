@@ -13,7 +13,7 @@ class Constants
   # FRAMERATE
 
   @fps        = 60.0
-  @replay_fps = 10.0 # replay at 10FPS
+  @replay_fps = 60.0 # replay at 10FPS
 
   # MOTO PARTS
 
