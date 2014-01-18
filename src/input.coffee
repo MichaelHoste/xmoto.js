@@ -32,6 +32,9 @@ class Input
     $(document).off('keydown')
     $(document).on('keydown', (event) =>
       switch(event.which || event.keyCode)
+        when 80 # p
+          console.log("salut")
+          @level.particles.create()
         when 38
           @up = true
         when 40

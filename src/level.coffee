@@ -32,6 +32,9 @@ class Level
     # Moto (level independant)
     @moto          = new Moto(this)
 
+    # Particles (level independant)
+    @particles     = new Particles(this)
+
     # Level dependent objects
     @infos         = new Infos(this)
     @sky           = new Sky(this)
@@ -108,6 +111,8 @@ class Level
     @moto    .display(@ctx)
     if @ghost
       @ghost.display(@ctx)
+
+    @particles.display(@ctx)
 
     @physics.display() if Constants.debug
 
