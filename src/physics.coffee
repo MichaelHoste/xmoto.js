@@ -41,16 +41,16 @@ class Physics
 
   init: ->
     @last_step = new Date().getTime()
-    @step      = 1000.0/60.0
+    @step      = 1000.0/Constants.fps
     @steps     = 0
 
   update: ->
     while (new Date()).getTime() - @last_step > @step
       @level.input.move()
-      @world.Step(1.0/60.0, 10, 10)
+      @world.Step(1.0/Constants.fps, 10, 10)
       @world.ClearForces()
       @last_step += @step
-      @level.replay.add_frame() if @steps%2 == 0
+      @level.replay.add_frame() if @steps % (Constants.fps / Constants.replay_fps) == 0
       @steps = @steps + 1
 
   # for debugging

@@ -149,7 +149,7 @@ class Level
     if save_replay
       if (not @ghost.replay) or @ghost.replay.frames_count() > @replay.frames_count()
         @ghost  = new Ghost(this, @replay.clone())
-    @ghost.current_frame = 0
+    @physics.steps = 0
     @replay = new Replay(this)
 
     @moto.destroy()
