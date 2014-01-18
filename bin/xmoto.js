@@ -407,9 +407,6 @@
       $(document).off('keydown');
       $(document).on('keydown', function(event) {
         switch (event.which || event.keyCode) {
-          case 80:
-            console.log("salut");
-            return _this.level.particles.create();
           case 38:
             return _this.up = true;
           case 40:
@@ -484,7 +481,7 @@
     };
 
     Input.prototype.move = function() {
-      var air_density, drag_force, force, moto, object_penetration, rider, squared_speed, v;
+      var air_density, drag_force, force, linear_speed, moto, object_penetration, rider, rotation_speed, squared_speed, v;
       force = 24.1;
       moto = this.level.moto;
       rider = moto.rider;
@@ -535,7 +532,12 @@
       object_penetration = 0.025;
       squared_speed = Math.pow(moto.body.GetLinearVelocity().x, 2);
       drag_force = air_density * squared_speed * object_penetration;
-      return moto.body.SetLinearDamping(drag_force);
+      moto.body.SetLinearDamping(drag_force);
+      rotation_speed = -(moto.left_wheel.GetAngularVelocity() * Math.PI / 180) * 2 * Math.PI * Constants.left_wheel.radius;
+      linear_speed = moto.left_wheel.GetLinearVelocity().x / 10;
+      if (linear_speed > 0 && rotation_speed > 1.5 * linear_speed) {
+        return this.level.particles.create();
+      }
     };
 
     return Input;

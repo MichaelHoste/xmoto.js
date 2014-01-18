@@ -32,9 +32,6 @@ class Input
     $(document).off('keydown')
     $(document).on('keydown', (event) =>
       switch(event.which || event.keyCode)
-        when 80 # p
-          console.log("salut")
-          @level.particles.create()
         when 38
           @up = true
         when 40
@@ -147,3 +144,10 @@ class Input
     squared_speed      = Math.pow(moto.body.GetLinearVelocity().x, 2)
     drag_force         = air_density * squared_speed * object_penetration
     moto.body.SetLinearDamping(drag_force)
+
+    # Detection of drifting
+    rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
+    linear_speed   = moto.left_wheel.GetLinearVelocity().x/10
+
+    if linear_speed > 0 and rotation_speed > 1.5*linear_speed
+      @level.particles.create()
