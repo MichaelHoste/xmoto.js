@@ -666,7 +666,9 @@
 
     Blocks.prototype.parse = function(xml) {
       var block, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices, _i, _j, _k, _len, _len1, _len2;
+      alert("debug parse");
       xml_blocks = $(xml).find('block');
+      alert("avant xml_blocks");
       for (_i = 0, _len = xml_blocks.length; _i < _len; _i++) {
         xml_block = xml_blocks[_i];
         block = {
@@ -690,9 +692,11 @@
           },
           vertices: []
         };
+        alert("dans xml_blocks");
         if (block.usetexture.id === 'default') {
           block.usetexture.id = 'dirt';
         }
+        alert("suite");
         xml_materials = $(xml_block).find('edges material');
         for (_j = 0, _len1 = xml_materials.length; _j < _len1; _j++) {
           xml_material = xml_materials[_j];
@@ -708,6 +712,7 @@
           };
           block.edges.materials.push(material);
         }
+        alert("avant vertices");
         xml_vertices = $(xml_block).find('vertex');
         for (_k = 0, _len2 = xml_vertices.length; _k < _len2; _k++) {
           xml_vertex = xml_vertices[_k];
@@ -718,6 +723,7 @@
           };
           block.vertices.push(vertex);
         }
+        alert("listing");
         this.list.push(block);
         if (block.position.background) {
           this.back_list.push(block);
@@ -725,25 +731,31 @@
           this.front_list.push(block);
         }
       }
+      alert("sort");
       this.list.sort(sort_blocks_by_texture);
       this.back_list.sort(sort_blocks_by_texture);
       this.front_list.sort(sort_blocks_by_texture);
+      alert("avant return");
       return this;
     };
 
     Blocks.prototype.init = function() {
       var block, triangle, _i, _j, _len, _len1, _ref, _ref1;
+      alert("liste des blocks");
       _ref = this.list;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
         this.assets.textures.push(block.usetexture.id);
       }
+      alert("triangulation");
       this.triangles = triangulate(this.front_list);
+      alert("box2D");
       _ref1 = this.triangles;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         triangle = _ref1[_j];
         this.level.physics.create_polygon(triangle, 'ground');
       }
+      alert("edges");
       return this.edges = new Edges(this.level, this.list);
     };
 
@@ -830,6 +842,7 @@
       this.theme = this.assets.theme;
       this.blocks = blocks;
       this.list = [];
+      alert("dans edges");
       _ref = this.blocks;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
@@ -841,6 +854,7 @@
           }
         }
       }
+      alert("dans edges suite");
       _ref2 = this.blocks;
       for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
         block = _ref2[_k];

@@ -8,12 +8,14 @@ class Edges
 
     @list   = [] # list of edges
 
+    alert("dans edges")
     # Assets
     for block in @blocks
       for vertex in block.vertices
         if vertex.edge
           @assets.effects.push(@theme.edge_params(vertex.edge).file)
 
+    alert("dans edges suite")
     # Create edges
     for block in @blocks
       for vertex, i in block.vertices

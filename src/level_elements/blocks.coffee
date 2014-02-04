@@ -8,7 +8,10 @@ class Blocks
     @front_list = [] # front list (collisions)
 
   parse: (xml) ->
+    alert("debug parse")
     xml_blocks = $(xml).find('block')
+
+    alert("avant xml_blocks")
 
     for xml_block in xml_blocks
       block =
@@ -28,7 +31,10 @@ class Blocks
           materials:  []
         vertices:     []
 
+      alert("dans xml_blocks")
       block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
+
+      alert("suite")
 
       xml_materials = $(xml_block).find('edges material')
       for xml_material in xml_materials
@@ -44,6 +50,8 @@ class Blocks
 
         block.edges.materials.push(material)
 
+      alert("avant vertices")
+
       xml_vertices = $(xml_block).find('vertex')
       for xml_vertex in xml_vertices
         vertex =
@@ -53,29 +61,40 @@ class Blocks
 
         block.vertices.push(vertex)
 
+      alert("listing")
+
       @list.push(block)
       if block.position.background
         @back_list.push(block)
       else
         @front_list.push(block)
 
+    alert("sort")
     @list      .sort( sort_blocks_by_texture )
     @back_list .sort( sort_blocks_by_texture )
     @front_list.sort( sort_blocks_by_texture )
 
+    alert("avant return")
+
     return this
 
   init: ->
+    alert("liste des blocks")
     # Assets
     for block in @list
       @assets.textures.push(block.usetexture.id)
 
+    alert("triangulation")
     # Triangulation (for collisions in box2D)
     @triangles = triangulate(@front_list)
+
+    alert("box2D")
 
     # Create triangles in box2D
     for triangle in @triangles
       @level.physics.create_polygon(triangle, 'ground')
+
+    alert("edges")
 
     # Init edges
     @edges = new Edges(@level, @list)
