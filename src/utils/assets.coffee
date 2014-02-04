@@ -60,6 +60,8 @@ class Assets
     for item in items
       $("#assets").append("<img id=\"#{item.id}\" src=\"#{item.src}\"/>")
 
+    alert(items.length)
+
     items = []
 
     console.log("salut fin de chargement ")

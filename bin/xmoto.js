@@ -2177,6 +2177,7 @@
         item = items[_m];
         $("#assets").append("<img id=\"" + item.id + "\" src=\"" + item.src + "\"/>");
       }
+      alert(items.length);
       items = [];
       console.log("salut fin de chargement ");
       return console.log("fin");
