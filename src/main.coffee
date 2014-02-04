@@ -1,6 +1,8 @@
 play_level = (name) ->
   alert('play level')
+  alert("play level 2")
   level = new Level()
+  alert("new level")
   level.load_from_file(name)
 
   # Load assets for this level before doing anything else

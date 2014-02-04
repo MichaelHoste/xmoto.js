@@ -510,7 +510,9 @@
   play_level = function(name) {
     var go, level;
     alert('play level');
+    alert("play level 2");
     level = new Level();
+    alert("new level");
     level.load_from_file(name);
     alert("avant assets");
     level.assets.load();
