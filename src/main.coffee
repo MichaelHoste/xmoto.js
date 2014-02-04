@@ -1,4 +1,5 @@
 play_level = (name) ->
+  alert('play level')
   level = new Level()
   level.load_from_file(name)
 
