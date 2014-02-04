@@ -1,7 +1,7 @@
 class Assets
 
   constructor: ->
-    @queue    = new createjs.LoadQueue()
+    @queue    = new createjs.LoadQueue(false)
     @theme    = new Theme('modern.xml') # or "original.xml"
 
     @textures = [] # texture list

@@ -2506,7 +2506,7 @@
 
   Assets = (function() {
     function Assets() {
-      this.queue = new createjs.LoadQueue();
+      this.queue = new createjs.LoadQueue(false);
       this.theme = new Theme('modern.xml');
       this.textures = [];
       this.anims = [];
