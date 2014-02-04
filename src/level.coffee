@@ -55,11 +55,17 @@ class Level
     alert("start load level")
     # Level dependent objects
     @infos        .parse(xml).init()
+    alert("1")
     @sky          .parse(xml).init()
+    alert("2")
     @blocks       .parse(xml).init()
+    alert("3")
     @limits       .parse(xml).init()
+    alert("4")
     @layer_offsets.parse(xml).init()
+    alert("5")
     @script       .parse(xml).init()
+    alert("6")
     @entities     .parse(xml).init()
 
     alert("parse")

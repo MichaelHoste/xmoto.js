@@ -365,11 +365,17 @@
     Level.prototype.load_level = function(xml) {
       alert("start load level");
       this.infos.parse(xml).init();
+      alert("1");
       this.sky.parse(xml).init();
+      alert("2");
       this.blocks.parse(xml).init();
+      alert("3");
       this.limits.parse(xml).init();
+      alert("4");
       this.layer_offsets.parse(xml).init();
+      alert("5");
       this.script.parse(xml).init();
+      alert("6");
       this.entities.parse(xml).init();
       alert("parse");
       this.moto.init();
