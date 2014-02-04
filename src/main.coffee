@@ -4,12 +4,14 @@ play_level = (name) ->
   level.load_from_file(name)
 
   # Load assets for this level before doing anything else
+  alert("avant assets")
   level.assets.load()
-  console.log("assets chargées")
+  alert("assets charges")
   setTimeout( (-> go()), 3000)
 
   go = ->
     #createjs.Sound.setMute(true)
+    alert("debut du go")
 
     update = ->
       level.input.move_moto()

@@ -512,13 +512,15 @@
     alert('play level');
     level = new Level();
     level.load_from_file(name);
+    alert("avant assets");
     level.assets.load();
-    console.log("assets chargées");
+    alert("assets charges");
     setTimeout((function() {
       return go();
     }), 3000);
     return go = function() {
       var update;
+      alert("debut du go");
       update = function() {
         level.input.move_moto();
         level.world.Step(1.0 / 30.0, 20, 20);
