@@ -28,8 +28,8 @@ class Listeners
           if @level.got_strawberries()
             createjs.Sound.play('EndOfLevel')
             @level.need_to_restart = true
-            #console.log(LZString.compress(JSON.stringify(@level.replay.frames)).length)
-            #$.post('/', { replay: @level.replay.frames })
+            console.log(JSON.stringify(@level.replay.frames))
+            #$.post('', { replay: LZString.compress(JSON.stringify(@level.replay.frames)) })
 
         # Fall of rider
         else if Listeners.does_contact(a, b, 'rider', 'ground') and a.part != 'lower_leg' and b.part != 'lower_leg'

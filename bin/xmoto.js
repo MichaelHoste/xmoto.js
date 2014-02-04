@@ -126,7 +126,7 @@
 
     Constants.fps = 60.0;
 
-    Constants.replay_fps = 60.0;
+    Constants.replay_fps = 10.0;
 
     Constants.body = {
       density: 1.5,
@@ -534,10 +534,7 @@
       drag_force = air_density * squared_speed * object_penetration;
       moto.body.SetLinearDamping(drag_force);
       rotation_speed = -(moto.left_wheel.GetAngularVelocity() * Math.PI / 180) * 2 * Math.PI * Constants.left_wheel.radius;
-      linear_speed = moto.left_wheel.GetLinearVelocity().x / 10;
-      if (linear_speed > 0 && rotation_speed > 1.5 * linear_speed) {
-        return this.level.particles.create();
-      }
+      return linear_speed = moto.left_wheel.GetLinearVelocity().x / 10;
     };
 
     return Input;
@@ -747,7 +744,8 @@
           } else if (Listeners.does_contact_moto_rider(a, b, 'end_of_level')) {
             if (_this.level.got_strawberries()) {
               createjs.Sound.play('EndOfLevel');
-              return _this.level.need_to_restart = true;
+              _this.level.need_to_restart = true;
+              return console.log(JSON.stringify(_this.level.replay.frames));
             }
           } else if (Listeners.does_contact(a, b, 'rider', 'ground') && a.part !== 'lower_leg' && b.part !== 'lower_leg') {
             return _this.kill_moto();

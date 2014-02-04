@@ -149,5 +149,5 @@ class Input
     rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
     linear_speed   = moto.left_wheel.GetLinearVelocity().x/10
 
-    if linear_speed > 0 and rotation_speed > 1.5*linear_speed
-      @level.particles.create()
+    #if linear_speed > 0 and rotation_speed > 1.5*linear_speed
+    #  @level.particles.create()
