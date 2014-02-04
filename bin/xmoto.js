@@ -363,6 +363,7 @@
     };
 
     Level.prototype.load_level = function(xml) {
+      alert("start load level");
       this.infos.parse(xml).init();
       this.sky.parse(xml).init();
       this.blocks.parse(xml).init();
@@ -370,8 +371,10 @@
       this.layer_offsets.parse(xml).init();
       this.script.parse(xml).init();
       this.entities.parse(xml).init();
+      alert("parse");
       this.moto.init();
       this.ghost.init();
+      alert("moto and ghost init");
       this.input.init();
       return this.listeners.init();
     };
@@ -2183,9 +2186,7 @@
         $("#assets").append("<img id=\"" + item.id + "\" src=\"" + item.src + "\"/>");
       }
       alert(items.length);
-      items = [];
-      console.log("salut fin de chargement ");
-      return console.log("fin");
+      return items = [];
     };
 
     Assets.prototype.get = function(name) {
@@ -2398,7 +2399,6 @@
       this.sprites = [];
       this.edges = [];
       theme = $("#theme").text();
-      console.log(theme);
       this.load_theme(theme);
     }
 

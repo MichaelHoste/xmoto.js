@@ -5,7 +5,6 @@ class Theme
     @edges   = []
 
     theme = $("#theme").text()
-    console.log(theme)
     @load_theme(theme)
 
   load_theme: (xml) ->

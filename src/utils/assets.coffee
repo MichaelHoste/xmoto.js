@@ -64,12 +64,8 @@ class Assets
 
     items = []
 
-    console.log("salut fin de chargement ")
-
     #@queue.addEventListener("complete", callback)
     #@queue.loadManifest(items)
-
-    console.log("fin")
 
   # Get an asset by its name ("id")
   get: (name) ->

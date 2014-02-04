@@ -52,6 +52,7 @@ class Level
     @load_level(level)
 
   load_level: (xml) ->
+    alert("start load level")
     # Level dependent objects
     @infos        .parse(xml).init()
     @sky          .parse(xml).init()
@@ -61,9 +62,13 @@ class Level
     @script       .parse(xml).init()
     @entities     .parse(xml).init()
 
+    alert("parse")
+
     # Moto and ghosts (level independant)
     @moto.init()
     @ghost.init()
+
+    alert("moto and ghost init")
 
     @input.init()
     @listeners.init()
