@@ -6,9 +6,9 @@ class Constants
 
   @debug              = false
 
-  @gravity            = 9.81 # Default gravity of the game
-  @max_rotation_speed = 0.38 # Max rotation speed of the wheels (x * PI). Limit the max speed of the moto
-  @air_density        = 0.03 # Friction of air
+  @gravity        =  9.81 # Default gravity of the game
+  @max_moto_speed = 70.00 # Max rotation speed of the wheels. Limit the max speed of the moto
+  @air_density    =  0.03 # Friction of air
 
   # FRAMERATE
 

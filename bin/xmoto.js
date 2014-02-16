@@ -120,7 +120,7 @@
 
     Constants.gravity = 9.81;
 
-    Constants.max_rotation_speed = 0.38;
+    Constants.max_moto_speed = 70.00;
 
     Constants.air_density = 0.03;
 
@@ -481,7 +481,7 @@
     };
 
     Input.prototype.move = function() {
-      var air_density, drag_force, force, linear_speed, moto, object_penetration, rider, rotation_speed, squared_speed, v;
+      var air_density, drag_force, force, moto, object_penetration, rider, squared_speed, v;
       force = 24.1;
       moto = this.level.moto;
       rider = moto.rider;
@@ -520,9 +520,9 @@
       }
       if (!this.up && !this.down) {
         v = moto.left_wheel.GetAngularVelocity();
-        this.level.moto.left_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 10 : void 0));
+        moto.left_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 10 : void 0));
         v = moto.right_wheel.GetAngularVelocity();
-        this.level.moto.right_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 100 : void 0));
+        moto.right_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 100 : void 0));
       }
       moto.left_prismatic_joint.SetMaxMotorForce(8 + Math.abs(800 * Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)));
       moto.left_prismatic_joint.SetMotorSpeed(-3 * moto.left_prismatic_joint.GetJointTranslation());
@@ -533,8 +533,16 @@
       squared_speed = Math.pow(moto.body.GetLinearVelocity().x, 2);
       drag_force = air_density * squared_speed * object_penetration;
       moto.body.SetLinearDamping(drag_force);
-      rotation_speed = -(moto.left_wheel.GetAngularVelocity() * Math.PI / 180) * 2 * Math.PI * Constants.left_wheel.radius;
-      return linear_speed = moto.left_wheel.GetLinearVelocity().x / 10;
+      if (moto.right_wheel.GetAngularVelocity() > Constants.max_rotation_speed) {
+        moto.right_wheel.SetAngularVelocity(Constants.max_rotation_speed);
+      } else if (moto.right_wheel.GetAngularVelocity() < -Constants.max_rotation_speed) {
+        moto.right_wheel.SetAngularVelocity(-Constants.max_rotation_speed);
+      }
+      if (moto.left_wheel.GetAngularVelocity() > Constants.max_rotation_speed) {
+        return moto.left_wheel.SetAngularVelocity(Constants.max_rotation_speed);
+      } else if (moto.left_wheel.GetAngularVelocity() < -Constants.max_rotation_speed) {
+        return moto.left_wheel.SetAngularVelocity(-Constants.max_rotation_speed);
+      }
     };
 
     return Input;
@@ -880,8 +888,6 @@
       this.level = level;
       this.world = new b2World(new b2Vec2(0, -Constants.gravity), true);
       b2Settings.b2_linearSlop = 0.0025;
-      b2Settings.b2_maxRotation = Constants.max_rotation_speed * b2Settings.b2_pi;
-      b2Settings.b2_maxRotationSquared = b2Settings.b2_maxRotation * b2Settings.b2_maxRotation;
       debugDraw = new b2DebugDraw();
       debugDraw.SetSprite(this.level.ctx);
       debugDraw.SetFillAlpha(0.3);

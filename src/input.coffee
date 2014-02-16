@@ -124,11 +124,11 @@ class Input
     if not @up and not @down
       # Engine brake
       v = moto.left_wheel.GetAngularVelocity()
-      @level.moto.left_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/10))
+      moto.left_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/10))
 
       # Friction on right wheel
       v = moto.right_wheel.GetAngularVelocity()
-      @level.moto.right_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/100))
+      moto.right_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/100))
 
     # Left wheel suspension
     moto.left_prismatic_joint.SetMaxMotorForce(8+Math.abs(800*Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)))
@@ -145,9 +145,19 @@ class Input
     drag_force         = air_density * squared_speed * object_penetration
     moto.body.SetLinearDamping(drag_force)
 
-    # Detection of drifting
-    rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
-    linear_speed   = moto.left_wheel.GetLinearVelocity().x/10
+    # Limitation of wheel rotation speed (and by extension, of moto)
+    if moto.right_wheel.GetAngularVelocity() > Constants.max_rotation_speed
+      moto.right_wheel.SetAngularVelocity(Constants.max_rotation_speed)
+    else if moto.right_wheel.GetAngularVelocity() < -Constants.max_rotation_speed
+      moto.right_wheel.SetAngularVelocity(-Constants.max_rotation_speed)
 
+    if moto.left_wheel.GetAngularVelocity() > Constants.max_rotation_speed
+      moto.left_wheel.SetAngularVelocity(Constants.max_rotation_speed)
+    else if moto.left_wheel.GetAngularVelocity() < -Constants.max_rotation_speed
+      moto.left_wheel.SetAngularVelocity(-Constants.max_rotation_speed)
+
+    # Detection of drifting
+    #rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
+    #linear_speed   = moto.left_wheel.GetLinearVelocity().x/10
     #if linear_speed > 0 and rotation_speed > 1.5*linear_speed
     #  @level.particles.create()
