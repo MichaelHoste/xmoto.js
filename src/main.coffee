@@ -27,15 +27,15 @@ full_screen = ->
   window.onresize()
 
 bind_select = ->
-  $("#levels").on('change', ->
+  $("select#levels").on('change', ->
     show_loading()
     play_level($(this).val())
   )
 
 select_level_from_url = ->
   level = location.search.substr(1)
-  $("#levels").val(level)
-  $("#levels").trigger("change")
+  $("select#levels").val(level)
+  $("select#levels").trigger("change")
 
 $ ->
   CppConstants.init()
@@ -43,9 +43,11 @@ $ ->
 
   bind_select()
 
-  if location.search != ''
+  if $("#game").attr('data-current-level')
+    play_level($("#game").data('current-level'))
+  else if location.search != ''
     select_level_from_url()
-  else
-    play_level($("#levels option:selected").val())
+  else if $("select#levels").length
+    play_level($("select#levels option:selected").val())
 
   #full_screen()

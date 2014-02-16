@@ -67,7 +67,7 @@ class Level
   load_from_file: (file_name) ->
     $.ajax({
       type:     "GET",
-      url:      "data/Levels/#{file_name}",
+      url:      "/data/Levels/#{file_name}",
       dataType: "xml",
       success:  @load_level
       async:    false
