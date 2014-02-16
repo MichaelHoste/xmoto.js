@@ -575,7 +575,7 @@
     Level.prototype.load_from_file = function(file_name) {
       return $.ajax({
         type: "GET",
-        url: "data/Levels/" + file_name,
+        url: "/data/Levels/" + file_name,
         dataType: "xml",
         success: this.load_level,
         async: false,
@@ -835,7 +835,9 @@
 
   $(function() {
     bind_select();
-    if (location.search !== '') {
+    if ($("#game").attr('data-current-level')) {
+      return play_level($("#game").data('current-level'));
+    } else if (location.search !== '') {
       return select_level_from_url();
     } else {
       return play_level($("#levels option:selected").val());
@@ -2523,7 +2525,7 @@
         item = _ref[_i];
         items.push({
           id: item,
-          src: "data/Textures/Textures/" + (item.toLowerCase())
+          src: "/data/Textures/Textures/" + (item.toLowerCase())
         });
       }
       _ref1 = this.anims;
@@ -2531,7 +2533,7 @@
         item = _ref1[_j];
         items.push({
           id: item,
-          src: "data/Textures/Anims/" + (item.toLowerCase())
+          src: "/data/Textures/Anims/" + (item.toLowerCase())
         });
       }
       _ref2 = this.effects;
@@ -2539,7 +2541,7 @@
         item = _ref2[_k];
         items.push({
           id: item,
-          src: "data/Textures/Effects/" + (item.toLowerCase())
+          src: "/data/Textures/Effects/" + (item.toLowerCase())
         });
       }
       _ref3 = this.moto;
@@ -2547,21 +2549,9 @@
         item = _ref3[_l];
         items.push({
           id: item,
-          src: "data/Textures/Riders/" + (item.toLowerCase()) + ".png"
+          src: "/data/Textures/Riders/" + (item.toLowerCase()) + ".png"
         });
       }
-      createjs.Sound.registerSound({
-        id: "PickUpStrawberry",
-        src: "data/Sounds/PickUpStrawberry.ogg"
-      });
-      createjs.Sound.registerSound({
-        id: "Headcrash",
-        src: "data/Sounds/Headcrash.ogg"
-      });
-      createjs.Sound.registerSound({
-        id: "EndOfLevel",
-        src: "data/Sounds/EndOfLevel.ogg"
-      });
       items = this.remove_duplicate_textures(items);
       this.queue.addEventListener("complete", callback);
       return this.queue.loadManifest(items);
@@ -2783,7 +2773,7 @@
       this.textures = [];
       $.ajax({
         type: "GET",
-        url: "data/Themes/" + file_name,
+        url: "/data/Themes/" + file_name,
         dataType: "xml",
         success: this.load_theme,
         async: false,

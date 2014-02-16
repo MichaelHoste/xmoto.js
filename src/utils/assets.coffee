@@ -16,38 +16,38 @@ class Assets
     for item in @textures
       items.push(
         id:  item
-        src: "data/Textures/Textures/#{item.toLowerCase()}"
+        src: "/data/Textures/Textures/#{item.toLowerCase()}"
       )
     for item in @anims
       items.push(
         id:  item
-        src: "data/Textures/Anims/#{item.toLowerCase()}"
+        src: "/data/Textures/Anims/#{item.toLowerCase()}"
       )
     for item in @effects
       items.push(
         id:  item
-        src: "data/Textures/Effects/#{item.toLowerCase()}"
+        src: "/data/Textures/Effects/#{item.toLowerCase()}"
       )
     for item in @moto
       items.push(
         id:  item
-        src: "data/Textures/Riders/#{item.toLowerCase()}.png"
+        src: "/data/Textures/Riders/#{item.toLowerCase()}.png"
       )
 
-    createjs.Sound.registerSound(
-      id:  "PickUpStrawberry"
-      src: "data/Sounds/PickUpStrawberry.ogg"
-    )
-
-    createjs.Sound.registerSound(
-      id:  "Headcrash"
-      src: "data/Sounds/Headcrash.ogg"
-    )
-
-    createjs.Sound.registerSound(
-      id:  "EndOfLevel"
-      src: "data/Sounds/EndOfLevel.ogg"
-    )
+#    createjs.Sound.registerSound(
+#      id:  "PickUpStrawberry"
+#      src: "/data/Sounds/PickUpStrawberry.ogg"
+#    )
+#
+#    createjs.Sound.registerSound(
+#      id:  "Headcrash"
+#      src: "/data/Sounds/Headcrash.ogg"
+#    )
+#
+#    createjs.Sound.registerSound(
+#      id:  "EndOfLevel"
+#      src: "/data/Sounds/EndOfLevel.ogg"
+#    )
 
     items = @remove_duplicate_textures(items)
 

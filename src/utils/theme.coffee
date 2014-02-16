@@ -7,7 +7,7 @@ class Theme
 
     $.ajax({
       type:     "GET",
-      url:      "data/Themes/#{file_name}",
+      url:      "/data/Themes/#{file_name}",
       dataType: "xml",
       success:  @load_theme
       async:    false

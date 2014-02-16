@@ -47,7 +47,9 @@ select_level_from_url = ->
 $ ->
   bind_select()
 
-  if location.search != ''
+  if $("#game").attr('data-current-level')
+      play_level($("#game").data('current-level'))
+  else if location.search != ''
     select_level_from_url()
   else
     play_level($("#levels option:selected").val())
