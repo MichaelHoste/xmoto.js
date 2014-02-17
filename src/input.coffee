@@ -146,15 +146,15 @@ class Input
     moto.body.SetLinearDamping(drag_force)
 
     # Limitation of wheel rotation speed (and by extension, of moto)
-    if moto.right_wheel.GetAngularVelocity() > Constants.max_rotation_speed
-      moto.right_wheel.SetAngularVelocity(Constants.max_rotation_speed)
-    else if moto.right_wheel.GetAngularVelocity() < -Constants.max_rotation_speed
-      moto.right_wheel.SetAngularVelocity(-Constants.max_rotation_speed)
+    if moto.right_wheel.GetAngularVelocity() > Constants.max_moto_speed
+      moto.right_wheel.SetAngularVelocity(Constants.max_moto_speed)
+    else if moto.right_wheel.GetAngularVelocity() < -Constants.max_moto_speed
+      moto.right_wheel.SetAngularVelocity(-Constants.max_moto_speed)
 
-    if moto.left_wheel.GetAngularVelocity() > Constants.max_rotation_speed
-      moto.left_wheel.SetAngularVelocity(Constants.max_rotation_speed)
-    else if moto.left_wheel.GetAngularVelocity() < -Constants.max_rotation_speed
-      moto.left_wheel.SetAngularVelocity(-Constants.max_rotation_speed)
+    if moto.left_wheel.GetAngularVelocity() > Constants.max_moto_speed
+      moto.left_wheel.SetAngularVelocity(Constants.max_moto_speed)
+    else if moto.left_wheel.GetAngularVelocity() < -Constants.max_moto_speed
+      moto.left_wheel.SetAngularVelocity(-Constants.max_moto_speed)
 
     # Detection of drifting
     #rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius

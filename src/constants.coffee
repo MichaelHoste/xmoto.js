@@ -4,7 +4,7 @@ class Constants
 
   # GENERAL
 
-  @debug              = false
+  @debug          = false
 
   @gravity        =  9.81 # Default gravity of the game
   @max_moto_speed = 70.00 # Max rotation speed of the wheels. Limit the max speed of the moto

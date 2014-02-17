@@ -533,15 +533,15 @@
       squared_speed = Math.pow(moto.body.GetLinearVelocity().x, 2);
       drag_force = air_density * squared_speed * object_penetration;
       moto.body.SetLinearDamping(drag_force);
-      if (moto.right_wheel.GetAngularVelocity() > Constants.max_rotation_speed) {
-        moto.right_wheel.SetAngularVelocity(Constants.max_rotation_speed);
-      } else if (moto.right_wheel.GetAngularVelocity() < -Constants.max_rotation_speed) {
-        moto.right_wheel.SetAngularVelocity(-Constants.max_rotation_speed);
+      if (moto.right_wheel.GetAngularVelocity() > Constants.max_moto_speed) {
+        moto.right_wheel.SetAngularVelocity(Constants.max_moto_speed);
+      } else if (moto.right_wheel.GetAngularVelocity() < -Constants.max_moto_speed) {
+        moto.right_wheel.SetAngularVelocity(-Constants.max_moto_speed);
       }
-      if (moto.left_wheel.GetAngularVelocity() > Constants.max_rotation_speed) {
-        return moto.left_wheel.SetAngularVelocity(Constants.max_rotation_speed);
-      } else if (moto.left_wheel.GetAngularVelocity() < -Constants.max_rotation_speed) {
-        return moto.left_wheel.SetAngularVelocity(-Constants.max_rotation_speed);
+      if (moto.left_wheel.GetAngularVelocity() > Constants.max_moto_speed) {
+        return moto.left_wheel.SetAngularVelocity(Constants.max_moto_speed);
+      } else if (moto.left_wheel.GetAngularVelocity() < -Constants.max_moto_speed) {
+        return moto.left_wheel.SetAngularVelocity(-Constants.max_moto_speed);
       }
     };
 
