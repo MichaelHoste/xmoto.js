@@ -24,12 +24,11 @@ class Listeners
             createjs.Sound.play('PickUpStrawberry')
 
         # End of level
-        else if Listeners.does_contact_moto_rider(a, b, 'end_of_level')
+        else if Listeners.does_contact_moto_rider(a, b, 'end_of_level') and not @level.need_to_restart
           if @level.got_strawberries()
             createjs.Sound.play('EndOfLevel')
             @level.need_to_restart = true
-            console.log(JSON.stringify(@level.replay.frames))
-            #$.post('', { replay: LZString.compress(JSON.stringify(@level.replay.frames)) })
+            @save_replay(@level.replay)
 
         # Fall of rider
         else if Listeners.does_contact(a, b, 'rider', 'ground') and a.part != 'lower_leg' and b.part != 'lower_leg'
@@ -46,6 +45,13 @@ class Listeners
 
   @does_contact: (a, b, obj1, obj2) ->
     (a.name == obj1 and b.name == obj2) or (a.name == obj2 and b.name == obj1)
+
+  save_replay: (replay) ->
+    $.post('',
+      time:   replay.frames[replay.frames_count - 1]
+      frames: replay.frames_count
+      replay: ReplayConversionService.object_to_string(replay)
+    )
 
   kill_moto: ->
     moto = @level.moto

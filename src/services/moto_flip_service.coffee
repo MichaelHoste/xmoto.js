@@ -6,7 +6,7 @@
 # Careful, the position of the left wheel is assigned to the one of the
 # right wheel and vice-versa (this is symmetric, it's normal!)
 
-class MotoFlip
+class MotoFlipService
 
   @execute: (moto) ->
     body =
