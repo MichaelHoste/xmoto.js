@@ -48,7 +48,7 @@ class Listeners
 
   save_replay: (replay) ->
     $.post('',
-      time:   replay.frames[replay.frames_count - 1]
+      time:   @level.current_time
       frames: replay.frames_count
       replay: ReplayConversionService.object_to_string(replay)
     )

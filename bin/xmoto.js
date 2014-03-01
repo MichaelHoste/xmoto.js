@@ -691,13 +691,17 @@
     };
 
     Level.prototype.restart = function(save_replay) {
-      var entity, _i, _len, _ref;
+      var clone, entity, string, _i, _len, _ref;
       if (save_replay == null) {
         save_replay = false;
       }
       if (save_replay) {
         if ((!this.ghost.replay) || this.ghost.replay.frames_count() > this.replay.frames_count()) {
-          this.ghost = new Ghost(this, this.replay.clone());
+          console.log(this.replay);
+          string = ReplayConversionService.object_to_string(this.replay);
+          clone = ReplayConversionService.string_to_object(this, string);
+          console.log(clone);
+          this.ghost = new Ghost(this, clone);
         }
       }
       this.physics.steps = 0;
@@ -775,7 +779,7 @@
 
     Listeners.prototype.save_replay = function(replay) {
       return $.post('', {
-        time: replay.frames[replay.frames_count - 1],
+        time: this.level.current_time,
         frames: replay.frames_count,
         replay: ReplayConversionService.object_to_string(replay)
       });
@@ -2252,7 +2256,6 @@
       moto = this.level.moto;
       rider = this.level.moto.rider;
       frame = {
-        time: this.level.current_time,
         mirror: moto.mirror === -1,
         left_wheel: position_2d(moto.left_wheel),
         right_wheel: position_2d(moto.right_wheel),
@@ -2294,7 +2297,6 @@
       current_frame_weight = (ratio_fps - interpolation) / ratio_fps;
       next_frame_weight = interpolation / ratio_fps;
       frame = {
-        time: current_frame.time,
         mirror: current_frame.mirror
       };
       _ref = ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
@@ -2650,14 +2652,13 @@
   ReplayConversionService = (function() {
     function ReplayConversionService() {}
 
-    ReplayConversionService.object_to_string = function(replay) {
-      var element, frame, mirror, string, _i, _j, _len, _len1, _ref, _ref1;
+    ReplayConversionService.object_to_string = function(replay_object) {
+      var element, frame, string, _i, _j, _len, _len1, _ref, _ref1;
       string = '';
-      _ref = replay.frames;
+      _ref = replay_object.frames;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         frame = _ref[_i];
-        mirror = frame.mirror ? '1' : '0';
-        string += "" + frame.time + "|" + mirror;
+        string += frame.mirror ? '1' : '0';
         _ref1 = ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           element = _ref1[_j];
@@ -2665,15 +2666,51 @@
           string += frame[element].position.y.toFixed(2) + '';
           string += frame[element].angle.toFixed(2) + '';
         }
+        string += '|';
       }
-      console.log(string.length / replay.frames.length);
-      console.log(LZString.compress(string).length / replay.frames.length);
+      string = string.slice(0, -1);
       console.log(string.length);
       console.log(LZString.compress(string).length);
+      console.log(string);
       return string;
     };
 
-    ReplayConversionService.string_to_object = function(replay) {};
+    ReplayConversionService.string_to_object = function(level, replay_string) {
+      var axe, element, frame, frame_string, frames_string, number, object, position, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+      object = new Replay(level);
+      frames_string = replay_string.split('|');
+      for (_i = 0, _len = frames_string.length; _i < _len; _i++) {
+        frame_string = frames_string[_i];
+        frame = {};
+        frame['mirror'] = frame_string[0] === '1';
+        position = 1;
+        _ref = ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          element = _ref[_j];
+          frame[element] = {};
+          frame[element]['position'] = {};
+          _ref1 = ['x', 'y'];
+          for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+            axe = _ref1[_k];
+            number = this.next_number(frame_string, position);
+            frame[element]['position'][axe] = parseFloat(number);
+            position = position + number.length;
+          }
+          number = this.next_number(frame_string, position);
+          frame[element]['angle'] = parseFloat(number);
+          position = position + number.length;
+        }
+        object.frames.push(frame);
+      }
+      return object;
+    };
+
+    ReplayConversionService.next_number = function(string, position) {
+      var number, number_parts;
+      number = string.substring(position, position + 12);
+      number_parts = number.split('.');
+      return number_parts[0] + '.' + number_parts[1].substring(0, 2);
+    };
 
     return ReplayConversionService;
 

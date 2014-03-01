@@ -16,7 +16,7 @@ class Replay
     rider  = @level.moto.rider
 
     frame =
-      time:        @level.current_time
+      #time:        @level.current_time
       mirror:      moto.mirror == -1  # true if moto is reversed
       left_wheel:  position_2d(moto.left_wheel)
       right_wheel: position_2d(moto.right_wheel)
@@ -52,7 +52,6 @@ class Replay
     next_frame_weight    = interpolation               / ratio_fps
 
     frame =
-      time:   current_frame.time
       mirror: current_frame.mirror
 
     for part in ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg',
