@@ -3,10 +3,10 @@
 
 class ReplayConversionService
 
-  @object_to_string: (replay_object) ->
+  @frames_to_string: (frames) ->
     string = ''
 
-    for frame in replay_object.frames
+    for frame in frames
       string += if frame.mirror then '1' else '0'
       for element in [ 'left_wheel', 'right_wheel', 'body', 'torso',
                        'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm' ]
@@ -18,11 +18,10 @@ class ReplayConversionService
 
     return LZString.compressToBase64(string)
 
-  @string_to_object: (level, replay_string) ->
-    object = new Replay(level)
-
-    replay_string = LZString.decompressFromBase64(replay_string)
-    frames_string = replay_string.split('|')
+  @string_to_frames: (string) ->
+    frames = []
+    string = LZString.decompressFromBase64(string)
+    frames_string = string.split('|')
 
     for frame_string in frames_string
       frame = {}
@@ -40,9 +39,9 @@ class ReplayConversionService
         number = @next_number(frame_string, position)
         frame[element]['angle'] = parseFloat(number)
         position = position + number.length
-      object.frames.push(frame)
+      frames.push(frame)
 
-    return object
+    return frames
 
   # Take next number in a string from position (assuming numbers always have 2 digits)
   # ex: 1.4567.22578.22

@@ -16,7 +16,16 @@ class Constants
   @replay_fps = 10.0 # "fps / replay_fps = x" where x is an integer !
 
   # PATHS TO BACKEND
-  @scores_path = '/level_user_links'
+
+  @scores_path  = '/level_user_links'  # Path where to POST a score
+  @replays_path = '/data/Replays'      # Path where all the replay files are stored (ex. /data/Replays/1.replay)
+                                       # ...for better performances, replay files are publicly stored (flat !)
+
+  # SELECTORS FOR BACKEND (get important informations from the page DOM)
+
+  @current_user_selector      = "#current-user"         # ex. $("#current-user").attr('data-best-score-id')
+  @best_score_id_attribute    = "data-best-score-id"    #     must give the id from the current user's best score
+  @best_score_steps_attribute = "data-best-score-steps"
 
   # MOTO PARTS
 

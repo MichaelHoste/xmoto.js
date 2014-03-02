@@ -5,12 +5,38 @@ class Replay
     @frames  = []
     @physics = level.physics
     @success = false
+    @steps   = 0
 
   clone: ->
     new_replay = new Replay(@level)
     for frame in @frames
       new_replay.frames.push($.extend(true, {}, frame))
-    new_replay
+    new_replay.success = @success
+    new_replay.steps   = @steps
+    return new_replay
+
+  load: ->
+    selector     = $(Constants.current_user_selector)
+    replay_id    = selector.attr(Constants.best_score_id_attribute)
+    replay_steps = selector.attr(Constants.best_score_steps_attribute)
+    if selector.length && replay_id.length > 0
+      $.get("#{Constants.replays_path}/#{replay_id}.replay", (data) =>
+        @frames  = ReplayConversionService.string_to_frames(data)
+        @success = true
+        @steps   = parseInt(replay_steps)
+      )
+      return this
+    else
+      return null
+
+  save: ->
+    $.post(Constants.scores_path,
+      level:  @level.infos.identifier
+      time:   @level.current_time
+      steps:  @steps
+      fps:    Constants.replay_fps
+      replay: ReplayConversionService.frames_to_string(@frames)
+    )
 
   add_frame: ->
     moto   = @level.moto
@@ -59,15 +85,6 @@ class Replay
       frame[part] = weighted_position_2d(current_frame[part], next_frame[part],
                                          current_frame_weight, next_frame_weight)
     return frame
-
-  save: ->
-    $.post(Constants.scores_path,
-      level:  @level.infos.identifier
-      time:   @level.current_time
-      frames: @frames_count()
-      fps:    Constants.replay_fps
-      replay: ReplayConversionService.object_to_string(this)
-    )
 
 position_2d = (object) ->
   position:

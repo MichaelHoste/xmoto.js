@@ -130,6 +130,14 @@
 
     Constants.scores_path = '/level_user_links';
 
+    Constants.replays_path = '/data/Replays';
+
+    Constants.current_user_selector = "#current-user";
+
+    Constants.best_score_id_attribute = "data-best-score-id";
+
+    Constants.best_score_steps_attribute = "data-best-score-steps";
+
     Constants.body = {
       density: 1.5,
       restitution: 0.5,
@@ -897,12 +905,17 @@
     };
 
     Physics.prototype.restart = function() {
-      this.replay = this.level.replay;
-      this.player_ghost = this.level.ghosts.player;
-      if (this.replay.success) {
-        if ((!this.player_ghost.replay) || this.player_ghost.replay.frames_count() > this.replay.frames_count()) {
-          this.level.replay.save();
-          this.level.ghosts.player = new Ghost(this.level, this.replay.clone());
+      var player_ghost, replay;
+      replay = this.level.replay;
+      player_ghost = this.level.ghosts.player;
+      if (replay.success) {
+        console.log(replay.steps);
+        if ((!player_ghost.replay) || player_ghost.replay.steps > replay.steps) {
+          console.log('win');
+          replay.save();
+          this.level.ghosts.player = new Ghost(this.level, replay.clone());
+        } else {
+          console.log('fail');
         }
       }
       this.level.restart();
@@ -917,6 +930,7 @@
         this.world.Step(1.0 / Constants.fps, 10, 10);
         this.world.ClearForces();
         this.last_step += this.step;
+        this.level.replay.steps = this.steps;
         ratio = Constants.fps / Constants.replay_fps;
         if (this.steps % ratio === ratio - 1) {
           this.level.replay.add_frame();
@@ -1904,9 +1918,11 @@
 
   Ghosts = (function() {
     function Ghosts(level) {
+      var replay;
       this.level = level;
       this.assets = level.assets;
-      this.player = new Ghost(this.level, null);
+      replay = new Replay(this.level).load();
+      this.player = new Ghost(this.level, replay);
       this.others = [];
     }
 
@@ -2264,6 +2280,7 @@
       this.frames = [];
       this.physics = level.physics;
       this.success = false;
+      this.steps = 0;
     }
 
     Replay.prototype.clone = function() {
@@ -2274,7 +2291,37 @@
         frame = _ref[_i];
         new_replay.frames.push($.extend(true, {}, frame));
       }
+      new_replay.success = this.success;
+      new_replay.steps = this.steps;
       return new_replay;
+    };
+
+    Replay.prototype.load = function() {
+      var replay_id, replay_steps, selector,
+        _this = this;
+      selector = $(Constants.current_user_selector);
+      replay_id = selector.attr(Constants.best_score_id_attribute);
+      replay_steps = selector.attr(Constants.best_score_steps_attribute);
+      if (selector.length && replay_id.length > 0) {
+        $.get("" + Constants.replays_path + "/" + replay_id + ".replay", function(data) {
+          _this.frames = ReplayConversionService.string_to_frames(data);
+          _this.success = true;
+          return _this.steps = parseInt(replay_steps);
+        });
+        return this;
+      } else {
+        return null;
+      }
+    };
+
+    Replay.prototype.save = function() {
+      return $.post(Constants.scores_path, {
+        level: this.level.infos.identifier,
+        time: this.level.current_time,
+        steps: this.steps,
+        fps: Constants.replay_fps,
+        replay: ReplayConversionService.frames_to_string(this.frames)
+      });
     };
 
     Replay.prototype.add_frame = function() {
@@ -2330,16 +2377,6 @@
         frame[part] = weighted_position_2d(current_frame[part], next_frame[part], current_frame_weight, next_frame_weight);
       }
       return frame;
-    };
-
-    Replay.prototype.save = function() {
-      return $.post(Constants.scores_path, {
-        level: this.level.infos.identifier,
-        time: this.level.current_time,
-        frames: this.frames_count(),
-        fps: Constants.replay_fps,
-        replay: ReplayConversionService.object_to_string(this)
-      });
     };
 
     return Replay;
@@ -2687,16 +2724,15 @@
   ReplayConversionService = (function() {
     function ReplayConversionService() {}
 
-    ReplayConversionService.object_to_string = function(replay_object) {
-      var element, frame, string, _i, _j, _len, _len1, _ref, _ref1;
+    ReplayConversionService.frames_to_string = function(frames) {
+      var element, frame, string, _i, _j, _len, _len1, _ref;
       string = '';
-      _ref = replay_object.frames;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        frame = _ref[_i];
+      for (_i = 0, _len = frames.length; _i < _len; _i++) {
+        frame = frames[_i];
         string += frame.mirror ? '1' : '0';
-        _ref1 = ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          element = _ref1[_j];
+        _ref = ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          element = _ref[_j];
           string += frame[element].position.x.toFixed(2) + '';
           string += frame[element].position.y.toFixed(2) + '';
           string += frame[element].angle.toFixed(2) + '';
@@ -2707,11 +2743,11 @@
       return LZString.compressToBase64(string);
     };
 
-    ReplayConversionService.string_to_object = function(level, replay_string) {
-      var axe, element, frame, frame_string, frames_string, number, object, position, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
-      object = new Replay(level);
-      replay_string = LZString.decompressFromBase64(replay_string);
-      frames_string = replay_string.split('|');
+    ReplayConversionService.string_to_frames = function(string) {
+      var axe, element, frame, frame_string, frames, frames_string, number, position, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+      frames = [];
+      string = LZString.decompressFromBase64(string);
+      frames_string = string.split('|');
       for (_i = 0, _len = frames_string.length; _i < _len; _i++) {
         frame_string = frames_string[_i];
         frame = {};
@@ -2733,9 +2769,9 @@
           frame[element]['angle'] = parseFloat(number);
           position = position + number.length;
         }
-        object.frames.push(frame);
+        frames.push(frame);
       }
-      return object;
+      return frames;
     };
 
     ReplayConversionService.next_number = function(string, position) {

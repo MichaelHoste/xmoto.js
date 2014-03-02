@@ -3,7 +3,11 @@ class Ghosts
   constructor: (level) ->
     @level   = level
     @assets  = level.assets
-    @player  = new Ghost(@level, null)
+
+    # Create replay and load the user's best score (from an id in the DOM)
+    replay   = new Replay(@level).load()
+    @player  = new Ghost(@level, replay)
+
     @others  = []
 
   display: ->

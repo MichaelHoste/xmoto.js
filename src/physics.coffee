@@ -42,14 +42,18 @@ class Physics
     @level.replay.add_frame()
 
   restart: ->
-    @replay       = @level.replay
-    @player_ghost = @level.ghosts.player
+    replay       = @level.replay
+    player_ghost = @level.ghosts.player
 
     # save replay if better (local + server)
-    if @replay.success
-      if (not @player_ghost.replay) || @player_ghost.replay.frames_count() > @replay.frames_count()
-        @level.replay.save()
-        @level.ghosts.player = new Ghost(@level, @replay.clone())
+    if replay.success
+      console.log(replay.steps)
+      if (not player_ghost.replay) || player_ghost.replay.steps > replay.steps
+        console.log('win')
+        replay.save()
+        @level.ghosts.player = new Ghost(@level, replay.clone())
+      else
+        console.log('fail')
 
     @level.restart()
     @init()
@@ -60,6 +64,8 @@ class Physics
       @world.Step(1.0/Constants.fps, 10, 10)
       @world.ClearForces()
       @last_step += @step
+
+      @level.replay.steps = @steps
 
       ratio = Constants.fps / Constants.replay_fps
       if @steps % ratio == ratio - 1
