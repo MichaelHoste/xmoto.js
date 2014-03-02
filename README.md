@@ -52,6 +52,8 @@ Use this file : http://xmoto.tuxfamily.org/levels.xml
 
 ## TODO
 
+ * Dezoom with speed
+ * Move camera left/right/up/down depending on moto direction and moto speed
  * Optimization : hide the ghosts and entities that are off the screen
  * Understand impact of "scale" and "depth" on edges.
  * Optimization : group the blocks by texture and fill the texture just once by group.

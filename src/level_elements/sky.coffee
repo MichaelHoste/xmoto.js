@@ -23,7 +23,9 @@ class Sky
   init: ->
     @assets.textures.push(@file_name)
 
-  display: (ctx) ->
+  display: ->
+    ctx = @level.ctx
+
     ctx.beginPath()
     ctx.moveTo(@level.canvas_width, @level.canvas_height)
     ctx.lineTo(0,                   @level.canvas_height)

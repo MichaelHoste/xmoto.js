@@ -42,14 +42,14 @@ class Physics
     @level.replay.add_frame()
 
   restart: ->
-    @replay = @level.replay
-    @ghost  = @level.ghost
+    @replay       = @level.replay
+    @player_ghost = @level.ghosts.player
 
     # save replay if better (local + server)
     if @replay.success
-      if (not @ghost.replay) || @ghost.replay.frames_count() > @replay.frames_count()
+      if (not @player_ghost.replay) || @player_ghost.replay.frames_count() > @replay.frames_count()
         @level.replay.save()
-        @level.ghost = new Ghost(@level, @replay.clone())
+        @level.ghosts.player = new Ghost(@level, @replay.clone())
 
     @level.restart()
     @init()

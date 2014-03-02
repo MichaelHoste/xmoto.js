@@ -25,9 +25,11 @@ class Level
     # Listeners
     @listeners     = new Listeners(this)
 
-    # Replay (for ghost)
+    # Replay: actual run of the player
     @replay        = new Replay(this)
-    @ghost         = new Ghost(this, null)
+
+    # Ghosts: previous saved run of various players (included himself)
+    @ghosts        = new Ghosts(this)
 
     # Moto (level independant)
     @moto          = new Moto(this)
@@ -71,7 +73,7 @@ class Level
 
     # Moto and ghosts (level independant)
     @moto.init()
-    @ghost.init()
+    @ghosts.init()
 
     @input.init()
     @listeners.init()
@@ -89,7 +91,7 @@ class Level
     # visible screen limits of the world (don't show anything outside of these limits)
     @compute_visibility()
 
-    @sky.display(@ctx)
+    @sky.display()
 
     # Redraw buffer if needed (the buffer is bigger than the canvas)
     # And display it (copy the right pixels from the buffer to the canvas)
@@ -104,12 +106,11 @@ class Level
     @ctx.translate(-@object_to_follow().position().x, -@object_to_follow().position().y - 0.25) # Camera on moto
 
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
-    @entities.display_items(@ctx)
-    @moto    .display(@ctx)
-    if @ghost
-      @ghost.display(@ctx)
+    @entities.display_items()
+    @moto    .display()
+    @ghosts  .display()
 
-    @particles.display(@ctx)
+    @particles.display()
 
     @physics.display() if Constants.debug
 

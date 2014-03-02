@@ -130,7 +130,9 @@ class Entities
         if visible_entity(@level.buffer.visible, entity)
           @display_entity(ctx, entity)
 
-  display_items: (ctx) ->
+  display_items: ->
+    ctx = @level.ctx
+
     for entity in @list
       if entity.type_id == 'EndOfLevel' or entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
         if visible_entity(@level.visible, entity)

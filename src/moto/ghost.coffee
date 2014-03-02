@@ -2,9 +2,7 @@ class Ghost
 
   constructor: (level, replay) ->
     @level   = level
-    @assets  = level.assets
     @replay  = replay
-    @physics = level.physics
 
   display: ->
     if @replay
@@ -22,15 +20,6 @@ class Ghost
       Rider.display_part(@level, @frame.lower_leg, Constants.lower_leg, mirror, 'ghost_')
       Rider.display_part(@level, @frame.upper_arm, Constants.upper_arm, mirror, 'ghost_')
       Rider.display_part(@level, @frame.lower_arm, Constants.lower_arm, mirror, 'ghost_')
-
-  init: ->
-    # Assets
-    parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
-              Constants.upper_arm, Constants.lower_arm,
-              Constants.body, Constants.left_wheel, Constants.right_wheel,
-              Constants.left_axle, Constants.right_axle ]
-    for part in parts
-      @assets.moto.push(part.ghost_texture)
 
   current_frame: ->
     @replay.current_frame()

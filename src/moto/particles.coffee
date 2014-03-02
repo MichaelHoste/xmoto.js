@@ -37,7 +37,9 @@ class Particles
 
     @list.push(particle)
 
-  display: (ctx) ->
+  display: ->
+    ctx = @level.ctx
+
     for particle in @list
       position = particle.GetPosition()
 

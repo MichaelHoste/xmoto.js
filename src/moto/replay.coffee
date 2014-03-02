@@ -52,6 +52,7 @@ class Replay
     current_frame_weight = (ratio_fps - interpolation) / ratio_fps
     next_frame_weight    = interpolation               / ratio_fps
 
+    frame = {}
     frame['mirror'] = current_frame.mirror
     for part in ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg',
                  'lower_leg', 'upper_arm', 'lower_arm']
