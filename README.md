@@ -50,10 +50,6 @@ Then put result lines in a bash file at the root of the project, chmod +x the fi
 
 Use this file : http://xmoto.tuxfamily.org/levels.
 
-### Note about importation
-
-At least 5 levels have the same id (name) but with uppercases or lowercases. This is bad for postgresql so I renamed them by hand with a "-" at the end
-
 ## TODO
 
  * Dezoom with speed
