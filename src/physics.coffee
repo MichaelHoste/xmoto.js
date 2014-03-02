@@ -47,8 +47,11 @@ class Physics
       @world.Step(1.0/Constants.fps, 10, 10)
       @world.ClearForces()
       @last_step += @step
-      if @steps % (Constants.fps / Constants.replay_fps) == 0
+
+      ratio = Constants.fps / Constants.replay_fps
+      if @steps % ratio == ratio - 1
         @level.replay.add_frame()
+
       @steps = @steps + 1
 
   # for debugging

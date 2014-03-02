@@ -13,7 +13,7 @@ class Constants
   # FRAMERATE
 
   @fps        = 60.0
-  @replay_fps = 10.0
+  @replay_fps = 10.0 # "fps / replay_fps = x" where x is an integer !
 
   # MOTO PARTS
 

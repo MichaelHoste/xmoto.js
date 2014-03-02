@@ -16,11 +16,6 @@ class ReplayConversionService
       string += '|'
     string = string.slice(0, -1) # remove last '|'
 
-    console.log(string.length)
-    console.log(LZString.compress(string).length)
-
-    console.log(string)
-
     return string
 
   @string_to_object: (level, replay_string) ->
