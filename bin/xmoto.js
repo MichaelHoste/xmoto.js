@@ -2294,13 +2294,11 @@
     };
 
     Replay.prototype.interpolate_frames = function(current_frame, next_frame, interpolation) {
-      var current_frame_weight, frame, next_frame_weight, part, ratio_fps, _i, _len, _ref;
+      var current_frame_weight, next_frame_weight, part, ratio_fps, _i, _len, _ref;
       ratio_fps = Constants.fps / Constants.replay_fps;
       current_frame_weight = (ratio_fps - interpolation) / ratio_fps;
       next_frame_weight = interpolation / ratio_fps;
-      frame = {
-        mirror: current_frame.mirror
-      };
+      frame['mirror'] = current_frame.mirror;
       _ref = ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         part = _ref[_i];
