@@ -691,17 +691,13 @@
     };
 
     Level.prototype.restart = function(save_replay) {
-      var clone, entity, string, _i, _len, _ref;
+      var entity, _i, _len, _ref;
       if (save_replay == null) {
         save_replay = false;
       }
       if (save_replay) {
         if ((!this.ghost.replay) || this.ghost.replay.frames_count() > this.replay.frames_count()) {
-          console.log(this.replay);
-          string = ReplayConversionService.object_to_string(this.replay);
-          clone = ReplayConversionService.string_to_object(this, string);
-          console.log(clone);
-          this.ghost = new Ghost(this, clone);
+          this.ghost = new Ghost(this, this.replay.clone());
         }
       }
       this.physics.steps = 0;

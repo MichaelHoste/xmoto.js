@@ -153,11 +153,7 @@ class Level
   restart: (save_replay = false) ->
     if save_replay
       if (not @ghost.replay) or @ghost.replay.frames_count() > @replay.frames_count()
-        console.log(@replay)
-        string = ReplayConversionService.object_to_string(@replay)
-        clone  = ReplayConversionService.string_to_object(this, string)
-        console.log(clone)
-        @ghost  = new Ghost(this, clone)
+        @ghost  = new Ghost(this, @replay.clone())
     @physics.steps = 0
     @replay = new Replay(this)
 
