@@ -4,6 +4,7 @@ class Replay
     @level   = level
     @frames  = []
     @physics = level.physics
+    @success = false
 
   clone: ->
     new_replay = new Replay(@level)
@@ -59,6 +60,15 @@ class Replay
       frame[part] = weighted_position_2d(current_frame[part], next_frame[part],
                                          current_frame_weight, next_frame_weight)
     return frame
+
+  save: ->
+    $.post(Constants.scores_path,
+      level:  @level.infos.identifier
+      time:   @level.current_time
+      frames: @frames_count()
+      fps:    Constants.replay_fps
+      replay: ReplayConversionService.object_to_string(this)
+    )
 
 position_2d = (object) ->
   position:

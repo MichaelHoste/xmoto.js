@@ -41,7 +41,7 @@ class Input
         when 39
           @right = true
         when 13
-          @level.restart()
+          @level.need_to_restart = true
         when 32
           @level.flip_moto() if not @level.moto.dead
         when 85 # u

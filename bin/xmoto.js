@@ -128,6 +128,8 @@
 
     Constants.replay_fps = 10.0;
 
+    Constants.scores_path = '/level_user_links';
+
     Constants.body = {
       density: 1.5,
       restitution: 0.5,
@@ -416,7 +418,7 @@
           case 39:
             return _this.right = true;
           case 13:
-            return _this.level.restart();
+            return _this.level.need_to_restart = true;
           case 32:
             if (!_this.level.moto.dead) {
               return _this.level.flip_moto();
@@ -612,9 +614,6 @@
     };
 
     Level.prototype.display = function() {
-      if (this.need_to_restart) {
-        this.restart(true);
-      }
       if (!this.canvas_width) {
         this.init_canvas();
       }
@@ -690,31 +689,22 @@
       return true;
     };
 
-    Level.prototype.restart = function(save_replay) {
-      var entity, _i, _len, _ref;
-      if (save_replay == null) {
-        save_replay = false;
-      }
-      if (save_replay) {
-        if ((!this.ghost.replay) || this.ghost.replay.frames_count() > this.replay.frames_count()) {
-          this.ghost = new Ghost(this, this.replay.clone());
-        }
-      }
-      this.physics.steps = 0;
+    Level.prototype.restart = function() {
+      var entity, _i, _len, _ref, _results;
       this.replay = new Replay(this);
       this.moto.destroy();
       this.moto = new Moto(this, false);
       this.moto.init();
       this.start_time = new Date().getTime();
       this.current_time = 0;
-      this.physics.init();
       this.update_timer(true);
       _ref = this.entities.strawberries;
+      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
-        entity.display = true;
+        _results.push(entity.display = true);
       }
-      return this.need_to_restart = false;
+      return _results;
     };
 
     Level.prototype.object_to_follow = function() {
@@ -751,9 +741,7 @@
             }
           } else if (Listeners.does_contact_moto_rider(a, b, 'end_of_level') && !_this.level.need_to_restart) {
             if (_this.level.got_strawberries()) {
-              createjs.Sound.play('EndOfLevel');
-              _this.level.need_to_restart = true;
-              return _this.save_replay(_this.level.replay);
+              return _this.trigger_restart();
             }
           } else if (Listeners.does_contact(a, b, 'rider', 'ground') && a.part !== 'lower_leg' && b.part !== 'lower_leg') {
             return _this.kill_moto();
@@ -773,12 +761,10 @@
       return (a.name === obj1 && b.name === obj2) || (a.name === obj2 && b.name === obj1);
     };
 
-    Listeners.prototype.save_replay = function(replay) {
-      return $.post('', {
-        time: this.level.current_time,
-        frames: replay.frames_count,
-        replay: ReplayConversionService.object_to_string(replay)
-      });
+    Listeners.prototype.trigger_restart = function() {
+      createjs.Sound.play('EndOfLevel');
+      this.level.replay.success = true;
+      return this.level.need_to_restart = true;
     };
 
     Listeners.prototype.kill_moto = function() {
@@ -855,7 +841,7 @@
       return play_level($("#game").data('current-level'));
     } else if (location.search !== '') {
       return select_level_from_url();
-    } else {
+    } else if ($("#levels").length) {
       return play_level($("#levels option:selected").val());
     }
   });
@@ -912,6 +898,19 @@
       return this.level.replay.add_frame();
     };
 
+    Physics.prototype.restart = function() {
+      this.replay = this.level.replay;
+      this.ghost = this.level.ghost;
+      if (this.replay.success) {
+        if ((!this.ghost.replay) || this.ghost.replay.frames_count() > this.replay.frames_count()) {
+          this.level.replay.save();
+          this.level.ghost = new Ghost(this.level, this.replay.clone());
+        }
+      }
+      this.level.restart();
+      return this.init();
+    };
+
     Physics.prototype.update = function() {
       var ratio, _results;
       _results = [];
@@ -924,7 +923,12 @@
         if (this.steps % ratio === ratio - 1) {
           this.level.replay.add_frame();
         }
-        _results.push(this.steps = this.steps + 1);
+        if (this.level.need_to_restart) {
+          this.restart();
+          _results.push(this.level.need_to_restart = false);
+        } else {
+          _results.push(this.steps = this.steps + 1);
+        }
       }
       return _results;
     };
@@ -2235,6 +2239,7 @@
       this.level = level;
       this.frames = [];
       this.physics = level.physics;
+      this.success = false;
     }
 
     Replay.prototype.clone = function() {
@@ -2302,6 +2307,16 @@
         frame[part] = weighted_position_2d(current_frame[part], next_frame[part], current_frame_weight, next_frame_weight);
       }
       return frame;
+    };
+
+    Replay.prototype.save = function() {
+      return $.post(Constants.scores_path, {
+        level: this.level.infos.identifier,
+        time: this.level.current_time,
+        frames: this.frames_count(),
+        fps: Constants.replay_fps,
+        replay: ReplayConversionService.object_to_string(this)
+      });
     };
 
     return Replay;
@@ -2666,12 +2681,13 @@
         string += '|';
       }
       string = string.slice(0, -1);
-      return string;
+      return LZString.compressToBase64(string);
     };
 
     ReplayConversionService.string_to_object = function(level, replay_string) {
       var axe, element, frame, frame_string, frames_string, number, object, position, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
       object = new Replay(level);
+      replay_string = LZString.decompressFromBase64(replay_string);
       frames_string = replay_string.split('|');
       for (_i = 0, _len = frames_string.length; _i < _len; _i++) {
         frame_string = frames_string[_i];

@@ -26,9 +26,7 @@ class Listeners
         # End of level
         else if Listeners.does_contact_moto_rider(a, b, 'end_of_level') and not @level.need_to_restart
           if @level.got_strawberries()
-            createjs.Sound.play('EndOfLevel')
-            @level.need_to_restart = true
-            @save_replay(@level.replay)
+            @trigger_restart()
 
         # Fall of rider
         else if Listeners.does_contact(a, b, 'rider', 'ground') and a.part != 'lower_leg' and b.part != 'lower_leg'
@@ -46,12 +44,10 @@ class Listeners
   @does_contact: (a, b, obj1, obj2) ->
     (a.name == obj1 and b.name == obj2) or (a.name == obj2 and b.name == obj1)
 
-  save_replay: (replay) ->
-    $.post('',
-      time:   @level.current_time
-      frames: replay.frames_count
-      replay: ReplayConversionService.object_to_string(replay)
-    )
+  trigger_restart: ->
+    createjs.Sound.play('EndOfLevel')
+    @level.replay.success  = true
+    @level.need_to_restart = true
 
   kill_moto: ->
     moto = @level.moto

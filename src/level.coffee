@@ -82,9 +82,6 @@ class Level
     @ctx.lineWidth = 0.01
 
   display: ->
-    if @need_to_restart
-      @restart(true)
-
     @init_canvas() if not @canvas_width
 
     @update_timer()
@@ -150,11 +147,7 @@ class Level
         return false
     return true
 
-  restart: (save_replay = false) ->
-    if save_replay
-      if (not @ghost.replay) or @ghost.replay.frames_count() > @replay.frames_count()
-        @ghost  = new Ghost(this, @replay.clone())
-    @physics.steps = 0
+  restart: ->
     @replay = new Replay(this)
 
     @moto.destroy()
@@ -163,13 +156,10 @@ class Level
 
     @start_time   = new Date().getTime()
     @current_time = 0
-    @physics.init()
     @update_timer(true)
 
     for entity in @entities.strawberries
       entity.display = true
-
-    @need_to_restart = false
 
   object_to_follow: ->
     @moto

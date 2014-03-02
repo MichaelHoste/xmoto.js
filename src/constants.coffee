@@ -15,6 +15,9 @@ class Constants
   @fps        = 60.0
   @replay_fps = 10.0 # "fps / replay_fps = x" where x is an integer !
 
+  # PATHS TO BACKEND
+  @scores_path = '/level_user_links'
+
   # MOTO PARTS
 
   @body =

@@ -16,11 +16,12 @@ class ReplayConversionService
       string += '|'
     string = string.slice(0, -1) # remove last '|'
 
-    return string
+    return LZString.compressToBase64(string)
 
   @string_to_object: (level, replay_string) ->
     object = new Replay(level)
 
+    replay_string = LZString.decompressFromBase64(replay_string)
     frames_string = replay_string.split('|')
 
     for frame_string in frames_string

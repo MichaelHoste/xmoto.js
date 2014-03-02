@@ -41,6 +41,19 @@ class Physics
     @steps     = 0
     @level.replay.add_frame()
 
+  restart: ->
+    @replay = @level.replay
+    @ghost  = @level.ghost
+
+    # save replay if better (local + server)
+    if @replay.success
+      if (not @ghost.replay) || @ghost.replay.frames_count() > @replay.frames_count()
+        @level.replay.save()
+        @level.ghost = new Ghost(@level, @replay.clone())
+
+    @level.restart()
+    @init()
+
   update: ->
     while (new Date()).getTime() - @last_step > @step
       @level.input.move()
@@ -52,7 +65,11 @@ class Physics
       if @steps % ratio == ratio - 1
         @level.replay.add_frame()
 
-      @steps = @steps + 1
+      if @level.need_to_restart
+        @restart()
+        @level.need_to_restart = false
+      else
+        @steps = @steps + 1
 
   # for debugging
   display: ->

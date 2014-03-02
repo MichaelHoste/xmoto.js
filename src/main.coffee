@@ -51,7 +51,7 @@ $ ->
       play_level($("#game").data('current-level'))
   else if location.search != ''
     select_level_from_url()
-  else
+  else if $("#levels").length
     play_level($("#levels option:selected").val())
 
   #full_screen()
