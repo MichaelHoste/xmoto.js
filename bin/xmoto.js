@@ -923,23 +923,23 @@
     };
 
     Physics.prototype.update = function() {
-      var ratio, _results;
+      var _results;
       _results = [];
       while ((new Date()).getTime() - this.last_step > this.step) {
+        this.steps = this.steps + 1;
+        this.last_step += this.step;
+        this.level.replay.steps = this.steps;
         this.level.input.move();
         this.world.Step(1.0 / Constants.fps, 10, 10);
         this.world.ClearForces();
-        this.last_step += this.step;
-        this.level.replay.steps = this.steps;
-        ratio = Constants.fps / Constants.replay_fps;
-        if (this.steps % ratio === ratio - 1) {
+        if (this.steps % (Constants.fps / Constants.replay_fps) === 0) {
           this.level.replay.add_frame();
         }
         if (this.level.need_to_restart) {
           this.restart();
           _results.push(this.level.need_to_restart = false);
         } else {
-          _results.push(this.steps = this.steps + 1);
+          _results.push(void 0);
         }
       }
       return _results;

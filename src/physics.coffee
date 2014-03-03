@@ -60,22 +60,20 @@ class Physics
 
   update: ->
     while (new Date()).getTime() - @last_step > @step
+      @steps = @steps + 1
+      @last_step += @step
+      @level.replay.steps = @steps
+
       @level.input.move()
       @world.Step(1.0/Constants.fps, 10, 10)
       @world.ClearForces()
-      @last_step += @step
 
-      @level.replay.steps = @steps
-
-      ratio = Constants.fps / Constants.replay_fps
-      if @steps % ratio == ratio - 1
+      if @steps % (Constants.fps / Constants.replay_fps) == 0
         @level.replay.add_frame()
 
       if @level.need_to_restart
         @restart()
         @level.need_to_restart = false
-      else
-        @steps = @steps + 1
 
   # for debugging
   display: ->
