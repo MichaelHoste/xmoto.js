@@ -50,6 +50,7 @@ class Physics
       console.log(replay.steps)
       if (not player_ghost.replay) || player_ghost.replay.steps > replay.steps
         console.log('win')
+        @level.replay.add_frame() # add last frame (not always in timing of replay_fps but nicer when drawing replay)
         replay.save()
         @level.ghosts.player = new Ghost(@level, replay.clone())
       else

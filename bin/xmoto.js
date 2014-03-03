@@ -912,6 +912,7 @@
         console.log(replay.steps);
         if ((!player_ghost.replay) || player_ghost.replay.steps > replay.steps) {
           console.log('win');
+          this.level.replay.add_frame();
           replay.save();
           this.level.ghosts.player = new Ghost(this.level, replay.clone());
         } else {
