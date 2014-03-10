@@ -432,15 +432,11 @@
               return _this.level.flip_moto();
             }
             break;
-          case 85:
-            switch (_this.level.render_mode) {
-              case "normal":
-                return _this.level.set_render_mode("ugly");
-              case "ugly":
-                return _this.level.set_render_mode("uglyOver");
-              case "uglyOver":
-                return _this.level.set_render_mode("normal");
-            }
+          case 67:
+            return $.post('capture', {
+              steps: _this.level.physics.steps,
+              image: $("#game")[0].toDataURL()
+            });
         }
       });
       return $(document).on('keyup', function(event) {
@@ -587,7 +583,6 @@
       this.script = new Script(this);
       this.entities = new Entities(this);
       this.buffer = new Buffer(this);
-      this.render_mode = "normal";
     }
 
     Level.prototype.load_from_file = function(file_name) {
@@ -1521,27 +1516,18 @@
 
     Entities.prototype.display_entity = function(ctx, entity) {
       var num, texture_name;
-      if (this.level.render_mode === "normal" || this.level.render_mode === "uglyOver") {
-        if (entity.frames) {
-          num = this.level.current_time % (entity.frames * entity.delay * 1000);
-          num = Math.floor(num / (entity.delay * 1000));
-          texture_name = frame_name(entity, num);
-        } else {
-          texture_name = entity.file;
-        }
-        ctx.save();
-        ctx.translate(entity.position.x, entity.position.y);
-        ctx.scale(1, -1);
-        ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
-        ctx.restore();
+      if (entity.frames) {
+        num = this.level.current_time % (entity.frames * entity.delay * 1000);
+        num = Math.floor(num / (entity.delay * 1000));
+        texture_name = frame_name(entity, num);
+      } else {
+        texture_name = entity.file;
       }
-      if (this.level.render_mode === "ugly" || this.level.render_mode === "uglyOver") {
-        this.level.ctx.beginPath();
-        this.level.ctx.strokeStyle = "#0000FF";
-        this.level.ctx.lineWidth = 0.05;
-        this.level.ctx.arc(entity.position.x + entity.center.x - entity.size.width / 2, entity.position.y + entity.center.y - entity.size.height / 2, entity.size.r, 0, 2 * Math.PI);
-        return this.level.ctx.stroke();
-      }
+      ctx.save();
+      ctx.translate(entity.position.x, entity.position.y);
+      ctx.scale(1, -1);
+      ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
+      return ctx.restore();
     };
 
     Entities.prototype.entity_texture_name = function(entity) {

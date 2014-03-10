@@ -49,8 +49,6 @@ class Level
     # Buffer
     @buffer        = new Buffer(this)
 
-    @render_mode   = "normal"
-
   load_from_file: (file_name) ->
     $.ajax({
       type:     "GET",

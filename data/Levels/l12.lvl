@@ -220,7 +220,7 @@
 		<size r="0.400000"/>
 		<position x="-17.000000" y="-8.000000"/>
 		<param name="z" value="-1"/>
-		<param name="name" value="HangningVines2"/>
+		<param name="name" value="HangingVines2"/>
 	</entity>
 	<entity id="MyWrecker0" typeid="Wrecker">
 		<size r="0.400000"/>

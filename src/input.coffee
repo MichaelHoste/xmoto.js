@@ -44,11 +44,11 @@ class Input
           @level.need_to_restart = true
         when 32
           @level.flip_moto() if not @level.moto.dead
-        when 85 # u
-          switch @level.render_mode
-            when "normal"   then @level.set_render_mode("ugly")
-            when "ugly"     then @level.set_render_mode("uglyOver")
-            when "uglyOver" then @level.set_render_mode("normal")
+        when 67
+          $.post('capture',
+            steps: @level.physics.steps
+            image: $("#game")[0].toDataURL()
+          )
     )
 
     $(document).on('keyup', (event) =>
