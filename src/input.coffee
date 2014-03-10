@@ -45,10 +45,12 @@ class Input
         when 32
           @level.flip_moto() if not @level.moto.dead
         when 67
-          $.post('capture',
+          url = document.URL
+          url = if url.substr(url.length-1) != '/' then "#{url}/capture" else "#{url}capture"
+          $.post(url,
             steps: @level.physics.steps
             image: $("#game")[0].toDataURL()
-          )
+          ).done( -> console.log("Capture uploaded")).fail( -> console.log("Capture failed"))
     )
 
     $(document).on('keyup', (event) =>
