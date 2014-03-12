@@ -5,7 +5,6 @@ class Constants
   # GENERAL
 
   @debug          = false
-
   @gravity        =  9.81 # Default gravity of the game
   @max_moto_speed = 70.00 # Max rotation speed of the wheels. Limit the max speed of the moto
   @air_density    =  0.03 # Friction of air
@@ -14,6 +13,12 @@ class Constants
 
   @fps        = 60.0
   @replay_fps = 10.0 # "fps / replay_fps = x" where x is an integer !
+
+  # DISPLAY
+
+  @zoom =
+    x:  85.0
+    y: -85.0
 
   # PATHS TO BACKEND
 

@@ -10,8 +10,8 @@ class Level
 
     # level unities * scale = pixels
     @scale =
-      x:  70
-      y: -70
+      x: Constants.zoom.x
+      y: Constants.zoom.y
 
     # Assets manager
     @assets        = new Assets()
@@ -83,7 +83,6 @@ class Level
 
   display: ->
     @init_canvas() if not @canvas_width
-
     @update_timer()
 
     # visible screen limits of the world (don't show anything outside of these limits)

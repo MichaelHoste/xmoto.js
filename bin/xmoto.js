@@ -62,8 +62,8 @@
         y: moto.position().y
       };
       this.buffer_scale = {
-        x: this.level.scale.x > 70 ? 70 : this.level.scale.x,
-        y: this.level.scale.y < -70 ? -70 : this.level.scale.y
+        x: this.level.scale.x > Constants.zoom.x ? Constants.zoom.x : this.level.scale.x,
+        y: this.level.scale.y < Constants.zoom.y ? Constants.zoom.y : this.level.scale.y
       };
       this.compute_visibility();
       this.ctx.clearRect(0, 0, this.canvas_width, this.canvas_height);
@@ -127,6 +127,11 @@
     Constants.fps = 60.0;
 
     Constants.replay_fps = 10.0;
+
+    Constants.zoom = {
+      x: 85.0,
+      y: -85.0
+    };
 
     Constants.scores_path = '/level_user_links';
 
@@ -460,41 +465,13 @@
       });
     };
 
-    Input.prototype.init_zoom = function() {
-      var canvas, scroll,
-        _this = this;
-      scroll = function(event) {
-        var delta;
-        if (event.wheelDelta) {
-          delta = event.wheelDelta / 40;
-        } else if (event.detail) {
-          delta = -event.detail;
-        } else {
-          delta = 0;
-        }
-        _this.level.scale.x += (_this.level.scale.x / 200) * delta;
-        _this.level.scale.y += (_this.level.scale.y / 200) * delta;
-        if (_this.level.scale.x < 35) {
-          _this.level.scale.x = 35;
-        }
-        if (_this.level.scale.y > -35) {
-          _this.level.scale.y = -35;
-        }
-        if (_this.level.scale.x > 200) {
-          _this.level.scale.x = 200;
-        }
-        if (_this.level.scale.y < -200) {
-          _this.level.scale.y = -200;
-        }
-        return event.preventDefault() && false;
-      };
-      canvas = $('#game').get(0);
-      canvas.addEventListener('DOMMouseScroll', scroll, false);
-      return canvas.addEventListener('mousewheel', scroll, false);
-    };
+    Input.prototype.init_zoom = function() {};
 
     Input.prototype.move = function() {
-      var air_density, drag_force, force, moto, object_penetration, rider, squared_speed, v;
+      var air_density, drag_force, force, moto, object_penetration, rider, speed, squared_speed, v;
+      speed = Math2D.distance_between_points(new b2Vec2(0, 0), this.level.moto.body.GetLinearVelocity());
+      this.level.scale.x = this.level.scale.x * 0.99 + (Constants.zoom.x / (1.0 + speed / 10.0)) * 0.01;
+      this.level.scale.y = this.level.scale.y * 0.99 + (Constants.zoom.y / (1.0 + speed / 10.0)) * 0.01;
       force = 24.1;
       moto = this.level.moto;
       rider = moto.rider;
@@ -571,8 +548,8 @@
       this.canvas = $('#game').get(0);
       this.ctx = this.canvas.getContext('2d');
       this.scale = {
-        x: 70,
-        y: -70
+        x: Constants.zoom.x,
+        y: Constants.zoom.y
       };
       this.assets = new Assets();
       this.physics = new Physics(this);

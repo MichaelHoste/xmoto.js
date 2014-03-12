@@ -10,8 +10,8 @@ class Buffer
     @canvas = $('#buffer').get(0)
     @ctx    = @canvas.getContext('2d')
 
-    # can be any size, but we prefer to be close to default scale of the game
-    # for better image quality
+    # can start at any size, but we prefer to be close to default scale
+    # of the main canvas for better image quality
     @buffer_scale =
       x: @level.scale.x
       y: @level.scale.y
@@ -50,11 +50,11 @@ class Buffer
       x: moto.position().x
       y: moto.position().y
 
-    # Save buffer scale at the moment of the redrawn
-    # (minimum 70 because or else the quality is too high and the buffer too small => waste of ressources)
+    # Define buffer scale at the moment of the redrawn
+    # (minimum the value of the default zoom, or else the quality is too high and better have a bigger buffer)
     @buffer_scale =
-      x: if @level.scale.x > 70  then  70 else @level.scale.x
-      y: if @level.scale.y < -70 then -70 else @level.scale.y
+      x: if @level.scale.x > Constants.zoom.x then Constants.zoom.x else @level.scale.x
+      y: if @level.scale.y < Constants.zoom.y then Constants.zoom.y else @level.scale.y
 
     # visible screen limits of the world
     # (don't show anything outside of these limits when the buffer redraw)

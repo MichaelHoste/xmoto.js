@@ -68,32 +68,37 @@ class Input
   # If there are some issues on other systems than MacOS,
   # check this to find a solution : http://stackoverflow.com/questions/5527601/normalizing-mousewheel-speed-across-browsers
   init_zoom: ->
-    scroll = (event) =>
-      if event.wheelDelta
-        delta = event.wheelDelta/40
-      else if event.detail
-        delta = -event.detail
-      else
-        delta = 0
-
-      # zoom / dezoom
-      @level.scale.x += (@level.scale.x/200) * delta
-      @level.scale.y += (@level.scale.y/200) * delta
-
-      # boundaries
-      @level.scale.x =  35 if @level.scale.x <  35
-      @level.scale.y = -35 if @level.scale.y > -35
-
-      @level.scale.x =  200 if @level.scale.x >  200
-      @level.scale.y = -200 if @level.scale.y < -200
-
-      return event.preventDefault() && false
-
-    canvas = $('#game').get(0)
-    canvas.addEventListener('DOMMouseScroll', scroll, false)
-    canvas.addEventListener('mousewheel',     scroll, false)
+    #scroll = (event) =>
+    #  if event.wheelDelta
+    #    delta = event.wheelDelta/40
+    #  else if event.detail
+    #    delta = -event.detail
+    #  else
+    #    delta = 0
+#
+    #  # zoom / dezoom
+    #  @level.scale.x += (@level.scale.x/200) * delta
+    #  @level.scale.y += (@level.scale.y/200) * delta
+#
+    #  # boundaries
+    #  @level.scale.x =  35 if @level.scale.x <  35
+    #  @level.scale.y = -35 if @level.scale.y > -35
+#
+    #  @level.scale.x =  200 if @level.scale.x >  200
+    #  @level.scale.y = -200 if @level.scale.y < -200
+#
+    #  return event.preventDefault() && false
+#
+    #canvas = $('#game').get(0)
+    #canvas.addEventListener('DOMMouseScroll', scroll, false)
+    #canvas.addEventListener('mousewheel',     scroll, false)
 
   move: ->
+    speed = Math2D.distance_between_points(new b2Vec2(0, 0), @level.moto.body.GetLinearVelocity())
+    @level.scale.x = @level.scale.x * 0.99 + (Constants.zoom.x / (1.0 + speed/10.0)) * 0.01
+    @level.scale.y = @level.scale.y * 0.99 + (Constants.zoom.y / (1.0 + speed/10.0)) * 0.01
+
+
     force = 24.1
     moto  = @level.moto
     rider = moto.rider
