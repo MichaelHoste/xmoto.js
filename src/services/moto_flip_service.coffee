@@ -87,17 +87,17 @@ class MotoFlipService
     moto.body           .SetLinearVelocity(body.linear)
     moto.body           .SetAngularVelocity(body.angular)
 
-    # !!! Position of right wheel, it's normal !
+    # !!! Position and speed of right_wheel and angular velocity of left_wheel it's normal !
     moto.left_wheel     .SetPosition(right_wheel.position)
-    moto.left_wheel     .SetAngle(right_wheel.angle)
+    moto.left_wheel     .SetAngle(-left_wheel.angle)
     moto.left_wheel     .SetLinearVelocity(right_wheel.linear)
-    moto.left_wheel     .SetAngularVelocity(right_wheel.angular)
+    moto.left_wheel     .SetAngularVelocity(-left_wheel.angular)
 
-    # !!! Position of left wheel, it's normal !
+    # !!! Position and speed of left_wheel and angular velocity of right_wheel it's normal !
     moto.right_wheel    .SetPosition(left_wheel.position)
-    moto.right_wheel    .SetAngle(left_wheel.angle)
+    moto.right_wheel    .SetAngle(-right_wheel.angle)
     moto.right_wheel    .SetLinearVelocity(left_wheel.linear)
-    moto.right_wheel    .SetAngularVelocity(left_wheel.angular)
+    moto.right_wheel    .SetAngularVelocity(-right_wheel.angular)
 
     moto.left_axle      .SetPosition(left_axle.position)
     moto.left_axle      .SetAngle(left_axle.angle)
