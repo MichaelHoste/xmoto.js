@@ -13,10 +13,10 @@ class Buffer
     # can start at any size, but we prefer to be close to default scale
     # of the main canvas for better image quality
     @buffer_scale =
-      x: @level.scale.x
-      y: @level.scale.y
+      x: @level.camera.scale.x
+      y: @level.camera.scale.y
 
-    @scale        = @level.scale
+    @scale        = @level.camera.scale
     @sky          = @level.sky
     @limits       = @level.limits
     @entities     = @level.entities
@@ -53,8 +53,8 @@ class Buffer
     # Define buffer scale at the moment of the redrawn
     # (minimum the value of the default zoom, or else the quality is too high and better have a bigger buffer)
     @buffer_scale =
-      x: if @level.scale.x > Constants.zoom.x then Constants.zoom.x else @level.scale.x
-      y: if @level.scale.y < Constants.zoom.y then Constants.zoom.y else @level.scale.y
+      x: if @scale.x > Constants.default_scale.x then Constants.default_scale.x else @scale.x
+      y: if @scale.y < Constants.default_scale.y then Constants.default_scale.y else @scale.y
 
     # visible screen limits of the world
     # (don't show anything outside of these limits when the buffer redraw)

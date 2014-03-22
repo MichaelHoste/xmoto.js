@@ -8,11 +8,6 @@ class Level
     @canvas = $('#game').get(0)
     @ctx    = @canvas.getContext('2d')
 
-    # level unities * scale = pixels
-    @scale =
-      x: Constants.zoom.x
-      y: Constants.zoom.y
-
     # Assets manager
     @assets        = new Assets()
 
@@ -21,6 +16,9 @@ class Level
 
     # Inputs
     @input         = new Input(this)
+
+    # Camera
+    @camera        = new Camera(this)
 
     # Listeners
     @listeners     = new Listeners(this)
@@ -74,6 +72,7 @@ class Level
     @ghosts.init()
 
     @input.init()
+    @camera.init()
     @listeners.init()
 
   init_canvas: ->
@@ -98,8 +97,8 @@ class Level
     @ctx.save()
 
     # initialize position of camera
-    @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
-    @ctx.scale(@scale.x, @scale.y)                                  # Scale (zoom)
+    @ctx.translate(@canvas_width/2, @canvas_height/2)  # Center of canvas
+    @ctx.scale(@camera.scale.x, @camera.scale.y)       # Scale (zoom)
     @ctx.translate(-@object_to_follow().position().x, -@object_to_follow().position().y - 0.25) # Camera on moto
 
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
@@ -128,10 +127,10 @@ class Level
 
   compute_visibility: ->
     @visible =
-      left:   @object_to_follow().position().x - (@canvas_width  / 2) / @scale.x
-      right:  @object_to_follow().position().x + (@canvas_width  / 2) / @scale.x
-      bottom: @object_to_follow().position().y + (@canvas_height / 2) / @scale.y
-      top:    @object_to_follow().position().y - (@canvas_height / 2) / @scale.y
+      left:   @object_to_follow().position().x - (@canvas_width  / 2) / @camera.scale.x
+      right:  @object_to_follow().position().x + (@canvas_width  / 2) / @camera.scale.x
+      bottom: @object_to_follow().position().y + (@canvas_height / 2) / @camera.scale.y
+      top:    @object_to_follow().position().y - (@canvas_height / 2) / @camera.scale.y
     @visible.aabb = new b2AABB()
     @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
     @visible.aabb.upperBound.Set(@visible.right, @visible.top)

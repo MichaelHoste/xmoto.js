@@ -16,7 +16,9 @@ class Constants
 
   # DISPLAY
 
-  @zoom =
+  @auto_zoom      = true # true if camera msut dezoom when moto speed increase
+  @scroll_to_zoom = true # true if user can scroll or unscroll for zoom/dezoom
+  @default_scale  =      # default zoom of the camera
     x:  85.0
     y: -85.0
 
