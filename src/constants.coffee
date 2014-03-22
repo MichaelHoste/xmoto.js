@@ -4,10 +4,12 @@ class Constants
 
   # GENERAL
 
-  @debug          = false
-  @gravity        =  9.81 # Default gravity of the game
-  @max_moto_speed = 70.00 # Max rotation speed of the wheels. Limit the max speed of the moto
-  @air_density    =  0.03 # Friction of air
+  @debug             = false
+  @gravity           =  9.81 # Default gravity of the game
+  @max_moto_speed    = 70.00 # Max rotation speed of the wheels. Limit the max speed of the moto
+  @air_density       =  0.03 # Friction of air
+  @moto_acceleration =  8.00 # Acceleration of moto
+  @biker_force       =  6.00 # Force of biker when he rotates the moto
 
   # FRAMERATE
 
@@ -32,7 +34,7 @@ class Constants
 
   @current_user_selector      = "#current-user"         # ex. $("#current-user").attr('data-best-score-id')
   @best_score_id_attribute    = "data-best-score-id"    #     must give the id from the current user's best score
-  @best_score_steps_attribute = "data-best-score-steps"
+  @best_score_steps_attribute = "data-best-score-steps" #     so that we can load the corresponding replay
 
   # MOTO PARTS
 
@@ -56,9 +58,9 @@ class Constants
 
   @left_wheel =
     radius:      0.35
-    density:     2.0
+    density:     1.8
     restitution: 0.5
-    friction:    1.3
+    friction:    1.4
     position:
       x: -0.70
       y:  0.48
@@ -68,9 +70,9 @@ class Constants
 
   @right_wheel =
     radius:      0.35
-    density:     2.0
+    density:     1.8
     restitution: 0.5
-    friction:    1.3
+    friction:    1.4
     position:
       x: 0.70
       y: 0.48
@@ -184,7 +186,7 @@ class Constants
              new b2Vec2( 0.4,  0.07)
              new b2Vec2(-0.4,  0.14)
              new b2Vec2(-0.4, -0.08) ]
-    collisions: true
+    collisions: false
     texture:       'playerupperleg'
     ghost_texture: 'ghostupperleg'
     texture_size:
@@ -260,3 +262,83 @@ class Constants
     axe_position:
       x: -0.25
       y:  0.14
+
+  # OVERRIDE CONSTANTS BY URL PARAMS
+
+  url = $.url()
+
+  # General
+  @debug             = url.param('debug') == 'true'               if url.param('debug')
+  @gravity           = parseFloat(url.param('gravity'))           if url.param('gravity')
+  @max_moto_speed    = parseFloat(url.param('max_moto_speed'))    if url.param('max_moto_speed')
+  @air_density       = parseFloat(url.param('air_density'))       if url.param('air_density')
+  @automatic_scale   = url.param('automatic_scale') == 'true'     if url.param('automatic_scale')
+  @manual_scale      = url.param('manual_scale')    == 'true'     if url.param('manual_scale')
+  @moto_acceleration = parseFloat(url.param('moto_acceleration')) if url.param('moto_acceleration')
+  @biker_force       = parseFloat(url.param('biker_force'))       if url.param('biker_force')
+
+  # Density
+  @body.density        = parseFloat(url.param('body_density'))        if url.param('body_density')
+  @left_wheel.density  = parseFloat(url.param('left_wheel_density'))  if url.param('left_wheel_density')
+  @right_wheel.density = parseFloat(url.param('right_wheel_density')) if url.param('right_wheel_density')
+  @left_axle.density   = parseFloat(url.param('left_axle_density'))   if url.param('left_axle_density')
+  @right_axle.density  = parseFloat(url.param('right_axle_density'))  if url.param('right_axle_density')
+  @head.density        = parseFloat(url.param('head_density'))        if url.param('head_density')
+  @torso.density       = parseFloat(url.param('torso_density'))       if url.param('torso_density')
+  @lower_leg.density   = parseFloat(url.param('lower_leg_density'))   if url.param('lower_leg_density')
+  @upper_leg.density   = parseFloat(url.param('upper_leg_density'))   if url.param('upper_leg_density')
+  @lower_arm.density   = parseFloat(url.param('lower_arm_density'))   if url.param('lower_arm_density')
+  @upper_arm.density   = parseFloat(url.param('upper_arm_density'))   if url.param('upper_arm_density')
+
+  # Restitution
+  @body.restitution        = parseFloat(url.param('body_restitution'))        if url.param('body_restitution')
+  @left_wheel.restitution  = parseFloat(url.param('left_wheel_restitution'))  if url.param('left_wheel_restitution')
+  @right_wheel.restitution = parseFloat(url.param('right_wheel_restitution')) if url.param('right_wheel_restitution')
+  @left_axle.restitution   = parseFloat(url.param('left_axle_restitution'))   if url.param('left_axle_restitution')
+  @right_axle.restitution  = parseFloat(url.param('right_axle_restitution'))  if url.param('right_axle_restitution')
+  @head.restitution        = parseFloat(url.param('head_restitution'))        if url.param('head_restitution')
+  @torso.restitution       = parseFloat(url.param('torso_restitution'))       if url.param('torso_restitution')
+  @lower_leg.restitution   = parseFloat(url.param('lower_leg_restitution'))   if url.param('lower_leg_restitution')
+  @upper_leg.restitution   = parseFloat(url.param('upper_leg_restitution'))   if url.param('upper_leg_restitution')
+  @lower_arm.restitution   = parseFloat(url.param('lower_arm_restitution'))   if url.param('lower_arm_restitution')
+  @upper_arm.restitution   = parseFloat(url.param('upper_arm_restitution'))   if url.param('upper_arm_restitution')
+
+  # Friction
+  @body.friction        = parseFloat(url.param('body_friction'))        if url.param('body_friction')
+  @left_wheel.friction  = parseFloat(url.param('left_wheel_friction'))  if url.param('left_wheel_friction')
+  @right_wheel.friction = parseFloat(url.param('right_wheel_friction')) if url.param('right_wheel_friction')
+  @left_axle.friction   = parseFloat(url.param('left_axle_friction'))   if url.param('left_axle_friction')
+  @right_axle.friction  = parseFloat(url.param('right_axle_friction'))  if url.param('right_axle_friction')
+  @head.friction        = parseFloat(url.param('head_friction'))        if url.param('head_friction')
+  @torso.friction       = parseFloat(url.param('torso_friction'))       if url.param('torso_friction')
+  @lower_leg.friction   = parseFloat(url.param('lower_leg_friction'))   if url.param('lower_leg_friction')
+  @upper_leg.friction   = parseFloat(url.param('upper_leg_friction'))   if url.param('upper_leg_friction')
+  @lower_arm.friction   = parseFloat(url.param('lower_arm_friction'))   if url.param('lower_arm_friction')
+  @upper_arm.friction   = parseFloat(url.param('upper_arm_friction'))   if url.param('upper_arm_friction')
+
+  # Collision
+  @body.collision        = url.param('body_collision')        == 'true' if url.param('body_collision')
+  @left_wheel.collision  = url.param('left_wheel_collision')  == 'true' if url.param('left_wheel_collision')
+  @right_wheel.collision = url.param('right_wheel_collision') == 'true' if url.param('right_wheel_collision')
+  @left_axle.collision   = url.param('left_axle_collision')   == 'true' if url.param('left_axle_collision')
+  @right_axle.collision  = url.param('right_axle_collision')  == 'true' if url.param('right_axle_collision')
+  @head.collision        = url.param('head_collision')        == 'true' if url.param('head_collision')
+  @torso.collision       = url.param('torso_collision')       == 'true' if url.param('torso_collision')
+  @lower_leg.collision   = url.param('lower_leg_collision')   == 'true' if url.param('lower_leg_collision')
+  @upper_leg.collision   = url.param('upper_leg_collision')   == 'true' if url.param('upper_leg_collision')
+  @lower_arm.collision   = url.param('lower_arm_collision')   == 'true' if url.param('lower_arm_collision')
+  @upper_arm.collision   = url.param('upper_arm_collision')   == 'true' if url.param('upper_arm_collision')
+
+  # Others
+  @head.radius                        = parseFloat(url.param('head_radius'))                        if url.param('head_radius')
+
+  @left_suspension.angle.x            = parseFloat(url.param['left_suspension_angle_x'])            if url.param('left_suspension_angle_x')
+  @left_suspension.angle.y            = parseFloat(url.param['left_suspension_angle_y'])            if url.param('left_suspension_angle_y')
+  @left_suspension.lower_translation  = parseFloat(url.param['left_suspension_lower_translation'])  if url.param('left_suspension_lower_translation')
+  @left_suspension.upper_translation  = parseFloat(url.param['left_suspension_upper_translation'])  if url.param('left_suspension_upper_translation')
+
+  @right_suspension.angle.x           = parseFloat(url.param['right_suspension_angle_x'])           if url.param('right_suspension_angle_x')
+  @right_suspension.angle.y           = parseFloat(url.param['right_suspension_angle_y'])           if url.param('right_suspension_angle_y')
+  @right_suspension.lower_translation = parseFloat(url.param['right_suspension_lower_translation']) if url.param('right_suspension_lower_translation')
+  @right_suspension.upper_translation = parseFloat(url.param['right_suspension_upper_translation']) if url.param('right_suspension_upper_translation')
+

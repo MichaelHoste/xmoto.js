@@ -88,6 +88,8 @@ class Blocks
     @edges = new Edges(@level, @list)
 
   display: (ctx) ->
+    return false if Constants.debug
+
     # draw back blocks before front blocks
     for block in @back_list.concat(@front_list)
       if visible_block(@level.buffer.visible, block)

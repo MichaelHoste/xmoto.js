@@ -167,6 +167,8 @@ class Moto
     @world.CreateJoint(jointDef)
 
   display: ->
+    return false if Constants.debug
+
     @display_wheel(      @left_wheel,  Constants.left_wheel)
     @display_wheel(      @right_wheel, Constants.right_wheel)
     @display_left_axle(  @left_axle,   Constants.left_axle)

@@ -9,7 +9,7 @@ play_level = (name) ->
       level.display()
       window.game_loop = window.requestAnimationFrame(update)
 
-    createjs.Sound.setMute(true)
+    #createjs.Sound.setMute(true)
 
     level.start_time   = new Date().getTime()
     level.current_time = 0
@@ -40,8 +40,8 @@ bind_select = ->
   )
 
 select_level_from_url = ->
-  level = location.search.substr(1)
-  $("#levels").val(level)
+  level = $.url().param('l')
+  $("#levels").val("l#{level}.lvl")
   $("#levels").trigger("change")
 
 $ ->

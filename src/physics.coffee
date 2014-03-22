@@ -25,9 +25,10 @@ class Physics
 
     # debug initialization
     debugDraw = new b2DebugDraw()
-    debugDraw.SetSprite(@level.ctx) # context
-    debugDraw.SetFillAlpha(0.3)     # transparency
-    debugDraw.SetLineThickness(1.0) # thickness of line
+    debugDraw.SetSprite(@level.ctx)  # context
+    @level.ctx.lineWidth = 0.05
+    debugDraw.SetFillAlpha(0.5)      # transparency
+    debugDraw.SetLineThickness(0.01) # thickness of line
 
     # Assign debug to world
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit)
@@ -81,15 +82,15 @@ class Physics
   display: ->
     @world.DrawDebugData()
 
-  create_polygon: (vertices, name) ->
+  create_polygon: (vertices, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
     # Create fixture
     fixDef = new b2FixtureDef()
 
-    fixDef.shape       = new b2PolygonShape()
-    fixDef.density     = 1.0
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
-    fixDef.filter.groupIndex = -2
+    fixDef.shape             = new b2PolygonShape()
+    fixDef.density           = density
+    fixDef.restitution       = restitution
+    fixDef.friction          = friction
+    fixDef.filter.groupIndex = group_index
 
     # Create polygon
     Physics.create_shape(fixDef, vertices)
@@ -109,7 +110,7 @@ class Physics
     # Assign fixture to body and add body to 2D world
     @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
-  create_lines: (block, name) ->
+  create_lines: (block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
     # Create body
     bodyDef = new b2BodyDef()
 
@@ -130,11 +131,11 @@ class Physics
       # Create fixture
       fixDef = new b2FixtureDef()
 
-      fixDef.shape       = new b2PolygonShape()
-      fixDef.density     = 1.0
-      fixDef.restitution = 0.5
-      fixDef.friction    = 1.0
-      fixDef.filter.groupIndex = -2
+      fixDef.shape             = new b2PolygonShape()
+      fixDef.density           = density
+      fixDef.restitution       = restitution
+      fixDef.friction          = friction
+      fixDef.filter.groupIndex = group_index
 
       # Create line (from polygon because box2Dweb cannot do otherwise)
       vertex1 = vertex

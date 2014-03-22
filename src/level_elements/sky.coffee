@@ -33,9 +33,13 @@ class Sky
     ctx.lineTo(@level.canvas_width, 0)
     ctx.closePath()
 
-    ctx.save()
-    ctx.scale(4.0, 4.0)
-    ctx.translate(-@level.object_to_follow().position().x*4, @level.object_to_follow().position().y*2)
-    ctx.fillStyle = ctx.createPattern(@assets.get(@file_name), "repeat")
-    ctx.fill()
-    ctx.restore()
+    if Constants.debug
+      ctx.fillStyle = "#FFFFFF"
+      ctx.fill()
+    else
+      ctx.save()
+      ctx.scale(4.0, 4.0)
+      ctx.translate(-@level.object_to_follow().position().x*4, @level.object_to_follow().position().y*2)
+      ctx.fillStyle = ctx.createPattern(@assets.get(@file_name), "repeat")
+      ctx.fill()
+      ctx.restore()

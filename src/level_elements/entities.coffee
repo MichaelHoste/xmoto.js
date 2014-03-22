@@ -125,12 +125,16 @@ class Entities
     body
 
   display_sprites: (ctx) ->
+    return false if Constants.debug
+
     for entity in @list
       if entity.type_id == 'Sprite'
         if visible_entity(@level.buffer.visible, entity)
           @display_entity(ctx, entity)
 
-  display_items: ->
+  display_items : ->
+    return false if Constants.debug
+
     ctx = @level.ctx
 
     for entity in @list
@@ -155,15 +159,6 @@ class Entities
                   entity.size.width,
                   entity.size.height)
     ctx.restore()
-
-    # ugly mode
-    #@level.ctx.beginPath()
-    #@level.ctx.strokeStyle="#0000FF"
-    #@level.ctx.lineWidth = 0.05
-    #@level.ctx.arc(entity.position.x+entity.center.x-entity.size.width/2,
-    #               entity.position.y+entity.center.y-entity.size.height/2,
-    #               entity.size.r, 0, 2*Math.PI)
-    #@level.ctx.stroke()
 
   entity_texture_name: (entity) ->
     if entity.type_id == 'Sprite'

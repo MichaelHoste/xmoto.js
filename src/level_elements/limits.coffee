@@ -75,6 +75,8 @@ class Limits
     @level.physics.create_polygon(vertices, 'ground')
 
   display: (ctx) ->
+    return false if Constants.debug
+
     buffer = @level.buffer
 
     # Left border

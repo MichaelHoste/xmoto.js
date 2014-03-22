@@ -78,7 +78,6 @@ class Level
   init_canvas: ->
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height)
-    @ctx.lineWidth = 0.01
 
   display: ->
     @init_canvas() if not @canvas_width

@@ -49,7 +49,7 @@ class Input
           $.post(url,
             steps: @level.physics.steps
             image: $("#game")[0].toDataURL()
-          ).done( -> console.log("Capture uploaded")).fail( -> console.log("Capture failed"))
+          ).done( -> alert("Capture uploaded")).fail( -> alert("Capture failed"))
     )
 
     $(document).on('keyup', (event) =>
@@ -65,14 +65,16 @@ class Input
     )
 
   move: ->
-    force = 24.1
     moto  = @level.moto
     rider = moto.rider
+
+    moto_acceleration = Constants.moto_acceleration
+    biker_force       = Constants.biker_force
 
     if not @level.moto.dead
       # Accelerate
       if @up
-        moto.left_wheel.ApplyTorque(- moto.mirror * force/3)
+        moto.left_wheel.ApplyTorque(- moto.mirror * moto_acceleration)
 
       # Brakes
       if @down
@@ -82,17 +84,17 @@ class Input
 
       # Back wheeling
       if @left
-        moto.body            .ApplyTorque(    force/3.0)
-        moto.rider.torso     .ApplyTorque(    force/8.0)
-        moto.rider.torso     .ApplyForce({x: -force/4.0, y: 0}, moto.rider.torso    .GetWorldCenter())
-        moto.rider.lower_leg .ApplyForce({x:  force/4.0, y: 0}, moto.rider.lower_leg.GetWorldCenter())
+        moto.body            .ApplyTorque(    biker_force/0.7)
+        moto.rider.torso     .ApplyTorque(    biker_force/2.0)
+        moto.rider.torso     .ApplyForce({x: -biker_force, y: 0}, moto.rider.torso    .GetWorldCenter())
+        moto.rider.lower_leg .ApplyForce({x:  biker_force, y: 0}, moto.rider.lower_leg.GetWorldCenter())
 
       # Front wheeling
       if @right
-        moto.body            .ApplyTorque(   -force/3.0)
-        moto.rider.torso     .ApplyTorque(   -force/8.0)
-        moto.rider.torso     .ApplyForce({x:  force/4.0, y: 0}, moto.rider.torso    .GetWorldCenter())
-        moto.rider.lower_leg .ApplyForce({x: -force/4.0, y :0}, moto.rider.lower_leg.GetWorldCenter())
+        moto.body            .ApplyTorque(   -biker_force/0.75) # a bit less force for front wheeling
+        moto.rider.torso     .ApplyTorque(   -biker_force/2.2)
+        moto.rider.torso     .ApplyForce({x:  biker_force, y: 0}, moto.rider.torso    .GetWorldCenter())
+        moto.rider.lower_leg .ApplyForce({x: -biker_force, y :0}, moto.rider.lower_leg.GetWorldCenter())
 
     if not @up and not @down
       # Engine brake

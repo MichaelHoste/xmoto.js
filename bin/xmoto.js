@@ -24,8 +24,7 @@
 
     Buffer.prototype.init_canvas = function() {
       this.canvas_width = parseFloat(this.canvas.width);
-      this.canvas_height = parseFloat(this.canvas.height);
-      return this.ctx.lineWidth = 0.01;
+      return this.canvas_height = parseFloat(this.canvas.height);
     };
 
     Buffer.prototype.redraw_needed = function() {
@@ -175,6 +174,8 @@
   b2Vec2 = Box2D.Common.Math.b2Vec2;
 
   Constants = (function() {
+    var url;
+
     function Constants() {}
 
     Constants.debug = false;
@@ -184,6 +185,10 @@
     Constants.max_moto_speed = 70.00;
 
     Constants.air_density = 0.03;
+
+    Constants.moto_acceleration = 8.00;
+
+    Constants.biker_force = 6.00;
 
     Constants.fps = 60.0;
 
@@ -228,9 +233,9 @@
 
     Constants.left_wheel = {
       radius: 0.35,
-      density: 2.0,
+      density: 1.8,
       restitution: 0.5,
-      friction: 1.3,
+      friction: 1.4,
       position: {
         x: -0.70,
         y: 0.48
@@ -242,9 +247,9 @@
 
     Constants.right_wheel = {
       radius: 0.35,
-      density: 2.0,
+      density: 1.8,
       restitution: 0.5,
-      friction: 1.3,
+      friction: 1.4,
       position: {
         x: 0.70,
         y: 0.48
@@ -354,7 +359,7 @@
       },
       angle: -Math.PI / 11.0,
       shape: [new b2Vec2(0.4, -0.14), new b2Vec2(0.4, 0.07), new b2Vec2(-0.4, 0.14), new b2Vec2(-0.4, -0.08)],
-      collisions: true,
+      collisions: false,
       texture: 'playerupperleg',
       ghost_texture: 'ghostupperleg',
       texture_size: {
@@ -443,6 +448,252 @@
       }
     };
 
+    url = $.url();
+
+    if (url.param('debug')) {
+      Constants.debug = url.param('debug') === 'true';
+    }
+
+    if (url.param('gravity')) {
+      Constants.gravity = parseFloat(url.param('gravity'));
+    }
+
+    if (url.param('max_moto_speed')) {
+      Constants.max_moto_speed = parseFloat(url.param('max_moto_speed'));
+    }
+
+    if (url.param('air_density')) {
+      Constants.air_density = parseFloat(url.param('air_density'));
+    }
+
+    if (url.param('automatic_scale')) {
+      Constants.automatic_scale = url.param('automatic_scale') === 'true';
+    }
+
+    if (url.param('manual_scale')) {
+      Constants.manual_scale = url.param('manual_scale') === 'true';
+    }
+
+    if (url.param('moto_acceleration')) {
+      Constants.moto_acceleration = parseFloat(url.param('moto_acceleration'));
+    }
+
+    if (url.param('biker_force')) {
+      Constants.biker_force = parseFloat(url.param('biker_force'));
+    }
+
+    if (url.param('body_density')) {
+      Constants.body.density = parseFloat(url.param('body_density'));
+    }
+
+    if (url.param('left_wheel_density')) {
+      Constants.left_wheel.density = parseFloat(url.param('left_wheel_density'));
+    }
+
+    if (url.param('right_wheel_density')) {
+      Constants.right_wheel.density = parseFloat(url.param('right_wheel_density'));
+    }
+
+    if (url.param('left_axle_density')) {
+      Constants.left_axle.density = parseFloat(url.param('left_axle_density'));
+    }
+
+    if (url.param('right_axle_density')) {
+      Constants.right_axle.density = parseFloat(url.param('right_axle_density'));
+    }
+
+    if (url.param('head_density')) {
+      Constants.head.density = parseFloat(url.param('head_density'));
+    }
+
+    if (url.param('torso_density')) {
+      Constants.torso.density = parseFloat(url.param('torso_density'));
+    }
+
+    if (url.param('lower_leg_density')) {
+      Constants.lower_leg.density = parseFloat(url.param('lower_leg_density'));
+    }
+
+    if (url.param('upper_leg_density')) {
+      Constants.upper_leg.density = parseFloat(url.param('upper_leg_density'));
+    }
+
+    if (url.param('lower_arm_density')) {
+      Constants.lower_arm.density = parseFloat(url.param('lower_arm_density'));
+    }
+
+    if (url.param('upper_arm_density')) {
+      Constants.upper_arm.density = parseFloat(url.param('upper_arm_density'));
+    }
+
+    if (url.param('body_restitution')) {
+      Constants.body.restitution = parseFloat(url.param('body_restitution'));
+    }
+
+    if (url.param('left_wheel_restitution')) {
+      Constants.left_wheel.restitution = parseFloat(url.param('left_wheel_restitution'));
+    }
+
+    if (url.param('right_wheel_restitution')) {
+      Constants.right_wheel.restitution = parseFloat(url.param('right_wheel_restitution'));
+    }
+
+    if (url.param('left_axle_restitution')) {
+      Constants.left_axle.restitution = parseFloat(url.param('left_axle_restitution'));
+    }
+
+    if (url.param('right_axle_restitution')) {
+      Constants.right_axle.restitution = parseFloat(url.param('right_axle_restitution'));
+    }
+
+    if (url.param('head_restitution')) {
+      Constants.head.restitution = parseFloat(url.param('head_restitution'));
+    }
+
+    if (url.param('torso_restitution')) {
+      Constants.torso.restitution = parseFloat(url.param('torso_restitution'));
+    }
+
+    if (url.param('lower_leg_restitution')) {
+      Constants.lower_leg.restitution = parseFloat(url.param('lower_leg_restitution'));
+    }
+
+    if (url.param('upper_leg_restitution')) {
+      Constants.upper_leg.restitution = parseFloat(url.param('upper_leg_restitution'));
+    }
+
+    if (url.param('lower_arm_restitution')) {
+      Constants.lower_arm.restitution = parseFloat(url.param('lower_arm_restitution'));
+    }
+
+    if (url.param('upper_arm_restitution')) {
+      Constants.upper_arm.restitution = parseFloat(url.param('upper_arm_restitution'));
+    }
+
+    if (url.param('body_friction')) {
+      Constants.body.friction = parseFloat(url.param('body_friction'));
+    }
+
+    if (url.param('left_wheel_friction')) {
+      Constants.left_wheel.friction = parseFloat(url.param('left_wheel_friction'));
+    }
+
+    if (url.param('right_wheel_friction')) {
+      Constants.right_wheel.friction = parseFloat(url.param('right_wheel_friction'));
+    }
+
+    if (url.param('left_axle_friction')) {
+      Constants.left_axle.friction = parseFloat(url.param('left_axle_friction'));
+    }
+
+    if (url.param('right_axle_friction')) {
+      Constants.right_axle.friction = parseFloat(url.param('right_axle_friction'));
+    }
+
+    if (url.param('head_friction')) {
+      Constants.head.friction = parseFloat(url.param('head_friction'));
+    }
+
+    if (url.param('torso_friction')) {
+      Constants.torso.friction = parseFloat(url.param('torso_friction'));
+    }
+
+    if (url.param('lower_leg_friction')) {
+      Constants.lower_leg.friction = parseFloat(url.param('lower_leg_friction'));
+    }
+
+    if (url.param('upper_leg_friction')) {
+      Constants.upper_leg.friction = parseFloat(url.param('upper_leg_friction'));
+    }
+
+    if (url.param('lower_arm_friction')) {
+      Constants.lower_arm.friction = parseFloat(url.param('lower_arm_friction'));
+    }
+
+    if (url.param('upper_arm_friction')) {
+      Constants.upper_arm.friction = parseFloat(url.param('upper_arm_friction'));
+    }
+
+    if (url.param('body_collision')) {
+      Constants.body.collision = url.param('body_collision') === 'true';
+    }
+
+    if (url.param('left_wheel_collision')) {
+      Constants.left_wheel.collision = url.param('left_wheel_collision') === 'true';
+    }
+
+    if (url.param('right_wheel_collision')) {
+      Constants.right_wheel.collision = url.param('right_wheel_collision') === 'true';
+    }
+
+    if (url.param('left_axle_collision')) {
+      Constants.left_axle.collision = url.param('left_axle_collision') === 'true';
+    }
+
+    if (url.param('right_axle_collision')) {
+      Constants.right_axle.collision = url.param('right_axle_collision') === 'true';
+    }
+
+    if (url.param('head_collision')) {
+      Constants.head.collision = url.param('head_collision') === 'true';
+    }
+
+    if (url.param('torso_collision')) {
+      Constants.torso.collision = url.param('torso_collision') === 'true';
+    }
+
+    if (url.param('lower_leg_collision')) {
+      Constants.lower_leg.collision = url.param('lower_leg_collision') === 'true';
+    }
+
+    if (url.param('upper_leg_collision')) {
+      Constants.upper_leg.collision = url.param('upper_leg_collision') === 'true';
+    }
+
+    if (url.param('lower_arm_collision')) {
+      Constants.lower_arm.collision = url.param('lower_arm_collision') === 'true';
+    }
+
+    if (url.param('upper_arm_collision')) {
+      Constants.upper_arm.collision = url.param('upper_arm_collision') === 'true';
+    }
+
+    if (url.param('head_radius')) {
+      Constants.head.radius = parseFloat(url.param('head_radius'));
+    }
+
+    if (url.param('left_suspension_angle_x')) {
+      Constants.left_suspension.angle.x = parseFloat(url.param['left_suspension_angle_x']);
+    }
+
+    if (url.param('left_suspension_angle_y')) {
+      Constants.left_suspension.angle.y = parseFloat(url.param['left_suspension_angle_y']);
+    }
+
+    if (url.param('left_suspension_lower_translation')) {
+      Constants.left_suspension.lower_translation = parseFloat(url.param['left_suspension_lower_translation']);
+    }
+
+    if (url.param('left_suspension_upper_translation')) {
+      Constants.left_suspension.upper_translation = parseFloat(url.param['left_suspension_upper_translation']);
+    }
+
+    if (url.param('right_suspension_angle_x')) {
+      Constants.right_suspension.angle.x = parseFloat(url.param['right_suspension_angle_x']);
+    }
+
+    if (url.param('right_suspension_angle_y')) {
+      Constants.right_suspension.angle.y = parseFloat(url.param['right_suspension_angle_y']);
+    }
+
+    if (url.param('right_suspension_lower_translation')) {
+      Constants.right_suspension.lower_translation = parseFloat(url.param['right_suspension_lower_translation']);
+    }
+
+    if (url.param('right_suspension_upper_translation')) {
+      Constants.right_suspension.upper_translation = parseFloat(url.param['right_suspension_upper_translation']);
+    }
+
     return Constants;
 
   })();
@@ -509,9 +760,9 @@
               steps: _this.level.physics.steps,
               image: $("#game")[0].toDataURL()
             }).done(function() {
-              return console.log("Capture uploaded");
+              return alert("Capture uploaded");
             }).fail(function() {
-              return console.log("Capture failed");
+              return alert("Capture failed");
             });
         }
       });
@@ -530,39 +781,40 @@
     };
 
     Input.prototype.move = function() {
-      var air_density, drag_force, force, moto, object_penetration, rider, squared_speed, v;
-      force = 24.1;
+      var air_density, biker_force, drag_force, moto, moto_acceleration, object_penetration, rider, squared_speed, v;
       moto = this.level.moto;
       rider = moto.rider;
+      moto_acceleration = Constants.moto_acceleration;
+      biker_force = Constants.biker_force;
       if (!this.level.moto.dead) {
         if (this.up) {
-          moto.left_wheel.ApplyTorque(-moto.mirror * force / 3);
+          moto.left_wheel.ApplyTorque(-moto.mirror * moto_acceleration);
         }
         if (this.down) {
           moto.right_wheel.SetAngularVelocity(0);
           moto.left_wheel.SetAngularVelocity(0);
         }
         if (this.left) {
-          moto.body.ApplyTorque(force / 3.0);
-          moto.rider.torso.ApplyTorque(force / 8.0);
+          moto.body.ApplyTorque(biker_force / 0.7);
+          moto.rider.torso.ApplyTorque(biker_force / 2.0);
           moto.rider.torso.ApplyForce({
-            x: -force / 4.0,
+            x: -biker_force,
             y: 0
           }, moto.rider.torso.GetWorldCenter());
           moto.rider.lower_leg.ApplyForce({
-            x: force / 4.0,
+            x: biker_force,
             y: 0
           }, moto.rider.lower_leg.GetWorldCenter());
         }
         if (this.right) {
-          moto.body.ApplyTorque(-force / 3.0);
-          moto.rider.torso.ApplyTorque(-force / 8.0);
+          moto.body.ApplyTorque(-biker_force / 0.75);
+          moto.rider.torso.ApplyTorque(-biker_force / 2.2);
           moto.rider.torso.ApplyForce({
-            x: force / 4.0,
+            x: biker_force,
             y: 0
           }, moto.rider.torso.GetWorldCenter());
           moto.rider.lower_leg.ApplyForce({
-            x: -force / 4.0,
+            x: -biker_force,
             y: 0
           }, moto.rider.lower_leg.GetWorldCenter());
         }
@@ -653,8 +905,7 @@
 
     Level.prototype.init_canvas = function() {
       this.canvas_width = parseFloat(this.canvas.width);
-      this.canvas_height = parseFloat(this.canvas.height);
-      return this.ctx.lineWidth = 0.01;
+      return this.canvas_height = parseFloat(this.canvas.height);
     };
 
     Level.prototype.display = function() {
@@ -778,8 +1029,7 @@
             strawberry = a === 'strawberry' ? contact.GetFixtureA() : contact.GetFixtureB();
             entity = strawberry.GetBody().GetUserData().entity;
             if (entity.display) {
-              entity.display = false;
-              return createjs.Sound.play('PickUpStrawberry');
+              return entity.display = false;
             }
           } else if (Listeners.does_contact_moto_rider(a, b, 'end_of_level') && !_this.level.need_to_restart) {
             if (_this.level.got_strawberries()) {
@@ -804,7 +1054,6 @@
     };
 
     Listeners.prototype.trigger_restart = function() {
-      createjs.Sound.play('EndOfLevel');
       this.level.replay.success = true;
       return this.level.need_to_restart = true;
     };
@@ -813,7 +1062,6 @@
       var moto;
       moto = this.level.moto;
       moto.dead = true;
-      createjs.Sound.play('Headcrash');
       this.world.DestroyJoint(moto.rider.ankle_joint);
       this.world.DestroyJoint(moto.rider.wrist_joint);
       moto.rider.shoulder_joint.m_enableLimit = false;
@@ -837,7 +1085,6 @@
         level.display();
         return window.game_loop = window.requestAnimationFrame(update);
       };
-      createjs.Sound.setMute(true);
       level.start_time = new Date().getTime();
       level.current_time = 0;
       level.physics.init();
@@ -872,8 +1119,8 @@
 
   select_level_from_url = function() {
     var level;
-    level = location.search.substr(1);
-    $("#levels").val(level);
+    level = $.url().param('l');
+    $("#levels").val("l" + level + ".lvl");
     return $("#levels").trigger("change");
   };
 
@@ -926,8 +1173,9 @@
       b2Settings.b2_linearSlop = 0.0025;
       debugDraw = new b2DebugDraw();
       debugDraw.SetSprite(this.level.ctx);
-      debugDraw.SetFillAlpha(0.3);
-      debugDraw.SetLineThickness(1.0);
+      this.level.ctx.lineWidth = 0.05;
+      debugDraw.SetFillAlpha(0.5);
+      debugDraw.SetLineThickness(0.01);
       debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
       this.world.SetDebugDraw(debugDraw);
       this.world;
@@ -987,14 +1235,26 @@
       return this.world.DrawDebugData();
     };
 
-    Physics.prototype.create_polygon = function(vertices, name) {
+    Physics.prototype.create_polygon = function(vertices, name, density, restitution, friction, group_index) {
       var bodyDef, fixDef;
+      if (density == null) {
+        density = 1.0;
+      }
+      if (restitution == null) {
+        restitution = 0.5;
+      }
+      if (friction == null) {
+        friction = 1.0;
+      }
+      if (group_index == null) {
+        group_index = -2;
+      }
       fixDef = new b2FixtureDef();
       fixDef.shape = new b2PolygonShape();
-      fixDef.density = 1.0;
-      fixDef.restitution = 0.5;
-      fixDef.friction = 1.0;
-      fixDef.filter.groupIndex = -2;
+      fixDef.density = density;
+      fixDef.restitution = restitution;
+      fixDef.friction = friction;
+      fixDef.filter.groupIndex = group_index;
       Physics.create_shape(fixDef, vertices);
       bodyDef = new b2BodyDef();
       bodyDef.position.x = 0;
@@ -1006,8 +1266,20 @@
       return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
     };
 
-    Physics.prototype.create_lines = function(block, name) {
+    Physics.prototype.create_lines = function(block, name, density, restitution, friction, group_index) {
       var body, bodyDef, fixDef, i, vertex, vertex1, vertex2, _i, _len, _ref, _results;
+      if (density == null) {
+        density = 1.0;
+      }
+      if (restitution == null) {
+        restitution = 0.5;
+      }
+      if (friction == null) {
+        friction = 1.0;
+      }
+      if (group_index == null) {
+        group_index = -2;
+      }
       bodyDef = new b2BodyDef();
       bodyDef.position.x = block.position.x;
       bodyDef.position.y = block.position.y;
@@ -1022,10 +1294,10 @@
         vertex = _ref[i];
         fixDef = new b2FixtureDef();
         fixDef.shape = new b2PolygonShape();
-        fixDef.density = 1.0;
-        fixDef.restitution = 0.5;
-        fixDef.friction = 1.0;
-        fixDef.filter.groupIndex = -2;
+        fixDef.density = density;
+        fixDef.restitution = restitution;
+        fixDef.friction = friction;
+        fixDef.filter.groupIndex = group_index;
         vertex1 = vertex;
         vertex2 = i === block.vertices.length - 1 ? block.vertices[0] : block.vertices[i + 1];
         fixDef.shape.SetAsArray([new b2Vec2(vertex1.x, vertex1.y), new b2Vec2(vertex2.x, vertex2.y)], 2);
@@ -1161,6 +1433,9 @@
 
     Blocks.prototype.display = function(ctx) {
       var block, i, vertex, _i, _j, _len, _len1, _ref, _ref1;
+      if (Constants.debug) {
+        return false;
+      }
       _ref = this.back_list.concat(this.front_list);
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
@@ -1519,6 +1794,9 @@
 
     Entities.prototype.display_sprites = function(ctx) {
       var entity, _i, _len, _ref, _results;
+      if (Constants.debug) {
+        return false;
+      }
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1538,6 +1816,9 @@
 
     Entities.prototype.display_items = function() {
       var ctx, entity, _i, _len, _ref, _results;
+      if (Constants.debug) {
+        return false;
+      }
       ctx = this.level.ctx;
       _ref = this.list;
       _results = [];
@@ -1792,6 +2073,9 @@
 
     Limits.prototype.display = function(ctx) {
       var buffer;
+      if (Constants.debug) {
+        return false;
+      }
       buffer = this.level.buffer;
       if (this.player.left > buffer.visible.left) {
         ctx.beginPath();
@@ -1901,12 +2185,17 @@
       ctx.lineTo(0, 0);
       ctx.lineTo(this.level.canvas_width, 0);
       ctx.closePath();
-      ctx.save();
-      ctx.scale(4.0, 4.0);
-      ctx.translate(-this.level.object_to_follow().position().x * 4, this.level.object_to_follow().position().y * 2);
-      ctx.fillStyle = ctx.createPattern(this.assets.get(this.file_name), "repeat");
-      ctx.fill();
-      return ctx.restore();
+      if (Constants.debug) {
+        ctx.fillStyle = "#FFFFFF";
+        return ctx.fill();
+      } else {
+        ctx.save();
+        ctx.scale(4.0, 4.0);
+        ctx.translate(-this.level.object_to_follow().position().x * 4, this.level.object_to_follow().position().y * 2);
+        ctx.fillStyle = ctx.createPattern(this.assets.get(this.file_name), "repeat");
+        ctx.fill();
+        return ctx.restore();
+      }
     };
 
     return Sky;
@@ -2136,6 +2425,9 @@
     };
 
     Moto.prototype.display = function() {
+      if (Constants.debug) {
+        return false;
+      }
       this.display_wheel(this.left_wheel, Constants.left_wheel);
       this.display_wheel(this.right_wheel, Constants.right_wheel);
       this.display_left_axle(this.left_axle, Constants.left_axle);
