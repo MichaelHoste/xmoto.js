@@ -9,11 +9,11 @@ class Camera
       y: Constants.default_scale.y
 
   init: ->
-    if Constants.scroll_to_zoom
+    if Constants.manual_scale
       @init_scroll()
 
   move: ->
-    if Constants.auto_zoom
+    if Constants.automatic_scale
       speed = Math2D.distance_between_points(new b2Vec2(0, 0), @level.moto.body.GetLinearVelocity())
       @scale.x = @scale.x * 0.995 + (Constants.default_scale.x / (1.0 + speed/10.0)) * 0.005
       @scale.y = @scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed/10.0)) * 0.005

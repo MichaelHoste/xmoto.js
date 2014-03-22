@@ -16,9 +16,9 @@ class Constants
 
   # DISPLAY
 
-  @auto_zoom      = true # true if camera msut dezoom when moto speed increase
-  @scroll_to_zoom = true # true if user can scroll or unscroll for zoom/dezoom
-  @default_scale  =      # default zoom of the camera
+  @automatic_scale = true # camera zoom and dezoom when moto speed changes         (can be both)
+  @manual_scale    = true # camera zoom and dezoom when player scrolls up and down (can be both)
+  @default_scale   =      # default zoom of the camera
     x:  85.0
     y: -85.0
 

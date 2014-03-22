@@ -121,14 +121,14 @@
     }
 
     Camera.prototype.init = function() {
-      if (Constants.scroll_to_zoom) {
+      if (Constants.manual_scale) {
         return this.init_scroll();
       }
     };
 
     Camera.prototype.move = function() {
       var speed;
-      if (Constants.auto_zoom) {
+      if (Constants.automatic_scale) {
         speed = Math2D.distance_between_points(new b2Vec2(0, 0), this.level.moto.body.GetLinearVelocity());
         this.scale.x = this.scale.x * 0.995 + (Constants.default_scale.x / (1.0 + speed / 10.0)) * 0.005;
         return this.scale.y = this.scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed / 10.0)) * 0.005;
@@ -189,9 +189,9 @@
 
     Constants.replay_fps = 10.0;
 
-    Constants.auto_zoom = true;
+    Constants.automatic_scale = true;
 
-    Constants.scroll_to_zoom = true;
+    Constants.manual_scale = true;
 
     Constants.default_scale = {
       x: 85.0,
