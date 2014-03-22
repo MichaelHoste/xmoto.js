@@ -7,7 +7,7 @@ class Buffer
     @level  = level
 
     # Buffer context
-    @canvas = $('#buffer').get(0)
+    @canvas = $(@level.options.buffer).get(0)
     @ctx    = @canvas.getContext('2d')
 
     # can start at any size, but we prefer to be close to default scale

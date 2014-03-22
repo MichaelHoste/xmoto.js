@@ -3,9 +3,11 @@ b2Vec2 = Box2D.Common.Math.b2Vec2
 
 class Level
 
-  constructor: ->
+  constructor: (options) ->
+    @options = options
+
     # Context
-    @canvas = $('#game').get(0)
+    @canvas = $(@options.canvas).get(0)
     @ctx    = @canvas.getContext('2d')
 
     # Assets manager
@@ -50,7 +52,7 @@ class Level
   load_from_file: (file_name) ->
     $.ajax({
       type:     "GET",
-      url:      "/data/Levels/#{file_name}",
+      url:      "#{@options.levels_path}/#{file_name}",
       dataType: "xml",
       success:  @load_level
       async:    false
@@ -120,7 +122,7 @@ class Level
       seconds = "0#{seconds}" if seconds < 10
       cents   = Math.floor(new_time / 10) % 100
       cents   = "0#{cents}" if cents < 10
-      $("#chrono").text("#{minutes}:#{seconds}:#{cents}")
+      $(@options.chrono).text("#{minutes}:#{seconds}:#{cents}")
 
     @current_time = new_time
 

@@ -25,10 +25,10 @@ class Physics
 
     # debug initialization
     debugDraw = new b2DebugDraw()
-    debugDraw.SetSprite(@level.ctx)  # context
-    @level.ctx.lineWidth = 0.05
-    debugDraw.SetFillAlpha(0.5)      # transparency
-    debugDraw.SetLineThickness(0.01) # thickness of line
+    debugDraw.SetSprite(@level.ctx)                # context
+    @level.ctx.lineWidth = 0.05                    # thickness of line (debugDraw.SetLineThickness doesn't work)
+    debugDraw.SetFillAlpha(0.5)                    # transparency
+    debugDraw.m_sprite.graphics.clear = -> return; # Don't allow box2D to (badly) clear the canvas
 
     # Assign debug to world
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit)
@@ -48,14 +48,14 @@ class Physics
 
     # save replay if better (local + server)
     if replay.success
-      console.log(replay.steps)
+      time = (replay.steps / 60.0).toFixed(2).replace('.', ':')
       if (not player_ghost.replay) || player_ghost.replay.steps > replay.steps
-        console.log('win')
+        console.log("WIN : you improved your personal score : #{time} (#{replay.steps} steps)")
         @level.replay.add_frame() # add last frame (not always in timing of replay_fps but nicer when drawing replay)
         replay.save()
         @level.ghosts.player = new Ghost(@level, replay.clone())
       else
-        console.log('fail')
+        console.log("FAIL : you didn't improve your personal score : #{time} (#{replay.steps} steps)")
 
     @level.restart()
     @init()

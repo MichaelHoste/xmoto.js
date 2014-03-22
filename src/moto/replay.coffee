@@ -16,11 +16,12 @@ class Replay
     return new_replay
 
   load: ->
-    selector     = $(Constants.current_user_selector)
-    replay_id    = selector.attr(Constants.best_score_id_attribute)
-    replay_steps = selector.attr(Constants.best_score_steps_attribute)
+    options      = @level.options
+    selector     = $(options.current_user)
+    replay_id    = selector.attr(options.replay_id_attribute)
+    replay_steps = selector.attr(options.replay_steps_attribute)
     if selector.length && replay_id.length > 0
-      $.get("#{Constants.replays_path}/#{replay_id}.replay", (data) =>
+      $.get("#{options.replays_path}/#{replay_id}.replay", (data) =>
         @frames  = ReplayConversionService.string_to_frames(data)
         @success = true
         @steps   = parseInt(replay_steps)

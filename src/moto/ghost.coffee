@@ -5,7 +5,7 @@ class Ghost
     @replay  = replay
 
   display: ->
-    if @replay
+    if @replay and !Constants.debug
       @frame = @current_frame()
       mirror = if @frame.mirror then -1 else 1
 

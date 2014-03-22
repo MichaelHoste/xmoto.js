@@ -48,7 +48,7 @@ class Input
           url = if url.substr(url.length-1) != '/' then "#{url}/capture" else "#{url}capture"
           $.post(url,
             steps: @level.physics.steps
-            image: $("#game")[0].toDataURL()
+            image: $(@level.options.canvas)[0].toDataURL()
           ).done( -> alert("Capture uploaded")).fail( -> alert("Capture failed"))
     )
 

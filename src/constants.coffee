@@ -24,18 +24,6 @@ class Constants
     x:  85.0
     y: -85.0
 
-  # PATHS TO BACKEND
-
-  @scores_path  = '/level_user_links'  # Path where to POST a score
-  @replays_path = '/data/Replays'      # Path where all the replay files are stored (ex. /data/Replays/1.replay)
-                                       # ...for better performances, replay files are publicly stored (flat !)
-
-  # SELECTORS FOR BACKEND (get important informations from the page DOM)
-
-  @current_user_selector      = "#current-user"         # ex. $("#current-user").attr('data-best-score-id')
-  @best_score_id_attribute    = "data-best-score-id"    #     must give the id from the current user's best score
-  @best_score_steps_attribute = "data-best-score-steps" #     so that we can load the corresponding replay
-
   # MOTO PARTS
 
   @body =
@@ -186,7 +174,7 @@ class Constants
              new b2Vec2( 0.4,  0.07)
              new b2Vec2(-0.4,  0.14)
              new b2Vec2(-0.4, -0.08) ]
-    collisions: false
+    collisions: true
     texture:       'playerupperleg'
     ghost_texture: 'ghostupperleg'
     texture_size:

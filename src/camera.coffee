@@ -42,6 +42,6 @@ class Camera
 
       return event.preventDefault() && false
 
-    canvas = $('#game').get(0)
+    canvas = $(@level.options.canvas).get(0)
     canvas.addEventListener('DOMMouseScroll', scroll, false)
     canvas.addEventListener('mousewheel',     scroll, false)

@@ -34,7 +34,7 @@ class Sky
     ctx.closePath()
 
     if Constants.debug
-      ctx.fillStyle = "#FFFFFF"
+      ctx.fillStyle = "#222228"
       ctx.fill()
     else
       ctx.save()

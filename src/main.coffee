@@ -1,57 +1,55 @@
-play_level = (name) ->
-  level = new Level()
-  level.load_from_file(name)
+$.xmoto = (level_filename, options = {}) ->
+  initialize = (options) ->
+    defaults =
 
-  # Load assets for this level before doing anything else
+      # Selectors
+      canvas:       '#xmoto'         # canvas selector
+      buffer:       '#buffer'        # buffer selector
+      loading:      '#loading'       # loading selector
+      chrono:       '#chrono'        # chrono selector
+      users:        '#users .user'   # each $("#users .user") behaves like $('#current-user') (cf. below)
+      current_user: '#current-user'  # ex. $("#current-user").attr('data-replay-id')
+                                     #     must give the id from the current user's best score
+                                     #     so that we can load the corresponding replay
+
+      # Attributes
+      replay_id_attribute:      'data-replay-id'      # id of replay (ex. /data/Replays/{id}.replay
+      replay_steps_attribute:   'data-replay-steps'   # number of steps of replay
+      replay_name_attribute:    'data-replay-name'    # name of user that made the replay
+      replay_picture_attribute: 'data-replay-picture' # picture of user that made the replay
+      replay_active_attribute:  'data-replay-display' # true if replay must be activated (displayed)
+
+      # Paths
+      levels_path:  '/data/Levels'        # Path where are the levels (ex. /data/Levels/l1.lvl)
+      scores_path:  '/level_user_links'   # Path where to POST a score
+      replays_path: '/data/Replays'       # Path where all the replay files are stored (ex. /data/Replays/1.replay)
+
+    return $.extend(defaults, options)
+
+  options = initialize(options)
+
+  $(options.loading).show()
+
+  level = new Level(options)
+  level.load_from_file(level_filename)
   level.assets.load( ->
     update = ->
       level.physics.update()
       level.display()
       window.game_loop = window.requestAnimationFrame(update)
 
-    #createjs.Sound.setMute(true)
-
     level.start_time   = new Date().getTime()
     level.current_time = 0
     level.physics.init()
 
     window.cancelAnimationFrame(window.game_loop)
-    hide_loading()
+    $(options.loading).hide()
 
     update()
   )
 
-show_loading = ->
-  $("#loading").show()
-
-hide_loading = ->
-  $("#loading").hide()
-
-full_screen = ->
-  window.onresize = ->
-    $("#game").width($("body").width())
-    $("#game").height($("body").height())
-  window.onresize()
-
-bind_select = ->
-  $("#levels").on('change', ->
-    show_loading()
-    play_level($(this).val())
-  )
-
-select_level_from_url = ->
-  level = $.url().param('l')
-  $("#levels").val("l#{level}.lvl")
-  $("#levels").trigger("change")
-
-$ ->
-  bind_select()
-
-  if $("#game").attr('data-current-level')
-      play_level($("#game").data('current-level'))
-  else if location.search != ''
-    select_level_from_url()
-  else if $("#levels").length
-    play_level($("#levels option:selected").val())
-
-  #full_screen()
+#full_screen = ->
+#  window.onresize = ->
+#    $("#xmoto").width($("body").width())
+#    $("#xmoto").height($("body").height())
+#  window.onresize()
