@@ -6,6 +6,11 @@ bind_debug_button = ->
     false
   )
 
+  $('.normal-button').on('click', ->
+    window.location = '?level=' + $("#levels option:selected").text()
+    false
+  )
+
 bind_delete_params_buttons = ->
   $("#debug span.delete").on('click', ->
     $(this).closest('.template').remove()
@@ -62,6 +67,7 @@ $ ->
   if $('#debug').length and Object.keys(params).length > 1 # level param is accepted with debug mode off
     $('.debug').show()
     $('.debug-button').hide()
+    $('body').addClass('debug')
 
     override_constants_by_url_params(params)
     create_form_with_url_params(params)

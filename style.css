@@ -67,7 +67,7 @@ body {
   padding-top: 50px;
   padding-bottom: 50px;
   background-color:black;
-  opacity: 0.5;
+  opacity: 0.6;
   color: white;
 }
 
@@ -117,24 +117,24 @@ div#debug {
   position:absolute;
   top: -24px;
   right: 100px;
+  z-index: 2;
 }
 
-div#debug.enabled {
-  margin-left: 10px;
-  width: 350px;
-  margin-top: -600px;
-  height: 600px;
-  overflow: auto;
-}
-
-#debug .debug-button {
+#debug .debug-button, .normal-button {
   color: #08c;
   text-decoration: none;
   font-size: 14px;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
-#debug .debug-button:hover {
+.normal-button {
+  position: absolute;
+  top: -24px;
+  right: 0px;
+  display:none;
+}
+
+#debug .debug-button:hover, .normal-button:hover {
   color: black;
 }
 
@@ -150,12 +150,80 @@ div#debug.enabled {
   width: 150px;
   display: block;
   float: left;
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  line-height: 23px;
 }
 
 #debug .template .delete {
   cursor: pointer;
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  color: #08c;
 }
 
 #debug .variables {
-  padding-top: 10px;
+}
+
+#debug .variables ul li {
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  line-height: 18px;
+}
+
+#debug .variables > ul {
+  padding-left: 20px;
+}
+
+#debug .variables > ul > li > ul {
+  padding-left: 20px;
+}
+
+#debug .variables ul li a {
+  text-decoration: none;
+  color: #08c;
+}
+
+#debug hr {
+  margin-top: 15px;
+  color: #DDDDDD;
+  border: 1px solid;
+}
+
+body.debug #prev-level, body.debug #next-level {
+  display:none;
+}
+
+body.debug #content {
+  width: 1000px;
+  margin-left: 50px;
+  margin-right: 0px;
+}
+
+body.debug #chrono {
+  left: 895px;
+}
+
+body.debug div#debug {
+  top: 0px;
+  left: 1016px;
+  width: 340px;
+  height: 600px;
+  overflow: auto;
+}
+
+body.debug #loading {
+  margin-left: 0px;
+}
+
+body.debug #levels_block {
+  margin-left: 0px;
+}
+
+body.debug #hint {
+  margin-right: 0px;
+}
+
+body.debug .normal-button {
+  display: block;
 }

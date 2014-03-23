@@ -2935,8 +2935,12 @@
   })();
 
   bind_debug_button = function() {
-    return $('#debug .debug-button').on('click', function() {
+    $('#debug .debug-button').on('click', function() {
       window.location = '?level=' + $("#levels option:selected").text() + '&debug=false';
+      return false;
+    });
+    return $('.normal-button').on('click', function() {
+      window.location = '?level=' + $("#levels option:selected").text();
       return false;
     });
   };
@@ -3028,6 +3032,7 @@
     if ($('#debug').length && Object.keys(params).length > 1) {
       $('.debug').show();
       $('.debug-button').hide();
+      $('body').addClass('debug');
       override_constants_by_url_params(params);
       create_form_with_url_params(params);
       display_constants();
