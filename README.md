@@ -1,58 +1,40 @@
-XMoto.io
+XMoto.js
 ========
 
-HTML5 Version of XMOTO (2D Canvas + Box2D)
+This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using 2D Canvas and Box2DWeb ([Box2DWeb](https://code.google.com/p/box2dweb/)).
 
-More about the development here : http://xmoto.io
+This is the first part of the project and its purpose is to be compatible with a lot of pre-existing levels from the original game (XML files).
 
-## For developpment
+The next part of the project is [XMoto.io](), a social XMoto game with a backend for scores, replays, etc. XMoto.io will be built on XMoto.js using Ruby on Rails and both the projects will co-evolve.
+
+ * Image
+ * DEMO
+ * More about the development here : http://xmoto.io
+
+## Usage
+
+ * Upload "data", "lib" and "bin" folders on a static web server.
+ * Include all the JavaScript files of /lib/ and /bin/xmoto.js on your web page.
+ * Unsure that /data/ folder is on your root directory.
+ * Call ```$.xmoto('l1.lvl')``` where "l1.lvl" is the name of the level you want to load
+
+## Developpment
 
 ### Installation
 
- * ```brew install nodejs``` (on MacOS) : install NodeJS
+ * ```brew install nodejs``` : install NodeJS (on MacOS)
  * ```sudo npm install -g coffee-script``` : install CoffeeScript
  * ```npm install express``` : install Express
 
-### Usage
+### Working environnement
 
  * ```coffee -j bin/xmoto.js -wc src/*.coffee src/*/*.coffee``` to compile to JavaScript automatically on each change.
- * ```node server.js``` to launch HTTP Server (http://localhost:3000) or use any web server.
+ * ```node server.js``` to launch HTTP Server (http://localhost:3000).
 
 Don't forget to restart the coffee command if you create new JS files.
 
-## For production
-
-Just upload the files on a static web server (you can remove the "src" folder if you want)
-
-## Download the levels from the XMoto official website
-
-### Solution 1
-
-Execute this on the chrome console of one of the page of listing (ex. http://xmoto.tuxfamily.org/index.php?page=levels&sort=name&letter=A)
-
-```
-var jq = document.createElement('script');
-jq.src = "//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js";
-document.getElementsByTagName('head')[0].appendChild(jq);
-// ... give time for script to load, then type.
-jQuery.noConflict();
-```
-
-Then this
-
-```
-$('.admin_data tr').each(function(){ $(this).find('td:last a').each(function() { console.log("wget -P data/Levels/ " + $(this).attr('href')) }) })
-```
-
-Then put result lines in a bash file at the root of the project, chmod +x the file and execute it.
-
-### Solution 2
-
-Use this file : http://xmoto.tuxfamily.org/levels.
-
 ## TODO
 
- * Dezoom with speed
  * Move camera left/right/up/down depending on moto direction and moto speed
  * Create camera and put @visibility, @scale, @object_to_follow etc. (for level and buffer)
  * surface drift / "rééquilibre bordures" / multiples photos liées ou photo+replay / voir replay

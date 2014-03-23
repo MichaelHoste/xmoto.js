@@ -61,7 +61,7 @@ body {
   font-size: 19px;
   margin-left: 100px;
   position: absolute;
-  top: 250px;
+  top: 234px;
   width: 1000px;
   text-align: center;
   padding-top: 50px;
@@ -188,6 +188,7 @@ div#debug {
   margin-top: 15px;
   color: #DDDDDD;
   border: 1px solid;
+  display:none;
 }
 
 body.debug #prev-level, body.debug #next-level {
@@ -226,4 +227,8 @@ body.debug #hint {
 
 body.debug .normal-button {
   display: block;
+}
+
+body.debug #debug hr {
+  display:block;
 }
