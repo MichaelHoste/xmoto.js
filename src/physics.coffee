@@ -67,6 +67,7 @@ class Physics
       @level.replay.steps = @steps
 
       @level.input.move()
+      @level.moto.move()
       @level.camera.move()
       @world.Step(1.0/Constants.fps, 10, 10)
       @world.ClearForces()

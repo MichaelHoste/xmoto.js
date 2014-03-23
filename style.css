@@ -1,0 +1,64 @@
+#xmoto {
+  float: left;
+}
+
+#buffer {
+  display: none;
+}
+
+#loading {
+  position: absolute;
+  top: 300px;
+  width: 1000px;
+  text-align: center;
+}
+
+#chrono {
+  position: absolute;
+  top: 20px;
+  left: 909px;
+  font-size: 20px;
+  background-color: black;
+  color: white;
+  padding: 10px;
+  width: 67px;
+  opacity: 0.5;
+  text-align: center;
+}
+
+#levels_block {
+  width: 1000px;
+  float: left;
+  padding-top: 10px;
+}
+
+div#debug {
+  float: left;
+  margin-left: 10px;
+  width: 350px;
+  margin-top: -600px;
+  height: 600px;
+  overflow: auto;
+}
+
+#debug form.debug {
+  display: none;
+}
+
+#debug .template {
+  display: none;
+}
+
+#debug .template label {
+  width: 150px;
+  display: block;
+  float: left;
+}
+
+#debug .template .delete {
+  cursor: pointer;
+}
+
+#debug .variables {
+  padding-top: 10px;
+}

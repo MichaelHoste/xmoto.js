@@ -98,18 +98,6 @@ class Constants
     texture:       'front1'
     ghost_texture: 'front_ghost'
 
-  # MOTO JOINTS
-
-  @left_suspension =
-    angle: new b2Vec2(0, 1)
-    lower_translation: -0.03
-    upper_translation:  0.20
-
-  @right_suspension =
-    angle: new b2Vec2(-0.2, 1)
-    lower_translation: 0.00
-    upper_translation: 0.20
-
   # RIDER PARTS
 
   @head =
@@ -218,6 +206,22 @@ class Constants
     texture_size:
       x: 0.24
       y: 0.56
+
+  # MOTO JOINTS
+
+  @left_suspension =
+    angle: new b2Vec2(0, 1)
+    lower_translation: -0.03
+    upper_translation:  0.20
+    back_force:         3.00
+    rigidity:           8.00
+
+  @right_suspension =
+    angle: new b2Vec2(-0.2, 1)
+    lower_translation: -0.01
+    upper_translation:  0.20
+    back_force:         3.00
+    rigidity:           4.00
 
   # RIDER JOINTS
 

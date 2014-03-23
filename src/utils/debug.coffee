@@ -3,6 +3,7 @@
 bind_debug_button = ->
   $('#debug .debug-button').on('click', ->
     window.location = '?level=' + $("#levels option:selected").text() + '&debug=false'
+    false
   )
 
 bind_delete_params_buttons = ->

@@ -96,41 +96,6 @@ class Input
         moto.rider.torso     .ApplyForce({x:  biker_force, y: 0}, moto.rider.torso    .GetWorldCenter())
         moto.rider.lower_leg .ApplyForce({x: -biker_force, y :0}, moto.rider.lower_leg.GetWorldCenter())
 
-    if not @up and not @down
-      # Engine brake
-      v = moto.left_wheel.GetAngularVelocity()
-      moto.left_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/10))
-
-      # Friction on right wheel
-      v = moto.right_wheel.GetAngularVelocity()
-      moto.right_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/100))
-
-    # Left wheel suspension
-    moto.left_prismatic_joint.SetMaxMotorForce(8+Math.abs(800*Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)))
-    moto.left_prismatic_joint.SetMotorSpeed(-3*moto.left_prismatic_joint.GetJointTranslation())
-
-    # Right wheel suspension
-    moto.right_prismatic_joint.SetMaxMotorForce(4+Math.abs(800*Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)))
-    moto.right_prismatic_joint.SetMotorSpeed(-3*moto.right_prismatic_joint.GetJointTranslation())
-
-    # Drag (air resistance)
-    air_density        = Constants.air_density
-    object_penetration = 0.025
-    squared_speed      = Math.pow(moto.body.GetLinearVelocity().x, 2)
-    drag_force         = air_density * squared_speed * object_penetration
-    moto.body.SetLinearDamping(drag_force)
-
-    # Limitation of wheel rotation speed (and by extension, of moto)
-    if moto.right_wheel.GetAngularVelocity() > Constants.max_moto_speed
-      moto.right_wheel.SetAngularVelocity(Constants.max_moto_speed)
-    else if moto.right_wheel.GetAngularVelocity() < -Constants.max_moto_speed
-      moto.right_wheel.SetAngularVelocity(-Constants.max_moto_speed)
-
-    if moto.left_wheel.GetAngularVelocity() > Constants.max_moto_speed
-      moto.left_wheel.SetAngularVelocity(Constants.max_moto_speed)
-    else if moto.left_wheel.GetAngularVelocity() < -Constants.max_moto_speed
-      moto.left_wheel.SetAngularVelocity(-Constants.max_moto_speed)
-
     # Detection of drifting
     #rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
     #linear_speed   = moto.left_wheel.GetLinearVelocity().x/10

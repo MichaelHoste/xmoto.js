@@ -275,18 +275,6 @@
       ghost_texture: 'front_ghost'
     };
 
-    Constants.left_suspension = {
-      angle: new b2Vec2(0, 1),
-      lower_translation: -0.03,
-      upper_translation: 0.20
-    };
-
-    Constants.right_suspension = {
-      angle: new b2Vec2(-0.2, 1),
-      lower_translation: 0.00,
-      upper_translation: 0.20
-    };
-
     Constants.head = {
       density: 0.4,
       restitution: 0.0,
@@ -392,6 +380,22 @@
         x: 0.24,
         y: 0.56
       }
+    };
+
+    Constants.left_suspension = {
+      angle: new b2Vec2(0, 1),
+      lower_translation: -0.03,
+      upper_translation: 0.20,
+      back_force: 3.00,
+      rigidity: 8.00
+    };
+
+    Constants.right_suspension = {
+      angle: new b2Vec2(-0.2, 1),
+      lower_translation: -0.01,
+      upper_translation: 0.20,
+      back_force: 3.00,
+      rigidity: 4.00
     };
 
     Constants.ankle = {
@@ -529,7 +533,7 @@
     };
 
     Input.prototype.move = function() {
-      var air_density, biker_force, drag_force, moto, moto_acceleration, object_penetration, rider, squared_speed, v;
+      var biker_force, moto, moto_acceleration, rider;
       moto = this.level.moto;
       rider = moto.rider;
       moto_acceleration = Constants.moto_acceleration;
@@ -561,36 +565,11 @@
             x: biker_force,
             y: 0
           }, moto.rider.torso.GetWorldCenter());
-          moto.rider.lower_leg.ApplyForce({
+          return moto.rider.lower_leg.ApplyForce({
             x: -biker_force,
             y: 0
           }, moto.rider.lower_leg.GetWorldCenter());
         }
-      }
-      if (!this.up && !this.down) {
-        v = moto.left_wheel.GetAngularVelocity();
-        moto.left_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 10 : void 0));
-        v = moto.right_wheel.GetAngularVelocity();
-        moto.right_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 100 : void 0));
-      }
-      moto.left_prismatic_joint.SetMaxMotorForce(8 + Math.abs(800 * Math.pow(moto.left_prismatic_joint.GetJointTranslation(), 2)));
-      moto.left_prismatic_joint.SetMotorSpeed(-3 * moto.left_prismatic_joint.GetJointTranslation());
-      moto.right_prismatic_joint.SetMaxMotorForce(4 + Math.abs(800 * Math.pow(moto.right_prismatic_joint.GetJointTranslation(), 2)));
-      moto.right_prismatic_joint.SetMotorSpeed(-3 * moto.right_prismatic_joint.GetJointTranslation());
-      air_density = Constants.air_density;
-      object_penetration = 0.025;
-      squared_speed = Math.pow(moto.body.GetLinearVelocity().x, 2);
-      drag_force = air_density * squared_speed * object_penetration;
-      moto.body.SetLinearDamping(drag_force);
-      if (moto.right_wheel.GetAngularVelocity() > Constants.max_moto_speed) {
-        moto.right_wheel.SetAngularVelocity(Constants.max_moto_speed);
-      } else if (moto.right_wheel.GetAngularVelocity() < -Constants.max_moto_speed) {
-        moto.right_wheel.SetAngularVelocity(-Constants.max_moto_speed);
-      }
-      if (moto.left_wheel.GetAngularVelocity() > Constants.max_moto_speed) {
-        return moto.left_wheel.SetAngularVelocity(Constants.max_moto_speed);
-      } else if (moto.left_wheel.GetAngularVelocity() < -Constants.max_moto_speed) {
-        return moto.left_wheel.SetAngularVelocity(-Constants.max_moto_speed);
       }
     };
 
@@ -948,6 +927,7 @@
         this.last_step += this.step;
         this.level.replay.steps = this.steps;
         this.level.input.move();
+        this.level.moto.move();
         this.level.camera.move();
         this.world.Step(1.0 / Constants.fps, 10, 10);
         this.world.ClearForces();
@@ -2074,6 +2054,40 @@
       return this.body.GetPosition();
     };
 
+    Moto.prototype.move = function() {
+      var air_density, back_force, drag_force, input, object_penetration, rigidity, squared_speed, v;
+      input = this.level.input;
+      if (!input.up && !input.down) {
+        v = this.left_wheel.GetAngularVelocity();
+        this.left_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 10 : void 0));
+        v = this.right_wheel.GetAngularVelocity();
+        this.right_wheel.ApplyTorque((Math.abs(v) >= 0.2 ? -v / 100 : void 0));
+      }
+      back_force = Constants.left_suspension.back_force;
+      rigidity = Constants.left_suspension.rigidity;
+      this.left_prismatic_joint.SetMaxMotorForce(rigidity + Math.abs(rigidity * 100 * Math.pow(this.left_prismatic_joint.GetJointTranslation(), 2)));
+      this.left_prismatic_joint.SetMotorSpeed(-back_force * this.left_prismatic_joint.GetJointTranslation());
+      back_force = Constants.right_suspension.back_force;
+      rigidity = Constants.right_suspension.rigidity;
+      this.right_prismatic_joint.SetMaxMotorForce(rigidity + Math.abs(rigidity * 100 * Math.pow(this.right_prismatic_joint.GetJointTranslation(), 2)));
+      this.right_prismatic_joint.SetMotorSpeed(-back_force * this.right_prismatic_joint.GetJointTranslation());
+      air_density = Constants.air_density;
+      object_penetration = 0.025;
+      squared_speed = Math.pow(this.body.GetLinearVelocity().x, 2);
+      drag_force = air_density * squared_speed * object_penetration;
+      this.body.SetLinearDamping(drag_force);
+      if (this.right_wheel.GetAngularVelocity() > Constants.max_moto_speed) {
+        this.right_wheel.SetAngularVelocity(Constants.max_moto_speed);
+      } else if (this.right_wheel.GetAngularVelocity() < -Constants.max_moto_speed) {
+        this.right_wheel.SetAngularVelocity(-Constants.max_moto_speed);
+      }
+      if (this.left_wheel.GetAngularVelocity() > Constants.max_moto_speed) {
+        return this.left_wheel.SetAngularVelocity(Constants.max_moto_speed);
+      } else if (this.left_wheel.GetAngularVelocity() < -Constants.max_moto_speed) {
+        return this.left_wheel.SetAngularVelocity(-Constants.max_moto_speed);
+      }
+    };
+
     Moto.prototype.create_body = function() {
       var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
@@ -2922,7 +2936,8 @@
 
   bind_debug_button = function() {
     return $('#debug .debug-button').on('click', function() {
-      return window.location = '?level=' + $("#levels option:selected").text() + '&debug=false';
+      window.location = '?level=' + $("#levels option:selected").text() + '&debug=false';
+      return false;
     });
   };
 

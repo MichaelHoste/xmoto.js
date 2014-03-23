@@ -59,6 +59,48 @@ class Moto
   position: ->
     @body.GetPosition()
 
+  move: ->
+    input = @level.input
+
+    if not input.up and not input.down
+      # Engine brake
+      v = @left_wheel.GetAngularVelocity()
+      @left_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/10))
+
+      # Friction on right wheel
+      v = @right_wheel.GetAngularVelocity()
+      @right_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/100))
+
+    # Left wheel suspension
+    back_force = Constants.left_suspension.back_force
+    rigidity   = Constants.left_suspension.rigidity
+    @left_prismatic_joint.SetMaxMotorForce(rigidity+Math.abs(rigidity*100*Math.pow(@left_prismatic_joint.GetJointTranslation(), 2)))
+    @left_prismatic_joint.SetMotorSpeed(-back_force*@left_prismatic_joint.GetJointTranslation())
+
+    # Right wheel suspension
+    back_force = Constants.right_suspension.back_force
+    rigidity   = Constants.right_suspension.rigidity
+    @right_prismatic_joint.SetMaxMotorForce(rigidity+Math.abs(rigidity*100*Math.pow(@right_prismatic_joint.GetJointTranslation(), 2)))
+    @right_prismatic_joint.SetMotorSpeed(-back_force*@right_prismatic_joint.GetJointTranslation())
+
+    # Drag (air resistance)
+    air_density        = Constants.air_density
+    object_penetration = 0.025
+    squared_speed      = Math.pow(@body.GetLinearVelocity().x, 2)
+    drag_force         = air_density * squared_speed * object_penetration
+    @body.SetLinearDamping(drag_force)
+
+    # Limitation of wheel rotation speed (and by extension, of moto)
+    if @right_wheel.GetAngularVelocity() > Constants.max_moto_speed
+      @right_wheel.SetAngularVelocity(Constants.max_moto_speed)
+    else if @right_wheel.GetAngularVelocity() < -Constants.max_moto_speed
+      @right_wheel.SetAngularVelocity(-Constants.max_moto_speed)
+
+    if @left_wheel.GetAngularVelocity() > Constants.max_moto_speed
+      @left_wheel.SetAngularVelocity(Constants.max_moto_speed)
+    else if @left_wheel.GetAngularVelocity() < -Constants.max_moto_speed
+      @left_wheel.SetAngularVelocity(-Constants.max_moto_speed)
+
   create_body: ->
     # Create fixture
     fixDef = new b2FixtureDef()
