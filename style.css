@@ -1,22 +1,80 @@
+body {
+  background: url('/background.png');
+  margin: 0px;
+  padding-bottom: 40px;
+}
+
+.back {
+  text-align: left;
+  font-size: 14px;
+  padding-left: 7px;
+  margin-top: 5px;
+}
+
+.back a {
+  color: #08c;
+  text-decoration: none;
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  line-height: 34px;
+}
+
+.back a:hover {
+  color: black;
+}
+
+.github-banner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 0;
+  z-index: 1;
+}
+
+#content {
+  position: relative;
+  width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+
 #xmoto {
   float: left;
+  box-shadow:0px 0px 30px #888;
 }
 
 #buffer {
   display: none;
 }
 
+#prev-level, #next-level {
+  width:100px;
+  height:600px;
+  float:left;
+  cursor:pointer;
+  color:#E5E5E5;
+}
+
 #loading {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 19px;
+  margin-left: 100px;
   position: absolute;
-  top: 300px;
+  top: 250px;
   width: 1000px;
   text-align: center;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  background-color:black;
+  opacity: 0.5;
+  color: white;
 }
 
 #chrono {
   position: absolute;
-  top: 20px;
-  left: 909px;
+  top: 18px;
+  left: 995px;
   font-size: 20px;
   background-color: black;
   color: white;
@@ -24,21 +82,60 @@
   width: 67px;
   opacity: 0.5;
   text-align: center;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 #levels_block {
   width: 1000px;
   float: left;
-  padding-top: 10px;
+  padding-top: 7px;
+  margin-left: 100px;
+
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 19px;
+  color: #333;
+}
+
+#levels_block select {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 19px;
+  vertical-align: 1px;
+}
+
+#hint {
+  font-size: 14px;
+  text-align: right;
+  float: right;
+  margin-right: 100px;
+  margin-top: -21px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  color: #333;
 }
 
 div#debug {
-  float: left;
+  position:absolute;
+  top: -24px;
+  right: 100px;
+}
+
+div#debug.enabled {
   margin-left: 10px;
   width: 350px;
   margin-top: -600px;
   height: 600px;
   overflow: auto;
+}
+
+#debug .debug-button {
+  color: #08c;
+  text-decoration: none;
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+#debug .debug-button:hover {
+  color: black;
 }
 
 #debug form.debug {
