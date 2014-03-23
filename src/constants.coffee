@@ -251,6 +251,13 @@ class Constants
       x: -0.25
       y:  0.14
 
+  # GROUND
+
+  @ground =
+    density:     1.0
+    restitution: 0.3
+    friction:    1.0
+
   # OVERRIDE CONSTANTS BY URL PARAMS
 
   url = $.url()
@@ -265,7 +272,7 @@ class Constants
   @moto_acceleration = parseFloat(url.param('moto_acceleration')) if url.param('moto_acceleration')
   @biker_force       = parseFloat(url.param('biker_force'))       if url.param('biker_force')
 
-  # Density
+  # Moto Density
   @body.density        = parseFloat(url.param('body_density'))        if url.param('body_density')
   @left_wheel.density  = parseFloat(url.param('left_wheel_density'))  if url.param('left_wheel_density')
   @right_wheel.density = parseFloat(url.param('right_wheel_density')) if url.param('right_wheel_density')
@@ -278,7 +285,7 @@ class Constants
   @lower_arm.density   = parseFloat(url.param('lower_arm_density'))   if url.param('lower_arm_density')
   @upper_arm.density   = parseFloat(url.param('upper_arm_density'))   if url.param('upper_arm_density')
 
-  # Restitution
+  # Moto Restitution
   @body.restitution        = parseFloat(url.param('body_restitution'))        if url.param('body_restitution')
   @left_wheel.restitution  = parseFloat(url.param('left_wheel_restitution'))  if url.param('left_wheel_restitution')
   @right_wheel.restitution = parseFloat(url.param('right_wheel_restitution')) if url.param('right_wheel_restitution')
@@ -291,7 +298,7 @@ class Constants
   @lower_arm.restitution   = parseFloat(url.param('lower_arm_restitution'))   if url.param('lower_arm_restitution')
   @upper_arm.restitution   = parseFloat(url.param('upper_arm_restitution'))   if url.param('upper_arm_restitution')
 
-  # Friction
+  # Moto Friction
   @body.friction        = parseFloat(url.param('body_friction'))        if url.param('body_friction')
   @left_wheel.friction  = parseFloat(url.param('left_wheel_friction'))  if url.param('left_wheel_friction')
   @right_wheel.friction = parseFloat(url.param('right_wheel_friction')) if url.param('right_wheel_friction')
@@ -304,7 +311,7 @@ class Constants
   @lower_arm.friction   = parseFloat(url.param('lower_arm_friction'))   if url.param('lower_arm_friction')
   @upper_arm.friction   = parseFloat(url.param('upper_arm_friction'))   if url.param('upper_arm_friction')
 
-  # Collision
+  # Moto Collision
   @body.collision        = url.param('body_collision')        == 'true' if url.param('body_collision')
   @left_wheel.collision  = url.param('left_wheel_collision')  == 'true' if url.param('left_wheel_collision')
   @right_wheel.collision = url.param('right_wheel_collision') == 'true' if url.param('right_wheel_collision')
@@ -319,6 +326,10 @@ class Constants
 
   # Others
   @head.radius                        = parseFloat(url.param('head_radius'))                        if url.param('head_radius')
+
+  @ground.density                     = parseFloat(url.param('ground_density'))                     if url.param('ground_density')
+  @ground.restitution                 = parseFloat(url.param('ground_restitution'))                 if url.param('ground_restitution')
+  @ground.friction                    = parseFloat(url.param('ground_friction'))                    if url.param('ground_friction')
 
   @left_suspension.angle.x            = parseFloat(url.param['left_suspension_angle_x'])            if url.param('left_suspension_angle_x')
   @left_suspension.angle.y            = parseFloat(url.param['left_suspension_angle_y'])            if url.param('left_suspension_angle_y')

@@ -81,8 +81,9 @@ class Blocks
       @assets.textures.push(texture_file)
 
     # Collisions for blocks
+    ground = Constants.ground
     for block in @front_list
-      @level.physics.create_lines(block, 'ground')
+      @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
     # Init edges
     @edges = new Edges(@level, @list)

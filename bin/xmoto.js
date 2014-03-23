@@ -438,6 +438,12 @@
       }
     };
 
+    Constants.ground = {
+      density: 1.0,
+      restitution: 0.3,
+      friction: 1.0
+    };
+
     url = $.url();
 
     if (url.param('debug')) {
@@ -650,6 +656,18 @@
 
     if (url.param('head_radius')) {
       Constants.head.radius = parseFloat(url.param('head_radius'));
+    }
+
+    if (url.param('ground_density')) {
+      Constants.ground.density = parseFloat(url.param('ground_density'));
+    }
+
+    if (url.param('ground_restitution')) {
+      Constants.ground.restitution = parseFloat(url.param('ground_restitution'));
+    }
+
+    if (url.param('ground_friction')) {
+      Constants.ground.friction = parseFloat(url.param('ground_friction'));
     }
 
     if (url.param('left_suspension_angle_x')) {
@@ -1391,17 +1409,18 @@
     };
 
     Blocks.prototype.init = function() {
-      var block, texture_file, _i, _j, _len, _len1, _ref, _ref1;
+      var block, ground, texture_file, _i, _j, _len, _len1, _ref, _ref1;
       _ref = this.list;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
         texture_file = block.texture_name;
         this.assets.textures.push(texture_file);
       }
+      ground = Constants.ground;
       _ref1 = this.front_list;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         block = _ref1[_j];
-        this.level.physics.create_lines(block, 'ground');
+        this.level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction);
       }
       return this.edges = new Edges(this.level, this.list);
     };
@@ -1970,8 +1989,9 @@
     };
 
     Limits.prototype.init = function() {
-      var vertices;
+      var ground, vertices;
       this.assets.textures.push(this.texture_name);
+      ground = Constants.ground;
       vertices = [];
       vertices.push({
         x: this.screen.left,
@@ -1989,7 +2009,7 @@
         x: this.player.left,
         y: this.screen.top
       });
-      this.level.physics.create_polygon(vertices, 'ground');
+      this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction);
       vertices = [];
       vertices.push({
         x: this.player.right,
@@ -2007,7 +2027,7 @@
         x: this.screen.right,
         y: this.screen.top
       });
-      this.level.physics.create_polygon(vertices, 'ground');
+      this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction);
       vertices = [];
       vertices.push({
         x: this.player.right,
@@ -2025,7 +2045,7 @@
         x: this.player.right,
         y: this.screen.bottom
       });
-      this.level.physics.create_polygon(vertices, 'ground');
+      this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction);
       vertices = [];
       vertices.push({
         x: this.player.right,
@@ -2043,7 +2063,7 @@
         x: this.player.right,
         y: this.player.top
       });
-      return this.level.physics.create_polygon(vertices, 'ground');
+      return this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction);
     };
 
     Limits.prototype.display = function(ctx) {

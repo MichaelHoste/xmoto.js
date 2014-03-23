@@ -41,13 +41,15 @@ class Limits
 
     # Collisions with borders
 
+    ground = Constants.ground
+
     # Left
     vertices = []
     vertices.push({ x: @screen.left, y: @screen.top })
     vertices.push({ x: @screen.left, y: @screen.bottom })
     vertices.push({ x: @player.left, y: @screen.bottom })
     vertices.push({ x: @player.left, y: @screen.top })
-    @level.physics.create_polygon(vertices, 'ground')
+    @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
 
     # Right
     vertices = []
@@ -55,7 +57,7 @@ class Limits
     vertices.push({ x: @player.right, y: @screen.bottom })
     vertices.push({ x: @screen.right, y: @screen.bottom })
     vertices.push({ x: @screen.right, y: @screen.top })
-    @level.physics.create_polygon(vertices, 'ground')
+    @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
 
     # Bottom
     vertices = []
@@ -63,7 +65,7 @@ class Limits
     vertices.push({ x: @player.left,  y: @player.bottom })
     vertices.push({ x: @player.left,  y: @screen.bottom })
     vertices.push({ x: @player.right, y: @screen.bottom })
-    @level.physics.create_polygon(vertices, 'ground')
+    @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
 
     # Bottom
     vertices = []
@@ -72,7 +74,7 @@ class Limits
     vertices.push({ x: @player.left,  y: @player.top })
     vertices.push({ x: @player.right, y: @player.top })
 
-    @level.physics.create_polygon(vertices, 'ground')
+    @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
 
   display: (ctx) ->
     return false if Constants.debug
