@@ -26,7 +26,7 @@
       $(document).ready(function(){
         $("#levels").on('change', function(){ $.xmoto($(this).val()) })
 
-        level = $.url().param('l')
+        level = $.url().param('level')
         if(level) {
           $("#levels").val("l" + level + ".lvl")
         }
@@ -37,21 +37,22 @@
   </head>
 
   <body>
-    <canvas id="xmoto"  width="1000" height="600"></canvas>
+    <canvas id="xmoto"  width="1000" height="600" style="float:left"></canvas>
     <canvas id="buffer" width="1500" height="900" style="display:none"></canvas>
 
     <div id="loading" style="position:absolute;top:300px;width:1000px;text-align:center">
-        Loading, please wait...
+      Loading, please wait...
     </div>
 
-    <div id="chrono" style="position:absolute;top:20px;left:872px;font-size:20px;background-color:black;color:white;padding:10px;width:104px;opacity:0.5;text-align:center">
+    <div id="chrono" style="position:absolute;top:20px;left:909px;font-size:20px;background-color:black;color:white;padding:10px;width:67px;opacity:0.5;text-align:center">
       0:00:00
     </div>
 
-    <div style="">
-      <br/>
+    <div style="width:1000px;float:left;padding-top:10px;">
       Select your level :
       <select id="levels">
+        <!-- SOME TEST LEVELS -->
+        <!--
         <option value="l1043.lvl">l1043.lvl</option>
         <option value="l1.lvl">l1.lvl</option>
         <option value="l2.lvl">l2.lvl</option>
@@ -64,7 +65,7 @@
         <option value="l1287.lvl">l1287.lvl</option>
         <option value="l1041.lvl">l1041.lvl</option>
         <option value="l1042.lvl">l1042.lvl</option>
-
+        -->
         <option value="l1.lvl">1</option>
         <option value="l2.lvl">2</option>
         <option value="l3.lvl">3</option>
@@ -3221,6 +3222,24 @@
 
       <br/><br/>
       <a href="https://github.com/michaelhoste/xmoto">Fork me on GitHub</a>
+    </div>
+
+    <div id="debug" style="float:left;margin-left:10px;width:350px;margin-top:-600px">
+      <a class="debug-button" href="#">debug mode</a>
+
+      <form class="debug" name="debug" method="get" action="" style="display:none">
+        <div class="template" style="display:none">
+          <label for="name_by_js" style="width: 150px;display: block;float: left;">
+            Name
+          </label>
+          <input id="name_by_js" type="text">
+          <span class="delete" style="cursor:pointer">x</span>
+        </div>
+        <input type="submit" value="Submit">
+      </form>
+
+      <div class="variables" style="padding-top:10px;">
+      </div>
     </div>
   </body>
 </html>
