@@ -3,13 +3,13 @@ XMoto.js
 
 This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using 2D Canvas and ([Box2DWeb](https://code.google.com/p/box2dweb/)).
 
-[![Image](https://raw.githubusercontent.com/MichaelHoste/xmoto.js/master/image.jpg)](http://js.xmoto.io)
+[![Image](https://raw.githubusercontent.com/MichaelHoste/xmoto.js/master/image2.jpg)](http://js.xmoto.io)
 
-This is the first part of a 2-parts project :
- 1. XMoto.js (this project!) : JavaScript port of the game that need to be compatible with a lot of pre-existing levels (XML files) from the original game.
- 2. [XMoto.io](https://github.com/MichaelHoste/xmoto.io) : social XMoto game with a backend for scores, replays, etc.
+This is the first part of a 2-parts project:
+ 1. [XMoto.js](https://github.com/MichaelHoste/xmoto.js) (this project!): JavaScript port of the game that need to be compatible with a lot of pre-existing levels (XML files) from the original game.
+ 2. [XMoto.io](https://github.com/MichaelHoste/xmoto.io): social XMoto game with a backend for scores, replays, etc.
 
-XMoto.io will be built on XMoto.js using Ruby on Rails and both the projects will co-evolve and interact in some parts. More about the project development here : http://xmoto.io
+XMoto.io will be built on XMoto.js using Ruby on Rails and both the projects will co-evolve and interact in some parts. More about the project development on http://xmoto.io
 
 ## Demo
 
@@ -26,9 +26,9 @@ Master branch is regularly deployed here: http://js.xmoto.io
 
 ### Installation
 
- * ```brew install nodejs``` : install NodeJS (on MacOS)
- * ```sudo npm install -g coffee-script``` : install CoffeeScript
- * ```npm install express``` : install Express
+ * ```brew install nodejs```: install NodeJS (on MacOS)
+ * ```sudo npm install -g coffee-script```: install CoffeeScript
+ * ```npm install express```: install Express
 
 ### Working environnement
 
@@ -42,7 +42,7 @@ Don't forget to restart the coffee command if you create new JS files.
  * Move camera left/right/up/down depending on moto direction and moto speed
  * Create camera and put @visibility, @scale, @object_to_follow etc. (for level and buffer)
  * surface drift / "rééquilibre bordures" / multiples photos liées ou photo+replay / voir replay
- * Optimization : hide the ghosts and entities that are off the screen
+ * Optimization: hide the ghosts and entities that are off the screen
  * Understand impact of "scale" and "depth" on edges.
- * Optimization : group the blocks by texture and fill the texture just once by group.
- * Optimization : only collide with polygons on the screen ?
+ * Optimization: group the blocks by texture and fill the texture just once by group.
+ * Optimization: only collide with polygons on the screen ?
