@@ -11,7 +11,7 @@ This is the **first** part of a 2-parts project:
  1. [XMoto.js](https://github.com/MichaelHoste/xmoto.js) (this project!): JavaScript port of the game that need to be compatible with a lot of pre-existing levels (XML files) from the original game.
  2. [XMoto.io](https://github.com/MichaelHoste/xmoto.io): social XMoto game with a backend for scores, replays, etc.
 
-XMoto.io will be built on XMoto.js using Ruby on Rails and both the projects will co-evolve and interact in some parts.
+XMoto.io will be built on top of XMoto.js, using Ruby on Rails, and both the projects will co-evolve and interact in some parts.
 <!-- XMoto.js will take some informations like replays from DOM and JS options, and it will call a route with replay when a player finished a level). -->
 
 More about the project development on http://xmoto.io
