@@ -1,11 +1,15 @@
 XMoto.js
 ========
 
-This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using 2D Canvas and Box2DWeb ([Box2DWeb](https://code.google.com/p/box2dweb/)).
+This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using 2D Canvas and ([Box2DWeb](https://code.google.com/p/box2dweb/)).
 
-This is the first part of the project and its purpose is to be compatible with a lot of pre-existing levels from the original game (XML files).
+[![Image](https://raw.githubusercontent.com/MichaelHoste/xmoto.js/master/image.jpg)](http://js.xmoto.io)
 
-The next part of the project is [XMoto.io](), a social XMoto game with a backend for scores, replays, etc. XMoto.io will be built on XMoto.js using Ruby on Rails and both the projects will co-evolve.
+This is the first part of a 2-parts project :
+ 1. XMoto.js (this project!) : JavaScript port of the game that need to be compatible with a lot of pre-existing levels (XML files) from the original game.
+ 2. [XMoto.io](https://github.com/MichaelHoste/xmoto.io) : social XMoto game with a backend for scores, replays, etc.
+
+XMoto.io will be built on XMoto.js using Ruby on Rails and both the projects will co-evolve and interact in some parts.
 
  * Image
  * DEMO
