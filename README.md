@@ -1,7 +1,7 @@
 XMoto.js
 ========
 
-[demo](http://js.xmoto.io)
+[DEMO](http://js.xmoto.io)
 
 This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using 2D Canvas and [Box2DWeb](https://code.google.com/p/box2dweb/).
 
