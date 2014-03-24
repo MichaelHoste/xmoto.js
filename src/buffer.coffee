@@ -7,8 +7,10 @@ class Buffer
     @level  = level
 
     # Create buffer on DOM
-    buffer_html = "<canvas id=\"buffer\" width=\"#{parseFloat(@level.canvas.width)*1.5}\"
-                                         height=\"#{parseFloat(@level.canvas.height)*1.5}\">
+    buffer_html = "<canvas id=\"buffer\"
+                           width=\"#{parseFloat(@level.canvas.width)*1.5}\"
+                           height=\"#{parseFloat(@level.canvas.height)*1.5}\"
+                           style=\"display:none\">
                    </canvas>"
     $(buffer_html).insertAfter(@level.options.canvas)
 

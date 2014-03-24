@@ -10,7 +10,7 @@
     function Buffer(level) {
       var buffer_html;
       this.level = level;
-      buffer_html = "<canvas id=\"buffer\" width=\"" + (parseFloat(this.level.canvas.width) * 1.5) + "\"                                         height=\"" + (parseFloat(this.level.canvas.height) * 1.5) + "\">                   </canvas>";
+      buffer_html = "<canvas id=\"buffer\"                           width=\"" + (parseFloat(this.level.canvas.width) * 1.5) + "\"                           height=\"" + (parseFloat(this.level.canvas.height) * 1.5) + "\"                           style=\"display:none\">                   </canvas>";
       $(buffer_html).insertAfter(this.level.options.canvas);
       this.canvas = $("#buffer").get(0);
       this.ctx = this.canvas.getContext('2d');
