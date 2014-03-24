@@ -181,6 +181,8 @@
 
     Constants.debug = false;
 
+    Constants.hooking = false;
+
     Constants.gravity = 9.81;
 
     Constants.max_moto_speed = 70.00;
@@ -449,6 +451,21 @@
       friction: 1.0
     };
 
+    Constants.chain_reaction = function() {
+      var element, _i, _len, _ref, _results;
+      if (this.hooking === true) {
+        _ref = ['body', 'left_axle', 'right_axle', 'torso', 'lower_leg', 'upper_leg', 'lower_arm', 'upper_arm'];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          element = _ref[_i];
+          _results.push(Constants[element].collisions = false);
+        }
+        return _results;
+      }
+    };
+
+    Constants.chain_reaction();
+
     return Constants;
 
   })();
@@ -536,7 +553,7 @@
     };
 
     Input.prototype.move = function() {
-      var biker_force, moto, moto_acceleration, rider;
+      var biker_force, moto, moto_acceleration, rider, rotation, rotation2;
       moto = this.level.moto;
       rider = moto.rider;
       moto_acceleration = Constants.moto_acceleration;
@@ -552,14 +569,22 @@
         if (this.left) {
           moto.body.ApplyTorque(biker_force / 0.7);
           moto.rider.torso.ApplyTorque(biker_force / 2.0);
-          moto.rider.torso.ApplyForce({
+          rotation = Math2D.rotate_point({
             x: -biker_force,
             y: 0
-          }, moto.rider.torso.GetWorldCenter());
-          moto.rider.lower_leg.ApplyForce({
-            x: biker_force,
+          }, moto.body.GetAngle(), {
+            x: 0,
             y: 0
-          }, moto.rider.lower_leg.GetWorldCenter());
+          });
+          rotation2 = Math2D.rotate_point({
+            x: -biker_force,
+            y: 0
+          }, moto.body.GetAngle(), {
+            x: 0,
+            y: 0
+          });
+          moto.rider.torso.ApplyForce(rotation, moto.rider.torso.GetWorldCenter());
+          moto.rider.lower_leg.ApplyForce(rotation2, moto.rider.lower_leg.GetWorldCenter());
         }
         if (this.right) {
           moto.body.ApplyTorque(-biker_force / 0.75);
@@ -766,7 +791,9 @@
             if (_this.level.got_strawberries()) {
               return _this.trigger_restart();
             }
-          } else if (Listeners.does_contact(a, b, 'rider', 'ground') && a.part !== 'lower_leg' && b.part !== 'lower_leg') {
+          } else if (Constants.hooking === false && Listeners.does_contact(a, b, 'rider', 'ground') && a.part !== 'lower_leg' && b.part !== 'lower_leg') {
+            return _this.kill_moto();
+          } else if (Constants.hooking === true && Listeners.does_contact(a, b, 'rider', 'ground') && (a.part === 'head' || b.part === 'head')) {
             return _this.kill_moto();
           } else if (Listeners.does_contact_moto_rider(a, b, 'wrecker')) {
             return _this.kill_moto();
@@ -2955,37 +2982,29 @@
   };
 
   override_constants_by_url_params = function(params) {
-    var array, array_key, array_keys, i, key, value, _results;
-    _results = [];
+    var array, array_key, array_keys, i, key, value, _i, _len;
     for (key in params) {
       value = params[key];
       array_keys = key.split('.');
       array = Constants;
-      _results.push((function() {
-        var _i, _len, _results1;
-        _results1 = [];
-        for (i = _i = 0, _len = array_keys.length; _i < _len; i = ++_i) {
-          array_key = array_keys[i];
-          if (i === array_keys.length - 1) {
-            if (value === '') {
-              _results1.push(delete params[key]);
-            } else {
-              if (value === 'true' || value === 'false') {
-                _results1.push(array[array_key] = value === 'true');
-              } else if (array_key !== 'level') {
-                _results1.push(array[array_key] = parseFloat(value));
-              } else {
-                _results1.push(void 0);
-              }
-            }
+      for (i = _i = 0, _len = array_keys.length; _i < _len; i = ++_i) {
+        array_key = array_keys[i];
+        if (i === array_keys.length - 1) {
+          if (value === '') {
+            delete params[key];
           } else {
-            _results1.push(array = array[array_key]);
+            if (value === 'true' || value === 'false') {
+              array[array_key] = value === 'true';
+            } else if (array_key !== 'level') {
+              array[array_key] = parseFloat(value);
+            }
           }
+        } else {
+          array = array[array_key];
         }
-        return _results1;
-      })());
+      }
     }
-    return _results;
+    return Constants.chain_reaction();
   };
 
   display_constants = function() {

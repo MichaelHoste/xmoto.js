@@ -29,7 +29,14 @@ class Listeners
             @trigger_restart()
 
         # Fall of rider
-        else if Listeners.does_contact(a, b, 'rider', 'ground') and a.part != 'lower_leg' and b.part != 'lower_leg'
+        else if Constants.hooking == false and
+                Listeners.does_contact(a, b, 'rider', 'ground') and
+                a.part != 'lower_leg' and b.part != 'lower_leg'
+          @kill_moto()
+
+        else if Constants.hooking == true and
+                Listeners.does_contact(a, b, 'rider', 'ground') and
+                (a.part == 'head' or b.part == 'head')
           @kill_moto()
 
         # Wrecker contact
@@ -53,12 +60,22 @@ class Listeners
     moto = @level.moto
     moto.dead = true
 
+    # Cause the game to "hard" crash because reactivation of collisions when in the middle of it
+    #@level.moto.rider.torso.GetFixtureList().SetSensor(false)
+    #@level.moto.rider.lower_leg.GetFixtureList().SetSensor(false)
+    #@level.moto.rider.upper_leg.GetFixtureList().SetSensor(false)
+    #@level.moto.rider.lower_arm.GetFixtureList().SetSensor(false)
+    #@level.moto.rider.upper_arm.GetFixtureList().SetSensor(false)
+    #@level.moto.body.GetFixtureList().SetSensor(false)
+    #@level.moto.left_axle.GetFixtureList().SetSensor(false)
+    #@level.moto.right_axle.GetFixtureList().SetSensor(false)
+
     #createjs.Sound.play('Headcrash')
 
     @world.DestroyJoint(moto.rider.ankle_joint)
     @world.DestroyJoint(moto.rider.wrist_joint)
     moto.rider.shoulder_joint.m_enableLimit = false
 
-    moto.rider.knee_joint.m_lowerAngle     = moto.rider.knee_joint.m_lowerAngle  * 3
-    moto.rider.elbow_joint.m_upperAngle    = moto.rider.elbow_joint.m_upperAngle * 3
-    moto.rider.hip_joint.m_lowerAngle      = moto.rider.hip_joint.m_lowerAngle   * 3
+    moto.rider.knee_joint.m_lowerAngle  = moto.rider.knee_joint.m_lowerAngle  * 3
+    moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3
+    moto.rider.hip_joint.m_lowerAngle   = moto.rider.hip_joint.m_lowerAngle   * 3

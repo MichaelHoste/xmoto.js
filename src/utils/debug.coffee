@@ -33,6 +33,8 @@ override_constants_by_url_params = (params) ->
       else
         array = array[array_key]
 
+  Constants.chain_reaction()
+
 display_constants = ->
   # display all the keys with direct link
   html = '<ul>'

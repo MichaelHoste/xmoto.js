@@ -4,7 +4,10 @@ class Constants
 
   # GENERAL
 
-  @debug             = false
+  @debug             = false # "Ugly" mode to debug physics
+  @hooking           = false # Hooking is a special trick in XMoto that allow the bike
+                             # to "hook" on blocks (http://www.youtube.com/watch?v=ebCgtnm_1m0)
+                             # (no collisions and no kill except for head)
   @gravity           =  9.81 # Default gravity of the game
   @max_moto_speed    = 70.00 # Max rotation speed of the wheels. Limit the max speed of the moto
   @air_density       =  0.03 # Friction of air
@@ -122,7 +125,7 @@ class Constants
              new b2Vec2( 0.13,  0.15)
              new b2Vec2(-0.20,  0.22)
              new b2Vec2(-0.18, -0.55) ]
-    collisions: true
+    collisions: (true)
     texture:       'playertorso'
     ghost_texture: 'ghosttorso'
     texture_size:
@@ -261,3 +264,14 @@ class Constants
     density:     1.0
     restitution: 0.3
     friction:    1.0
+
+  # CHAIN REACTION OF SOME ATTRIBUTES
+
+  @chain_reaction: ->
+    # If hooking == true, no collisions !
+    if @hooking == true
+      for element in ['body', 'left_axle', 'right_axle', 'torso',
+                      'lower_leg', 'upper_leg', 'lower_arm', 'upper_arm']
+        Constants[element].collisions = false
+
+  @chain_reaction()
