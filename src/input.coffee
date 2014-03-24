@@ -43,13 +43,20 @@ class Input
           @level.need_to_restart = true
         when 32
           @level.flip_moto() if not @level.moto.dead
-        when 67
-          url = document.URL
-          url = if url.substr(url.length-1) != '/' then "#{url}/capture" else "#{url}capture"
-          $.post(url,
-            steps: @level.physics.steps
-            image: $(@level.options.canvas)[0].toDataURL()
-          ).done( -> alert("Capture uploaded")).fail( -> alert("Capture failed"))
+        #when 69 # e
+        #  moto = @level.moto
+        #  if !moto.dead
+        #    @level.listeners.kill_moto()
+        #    force = 150.0 * moto.mirror
+        #    force_torso = Math2D.rotate_point({x: force, y: 0}, moto.mirror * (moto.body.GetAngle() + Math.PI/4.0), {x: 0, y: 0})
+        #    moto.rider.torso.ApplyForce(force_torso, moto.rider.torso.GetWorldCenter())
+        #when 67 # c
+        #  url = document.URL
+        #  url = if url.substr(url.length-1) != '/' then "#{url}/capture" else "#{url}capture"
+        #  $.post(url,
+        #    steps: @level.physics.steps
+        #    image: $(@level.options.canvas)[0].toDataURL()
+        #  ).done( -> alert("Capture uploaded")).fail( -> alert("Capture failed"))
     )
 
     $(document).on('keyup', (event) =>
@@ -65,8 +72,9 @@ class Input
     )
 
   move: ->
-    moto  = @level.moto
-    rider = moto.rider
+    moto   = @level.moto
+    rider  = moto.rider
+    mirror = moto.mirror
 
     moto_acceleration = Constants.moto_acceleration
     biker_force       = Constants.biker_force
@@ -82,25 +90,31 @@ class Input
         moto.right_wheel.SetAngularVelocity(0)
         moto.left_wheel.SetAngularVelocity(0)
 
-      # Back wheeling
-      if @left
-        force_torso = Math2D.rotate_point({x: -biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
-        force_leg   = Math2D.rotate_point({x:  biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
+      back_wheel = =>
+        moto.body  .ApplyTorque(mirror * biker_force/0.7)
+        rider.torso.ApplyTorque(mirror * biker_force/2.0)
 
-        moto.body           .ApplyTorque(biker_force/0.7)
-        moto.rider.torso    .ApplyTorque(biker_force/2.0)
-        moto.rider.torso    .ApplyForce(force_torso, moto.rider.torso    .GetWorldCenter())
-        moto.rider.lower_leg.ApplyForce(force_leg,   moto.rider.lower_leg.GetWorldCenter())
+        force_torso = Math2D.rotate_point({x: mirror * (-biker_force), y: 0}, moto.mirror * moto.body.GetAngle(), {x: 0, y: 0})
+        force_leg   = Math2D.rotate_point({x: mirror *   biker_force,  y: 0}, moto.mirror * moto.body.GetAngle(), {x: 0, y: 0})
+        rider.torso    .ApplyForce(force_torso, rider.torso.GetWorldCenter())
+        rider.lower_leg.ApplyForce(force_leg,   rider.lower_leg.GetWorldCenter())
+
+      front_wheel = =>
+        moto.body  .ApplyTorque(mirror * (-biker_force)/0.75) # a bit less force for front wheeling
+        rider.torso.ApplyTorque(mirror * (-biker_force)/2.2)
+
+        force_torso = Math2D.rotate_point({x: mirror *   biker_force,  y: 0}, moto.mirror * moto.body.GetAngle(), {x: 0, y: 0})
+        force_leg   = Math2D.rotate_point({x: mirror * (-biker_force), y: 0}, moto.mirror * moto.body.GetAngle(), {x: 0, y: 0})
+        rider.torso    .ApplyForce(force_torso, rider.torso    .GetWorldCenter())
+        rider.lower_leg.ApplyForce(force_leg,   rider.lower_leg.GetWorldCenter())
+
+      # Back wheeling
+      if (@left && mirror == 1) || (@right && mirror == -1)
+        back_wheel()
 
       # Front wheeling
-      if @right
-        force_torso = Math2D.rotate_point({x:  biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
-        force_leg   = Math2D.rotate_point({x: -biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
-
-        moto.body           .ApplyTorque(-biker_force/0.75) # a bit less force for front wheeling
-        moto.rider.torso    .ApplyTorque(-biker_force/2.2)
-        moto.rider.torso    .ApplyForce(force_torso, moto.rider.torso    .GetWorldCenter())
-        moto.rider.lower_leg.ApplyForce(force_leg,   moto.rider.lower_leg.GetWorldCenter())
+      if (@right && mirror == 1) || (@left && mirror == -1)
+        front_wheel()
 
     # Detection of drifting
     #rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius

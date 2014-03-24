@@ -508,7 +508,6 @@
       var _this = this;
       $(document).off('keydown');
       $(document).on('keydown', function(event) {
-        var url;
         switch (event.which || event.keyCode) {
           case 38:
             return _this.up = true;
@@ -524,18 +523,6 @@
             if (!_this.level.moto.dead) {
               return _this.level.flip_moto();
             }
-            break;
-          case 67:
-            url = document.URL;
-            url = url.substr(url.length - 1) !== '/' ? "" + url + "/capture" : "" + url + "capture";
-            return $.post(url, {
-              steps: _this.level.physics.steps,
-              image: $(_this.level.options.canvas)[0].toDataURL()
-            }).done(function() {
-              return alert("Capture uploaded");
-            }).fail(function() {
-              return alert("Capture failed");
-            });
         }
       });
       return $(document).on('keyup', function(event) {
@@ -553,9 +540,11 @@
     };
 
     Input.prototype.move = function() {
-      var biker_force, force_leg, force_torso, moto, moto_acceleration, rider;
+      var back_wheel, biker_force, front_wheel, mirror, moto, moto_acceleration, rider,
+        _this = this;
       moto = this.level.moto;
       rider = moto.rider;
+      mirror = moto.mirror;
       moto_acceleration = Constants.moto_acceleration;
       biker_force = Constants.biker_force;
       if (!this.level.moto.dead) {
@@ -566,45 +555,53 @@
           moto.right_wheel.SetAngularVelocity(0);
           moto.left_wheel.SetAngularVelocity(0);
         }
-        if (this.left) {
+        back_wheel = function() {
+          var force_leg, force_torso;
+          moto.body.ApplyTorque(mirror * biker_force / 0.7);
+          rider.torso.ApplyTorque(mirror * biker_force / 2.0);
           force_torso = Math2D.rotate_point({
-            x: -biker_force,
+            x: mirror * (-biker_force),
             y: 0
-          }, moto.body.GetAngle(), {
+          }, moto.mirror * moto.body.GetAngle(), {
             x: 0,
             y: 0
           });
           force_leg = Math2D.rotate_point({
-            x: biker_force,
+            x: mirror * biker_force,
             y: 0
-          }, moto.body.GetAngle(), {
+          }, moto.mirror * moto.body.GetAngle(), {
             x: 0,
             y: 0
           });
-          moto.body.ApplyTorque(biker_force / 0.7);
-          moto.rider.torso.ApplyTorque(biker_force / 2.0);
-          moto.rider.torso.ApplyForce(force_torso, moto.rider.torso.GetWorldCenter());
-          moto.rider.lower_leg.ApplyForce(force_leg, moto.rider.lower_leg.GetWorldCenter());
+          rider.torso.ApplyForce(force_torso, rider.torso.GetWorldCenter());
+          return rider.lower_leg.ApplyForce(force_leg, rider.lower_leg.GetWorldCenter());
+        };
+        front_wheel = function() {
+          var force_leg, force_torso;
+          moto.body.ApplyTorque(mirror * (-biker_force) / 0.75);
+          rider.torso.ApplyTorque(mirror * (-biker_force) / 2.2);
+          force_torso = Math2D.rotate_point({
+            x: mirror * biker_force,
+            y: 0
+          }, moto.mirror * moto.body.GetAngle(), {
+            x: 0,
+            y: 0
+          });
+          force_leg = Math2D.rotate_point({
+            x: mirror * (-biker_force),
+            y: 0
+          }, moto.mirror * moto.body.GetAngle(), {
+            x: 0,
+            y: 0
+          });
+          rider.torso.ApplyForce(force_torso, rider.torso.GetWorldCenter());
+          return rider.lower_leg.ApplyForce(force_leg, rider.lower_leg.GetWorldCenter());
+        };
+        if ((this.left && mirror === 1) || (this.right && mirror === -1)) {
+          back_wheel();
         }
-        if (this.right) {
-          force_torso = Math2D.rotate_point({
-            x: biker_force,
-            y: 0
-          }, moto.body.GetAngle(), {
-            x: 0,
-            y: 0
-          });
-          force_leg = Math2D.rotate_point({
-            x: -biker_force,
-            y: 0
-          }, moto.body.GetAngle(), {
-            x: 0,
-            y: 0
-          });
-          moto.body.ApplyTorque(-biker_force / 0.75);
-          moto.rider.torso.ApplyTorque(-biker_force / 2.2);
-          moto.rider.torso.ApplyForce(force_torso, moto.rider.torso.GetWorldCenter());
-          return moto.rider.lower_leg.ApplyForce(force_leg, moto.rider.lower_leg.GetWorldCenter());
+        if ((this.right && mirror === 1) || (this.left && mirror === -1)) {
+          return front_wheel();
         }
       }
     };
