@@ -214,6 +214,23 @@ div#debug {
   display:none;
 }
 
+#debug hr:last-child {
+  margin-bottom: 0px;
+}
+
+#debug .more {
+  font-size: 12px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  text-align: center;
+  margin-bottom: -8px;
+  display: none;
+}
+
+#debug .more a {
+  text-decoration: none;
+  color: #08c;
+}
+
 body.debug #prev-level, body.debug #next-level {
   display:none;
 }
@@ -250,6 +267,10 @@ body.debug #hint {
 
 body.debug #fun {
   margin-left: 0px;
+}
+
+body.debug #debug .more {
+  display: block;
 }
 
 body.debug .normal-button {
