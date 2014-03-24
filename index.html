@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <title>XMoto.js - HTML5 Port of XMoto</title>
+    <title>XMoto.js | HTML5 Port of XMoto</title>
     <meta name="description" content="Port of XMoto for the web using Canvas 2D, JavaScript (CoffeeScript) and Box2D">
 
     <meta name="author" content="Michaël Hoste">
@@ -22,13 +22,28 @@
 
     <script type="text/javascript">
       $(document).ready(function(){
+        // Change on select
         $("#levels").on('change', function(){ $.xmoto($(this).val()) })
 
+        // level in URL params
         level = $.url().param('level')
         if(level) {
           $("#levels").val("l" + level + ".lvl")
         }
 
+        // prev buttons
+        $("#prev-level").on('click', function() {
+          level_name = $("#levels option:selected").prev().prop('selected', true).val()
+          level_name ? $.xmoto(level_name) : alert('This is the first level')
+        })
+
+        // next button
+        $("#next-level").on('click', function() {
+          level_name = $("#levels option:selected").next().prop('selected', true).val()
+          level_name ? $.xmoto(level_name) : alert('This is the last level')
+        })
+
+        // initialize level
         $.xmoto($("#levels option:selected").val())
       })
     </script>
@@ -65,12 +80,14 @@
 
     <div id="content">
       <div id="prev-level">
+        &#65513;
       </div>
 
       <canvas id="xmoto" width="1000" height="600">
       </canvas>
 
       <div id="next-level">
+        &#65515;
       </div>
 
       <div id="loading">
@@ -82,7 +99,9 @@
       </div>
 
       <div id="levels_block">
-        Select your level :
+        <label for="levels">
+          Select your level:
+        <label>
         <select id="levels">
           <!-- SOME TEST LEVELS -->
           <!--
@@ -3258,6 +3277,18 @@
         "arrows" to move / "space" to flip / "enter" to restart / "scroll" to zoom
       </div>
 
+      <div style="clear:both"></div>
+
+      <div id="fun">
+        Have fun with the physics parameters :
+        <a href="/?level=1010&debug=false&left_wheel.radius=0.55">Tractor</a>,
+        <a href="/?level=1010&debug=false&ground.restitution=1.5&left_suspension.lower_translation=-0.5&left_suspension.upper_translation=0.5&left_suspension.back_force=6&left_suspension.rigidity=2&right_suspension.lower_translation=-0.5&right_suspension.upper_translation=0.5&right_suspension.back_force=6&right_suspension.rigidity=1">Rodeo</a>,
+        <a href="/?level=1010&debug=true">Ugly Mode</a>,
+        <a href="/?level=1010&debug=true&head.radius=0.7">Big Head</a>,
+        <a href="/?level=1010&debug=false&gravity=5">Moon</a>,
+        <a href="/?level=1010&debug=false&moto_acceleration=40&biker_force=10&max_moto_speed=110&gravity=25&left_wheel.friction=10&ground.friction=3">Furious</a>
+      </div>
+
       <a class="normal-button" href="#">
         normal mode
       </a>
@@ -3283,11 +3314,9 @@
         <div class="variables">
         </div>
       </div>
-      <div style="clear:both">
-      </div>
+      <div style="clear:both"></div>
     </div>
-    <div style="clear:both">
-    </div>
+    <div style="clear:both"></div>
   </body>
 </html>
 

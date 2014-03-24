@@ -36,7 +36,7 @@ body {
   width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 50px;
+  margin-top: 40px;
 }
 
 #xmoto {
@@ -49,11 +49,21 @@ body {
 }
 
 #prev-level, #next-level {
+  box-sizing: border-box;
   width:100px;
   height:600px;
+  padding-top: 234px;
   float:left;
   cursor:pointer;
   color:#E5E5E5;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  display:block;
+  font-size: 80px;
+  text-align: center;
+}
+
+#prev-level:hover, #next-level:hover {
+  color:#999999;
 }
 
 #loading {
@@ -111,6 +121,19 @@ body {
   margin-top: -21px;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   color: #333;
+}
+
+#fun {
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  color: #888;
+  margin-left: 100px;
+  margin-top: 18px;
+}
+
+#fun a {
+  text-decoration: none;
+  color: #08c;
 }
 
 div#debug {
@@ -223,6 +246,10 @@ body.debug #levels_block {
 
 body.debug #hint {
   margin-right: 0px;
+}
+
+body.debug #fun {
+  margin-left: 0px;
 }
 
 body.debug .normal-button {
