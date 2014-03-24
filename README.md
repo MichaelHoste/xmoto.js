@@ -3,7 +3,7 @@ XMoto.js
 
 [DEMO](http://js.xmoto.io)
 
-This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using 2D Canvas and [Box2DWeb](https://code.google.com/p/box2dweb/).
+This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using [CoffeeScript](http://coffeescript.org), 2D Canvas and [Box2DWeb](https://code.google.com/p/box2dweb/).
 
 [![Image](http://js.xmoto.io/image.jpg)](http://js.xmoto.io)
 
@@ -33,7 +33,7 @@ Examples: [Tractor](http://js.xmoto.io/?level=1010&debug=false&left_wheel.radius
 
  * Upload "data", "lib" and "bin" folders on a static web server (put 'data' folder on the root directory)
  * Include all the JavaScript files of /lib/ and /bin/xmoto.js on your web page.
- * Call ```$.xmoto('l1.lvl', options)``` where "l1.lvl" is the name of the level you want to load and options are:
+ * Call ```$.xmoto('l1.lvl')``` or ```$.xmoto('l1.lvl', options)``` where "l1.lvl" is the name of the level and the options are:
 
 ```
 {
