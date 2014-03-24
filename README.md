@@ -58,10 +58,6 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 
 ## TODO
 
- * Move camera left/right/up/down depending on moto direction and moto speed
- * Create camera and put @visibility, @scale, @object_to_follow etc. (for level and buffer)
- * surface drift / "rééquilibre bordures" / multiples photos liées ou photo+replay / voir replay
- * Optimization: hide the ghosts and entities that are off the screen
- * Understand impact of "scale" and "depth" on edges.
- * Optimization: group the blocks by texture and fill the texture just once by group.
- * Optimization: only collide with polygons on the screen ?
+Improve XML levels compatibility!
+
+[and other stuffs](https://github.com/MichaelHoste/xmoto.js/issues)
