@@ -6,8 +6,14 @@ class Buffer
   constructor: (level) ->
     @level  = level
 
+    # Create buffer on DOM
+    buffer_html = "<canvas id=\"buffer\" width=\"#{parseFloat(@level.canvas.width)*1.5}\"
+                                         height=\"#{parseFloat(@level.canvas.height)*1.5}\">
+                   </canvas>"
+    $(buffer_html).insertAfter(@level.options.canvas)
+
     # Buffer context
-    @canvas = $(@level.options.buffer).get(0)
+    @canvas = $("#buffer").get(0)
     @ctx    = @canvas.getContext('2d')
 
     # can start at any size, but we prefer to be close to default scale

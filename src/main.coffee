@@ -4,7 +4,6 @@ $.xmoto = (level_filename, options = {}) ->
 
       # Selectors
       canvas:       '#xmoto'         # canvas selector
-      buffer:       '#buffer'        # buffer selector
       loading:      '#loading'       # loading selector
       chrono:       '#chrono'        # chrono selector
       users:        '#users .user'   # each $("#users .user") behaves like $('#current-user') (cf. below)

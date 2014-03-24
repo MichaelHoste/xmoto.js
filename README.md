@@ -3,7 +3,7 @@ XMoto.js
 
 This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using 2D Canvas and ([Box2DWeb](https://code.google.com/p/box2dweb/)).
 
-[![Image](https://raw.githubusercontent.com/MichaelHoste/xmoto.js/master/image2.jpg)](http://js.xmoto.io)
+[![Image](https://raw.githubusercontent.com/MichaelHoste/xmoto.js/master/image.jpg)](http://js.xmoto.io)
 
 This is the first part of a 2-parts project:
  1. [XMoto.js](https://github.com/MichaelHoste/xmoto.js) (this project!): JavaScript port of the game that need to be compatible with a lot of pre-existing levels (XML files) from the original game.
@@ -17,9 +17,8 @@ Master branch is regularly deployed here: http://js.xmoto.io
 
 ## Usage
 
- * Upload "data", "lib" and "bin" folders on a static web server.
+ * Upload "data", "lib" and "bin" folders on a static web server (put 'data' folder on the root directory)
  * Include all the JavaScript files of /lib/ and /bin/xmoto.js on your web page.
- * Unsure that /data/ folder is on your root directory.
  * Call ```$.xmoto('l1.lvl')``` where "l1.lvl" is the name of the level you want to load
 
 ## Developpment
