@@ -84,21 +84,23 @@ class Input
 
       # Back wheeling
       if @left
-        moto.body            .ApplyTorque(    biker_force/0.7)
-        moto.rider.torso     .ApplyTorque(    biker_force/2.0)
+        force_torso = Math2D.rotate_point({x: -biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
+        force_leg   = Math2D.rotate_point({x:  biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
 
-        rotation  = Math2D.rotate_point({x: -biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
-        rotation2 = Math2D.rotate_point({x: -biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
-
-        moto.rider.torso     .ApplyForce(rotation,  moto.rider.torso    .GetWorldCenter())
-        moto.rider.lower_leg .ApplyForce(rotation2, moto.rider.lower_leg.GetWorldCenter())
+        moto.body           .ApplyTorque(biker_force/0.7)
+        moto.rider.torso    .ApplyTorque(biker_force/2.0)
+        moto.rider.torso    .ApplyForce(force_torso, moto.rider.torso    .GetWorldCenter())
+        moto.rider.lower_leg.ApplyForce(force_leg,   moto.rider.lower_leg.GetWorldCenter())
 
       # Front wheeling
       if @right
-        moto.body            .ApplyTorque(   -biker_force/0.75) # a bit less force for front wheeling
-        moto.rider.torso     .ApplyTorque(   -biker_force/2.2)
-        moto.rider.torso     .ApplyForce({x:  biker_force, y: 0}, moto.rider.torso    .GetWorldCenter())
-        moto.rider.lower_leg .ApplyForce({x: -biker_force, y :0}, moto.rider.lower_leg.GetWorldCenter())
+        force_torso = Math2D.rotate_point({x:  biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
+        force_leg   = Math2D.rotate_point({x: -biker_force, y: 0}, moto.body.GetAngle(), {x: 0, y: 0})
+
+        moto.body           .ApplyTorque(-biker_force/0.75) # a bit less force for front wheeling
+        moto.rider.torso    .ApplyTorque(-biker_force/2.2)
+        moto.rider.torso    .ApplyForce(force_torso, moto.rider.torso    .GetWorldCenter())
+        moto.rider.lower_leg.ApplyForce(force_leg,   moto.rider.lower_leg.GetWorldCenter())
 
     # Detection of drifting
     #rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius

@@ -553,7 +553,7 @@
     };
 
     Input.prototype.move = function() {
-      var biker_force, moto, moto_acceleration, rider, rotation, rotation2;
+      var biker_force, force_leg, force_torso, moto, moto_acceleration, rider;
       moto = this.level.moto;
       rider = moto.rider;
       moto_acceleration = Constants.moto_acceleration;
@@ -567,36 +567,44 @@
           moto.left_wheel.SetAngularVelocity(0);
         }
         if (this.left) {
-          moto.body.ApplyTorque(biker_force / 0.7);
-          moto.rider.torso.ApplyTorque(biker_force / 2.0);
-          rotation = Math2D.rotate_point({
+          force_torso = Math2D.rotate_point({
             x: -biker_force,
             y: 0
           }, moto.body.GetAngle(), {
             x: 0,
             y: 0
           });
-          rotation2 = Math2D.rotate_point({
-            x: -biker_force,
-            y: 0
-          }, moto.body.GetAngle(), {
-            x: 0,
-            y: 0
-          });
-          moto.rider.torso.ApplyForce(rotation, moto.rider.torso.GetWorldCenter());
-          moto.rider.lower_leg.ApplyForce(rotation2, moto.rider.lower_leg.GetWorldCenter());
-        }
-        if (this.right) {
-          moto.body.ApplyTorque(-biker_force / 0.75);
-          moto.rider.torso.ApplyTorque(-biker_force / 2.2);
-          moto.rider.torso.ApplyForce({
+          force_leg = Math2D.rotate_point({
             x: biker_force,
             y: 0
-          }, moto.rider.torso.GetWorldCenter());
-          return moto.rider.lower_leg.ApplyForce({
+          }, moto.body.GetAngle(), {
+            x: 0,
+            y: 0
+          });
+          moto.body.ApplyTorque(biker_force / 0.7);
+          moto.rider.torso.ApplyTorque(biker_force / 2.0);
+          moto.rider.torso.ApplyForce(force_torso, moto.rider.torso.GetWorldCenter());
+          moto.rider.lower_leg.ApplyForce(force_leg, moto.rider.lower_leg.GetWorldCenter());
+        }
+        if (this.right) {
+          force_torso = Math2D.rotate_point({
+            x: biker_force,
+            y: 0
+          }, moto.body.GetAngle(), {
+            x: 0,
+            y: 0
+          });
+          force_leg = Math2D.rotate_point({
             x: -biker_force,
             y: 0
-          }, moto.rider.lower_leg.GetWorldCenter());
+          }, moto.body.GetAngle(), {
+            x: 0,
+            y: 0
+          });
+          moto.body.ApplyTorque(-biker_force / 0.75);
+          moto.rider.torso.ApplyTorque(-biker_force / 2.2);
+          moto.rider.torso.ApplyForce(force_torso, moto.rider.torso.GetWorldCenter());
+          return moto.rider.lower_leg.ApplyForce(force_leg, moto.rider.lower_leg.GetWorldCenter());
         }
       }
     };
