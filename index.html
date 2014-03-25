@@ -12,42 +12,6 @@
     <link href="style.css" type="text/css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 
-    <script src="lib/jquery-1.10.2.js"       type="text/javascript"></script>
-    <script src="lib/Box2dWeb-2.1.a.3.js"    type="text/javascript"></script>
-    <script src="lib/preloadjs-0.3.1.min.js" type="text/javascript"></script>
-    <script src="lib/lz-string-1.3.3.min.js" type="text/javascript"></script>
-    <script src="lib/purl.js"                type="text/javascript"></script>
-
-    <script src="bin/xmoto.js"               type="text/javascript"></script>
-
-    <script type="text/javascript">
-      $(document).ready(function(){
-        // Change on select
-        $("#levels").on('change', function(){ $.xmoto($(this).val()) })
-
-        // level in URL params
-        level = $.url().param('level')
-        if(level) {
-          $("#levels").val("l" + level + ".lvl")
-        }
-
-        // prev buttons
-        $("#prev-level").on('click', function() {
-          level_name = $("#levels option:selected").prev().prop('selected', true).val()
-          level_name ? $.xmoto(level_name) : alert('This is the first level')
-        })
-
-        // next button
-        $("#next-level").on('click', function() {
-          level_name = $("#levels option:selected").next().prop('selected', true).val()
-          level_name ? $.xmoto(level_name) : alert('This is the last level')
-        })
-
-        // initialize level
-        $.xmoto($("#levels option:selected").val())
-      })
-    </script>
-
     <meta property="og:url"         content="http://js.xmoto.io" />
     <meta property="og:title"       content="XMoto.js - HTML5 Port of XMoto" />
     <meta property="og:description" content="Port of XMoto for the web using Canvas 2D, JavaScript (CoffeeScript) and Box2D" />
@@ -3327,6 +3291,42 @@
       <div style="clear:both"></div>
     </div>
     <div style="clear:both"></div>
+
+    <script src="lib/jquery-1.10.2.js"       type="text/javascript"></script>
+    <script src="lib/Box2dWeb-2.1.a.3.js"    type="text/javascript"></script>
+    <script src="lib/preloadjs-0.3.1.min.js" type="text/javascript"></script>
+    <script src="lib/lz-string-1.3.3.min.js" type="text/javascript"></script>
+    <script src="lib/purl.js"                type="text/javascript"></script>
+
+    <script src="bin/xmoto.js"               type="text/javascript"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+        // Change on select
+        $("#levels").on('change', function(){ $.xmoto($(this).val()) })
+
+        // level in URL params
+        level = $.url().param('level')
+        if(level) {
+          $("#levels").val("l" + level + ".lvl")
+        }
+
+        // prev buttons
+        $("#prev-level").on('click', function() {
+          level_name = $("#levels option:selected").prev().prop('selected', true).val()
+          level_name ? $.xmoto(level_name) : alert('This is the first level')
+        })
+
+        // next button
+        $("#next-level").on('click', function() {
+          level_name = $("#levels option:selected").next().prop('selected', true).val()
+          level_name ? $.xmoto(level_name) : alert('This is the last level')
+        })
+
+        // initialize level
+        $.xmoto($("#levels option:selected").val())
+      })
+    </script>
   </body>
 </html>
 
