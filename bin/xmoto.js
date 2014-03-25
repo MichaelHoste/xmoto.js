@@ -3019,7 +3019,8 @@
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       key = _ref[_i];
       value = Constants[key];
-      if (typeof value !== 'object') {
+      if (typeof value !== 'object' && typeof value !== 'function') {
+        console.log(typeof value);
         html += "<li><a href=\"" + document.URL + "&" + key + "=" + value + "\">" + key + "</a> (" + value + ")</li>";
       } else {
         html += "<li>" + key + "<ul>";
