@@ -12,7 +12,7 @@ class Constants
   @max_moto_speed    = 70.00 # Max rotation speed of the wheels. Limit the max speed of the moto
   @air_density       =  0.03 # Friction of air
   @moto_acceleration =  8.00 # Acceleration of moto
-  @biker_force       =  6.00 # Force of biker when he rotates the moto
+  @biker_force       = 11.00 # Force of biker when he rotates the moto
 
   # FRAMERATE
 
@@ -50,7 +50,7 @@ class Constants
   @left_wheel =
     radius:      0.35
     density:     1.8
-    restitution: 0.5
+    restitution: 0.3
     friction:    1.4
     position:
       x: -0.70
@@ -62,7 +62,7 @@ class Constants
   @right_wheel =
     radius:      0.35
     density:     1.8
-    restitution: 0.5
+    restitution: 0.3
     friction:    1.4
     position:
       x: 0.70
@@ -262,8 +262,8 @@ class Constants
 
   @ground =
     density:     1.0
-    restitution: 0.3
-    friction:    1.0
+    restitution: 0.2
+    friction:    1.2
 
   # CHAIN REACTION OF SOME ATTRIBUTES
 

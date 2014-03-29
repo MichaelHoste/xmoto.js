@@ -136,9 +136,6 @@ class Level
     @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
     @visible.aabb.upperBound.Set(@visible.right, @visible.top)
 
-  flip_moto: ->
-    @moto = MotoFlipService.execute(@moto)
-
   got_strawberries: ->
     for strawberry in @entities.strawberries
       if strawberry.display

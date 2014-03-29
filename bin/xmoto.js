@@ -191,7 +191,7 @@
 
     Constants.moto_acceleration = 8.00;
 
-    Constants.biker_force = 6.00;
+    Constants.biker_force = 11.00;
 
     Constants.fps = 60.0;
 
@@ -227,7 +227,7 @@
     Constants.left_wheel = {
       radius: 0.35,
       density: 1.8,
-      restitution: 0.5,
+      restitution: 0.3,
       friction: 1.4,
       position: {
         x: -0.70,
@@ -241,7 +241,7 @@
     Constants.right_wheel = {
       radius: 0.35,
       density: 1.8,
-      restitution: 0.5,
+      restitution: 0.3,
       friction: 1.4,
       position: {
         x: 0.70,
@@ -447,8 +447,8 @@
 
     Constants.ground = {
       density: 1.0,
-      restitution: 0.3,
-      friction: 1.0
+      restitution: 0.2,
+      friction: 1.2
     };
 
     Constants.chain_reaction = function() {
@@ -520,8 +520,10 @@
           case 13:
             return _this.level.need_to_restart = true;
           case 32:
-            if (!_this.level.moto.dead) {
-              return _this.level.flip_moto();
+            return _this.level.moto.flip();
+          case 69:
+            if (!$('input').is(':focus')) {
+              return _this.level.moto.rider.eject();
             }
         }
       });
@@ -540,10 +542,8 @@
     };
 
     Input.prototype.move = function() {
-      var back_wheel, biker_force, front_wheel, mirror, moto, moto_acceleration, rider,
-        _this = this;
+      var biker_force, mirror, moto, moto_acceleration;
       moto = this.level.moto;
-      rider = moto.rider;
       mirror = moto.mirror;
       moto_acceleration = Constants.moto_acceleration;
       biker_force = Constants.biker_force;
@@ -555,53 +555,12 @@
           moto.right_wheel.SetAngularVelocity(0);
           moto.left_wheel.SetAngularVelocity(0);
         }
-        back_wheel = function() {
-          var force_leg, force_torso;
-          moto.body.ApplyTorque(mirror * biker_force / 0.7);
-          rider.torso.ApplyTorque(mirror * biker_force / 2.0);
-          force_torso = Math2D.rotate_point({
-            x: mirror * (-biker_force),
-            y: 0
-          }, moto.mirror * moto.body.GetAngle(), {
-            x: 0,
-            y: 0
-          });
-          force_leg = Math2D.rotate_point({
-            x: mirror * biker_force,
-            y: 0
-          }, moto.mirror * moto.body.GetAngle(), {
-            x: 0,
-            y: 0
-          });
-          rider.torso.ApplyForce(force_torso, rider.torso.GetWorldCenter());
-          return rider.lower_leg.ApplyForce(force_leg, rider.lower_leg.GetWorldCenter());
-        };
-        front_wheel = function() {
-          var force_leg, force_torso;
-          moto.body.ApplyTorque(mirror * (-biker_force) / 0.75);
-          rider.torso.ApplyTorque(mirror * (-biker_force) / 2.2);
-          force_torso = Math2D.rotate_point({
-            x: mirror * biker_force,
-            y: 0
-          }, moto.mirror * moto.body.GetAngle(), {
-            x: 0,
-            y: 0
-          });
-          force_leg = Math2D.rotate_point({
-            x: mirror * (-biker_force),
-            y: 0
-          }, moto.mirror * moto.body.GetAngle(), {
-            x: 0,
-            y: 0
-          });
-          rider.torso.ApplyForce(force_torso, rider.torso.GetWorldCenter());
-          return rider.lower_leg.ApplyForce(force_leg, rider.lower_leg.GetWorldCenter());
-        };
         if ((this.left && mirror === 1) || (this.right && mirror === -1)) {
-          back_wheel();
+          moto.wheeling(biker_force);
         }
         if ((this.right && mirror === 1) || (this.left && mirror === -1)) {
-          return front_wheel();
+          biker_force = -biker_force * 0.8;
+          return moto.wheeling(biker_force);
         }
       }
     };
@@ -725,10 +684,6 @@
       this.visible.aabb = new b2AABB();
       this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
       return this.visible.aabb.upperBound.Set(this.visible.right, this.visible.top);
-    };
-
-    Level.prototype.flip_moto = function() {
-      return this.moto = MotoFlipService.execute(this.moto);
     };
 
     Level.prototype.got_strawberries = function() {
@@ -2122,6 +2077,36 @@
       }
     };
 
+    Moto.prototype.wheeling = function(force) {
+      var force_leg, force_torso, moto_angle;
+      moto_angle = this.mirror * this.body.GetAngle();
+      this.body.ApplyTorque(this.mirror * force * 0.50);
+      force_torso = Math2D.rotate_point({
+        x: this.mirror * (-force),
+        y: 0
+      }, moto_angle, {
+        x: 0,
+        y: 0
+      });
+      force_torso.y = this.mirror * force_torso.y;
+      this.rider.torso.ApplyForce(force_torso, this.rider.torso.GetWorldCenter());
+      force_leg = Math2D.rotate_point({
+        x: this.mirror * force,
+        y: 0
+      }, moto_angle, {
+        x: 0,
+        y: 0
+      });
+      force_leg.y = this.mirror * force_leg.y;
+      return this.rider.lower_leg.ApplyForce(force_leg, this.rider.lower_leg.GetWorldCenter());
+    };
+
+    Moto.prototype.flip = function() {
+      if (!this.dead) {
+        return this.level.moto = MotoFlipService.execute(this);
+      }
+    };
+
     Moto.prototype.create_body = function() {
       var body, bodyDef, fixDef;
       fixDef = new b2FixtureDef();
@@ -2576,6 +2561,23 @@
 
     Rider.prototype.position = function() {
       return this.moto.body.GetPosition();
+    };
+
+    Rider.prototype.eject = function() {
+      var adjusted_force_vector, eject_angle, force_vector;
+      if (!this.moto.dead) {
+        this.level.listeners.kill_moto();
+        force_vector = {
+          x: 150.0 * this.moto.mirror,
+          y: 0
+        };
+        eject_angle = this.mirror * this.moto.body.GetAngle() + Math.PI / 4.0;
+        adjusted_force_vector = Math2D.rotate_point(force_vector, eject_angle, {
+          x: 0,
+          y: 0
+        });
+        return this.torso.ApplyForce(force_torso, this.torso.GetWorldCenter());
+      }
     };
 
     Rider.prototype.create_head = function() {

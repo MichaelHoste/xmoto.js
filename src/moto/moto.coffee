@@ -101,6 +101,23 @@ class Moto
     else if @left_wheel.GetAngularVelocity() < -Constants.max_moto_speed
       @left_wheel.SetAngularVelocity(-Constants.max_moto_speed)
 
+  wheeling: (force) ->
+    moto_angle = @mirror * @body.GetAngle()
+
+    @body.ApplyTorque(@mirror * force * 0.50)
+
+    force_torso   = Math2D.rotate_point({x: @mirror * (-force), y: 0}, moto_angle, {x: 0, y: 0})
+    force_torso.y = @mirror * force_torso.y
+    @rider.torso.ApplyForce(force_torso, @rider.torso.GetWorldCenter())
+
+    force_leg   = Math2D.rotate_point({x: @mirror * force, y: 0}, moto_angle, {x: 0, y: 0})
+    force_leg.y = @mirror * force_leg.y
+    @rider.lower_leg.ApplyForce(force_leg, @rider.lower_leg.GetWorldCenter())
+
+  flip: ->
+    if not @dead
+      @level.moto = MotoFlipService.execute(this)
+
   create_body: ->
     # Create fixture
     fixDef = new b2FixtureDef()

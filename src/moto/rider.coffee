@@ -61,6 +61,15 @@ class Rider
   position: ->
     @moto.body.GetPosition()
 
+  eject: ->
+    if !@moto.dead
+      @level.listeners.kill_moto()
+
+      force_vector          = { x: 150.0 * @moto.mirror, y: 0 }
+      eject_angle           = @mirror * @moto.body.GetAngle() + Math.PI/4.0
+      adjusted_force_vector = Math2D.rotate_point(force_vector, eject_angle, {x: 0, y: 0})
+      @torso.ApplyForce(force_torso, @torso.GetWorldCenter())
+
   create_head: ->
     # Create fixture
     fixDef = new b2FixtureDef()
