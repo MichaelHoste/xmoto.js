@@ -508,6 +508,7 @@
       var _this = this;
       $(document).off('keydown');
       $(document).on('keydown', function(event) {
+        var url;
         switch (event.which || event.keyCode) {
           case 38:
             return _this.up = true;
@@ -525,6 +526,18 @@
             if (!$('input').is(':focus')) {
               return _this.level.moto.rider.eject();
             }
+            break;
+          case 67:
+            url = document.URL;
+            url = url.substr(url.length - 1) !== '/' ? "" + url + "/capture" : "" + url + "capture";
+            return $.post(url, {
+              steps: _this.level.physics.steps,
+              image: $(_this.level.options.canvas)[0].toDataURL()
+            }).done(function() {
+              return alert("Capture uploaded");
+            }).fail(function() {
+              return alert("Capture failed");
+            });
         }
       });
       return $(document).on('keyup', function(event) {
@@ -2576,7 +2589,7 @@
           x: 0,
           y: 0
         });
-        return this.torso.ApplyForce(force_torso, this.torso.GetWorldCenter());
+        return this.torso.ApplyForce(adjusted_force_vector, this.torso.GetWorldCenter());
       }
     };
 

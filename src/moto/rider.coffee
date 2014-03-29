@@ -68,7 +68,7 @@ class Rider
       force_vector          = { x: 150.0 * @moto.mirror, y: 0 }
       eject_angle           = @mirror * @moto.body.GetAngle() + Math.PI/4.0
       adjusted_force_vector = Math2D.rotate_point(force_vector, eject_angle, {x: 0, y: 0})
-      @torso.ApplyForce(force_torso, @torso.GetWorldCenter())
+      @torso.ApplyForce(adjusted_force_vector, @torso.GetWorldCenter())
 
   create_head: ->
     # Create fixture
