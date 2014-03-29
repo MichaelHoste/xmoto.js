@@ -2405,7 +2405,7 @@
     };
 
     Replay.prototype.save = function() {
-      return $.post(Constants.scores_path, {
+      return $.post(this.level.options.scores_path, {
         level: this.level.infos.identifier,
         time: this.level.current_time,
         steps: this.steps,

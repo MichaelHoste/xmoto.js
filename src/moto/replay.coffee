@@ -31,7 +31,7 @@ class Replay
       return null
 
   save: ->
-    $.post(Constants.scores_path,
+    $.post(@level.options.scores_path,
       level:  @level.infos.identifier
       time:   @level.current_time
       steps:  @steps
