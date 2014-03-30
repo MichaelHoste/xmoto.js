@@ -56,9 +56,6 @@ class Moto
 
     @rider.init()
 
-  position: ->
-    @body.GetPosition()
-
   move: ->
     input = @level.input
 
@@ -227,6 +224,7 @@ class Moto
 
   display: ->
     return false if Constants.debug
+    return false if @level.options.replay_only
 
     @display_wheel(      @left_wheel,  Constants.left_wheel)
     @display_wheel(      @right_wheel, Constants.right_wheel)

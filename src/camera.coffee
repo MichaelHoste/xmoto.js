@@ -18,6 +18,14 @@ class Camera
       @scale.x = @scale.x * 0.995 + (Constants.default_scale.x / (1.0 + speed/10.0)) * 0.005
       @scale.y = @scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed/10.0)) * 0.005
 
+  # must be an object with x and y values
+  target: ->
+    options = @level.options
+    if options.replay_only
+      @level.ghosts.replay.current_frame().body.position
+    else
+      @level.moto.body.GetPosition()
+
   # If there are some issues on other systems than MacOS,
   # check this to find a solution : http://stackoverflow.com/questions/5527601/normalizing-mousewheel-speed-across-browsers
   init_scroll : ->

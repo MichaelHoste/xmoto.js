@@ -11,6 +11,13 @@ $.xmoto = (level_filename, options = {}) ->
                                      #     must give the id from the current user's best score
                                      #     so that we can load the corresponding replay
 
+      # Replay
+      replay_only: false             # Not playable, just watch replay from replay_file
+      replay_file: ''                # play "replay" file (not playable)
+
+      # Zoom
+      zoom: Constants.default_scale
+
       # Attributes
       replay_id_attribute:      'data-replay-id'      # id of replay (ex. /data/Replays/{id}.replay
       replay_steps_attribute:   'data-replay-steps'   # number of steps of replay

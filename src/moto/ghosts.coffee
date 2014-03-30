@@ -4,14 +4,42 @@ class Ghosts
     @level   = level
     @assets  = level.assets
 
-    # Create replay and load the user's best score (from an id in the DOM)
-    replay   = new Replay(@level).load()
-    @player  = new Ghost(@level, replay)
+    @replay = @load_replay() # Create replay in "replay only" mode (from options)
+    @player = @load_player() # Create replay and load the user's best score (from an id in the DOM)
+    @others = @load_others() # Create replays from other players from DOM
 
-    @others  = []
+  load_replay: ->
+    options = @level.options
+
+    if options.replay_only
+      replay = new Replay(@level)
+      replay.load(options.replay_file)
+      return new Ghost(@level, replay)
+    else
+      return null
+
+  load_player: ->
+    options      = @level.options
+    selector     = $(options.current_user)
+    replay_id    = selector.attr(options.replay_id_attribute)
+
+    if selector.length && replay_id.length > 0
+      replay  = new Replay(@level)
+      replay.load("#{replay_id}.replay")
+      return new Ghost(@level, replay)
+    else
+      return new Ghost(@level, null)
+
+  load_others: ->
+    []
 
   display: ->
-    @player.display()
+    if @player
+      @player.display()
+
+    if @replay
+      @replay.display(false) # false means "not transparent"
+
     for ghost in @others
       ghost.display()
 

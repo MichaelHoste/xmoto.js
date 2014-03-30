@@ -15,20 +15,17 @@ class Replay
     new_replay.steps   = @steps
     return new_replay
 
-  load: ->
-    options      = @level.options
+  load: (filename) ->
+    options = @level.options
     selector     = $(options.current_user)
-    replay_id    = selector.attr(options.replay_id_attribute)
     replay_steps = selector.attr(options.replay_steps_attribute)
-    if selector.length && replay_id.length > 0
-      $.get("#{options.replays_path}/#{replay_id}.replay", (data) =>
-        @frames  = ReplayConversionService.string_to_frames(data)
-        @success = true
-        @steps   = parseInt(replay_steps)
-      )
-      return this
-    else
-      return null
+
+    $.get("#{options.replays_path}/#{filename}", (data) =>
+      @frames  = ReplayConversionService.string_to_frames(data)
+      @success = true
+      @steps   = parseInt(replay_steps)
+    )
+    return this
 
   save: ->
     $.post(@level.options.scores_path,

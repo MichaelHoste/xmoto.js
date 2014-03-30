@@ -14,11 +14,12 @@
       $(buffer_html).insertAfter(this.level.options.canvas);
       this.canvas = $("#buffer").get(0);
       this.ctx = this.canvas.getContext('2d');
+      this.camera = this.level.camera;
       this.buffer_scale = {
-        x: this.level.camera.scale.x,
-        y: this.level.camera.scale.y
+        x: this.camera.scale.x,
+        y: this.camera.scale.y
       };
-      this.scale = this.level.camera.scale;
+      this.scale = this.camera.scale;
       this.sky = this.level.sky;
       this.limits = this.level.limits;
       this.entities = this.level.entities;
@@ -31,22 +32,22 @@
     };
 
     Buffer.prototype.redraw_needed = function() {
-      var moto;
+      var target;
       if (!this.canvas_width) {
         return true;
       }
       if (this.visible) {
-        moto = this.level.object_to_follow();
-        if (this.visible.right < moto.position().x + (this.level.canvas_width / 2) / this.scale.x) {
+        target = this.camera.target();
+        if (this.visible.right < target.x + (this.level.canvas_width / 2) / this.scale.x) {
           return true;
         }
-        if (this.visible.left > moto.position().x - (this.level.canvas_width / 2) / this.scale.x) {
+        if (this.visible.left > target.x - (this.level.canvas_width / 2) / this.scale.x) {
           return true;
         }
-        if (this.visible.top < moto.position().y - (this.level.canvas_height / 2) / this.scale.y) {
+        if (this.visible.top < target.y - (this.level.canvas_height / 2) / this.scale.y) {
           return true;
         }
-        if (this.visible.bottom > moto.position().y + (this.level.canvas_height / 2) / this.scale.y) {
+        if (this.visible.bottom > target.y + (this.level.canvas_height / 2) / this.scale.y) {
           return true;
         }
       }
@@ -54,14 +55,14 @@
     };
 
     Buffer.prototype.redraw = function() {
-      var moto;
-      moto = this.level.object_to_follow();
+      var target;
+      target = this.camera.target();
       if (!this.canvas_width) {
         this.init_canvas();
       }
-      this.moto_position = {
-        x: moto.position().x,
-        y: moto.position().y
+      this.target_position = {
+        x: target.x,
+        y: target.y
       };
       this.buffer_scale = {
         x: this.scale.x > Constants.default_scale.x ? Constants.default_scale.x : this.scale.x,
@@ -72,7 +73,7 @@
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(this.buffer_scale.x, this.buffer_scale.y);
-      this.ctx.translate(-moto.position().x, -moto.position().y - 0.25);
+      this.ctx.translate(-target.x, -target.y - 0.25);
       this.limits.display(this.ctx);
       this.entities.display_sprites(this.ctx);
       this.blocks.display(this.ctx);
@@ -80,13 +81,13 @@
     };
 
     Buffer.prototype.compute_visibility = function() {
-      var moto;
-      moto = this.level.object_to_follow();
+      var target;
+      target = this.camera.target();
       this.visible = {
-        left: moto.position().x - (this.canvas_width / 2) / this.buffer_scale.x,
-        right: moto.position().x + (this.canvas_width / 2) / this.buffer_scale.x,
-        bottom: moto.position().y + (this.canvas_height / 2) / this.buffer_scale.y,
-        top: moto.position().y - (this.canvas_height / 2) / this.buffer_scale.y
+        left: target.x - (this.canvas_width / 2) / this.buffer_scale.x,
+        right: target.x + (this.canvas_width / 2) / this.buffer_scale.x,
+        bottom: target.y + (this.canvas_height / 2) / this.buffer_scale.y,
+        top: target.y - (this.canvas_height / 2) / this.buffer_scale.y
       };
       this.visible.aabb = new b2AABB();
       this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
@@ -94,16 +95,16 @@
     };
 
     Buffer.prototype.display = function() {
-      var buffer_center_x, buffer_center_y, canvas_center_x, canvas_center_y, clipped_height, clipped_width, margin_zoom_x, margin_zoom_y, moto, translate_x, translate_y;
-      moto = this.level.object_to_follow();
+      var buffer_center_x, buffer_center_y, canvas_center_x, canvas_center_y, clipped_height, clipped_width, margin_zoom_x, margin_zoom_y, target, translate_x, translate_y;
+      target = this.camera.target();
       buffer_center_x = this.canvas_width / 2;
       canvas_center_x = this.level.canvas_width / 2;
-      translate_x = (moto.position().x - this.moto_position.x) * this.buffer_scale.x;
+      translate_x = (target.x - this.target_position.x) * this.buffer_scale.x;
       clipped_width = this.level.canvas_width / (this.scale.x / this.buffer_scale.x);
       margin_zoom_x = (this.level.canvas_width - clipped_width) / 2;
       buffer_center_y = this.canvas_height / 2;
       canvas_center_y = this.level.canvas_height / 2;
-      translate_y = (moto.position().y - this.moto_position.y) * this.buffer_scale.y;
+      translate_y = (target.y - this.target_position.y) * this.buffer_scale.y;
       clipped_height = this.level.canvas_height / (this.scale.y / this.buffer_scale.y);
       margin_zoom_y = (this.level.canvas_height - clipped_height) / 2;
       return this.level.ctx.drawImage(this.canvas, buffer_center_x - canvas_center_x + translate_x + margin_zoom_x, buffer_center_y - canvas_center_y + translate_y + margin_zoom_y, clipped_width, clipped_height, 0, 0, this.level.canvas_width, this.level.canvas_height);
@@ -134,6 +135,16 @@
         speed = Math2D.distance_between_points(new b2Vec2(0, 0), this.level.moto.body.GetLinearVelocity());
         this.scale.x = this.scale.x * 0.995 + (Constants.default_scale.x / (1.0 + speed / 10.0)) * 0.005;
         return this.scale.y = this.scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed / 10.0)) * 0.005;
+      }
+    };
+
+    Camera.prototype.target = function() {
+      var options;
+      options = this.level.options;
+      if (options.replay_only) {
+        return this.level.ghosts.replay.current_frame().body.position;
+      } else {
+        return this.level.moto.body.GetPosition();
       }
     };
 
@@ -655,7 +666,7 @@
       this.ctx.save();
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(this.camera.scale.x, this.camera.scale.y);
-      this.ctx.translate(-this.object_to_follow().position().x, -this.object_to_follow().position().y - 0.25);
+      this.ctx.translate(-this.camera.target().x, -this.camera.target().y - 0.25);
       this.entities.display_items();
       this.moto.display();
       this.ghosts.display();
@@ -689,10 +700,10 @@
 
     Level.prototype.compute_visibility = function() {
       this.visible = {
-        left: this.object_to_follow().position().x - (this.canvas_width / 2) / this.camera.scale.x,
-        right: this.object_to_follow().position().x + (this.canvas_width / 2) / this.camera.scale.x,
-        bottom: this.object_to_follow().position().y + (this.canvas_height / 2) / this.camera.scale.y,
-        top: this.object_to_follow().position().y - (this.canvas_height / 2) / this.camera.scale.y
+        left: this.camera.target().x - (this.canvas_width / 2) / this.camera.scale.x,
+        right: this.camera.target().x + (this.canvas_width / 2) / this.camera.scale.x,
+        bottom: this.camera.target().y + (this.canvas_height / 2) / this.camera.scale.y,
+        top: this.camera.target().y - (this.canvas_height / 2) / this.camera.scale.y
       };
       this.visible.aabb = new b2AABB();
       this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
@@ -727,10 +738,6 @@
         _results.push(entity.display = true);
       }
       return _results;
-    };
-
-    Level.prototype.object_to_follow = function() {
-      return this.moto;
     };
 
     return Level;
@@ -818,6 +825,9 @@
         chrono: '#chrono',
         users: '#users .user',
         current_user: '#current-user',
+        replay_only: false,
+        replay_file: '',
+        zoom: Constants.default_scale,
         replay_id_attribute: 'data-replay-id',
         replay_steps_attribute: 'data-replay-steps',
         replay_name_attribute: 'data-replay-name',
@@ -1908,7 +1918,7 @@
       } else {
         ctx.save();
         ctx.scale(4.0, 4.0);
-        ctx.translate(-this.level.object_to_follow().position().x * 4, this.level.object_to_follow().position().y * 2);
+        ctx.translate(-this.level.camera.target().x * 4, this.level.camera.target().y * 2);
         ctx.fillStyle = ctx.createPattern(this.assets.get(this.file_name), "repeat");
         ctx.fill();
         return ctx.restore();
@@ -1925,21 +1935,25 @@
       this.replay = replay;
     }
 
-    Ghost.prototype.display = function() {
-      var mirror;
+    Ghost.prototype.display = function(transparent) {
+      var mirror, texture_prefix;
+      if (transparent == null) {
+        transparent = true;
+      }
       if (this.replay && !Constants.debug) {
         this.frame = this.current_frame();
         mirror = this.frame.mirror ? -1 : 1;
-        Moto.display_wheel(this.level, this.frame.left_wheel, Constants.left_wheel, mirror, 'ghost_');
-        Moto.display_wheel(this.level, this.frame.right_wheel, Constants.right_wheel, mirror, 'ghost_');
-        Moto.display_left_axle(this.level, this.frame.left_axle, Constants.left_axle, this.frame.body, this.frame.left_wheel, mirror, 'ghost_');
-        Moto.display_right_axle(this.level, this.frame.right_axle, Constants.right_axle, this.frame.body, this.frame.right_wheel, mirror, 'ghost_');
-        Moto.display_body(this.level, this.frame.body, Constants.body, mirror, 'ghost_');
-        Rider.display_part(this.level, this.frame.torso, Constants.torso, mirror, 'ghost_');
-        Rider.display_part(this.level, this.frame.upper_leg, Constants.upper_leg, mirror, 'ghost_');
-        Rider.display_part(this.level, this.frame.lower_leg, Constants.lower_leg, mirror, 'ghost_');
-        Rider.display_part(this.level, this.frame.upper_arm, Constants.upper_arm, mirror, 'ghost_');
-        return Rider.display_part(this.level, this.frame.lower_arm, Constants.lower_arm, mirror, 'ghost_');
+        texture_prefix = transparent ? 'ghost_' : '';
+        Moto.display_wheel(this.level, this.frame.left_wheel, Constants.left_wheel, mirror, texture_prefix);
+        Moto.display_wheel(this.level, this.frame.right_wheel, Constants.right_wheel, mirror, texture_prefix);
+        Moto.display_left_axle(this.level, this.frame.left_axle, Constants.left_axle, this.frame.body, this.frame.left_wheel, mirror, texture_prefix);
+        Moto.display_right_axle(this.level, this.frame.right_axle, Constants.right_axle, this.frame.body, this.frame.right_wheel, mirror, texture_prefix);
+        Moto.display_body(this.level, this.frame.body, Constants.body, mirror, texture_prefix);
+        Rider.display_part(this.level, this.frame.torso, Constants.torso, mirror, texture_prefix);
+        Rider.display_part(this.level, this.frame.upper_leg, Constants.upper_leg, mirror, texture_prefix);
+        Rider.display_part(this.level, this.frame.lower_leg, Constants.lower_leg, mirror, texture_prefix);
+        Rider.display_part(this.level, this.frame.upper_arm, Constants.upper_arm, mirror, texture_prefix);
+        return Rider.display_part(this.level, this.frame.lower_arm, Constants.lower_arm, mirror, texture_prefix);
       }
     };
 
@@ -1953,17 +1967,51 @@
 
   Ghosts = (function() {
     function Ghosts(level) {
-      var replay;
       this.level = level;
       this.assets = level.assets;
-      replay = new Replay(this.level).load();
-      this.player = new Ghost(this.level, replay);
-      this.others = [];
+      this.replay = this.load_replay();
+      this.player = this.load_player();
+      this.others = this.load_others();
     }
+
+    Ghosts.prototype.load_replay = function() {
+      var options, replay;
+      options = this.level.options;
+      if (options.replay_only) {
+        replay = new Replay(this.level);
+        replay.load(options.replay_file);
+        return new Ghost(this.level, replay);
+      } else {
+        return null;
+      }
+    };
+
+    Ghosts.prototype.load_player = function() {
+      var options, replay, replay_id, selector;
+      options = this.level.options;
+      selector = $(options.current_user);
+      replay_id = selector.attr(options.replay_id_attribute);
+      if (selector.length && replay_id.length > 0) {
+        replay = new Replay(this.level);
+        replay.load("" + replay_id + ".replay");
+        return new Ghost(this.level, replay);
+      } else {
+        return new Ghost(this.level, null);
+      }
+    };
+
+    Ghosts.prototype.load_others = function() {
+      return [];
+    };
 
     Ghosts.prototype.display = function() {
       var ghost, _i, _len, _ref, _results;
-      this.player.display();
+      if (this.player) {
+        this.player.display();
+      }
+      if (this.replay) {
+        this.replay.display(false);
+      }
       _ref = this.others;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -2050,10 +2098,6 @@
       this.left_prismatic_joint = this.create_prismatic_joint(this.left_axle, Constants.left_suspension);
       this.right_prismatic_joint = this.create_prismatic_joint(this.right_axle, Constants.right_suspension);
       return this.rider.init();
-    };
-
-    Moto.prototype.position = function() {
-      return this.body.GetPosition();
     };
 
     Moto.prototype.move = function() {
@@ -2207,6 +2251,9 @@
 
     Moto.prototype.display = function() {
       if (Constants.debug) {
+        return false;
+      }
+      if (this.level.options.replay_only) {
         return false;
       }
       this.display_wheel(this.left_wheel, Constants.left_wheel);
@@ -2398,23 +2445,18 @@
       return new_replay;
     };
 
-    Replay.prototype.load = function() {
-      var options, replay_id, replay_steps, selector,
+    Replay.prototype.load = function(filename) {
+      var options, replay_steps, selector,
         _this = this;
       options = this.level.options;
       selector = $(options.current_user);
-      replay_id = selector.attr(options.replay_id_attribute);
       replay_steps = selector.attr(options.replay_steps_attribute);
-      if (selector.length && replay_id.length > 0) {
-        $.get("" + options.replays_path + "/" + replay_id + ".replay", function(data) {
-          _this.frames = ReplayConversionService.string_to_frames(data);
-          _this.success = true;
-          return _this.steps = parseInt(replay_steps);
-        });
-        return this;
-      } else {
-        return null;
-      }
+      $.get("" + options.replays_path + "/" + filename, function(data) {
+        _this.frames = ReplayConversionService.string_to_frames(data);
+        _this.success = true;
+        return _this.steps = parseInt(replay_steps);
+      });
+      return this;
     };
 
     Replay.prototype.save = function() {

@@ -39,7 +39,7 @@ class Sky
     else
       ctx.save()
       ctx.scale(4.0, 4.0)
-      ctx.translate(-@level.object_to_follow().position().x*4, @level.object_to_follow().position().y*2)
+      ctx.translate(-@level.camera.target().x*4, @level.camera.target().y*2)
       ctx.fillStyle = ctx.createPattern(@assets.get(@file_name), "repeat")
       ctx.fill()
       ctx.restore()

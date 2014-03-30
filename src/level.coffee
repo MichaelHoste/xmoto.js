@@ -98,9 +98,9 @@ class Level
     @ctx.save()
 
     # initialize position of camera
-    @ctx.translate(@canvas_width/2, @canvas_height/2)  # Center of canvas
-    @ctx.scale(@camera.scale.x, @camera.scale.y)       # Scale (zoom)
-    @ctx.translate(-@object_to_follow().position().x, -@object_to_follow().position().y - 0.25) # Camera on moto
+    @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
+    @ctx.scale(@camera.scale.x, @camera.scale.y)                    # Scale (zoom)
+    @ctx.translate(-@camera.target().x, -@camera.target().y - 0.25) # Camera on moto
 
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
     @entities.display_items()
@@ -128,10 +128,10 @@ class Level
 
   compute_visibility: ->
     @visible =
-      left:   @object_to_follow().position().x - (@canvas_width  / 2) / @camera.scale.x
-      right:  @object_to_follow().position().x + (@canvas_width  / 2) / @camera.scale.x
-      bottom: @object_to_follow().position().y + (@canvas_height / 2) / @camera.scale.y
-      top:    @object_to_follow().position().y - (@canvas_height / 2) / @camera.scale.y
+      left:   @camera.target().x - (@canvas_width  / 2) / @camera.scale.x
+      right:  @camera.target().x + (@canvas_width  / 2) / @camera.scale.x
+      bottom: @camera.target().y + (@canvas_height / 2) / @camera.scale.y
+      top:    @camera.target().y - (@canvas_height / 2) / @camera.scale.y
     @visible.aabb = new b2AABB()
     @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
     @visible.aabb.upperBound.Set(@visible.right, @visible.top)
@@ -155,6 +155,3 @@ class Level
 
     for entity in @entities.strawberries
       entity.display = true
-
-  object_to_follow: ->
-    @moto
