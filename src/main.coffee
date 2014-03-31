@@ -6,7 +6,7 @@ $.xmoto = (level_filename, options = {}) ->
       canvas:       '#xmoto'         # canvas selector
       loading:      '#loading'       # loading selector
       chrono:       '#chrono'        # chrono selector
-      users:        '#users .user'   # each $("#users .user") behaves like $('#current-user') (cf. below)
+      users:        '#scores .user'  # each $("#scores .user") behaves like $('#current-user') (cf. below)
       current_user: '#current-user'  # ex. $("#current-user").attr('data-replay-id')
                                      #     must give the id from the current user's best score
                                      #     so that we can load the corresponding replay
@@ -23,7 +23,7 @@ $.xmoto = (level_filename, options = {}) ->
       replay_steps_attribute:   'data-replay-steps'   # number of steps of replay
       replay_name_attribute:    'data-replay-name'    # name of user that made the replay
       replay_picture_attribute: 'data-replay-picture' # picture of user that made the replay
-      replay_active_attribute:  'data-replay-display' # true if replay must be activated (displayed)
+      replay_active_attribute:  'data-replay-active'  # true if replay must be activated (displayed)
 
       # Paths
       levels_path:  '/data/Levels'        # Path where are the levels (ex. /data/Levels/l1.lvl)

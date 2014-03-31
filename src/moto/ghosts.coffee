@@ -19,19 +19,45 @@ class Ghosts
       return null
 
   load_player: ->
-    options      = @level.options
-    selector     = $(options.current_user)
-    replay_id    = selector.attr(options.replay_id_attribute)
+    options       = @level.options
+    selector      = $(options.current_user)
 
-    if selector.length && replay_id.length > 0
+    replay_id     = selector.attr(options.replay_id_attribute)
+    replay_steps  = parseInt(selector.attr(options.replay_steps_attribute))
+    replay_active = selector.find(options.replay_active_attribute) == 'true'
+
+    if selector.length && replay_id.length > 0 && replay_active
       replay  = new Replay(@level)
       replay.load("#{replay_id}.replay")
+      replay.steps = replay_steps
       return new Ghost(@level, replay)
     else
       return new Ghost(@level, null)
 
   load_others: ->
-    []
+    others  = []
+    options = @level.options
+
+    load = (level, i) ->
+      users = $(options.users)
+      if users.length == 0
+        setTimeout(( -> load(level, i+1)), (i*3.0/2.0)*100)
+      else
+        for user in users
+          replay_id     = $(user).attr(options.replay_id_attribute)
+          replay_steps  = parseInt($(user).attr(options.replay_steps_attribute))
+          replay_active = $(user).attr(options.replay_active_attribute) == 'true'
+
+          if replay_id.length > 0 && replay_active
+            replay = new Replay(level)
+            replay.load("#{replay_id}.replay")
+            replay.steps = replay_steps
+            others.push(new Ghost(level, replay))
+
+    if $('#scores').length
+      load(@level, 1) # Wait for async scores on page (AngularJS)
+
+    return others
 
   display: ->
     if @player

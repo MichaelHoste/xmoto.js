@@ -17,13 +17,9 @@ class Replay
 
   load: (filename) ->
     options = @level.options
-    selector     = $(options.current_user)
-    replay_steps = selector.attr(options.replay_steps_attribute)
-
     $.get("#{options.replays_path}/#{filename}", (data) =>
       @frames  = ReplayConversionService.string_to_frames(data)
       @success = true
-      @steps   = parseInt(replay_steps)
     )
     return this
 

@@ -827,7 +827,7 @@
         canvas: '#xmoto',
         loading: '#loading',
         chrono: '#chrono',
-        users: '#users .user',
+        users: '#scores .user',
         current_user: '#current-user',
         replay_only: false,
         replay_file: '',
@@ -836,7 +836,7 @@
         replay_steps_attribute: 'data-replay-steps',
         replay_name_attribute: 'data-replay-name',
         replay_picture_attribute: 'data-replay-picture',
-        replay_active_attribute: 'data-replay-display',
+        replay_active_attribute: 'data-replay-active',
         levels_path: '/data/Levels',
         scores_path: '/level_user_links',
         replays_path: '/data/Replays'
@@ -1995,13 +1995,16 @@
     };
 
     Ghosts.prototype.load_player = function() {
-      var options, replay, replay_id, selector;
+      var options, replay, replay_active, replay_id, replay_steps, selector;
       options = this.level.options;
       selector = $(options.current_user);
       replay_id = selector.attr(options.replay_id_attribute);
-      if (selector.length && replay_id.length > 0) {
+      replay_steps = parseInt(selector.attr(options.replay_steps_attribute));
+      replay_active = selector.find(options.replay_active_attribute) === 'true';
+      if (selector.length && replay_id.length > 0 && replay_active) {
         replay = new Replay(this.level);
         replay.load("" + replay_id + ".replay");
+        replay.steps = replay_steps;
         return new Ghost(this.level, replay);
       } else {
         return new Ghost(this.level, null);
@@ -2009,7 +2012,39 @@
     };
 
     Ghosts.prototype.load_others = function() {
-      return [];
+      var load, options, others;
+      others = [];
+      options = this.level.options;
+      load = function(level, i) {
+        var replay, replay_active, replay_id, replay_steps, user, users, _i, _len, _results;
+        users = $(options.users);
+        if (users.length === 0) {
+          return setTimeout((function() {
+            return load(level, i + 1);
+          }), (i * 3.0 / 2.0) * 100);
+        } else {
+          _results = [];
+          for (_i = 0, _len = users.length; _i < _len; _i++) {
+            user = users[_i];
+            replay_id = $(user).attr(options.replay_id_attribute);
+            replay_steps = parseInt($(user).attr(options.replay_steps_attribute));
+            replay_active = $(user).attr(options.replay_active_attribute) === 'true';
+            if (replay_id.length > 0 && replay_active) {
+              replay = new Replay(level);
+              replay.load("" + replay_id + ".replay");
+              replay.steps = replay_steps;
+              _results.push(others.push(new Ghost(level, replay)));
+            } else {
+              _results.push(void 0);
+            }
+          }
+          return _results;
+        }
+      };
+      if ($('#scores').length) {
+        load(this.level, 1);
+      }
+      return others;
     };
 
     Ghosts.prototype.display = function() {
@@ -2454,15 +2489,12 @@
     };
 
     Replay.prototype.load = function(filename) {
-      var options, replay_steps, selector,
+      var options,
         _this = this;
       options = this.level.options;
-      selector = $(options.current_user);
-      replay_steps = selector.attr(options.replay_steps_attribute);
       $.get("" + options.replays_path + "/" + filename, function(data) {
         _this.frames = ReplayConversionService.string_to_frames(data);
-        _this.success = true;
-        return _this.steps = parseInt(replay_steps);
+        return _this.success = true;
       });
       return this;
     };
