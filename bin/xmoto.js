@@ -152,7 +152,7 @@
       var canvas, scroll,
         _this = this;
       scroll = function(event) {
-        var delta;
+        var delta, max_limit_x, max_limit_y, min_limit_x, min_limit_y;
         if (event.wheelDelta) {
           delta = event.wheelDelta / 40;
         } else if (event.detail) {
@@ -162,17 +162,21 @@
         }
         _this.scale.x += (_this.scale.x / 200) * delta;
         _this.scale.y += (_this.scale.y / 200) * delta;
-        if (_this.scale.x < 25) {
-          _this.scale.x = 25;
+        min_limit_x = Constants.default_scale.x / 2;
+        min_limit_y = Constants.default_scale.y / 2;
+        max_limit_x = Constants.default_scale.x * 2;
+        max_limit_y = Constants.default_scale.y * 2;
+        if (_this.scale.x < min_limit_x) {
+          _this.scale.x = min_limit_x;
         }
-        if (_this.scale.y > -25) {
-          _this.scale.y = -25;
+        if (_this.scale.y > min_limit_y) {
+          _this.scale.y = min_limit_y;
         }
-        if (_this.scale.x > 200) {
-          _this.scale.x = 200;
+        if (_this.scale.x > max_limit_x) {
+          _this.scale.x = max_limit_x;
         }
-        if (_this.scale.y < -200) {
-          _this.scale.y = -200;
+        if (_this.scale.y < max_limit_y) {
+          _this.scale.y = max_limit_y;
         }
         return event.preventDefault() && false;
       };
@@ -827,7 +831,7 @@
         current_user: '#current-user',
         replay_only: false,
         replay_file: '',
-        zoom: Constants.default_scale,
+        zoom: Constants.default_scale.x,
         replay_id_attribute: 'data-replay-id',
         replay_steps_attribute: 'data-replay-steps',
         replay_name_attribute: 'data-replay-name',
@@ -840,6 +844,10 @@
       return $.extend(defaults, options);
     };
     options = initialize(options);
+    Constants.default_scale = {
+      x: options.zoom,
+      y: -options.zoom
+    };
     $(options.loading).show();
     level = new Level(options);
     level.load_from_file(level_filename);

@@ -42,11 +42,17 @@ class Camera
       @scale.y += (@scale.y/200) * delta
 
       # boundaries
-      @scale.x =  25 if @scale.x <  25
-      @scale.y = -25 if @scale.y > -25
+      min_limit_x = Constants.default_scale.x / 2
+      min_limit_y = Constants.default_scale.y / 2
 
-      @scale.x =  200 if @scale.x >  200
-      @scale.y = -200 if @scale.y < -200
+      max_limit_x = Constants.default_scale.x * 2
+      max_limit_y = Constants.default_scale.y * 2
+
+      @scale.x = min_limit_x if @scale.x < min_limit_x
+      @scale.y = min_limit_y if @scale.y > min_limit_y
+
+      @scale.x = max_limit_x if @scale.x > max_limit_x
+      @scale.y = max_limit_y if @scale.y < max_limit_y
 
       return event.preventDefault() && false
 

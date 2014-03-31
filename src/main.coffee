@@ -16,7 +16,7 @@ $.xmoto = (level_filename, options = {}) ->
       replay_file: ''                # play "replay" file (not playable)
 
       # Zoom
-      zoom: Constants.default_scale
+      zoom: Constants.default_scale.x # Zoom of camera
 
       # Attributes
       replay_id_attribute:      'data-replay-id'      # id of replay (ex. /data/Replays/{id}.replay
@@ -33,6 +33,9 @@ $.xmoto = (level_filename, options = {}) ->
     return $.extend(defaults, options)
 
   options = initialize(options)
+  Constants.default_scale =
+    x:  options.zoom
+    y: -options.zoom
 
   $(options.loading).show()
 
