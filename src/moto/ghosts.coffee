@@ -11,7 +11,7 @@ class Ghosts
   load_replay: ->
     options = @level.options
 
-    if options.replay_only
+    if options.replay_mode
       replay = new Replay(@level)
       replay.load(options.replay_file)
       return new Ghost(@level, replay)
@@ -20,15 +20,13 @@ class Ghosts
 
   load_player: ->
     options       = @level.options
-    selector      = $(options.current_user)
 
-    replay_id     = selector.attr(options.replay_id_attribute)
-    replay_steps  = parseInt(selector.attr(options.replay_steps_attribute))
-    replay_active = selector.find(options.replay_active_attribute) == 'true'
+    replay_file  = options.best_score_file
+    replay_steps = options.best_score_steps
 
-    if selector.length && replay_id.length > 0 && replay_active
+    if replay_file.length > 0
       replay  = new Replay(@level)
-      replay.load("#{replay_id}.replay")
+      replay.load("#{replay_file}")
       replay.steps = replay_steps
       return new Ghost(@level, replay)
     else
@@ -38,29 +36,20 @@ class Ghosts
     others  = []
     options = @level.options
 
-    load = (level, i) ->
-      users = $(options.users)
-      if users.length == 0
-        setTimeout(( -> load(level, i+1)), (i*3.0/2.0)*100)
-      else
-        for user in users
-          replay_id     = $(user).attr(options.replay_id_attribute)
-          replay_steps  = parseInt($(user).attr(options.replay_steps_attribute))
-          replay_active = $(user).attr(options.replay_active_attribute) == 'true'
+    for option_replay in options.replays
+      replay_file  = option_replay.file
+      replay_steps = option_replay.steps
 
-          if replay_id.length > 0 && replay_active
-            replay = new Replay(level)
-            replay.load("#{replay_id}.replay")
-            replay.steps = replay_steps
-            others.push(new Ghost(level, replay))
-
-    if $('#scores').length
-      load(@level, 1) # Wait for async scores on page (AngularJS)
+      if replay_file.length > 0
+        replay = new Replay(@level)
+        replay.load("#{replay_file}")
+        replay.steps = replay_steps
+        others.push(new Ghost(@level, replay))
 
     return others
 
   display: ->
-    if @player
+    if @player && @level.options.best_score_ghost
       @player.display()
 
     if @replay

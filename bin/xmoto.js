@@ -141,7 +141,7 @@
     Camera.prototype.target = function() {
       var options;
       options = this.level.options;
-      if (options.replay_only) {
+      if (options.replay_mode) {
         return this.level.ghosts.replay.current_frame().body.position;
       } else {
         return this.level.moto.body.GetPosition();
@@ -827,16 +827,13 @@
         canvas: '#xmoto',
         loading: '#loading',
         chrono: '#chrono',
-        users: '#scores .user',
-        current_user: '#current-user',
-        replay_only: false,
+        best_score_file: '',
+        best_score_steps: 99999999999,
+        best_score_ghost: true,
+        replays: [],
+        replay_mode: false,
         replay_file: '',
         zoom: Constants.default_scale.x,
-        replay_id_attribute: 'data-replay-id',
-        replay_steps_attribute: 'data-replay-steps',
-        replay_name_attribute: 'data-replay-name',
-        replay_picture_attribute: 'data-replay-picture',
-        replay_active_attribute: 'data-replay-active',
         levels_path: '/data/Levels',
         scores_path: '/level_user_links',
         replays_path: '/data/Replays'
@@ -1985,7 +1982,7 @@
     Ghosts.prototype.load_replay = function() {
       var options, replay;
       options = this.level.options;
-      if (options.replay_only) {
+      if (options.replay_mode) {
         replay = new Replay(this.level);
         replay.load(options.replay_file);
         return new Ghost(this.level, replay);
@@ -1995,15 +1992,13 @@
     };
 
     Ghosts.prototype.load_player = function() {
-      var options, replay, replay_active, replay_id, replay_steps, selector;
+      var options, replay, replay_file, replay_steps;
       options = this.level.options;
-      selector = $(options.current_user);
-      replay_id = selector.attr(options.replay_id_attribute);
-      replay_steps = parseInt(selector.attr(options.replay_steps_attribute));
-      replay_active = selector.find(options.replay_active_attribute) === 'true';
-      if (selector.length && replay_id.length > 0 && replay_active) {
+      replay_file = options.best_score_file;
+      replay_steps = options.best_score_steps;
+      if (replay_file.length > 0) {
         replay = new Replay(this.level);
-        replay.load("" + replay_id + ".replay");
+        replay.load("" + replay_file);
         replay.steps = replay_steps;
         return new Ghost(this.level, replay);
       } else {
@@ -2012,44 +2007,27 @@
     };
 
     Ghosts.prototype.load_others = function() {
-      var load, options, others;
+      var option_replay, options, others, replay, replay_file, replay_steps, _i, _len, _ref;
       others = [];
       options = this.level.options;
-      load = function(level, i) {
-        var replay, replay_active, replay_id, replay_steps, user, users, _i, _len, _results;
-        users = $(options.users);
-        if (users.length === 0) {
-          return setTimeout((function() {
-            return load(level, i + 1);
-          }), (i * 3.0 / 2.0) * 100);
-        } else {
-          _results = [];
-          for (_i = 0, _len = users.length; _i < _len; _i++) {
-            user = users[_i];
-            replay_id = $(user).attr(options.replay_id_attribute);
-            replay_steps = parseInt($(user).attr(options.replay_steps_attribute));
-            replay_active = $(user).attr(options.replay_active_attribute) === 'true';
-            if (replay_id.length > 0 && replay_active) {
-              replay = new Replay(level);
-              replay.load("" + replay_id + ".replay");
-              replay.steps = replay_steps;
-              _results.push(others.push(new Ghost(level, replay)));
-            } else {
-              _results.push(void 0);
-            }
-          }
-          return _results;
+      _ref = options.replays;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option_replay = _ref[_i];
+        replay_file = option_replay.file;
+        replay_steps = option_replay.steps;
+        if (replay_file.length > 0) {
+          replay = new Replay(this.level);
+          replay.load("" + replay_file);
+          replay.steps = replay_steps;
+          others.push(new Ghost(this.level, replay));
         }
-      };
-      if ($('#scores').length) {
-        load(this.level, 1);
       }
       return others;
     };
 
     Ghosts.prototype.display = function() {
       var ghost, _i, _len, _ref, _results;
-      if (this.player) {
+      if (this.player && this.level.options.best_score_ghost) {
         this.player.display();
       }
       if (this.replay) {
@@ -2296,7 +2274,7 @@
       if (Constants.debug) {
         return false;
       }
-      if (this.level.options.replay_only) {
+      if (this.level.options.replay_mode) {
         return false;
       }
       this.display_wheel(this.left_wheel, Constants.left_wheel);
