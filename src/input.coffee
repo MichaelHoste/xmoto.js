@@ -39,10 +39,10 @@ class Input
           @left = true
         when 39
           @right = true
-        when 13
-          @level.need_to_restart = true
         when 32
           @level.moto.flip()
+        when 13
+          @level.need_to_restart = true
         when 69 # e
           if !$('input').is(':focus')
             @level.moto.rider.eject()

@@ -544,10 +544,10 @@
             return _this.left = true;
           case 39:
             return _this.right = true;
-          case 13:
-            return _this.level.need_to_restart = true;
           case 32:
             return _this.level.moto.flip();
+          case 13:
+            return _this.level.need_to_restart = true;
           case 69:
             if (!$('input').is(':focus')) {
               return _this.level.moto.rider.eject();
