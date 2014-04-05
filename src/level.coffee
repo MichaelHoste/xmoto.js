@@ -82,8 +82,8 @@ class Level
     @canvas_height = parseFloat(@canvas.height)
 
   display: ->
-    @init_canvas() if not @canvas_width
-    @update_timer()
+    @init_canvas()  if not @canvas_width
+    @update_timer() if not @moto.dead
 
     # visible screen limits of the world (don't show anything outside of these limits)
     @compute_visibility()
@@ -113,10 +113,10 @@ class Level
 
     @ctx.restore()
 
-  update_timer: (now = false) ->
+  update_timer: (update_now = false) ->
     new_time = new Date().getTime() - @start_time
 
-    if now or Math.floor(new_time/10) > Math.floor(@current_time/10)
+    if update_now or Math.floor(new_time/10) > Math.floor(@current_time/10)
       minutes = Math.floor(new_time / 1000 / 60)
       seconds = Math.floor(new_time / 1000) % 60
       seconds = "0#{seconds}" if seconds < 10

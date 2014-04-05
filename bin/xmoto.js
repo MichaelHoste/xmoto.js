@@ -671,7 +671,9 @@
       if (!this.canvas_width) {
         this.init_canvas();
       }
-      this.update_timer();
+      if (!this.moto.dead) {
+        this.update_timer();
+      }
       this.compute_visibility();
       this.sky.display();
       if (this.buffer.redraw_needed()) {
@@ -692,13 +694,13 @@
       return this.ctx.restore();
     };
 
-    Level.prototype.update_timer = function(now) {
+    Level.prototype.update_timer = function(update_now) {
       var cents, minutes, new_time, seconds;
-      if (now == null) {
-        now = false;
+      if (update_now == null) {
+        update_now = false;
       }
       new_time = new Date().getTime() - this.start_time;
-      if (now || Math.floor(new_time / 10) > Math.floor(this.current_time / 10)) {
+      if (update_now || Math.floor(new_time / 10) > Math.floor(this.current_time / 10)) {
         minutes = Math.floor(new_time / 1000 / 60);
         seconds = Math.floor(new_time / 1000) % 60;
         if (seconds < 10) {
