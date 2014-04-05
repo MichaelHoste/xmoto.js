@@ -121,6 +121,10 @@
         x: Constants.default_scale.x,
         y: Constants.default_scale.y
       };
+      this.offset = {
+        x: 0,
+        y: 0
+      };
     }
 
     Camera.prototype.init = function() {
@@ -130,22 +134,29 @@
     };
 
     Camera.prototype.move = function() {
-      var speed;
+      var speed, velocity;
+      velocity = this.level.moto.body.GetLinearVelocity();
       if (Constants.automatic_scale) {
-        speed = Math2D.distance_between_points(new b2Vec2(0, 0), this.level.moto.body.GetLinearVelocity());
-        this.scale.x = this.scale.x * 0.995 + (Constants.default_scale.x / (1.0 + speed / 10.0)) * 0.005;
-        return this.scale.y = this.scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed / 10.0)) * 0.005;
+        speed = Math2D.distance_between_points(new b2Vec2(0, 0), velocity);
+        this.scale.x = this.scale.x * 0.995 + (Constants.default_scale.x / (1.0 + speed / 7.5)) * 0.005;
+        this.scale.y = this.scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed / 7.5)) * 0.005;
+        this.offset.x = this.offset.x * 0.97 + velocity.x / 3.0 * 0.03;
+        return this.offset.y = this.offset.y * 0.99 + velocity.y / 3.0 * 0.01;
       }
     };
 
     Camera.prototype.target = function() {
-      var options;
+      var adjusted_position, options, position;
       options = this.level.options;
       if (options.replay_mode) {
-        return this.level.ghosts.replay.current_frame().body.position;
+        position = this.level.ghosts.replay.current_frame().body.position;
       } else {
-        return this.level.moto.body.GetPosition();
+        position = this.level.moto.body.GetPosition();
       }
+      return adjusted_position = {
+        x: position.x + this.offset.x,
+        y: position.y + this.offset.y
+      };
     };
 
     Camera.prototype.init_scroll = function() {
@@ -204,7 +215,7 @@
 
     Constants.air_density = 0.03;
 
-    Constants.moto_acceleration = 8.00;
+    Constants.moto_acceleration = 9.00;
 
     Constants.biker_force = 11.00;
 
@@ -217,8 +228,8 @@
     Constants.manual_scale = true;
 
     Constants.default_scale = {
-      x: 85.0,
-      y: -85.0
+      x: 70.0,
+      y: -70.0
     };
 
     Constants.body = {

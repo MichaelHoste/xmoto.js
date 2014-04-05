@@ -11,7 +11,7 @@ class Constants
   @gravity           =  9.81 # Default gravity of the game
   @max_moto_speed    = 70.00 # Max rotation speed of the wheels. Limit the max speed of the moto
   @air_density       =  0.03 # Friction of air
-  @moto_acceleration =  8.00 # Acceleration of moto
+  @moto_acceleration =  9.00 # Acceleration of moto
   @biker_force       = 11.00 # Force of biker when he rotates the moto
 
   # FRAMERATE
@@ -24,8 +24,8 @@ class Constants
   @automatic_scale = true # camera zoom and dezoom when moto speed changes         (can be both)
   @manual_scale    = true # camera zoom and dezoom when player scrolls up and down (can be both)
   @default_scale   =      # default zoom of the camera
-    x:  85.0
-    y: -85.0
+    x:  70.0
+    y: -70.0
 
   # MOTO PARTS
 
