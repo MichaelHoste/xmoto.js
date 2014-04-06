@@ -146,7 +146,7 @@ class Level
     @replay = new Replay(this)
 
     @moto.destroy()
-    @moto = new Moto(this, false)
+    @moto = new Moto(this)
     @moto.init()
 
     @start_time   = new Date().getTime()

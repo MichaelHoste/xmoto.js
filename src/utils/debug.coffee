@@ -41,7 +41,6 @@ display_constants = ->
   for key in Object.keys(Constants)
     value = Constants[key]
     if typeof value != 'object' && typeof value != 'function'
-      console.log(typeof value)
       html += "<li><a href=\"#{document.URL}&#{key}=#{value}\">#{key}</a> (#{value})</li>"
     else
       html += "<li>#{key}<ul>"

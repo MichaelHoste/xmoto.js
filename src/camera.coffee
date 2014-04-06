@@ -32,7 +32,7 @@ class Camera
   target: ->
     options = @level.options
     if options.replay_mode
-      position = @level.ghosts.replay.current_frame().body.position
+      position = @level.ghosts.replay.moto.body.GetPosition()
     else
       position = @level.moto.body.GetPosition()
 

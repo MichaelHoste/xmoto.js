@@ -26,6 +26,7 @@ class Listeners
         # End of level
         else if Listeners.does_contact_moto_rider(a, b, 'end_of_level') and not @level.need_to_restart
           if @level.got_strawberries()
+            console.log(@level.replay.inputs)
             @trigger_restart()
 
         # Fall of rider

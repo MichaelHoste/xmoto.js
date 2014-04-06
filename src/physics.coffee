@@ -40,7 +40,6 @@ class Physics
     @last_step = new Date().getTime()
     @step      = 1000.0/Constants.fps
     @steps     = 0
-    @level.replay.add_frame()
 
   restart: ->
     replay       = @level.replay
@@ -51,29 +50,30 @@ class Physics
       time = (replay.steps / 60.0).toFixed(2).replace('.', ':')
       if (not player_ghost.replay) || player_ghost.replay.steps > replay.steps
         console.log("WIN : you improved your personal score : #{time} (#{replay.steps} steps)")
-        @level.replay.add_frame() # add last frame (not always in timing of replay_fps but nicer when drawing replay)
-        replay.save()
-        @level.ghosts.player = new Ghost(@level, replay.clone())
+        @save_replay_and_init_ghosts(replay)
       else
         console.log("FAIL : you didn't improve your personal score : #{time} (#{replay.steps} steps)")
 
     @level.restart()
     @init()
 
+  save_replay_and_init_ghosts: (replay) ->
+    replay.add_step() # add last step
+    replay.save()
+    @level.ghosts.player = new Ghost(@level, replay.clone())
+    @level.ghosts.init()
+
   update: ->
     while (new Date()).getTime() - @last_step > @step
       @steps = @steps + 1
       @last_step += @step
-      @level.replay.steps = @steps
 
-      @level.input.move()
       @level.moto.move()
+      @level.ghosts.move()
       @level.camera.move()
       @world.Step(1.0/Constants.fps, 10, 10)
       @world.ClearForces()
-
-      if @steps % (Constants.fps / Constants.replay_fps) == 0
-        @level.replay.add_frame()
+      @level.replay.add_step()
 
       if @level.need_to_restart
         @restart()

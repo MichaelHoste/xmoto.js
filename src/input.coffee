@@ -66,36 +66,3 @@ class Input
         when 39
           @right = false
     )
-
-  move: ->
-    moto   = @level.moto
-    mirror = moto.mirror
-
-    moto_acceleration = Constants.moto_acceleration
-    biker_force       = Constants.biker_force
-
-    if not @level.moto.dead
-      # Accelerate
-      if @up
-        moto.left_wheel.ApplyTorque(- moto.mirror * moto_acceleration)
-
-      # Brakes
-      if @down
-        # block wheels
-        moto.right_wheel.SetAngularVelocity(0)
-        moto.left_wheel.SetAngularVelocity(0)
-
-      # Back wheeling
-      if (@left && mirror == 1) || (@right && mirror == -1)
-        moto.wheeling(biker_force)
-
-      # Front wheeling
-      if (@right && mirror == 1) || (@left && mirror == -1)
-        biker_force = -biker_force * 0.8 # a bit less force for front wheeling
-        moto.wheeling(biker_force)
-
-    # Detection of drifting
-    #rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
-    #linear_speed   = moto.left_wheel.GetLinearVelocity().x/10
-    #if linear_speed > 0 and rotation_speed > 1.5*linear_speed
-    #  @level.particles.create()

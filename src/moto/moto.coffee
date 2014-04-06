@@ -56,8 +56,29 @@ class Moto
 
     @rider.init()
 
-  move: ->
-    input = @level.input
+  move: (input = @level.input) ->
+    moto_acceleration = Constants.moto_acceleration
+    biker_force       = Constants.biker_force
+
+    if not @dead
+      # Accelerate
+      if input.up
+        @left_wheel.ApplyTorque(- @mirror * moto_acceleration)
+
+      # Brakes
+      if input.down
+        # block wheels
+        @right_wheel.SetAngularVelocity(0)
+        @left_wheel.SetAngularVelocity(0)
+
+      # Back wheeling
+      if (input.left && @mirror == 1) || (input.right && @mirror == -1)
+        @wheeling(biker_force)
+
+      # Front wheeling
+      if (input.right && @mirror == 1) || (input.left && @mirror == -1)
+        biker_force = -biker_force * 0.8 # a bit less force for front wheeling
+        @wheeling(biker_force)
 
     if not input.up and not input.down
       # Engine brake
@@ -97,6 +118,12 @@ class Moto
       @left_wheel.SetAngularVelocity(Constants.max_moto_speed)
     else if @left_wheel.GetAngularVelocity() < -Constants.max_moto_speed
       @left_wheel.SetAngularVelocity(-Constants.max_moto_speed)
+
+    # Detection of drifting
+    #rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
+    #linear_speed   = moto.left_wheel.GetLinearVelocity().x/10
+    #if linear_speed > 0 and rotation_speed > 1.5*linear_speed
+    #  @level.particles.create()
 
   wheeling: (force) ->
     moto_angle = @mirror * @body.GetAngle()
