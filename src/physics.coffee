@@ -68,12 +68,17 @@ class Physics
       @steps = @steps + 1
       @last_step += @step
 
+      if !@level.moto.dead && !@level.ghosts.player.replay
+        ;
+        #console.log("#{@level.physics.steps} - #{@level.input.up} #{@level.input.down} #{@level.input.left} #{@level.input.right} #{@level.input.space}")
+
       @level.moto.move()
       @level.ghosts.move()
+      @level.replay.add_step()
       @level.camera.move()
       @world.Step(1.0/Constants.fps, 10, 10)
       @world.ClearForces()
-      @level.replay.add_step()
+      @level.input.space = false
 
       if @level.need_to_restart
         @restart()

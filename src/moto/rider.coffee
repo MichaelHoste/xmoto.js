@@ -15,16 +15,10 @@ class Rider
     @assets = level.assets
     @world  = level.physics.world
     @moto   = moto
-    @mirror = @moto.mirror
+    @mirror = moto.mirror
+    @ghost  = moto.ghost
 
   destroy: ->
-    @world.DestroyBody(@head)
-    @world.DestroyBody(@torso)
-    @world.DestroyBody(@lower_leg)
-    @world.DestroyBody(@upper_leg)
-    @world.DestroyBody(@lower_arm)
-    @world.DestroyBody(@upper_arm)
-
     @world.DestroyJoint(@neck_joint)
     @world.DestroyJoint(@ankle_joint)
     @world.DestroyJoint(@wrist_joint)
@@ -33,12 +27,22 @@ class Rider
     @world.DestroyJoint(@shoulder_joint)
     @world.DestroyJoint(@hip_joint)
 
+    @world.DestroyBody(@head)
+    @world.DestroyBody(@torso)
+    @world.DestroyBody(@lower_leg)
+    @world.DestroyBody(@upper_leg)
+    @world.DestroyBody(@lower_arm)
+    @world.DestroyBody(@upper_arm)
+
   init: ->
     # Assets
     parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
               Constants.upper_arm, Constants.lower_arm ]
     for part in parts
-      @assets.moto.push(part.texture)
+      if @ghost
+        @assets.moto.push(part.ghost_texture)
+      else
+        @assets.moto.push(part.texture)
 
     # Creation of moto parts
     @player_start = @level.entities.player_start
@@ -89,8 +93,9 @@ class Rider
     bodyDef.position.y = @player_start.y +           Constants.head.position.y
 
     bodyDef.userData =
-      name: 'rider'
-      part: 'head'
+      name:  'rider'
+      part:  'head'
+      rider:  this
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -124,8 +129,9 @@ class Rider
     bodyDef.angle = @mirror * part_constants.angle
 
     bodyDef.userData =
-      name: 'rider'
-      part: name
+      name:  'rider'
+      part:   name
+      rider:  this
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -176,25 +182,21 @@ class Rider
     @display_part(@lower_arm, Constants.lower_arm)
 
   display_part: (part, part_constants) ->
-    Rider.display_part(@level, part, part_constants, @mirror)
+    position = part.GetPosition()
+    angle    = part.GetAngle()
+    texture  = if @ghost then part_constants.ghost_texture else part_constants.texture
 
-  @display_part: (level, part, part_constants, mirror, texture_prefix = '') ->
-    # Get position from box2D object of replay
-    position = if part.GetPosition then part.GetPosition() else part.position
-    angle    = if part.GetAngle    then part.GetAngle()    else part.angle
-    texture  = part_constants["#{texture_prefix}texture"]
+    @level.ctx.save()
+    @level.ctx.translate(position.x, position.y)
+    @level.ctx.scale(@mirror, -1)
+    @level.ctx.rotate(@mirror * (-angle))
 
-    level.ctx.save()
-    level.ctx.translate(position.x, position.y)
-    level.ctx.scale(mirror, -1)
-    level.ctx.rotate(mirror * (-angle))
-
-    level.ctx.drawImage(
-      level.assets.get(texture),        # texture
+    @level.ctx.drawImage(
+      @level.assets.get(texture),       # texture
       -part_constants.texture_size.x/2, # x
       -part_constants.texture_size.y/2, # y
        part_constants.texture_size.x,   # size-x
        part_constants.texture_size.y    # size-y
     )
 
-    level.ctx.restore()
+    @level.ctx.restore()

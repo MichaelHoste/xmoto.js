@@ -31,7 +31,9 @@ class Camera
   # must be an something with x and y values
   target: ->
     options = @level.options
-    if options.replay_mode
+    if @level.ghosts.player and @level.ghosts.player.replay
+      position = @level.ghosts.player.moto.body.GetPosition()
+    else if options.replay_mode
       position = @level.ghosts.replay.moto.body.GetPosition()
     else
       position = @level.moto.body.GetPosition()

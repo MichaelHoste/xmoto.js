@@ -148,7 +148,9 @@
     Camera.prototype.target = function() {
       var adjusted_position, options, position;
       options = this.level.options;
-      if (options.replay_mode) {
+      if (this.level.ghosts.player && this.level.ghosts.player.replay) {
+        position = this.level.ghosts.player.moto.body.GetPosition();
+      } else if (options.replay_mode) {
         position = this.level.ghosts.replay.moto.body.GetPosition();
       } else {
         position = this.level.moto.body.GetPosition();
@@ -498,6 +500,11 @@
     function Input(level) {
       this.level = level;
       this.assets = level.assets;
+      this.up = false;
+      this.down = false;
+      this.left = false;
+      this.right = false;
+      this.space = false;
     }
 
     Input.prototype.init = function() {
@@ -543,7 +550,7 @@
           case 39:
             return _this.right = true;
           case 32:
-            return _this.level.moto.flip();
+            return _this.space = true;
           case 13:
             return _this.level.need_to_restart = true;
           case 69:
@@ -716,6 +723,7 @@
     Level.prototype.restart = function() {
       var entity, _i, _len, _ref, _results;
       this.replay = new Replay(this);
+      this.ghosts.reload();
       this.moto.destroy();
       this.moto = new Moto(this);
       this.moto.init();
@@ -760,15 +768,26 @@
             }
           } else if (Listeners.does_contact_moto_rider(a, b, 'end_of_level') && !_this.level.need_to_restart) {
             if (_this.level.got_strawberries()) {
-              console.log(_this.level.replay.inputs);
-              return _this.trigger_restart();
+              if (a.name === 'rider' ||  b.name === 'rider') {
+                moto = a.name === 'rider' ? a.rider.moto : b.rider.moto;
+              } else {
+                moto = a.name === 'moto' ? a.moto : b.moto;
+              }
+              return _this.trigger_restart(moto);
             }
           } else if (Constants.hooking === false && Listeners.does_contact(a, b, 'rider', 'ground') && a.part !== 'lower_leg' && b.part !== 'lower_leg') {
-            return _this.kill_moto();
+            moto = a.name === 'rider' ? a.rider.moto : b.rider.moto;
+            return _this.kill_moto(moto);
           } else if (Constants.hooking === true && Listeners.does_contact(a, b, 'rider', 'ground') && (a.part === 'head' || b.part === 'head')) {
-            return _this.kill_moto();
+            moto = a.name === 'rider' ? a.rider.moto : b.rider.moto;
+            return _this.kill_moto(moto);
           } else if (Listeners.does_contact_moto_rider(a, b, 'wrecker')) {
-            return _this.kill_moto();
+            if (a.name === 'rider' ||  b.name === 'rider') {
+              moto = a.name === 'rider' ? a.rider.moto : b.rider.moto;
+            } else {
+              moto = a.name === 'moto' ? a.moto : b.moto;
+            }
+            return _this.kill_moto(moto);
           }
         }
       };
@@ -783,14 +802,15 @@
       return (a.name === obj1 && b.name === obj2) || (a.name === obj2 && b.name === obj1);
     };
 
-    Listeners.prototype.trigger_restart = function() {
-      this.level.replay.success = true;
-      return this.level.need_to_restart = true;
+    Listeners.prototype.trigger_restart = function(moto) {
+      console.log(this.level.replay.inputs);
+      if (!moto.ghost) {
+        this.level.replay.success = true;
+        return this.level.need_to_restart = true;
+      }
     };
 
-    Listeners.prototype.kill_moto = function() {
-      var moto;
-      moto = this.level.moto;
+    Listeners.prototype.kill_moto = function(moto) {
       moto.dead = true;
       this.world.DestroyJoint(moto.rider.ankle_joint);
       this.world.DestroyJoint(moto.rider.wrist_joint);
@@ -934,12 +954,16 @@
       while ((new Date()).getTime() - this.last_step > this.step) {
         this.steps = this.steps + 1;
         this.last_step += this.step;
+        if (!this.level.moto.dead && !this.level.ghosts.player.replay) {
+
+        }
         this.level.moto.move();
         this.level.ghosts.move();
+        this.level.replay.add_step();
         this.level.camera.move();
         this.world.Step(1.0 / Constants.fps, 10, 10);
         this.world.ClearForces();
-        this.level.replay.add_step();
+        this.level.input.space = false;
         if (this.level.need_to_restart) {
           this.restart();
           _results.push(this.level.need_to_restart = false);
@@ -1927,10 +1951,16 @@
     function Ghost(level, replay) {
       this.level = level;
       this.replay = replay;
-      this.moto = new Moto(this.level);
+      this.moto = new Moto(this.level, true);
     }
 
     Ghost.prototype.init = function() {
+      return this.moto.init();
+    };
+
+    Ghost.prototype.reload = function() {
+      this.moto.destroy();
+      this.moto = new Moto(this.level, true);
       return this.moto.init();
     };
 
@@ -1940,8 +1970,12 @@
         up: this.replay.is_down('up'),
         down: this.replay.is_down('down'),
         left: this.replay.is_down('left'),
-        right: this.replay.is_down('right')
+        right: this.replay.is_down('right'),
+        space: this.replay.is_pressed('space')
       };
+      if (!this.level.moto.dead) {
+
+      }
       return this.moto.move(current_input);
     };
 
@@ -1978,6 +2012,10 @@
         _results.push(this.assets.moto.push(part.ghost_texture));
       }
       return _results;
+    };
+
+    Ghosts.prototype.reload = function() {
+      return this.player.reload();
     };
 
     Ghosts.prototype.move = function() {
@@ -2069,29 +2107,30 @@
   b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
   Moto = (function() {
-    function Moto(level, mirror) {
-      if (mirror == null) {
-        mirror = false;
+    function Moto(level, ghost) {
+      if (ghost == null) {
+        ghost = false;
       }
       this.level = level;
       this.assets = level.assets;
       this.world = level.physics.world;
-      this.mirror = mirror ? -1 : 1;
-      this.rider = new Rider(level, this);
+      this.mirror = 1;
       this.dead = false;
+      this.ghost = ghost;
+      this.rider = new Rider(level, this);
     }
 
     Moto.prototype.destroy = function() {
+      this.world.DestroyJoint(this.left_revolute_joint);
+      this.world.DestroyJoint(this.left_prismatic_joint);
+      this.world.DestroyJoint(this.right_revolute_joint);
+      this.world.DestroyJoint(this.right_prismatic_joint);
       this.rider.destroy();
       this.world.DestroyBody(this.body);
       this.world.DestroyBody(this.left_wheel);
       this.world.DestroyBody(this.right_wheel);
       this.world.DestroyBody(this.left_axle);
-      this.world.DestroyBody(this.right_axle);
-      this.world.DestroyJoint(this.left_revolute_joint);
-      this.world.DestroyJoint(this.left_prismatic_joint);
-      this.world.DestroyJoint(this.right_revolute_joint);
-      return this.world.DestroyJoint(this.right_prismatic_joint);
+      return this.world.DestroyBody(this.right_axle);
     };
 
     Moto.prototype.init = function() {
@@ -2099,7 +2138,11 @@
       parts = [Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
       for (_i = 0, _len = parts.length; _i < _len; _i++) {
         part = parts[_i];
-        this.assets.moto.push(part.texture);
+        if (this.ghost) {
+          this.assets.moto.push(part.ghost_texture);
+        } else {
+          this.assets.moto.push(part.texture);
+        }
       }
       this.player_start = this.level.entities.player_start;
       this.body = this.create_body();
@@ -2135,6 +2178,9 @@
         if ((input.right && this.mirror === 1) || (input.left && this.mirror === -1)) {
           biker_force = -biker_force * 0.8;
           this.wheeling(biker_force);
+        }
+        if (input.space) {
+          this.flip();
         }
       }
       if (!input.up && !input.down) {
@@ -2194,7 +2240,7 @@
 
     Moto.prototype.flip = function() {
       if (!this.dead) {
-        return this.level.moto = MotoFlipService.execute(this);
+        return MotoFlipService.execute(this);
       }
     };
 
@@ -2212,7 +2258,8 @@
       bodyDef.position.x = this.player_start.x + this.mirror * Constants.body.position.x;
       bodyDef.position.y = this.player_start.y + Constants.body.position.y;
       bodyDef.userData = {
-        name: 'moto'
+        name: 'moto',
+        moto: this
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.world.CreateBody(bodyDef);
@@ -2233,7 +2280,8 @@
       bodyDef.position.x = this.player_start.x + this.mirror * part_constants.position.x;
       bodyDef.position.y = this.player_start.y + part_constants.position.y;
       bodyDef.userData = {
-        name: 'moto'
+        name: 'moto',
+        moto: this
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       wheel = this.world.CreateBody(bodyDef);
@@ -2255,7 +2303,8 @@
       bodyDef.position.x = this.player_start.x + this.mirror * part_constants.position.x;
       bodyDef.position.y = this.player_start.y + part_constants.position.y;
       bodyDef.userData = {
-        name: 'moto'
+        name: 'moto',
+        moto: this
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.world.CreateBody(bodyDef);
@@ -2299,103 +2348,75 @@
     };
 
     Moto.prototype.display_wheel = function(part, part_constants) {
-      return Moto.display_wheel(this.level, part, part_constants, this.mirror);
-    };
-
-    Moto.display_wheel = function(level, part, part_constants, mirror, texture_prefix) {
       var angle, position, texture;
-      if (texture_prefix == null) {
-        texture_prefix = '';
-      }
-      position = part.GetPosition ? part.GetPosition() : part.position;
-      angle = part.GetAngle ? part.GetAngle() : part.angle;
-      texture = part_constants["" + texture_prefix + "texture"];
-      level.ctx.save();
-      level.ctx.translate(position.x, position.y);
-      level.ctx.rotate(angle);
-      level.ctx.drawImage(level.assets.get(texture), -part_constants.radius, -part_constants.radius, part_constants.radius * 2, part_constants.radius * 2);
-      return level.ctx.restore();
+      position = part.GetPosition();
+      angle = part.GetAngle();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.rotate(angle);
+      texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
+      this.level.ctx.drawImage(this.level.assets.get(texture), -part_constants.radius, -part_constants.radius, part_constants.radius * 2, part_constants.radius * 2);
+      return this.level.ctx.restore();
     };
 
     Moto.prototype.display_body = function(part, part_constants) {
-      return Moto.display_body(this.level, part, part_constants, this.mirror);
-    };
-
-    Moto.display_body = function(level, part, part_constants, mirror, texture_prefix) {
       var angle, position, texture;
-      if (texture_prefix == null) {
-        texture_prefix = '';
-      }
       position = part.GetPosition ? part.GetPosition() : part.position;
       angle = part.GetAngle ? part.GetAngle() : part.angle;
-      texture = part_constants["" + texture_prefix + "texture"];
-      level.ctx.save();
-      level.ctx.translate(position.x, position.y);
-      level.ctx.scale(mirror, -1);
-      level.ctx.rotate(mirror * (-angle));
-      level.ctx.drawImage(level.assets.get(texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
-      return level.ctx.restore();
-    };
-
-    Moto.display_axle_common = function(level, body, wheel_position, axle_position, axle_thickness, mirror, texture) {
-      var angle, axle_adjusted_position, body_angle, body_position, distance;
-      body_position = body.GetPosition ? body.GetPosition() : body.position;
-      body_angle = body.GetAngle ? body.GetAngle() : body.angle;
-      axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position);
-      distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position);
-      angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + mirror * Math.PI / 2;
-      level.ctx.save();
-      level.ctx.translate(wheel_position.x, wheel_position.y);
-      level.ctx.scale(mirror, -1);
-      level.ctx.rotate(mirror * (-angle));
-      level.ctx.drawImage(level.assets.get(texture), 0.0, -axle_thickness / 2, distance, axle_thickness);
-      return level.ctx.restore();
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(this.mirror, -1);
+      this.level.ctx.rotate(this.mirror * (-angle));
+      texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
+      this.level.ctx.drawImage(this.level.assets.get(texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
+      return this.level.ctx.restore();
     };
 
     Moto.prototype.display_left_axle = function(part, part_constants) {
-      return Moto.display_left_axle(this.level, part, part_constants, this.body, this.left_wheel, this.mirror);
-    };
-
-    Moto.display_left_axle = function(level, part, part_constants, body, wheel, mirror, texture_prefix) {
       var axle_position, axle_thickness, texture, wheel_position;
-      if (texture_prefix == null) {
-        texture_prefix = '';
-      }
       axle_thickness = 0.09;
-      wheel_position = wheel.GetPosition ? wheel.GetPosition() : wheel.position;
+      wheel_position = this.left_wheel.GetPosition();
       wheel_position = {
-        x: wheel_position.x - mirror * axle_thickness / 2.0,
+        x: wheel_position.x - this.mirror * axle_thickness / 2.0,
         y: wheel_position.y - 0.025
       };
       axle_position = {
-        x: -0.17 * mirror,
+        x: -0.17 * this.mirror,
         y: -0.30
       };
-      texture = part_constants["" + texture_prefix + "texture"];
-      return Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror, texture);
+      texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
+      return this.display_axle_common(wheel_position, axle_position, axle_thickness, texture);
     };
 
     Moto.prototype.display_right_axle = function(part, part_constants) {
-      return Moto.display_right_axle(this.level, part, part_constants, this.body, this.right_wheel, this.mirror);
-    };
-
-    Moto.display_right_axle = function(level, part, part_constants, body, wheel, mirror, texture_prefix) {
       var axle_position, axle_thickness, texture, wheel_position;
-      if (texture_prefix == null) {
-        texture_prefix = '';
-      }
       axle_thickness = 0.07;
-      wheel_position = wheel.GetPosition ? wheel.GetPosition() : wheel.position;
+      wheel_position = this.right_wheel.GetPosition();
       wheel_position = {
-        x: wheel_position.x + mirror * axle_thickness / 2.0 - mirror * 0.03,
+        x: wheel_position.x + this.mirror * axle_thickness / 2.0 - this.mirror * 0.03,
         y: wheel_position.y - 0.045
       };
       axle_position = {
-        x: 0.52 * mirror,
+        x: 0.52 * this.mirror,
         y: 0.025
       };
-      texture = part_constants["" + texture_prefix + "texture"];
-      return Moto.display_axle_common(level, body, wheel_position, axle_position, axle_thickness, mirror, texture);
+      texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
+      return this.display_axle_common(wheel_position, axle_position, axle_thickness, texture);
+    };
+
+    Moto.prototype.display_axle_common = function(wheel_position, axle_position, axle_thickness, texture) {
+      var angle, axle_adjusted_position, body_angle, body_position, distance;
+      body_position = this.body.GetPosition();
+      body_angle = this.body.GetAngle();
+      axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position);
+      distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position);
+      angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + this.mirror * Math.PI / 2;
+      this.level.ctx.save();
+      this.level.ctx.translate(wheel_position.x, wheel_position.y);
+      this.level.ctx.scale(this.mirror, -1);
+      this.level.ctx.rotate(this.mirror * (-angle));
+      this.level.ctx.drawImage(this.level.assets.get(texture), 0.0, -axle_thickness / 2, distance, axle_thickness);
+      return this.level.ctx.restore();
     };
 
     return Moto;
@@ -2471,7 +2492,7 @@
         left_up: [],
         right_down: [],
         right_up: [],
-        space_down: []
+        space_pressed: []
       };
     }
 
@@ -2480,7 +2501,7 @@
       new_replay = new Replay(this.level);
       new_replay.success = this.success;
       new_replay.steps = this.steps;
-      _ref = ['up_down', 'up_up', 'down_down', 'down_up', 'left_down', 'left_up', 'right_down', 'right_up', 'space_down'];
+      _ref = ['up_down', 'up_up', 'down_down', 'down_up', 'left_down', 'left_up', 'right_down', 'right_up', 'space_pressed'];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         key = _ref[_i];
         new_replay.inputs[key] = this.inputs[key].slice();
@@ -2489,22 +2510,21 @@
     };
 
     Replay.prototype.add_step = function() {
-      var input, key, _i, _len, _ref, _results;
+      var input, key, _i, _len, _ref;
       this.steps = this.level.physics.steps;
       input = this.level.input;
       _ref = ['up', 'down', 'left', 'right'];
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         key = _ref[_i];
         if (input[key] && this.is_up(key)) {
-          _results.push(this.inputs["" + key + "_down"].push(this.steps));
+          this.inputs["" + key + "_down"].push(this.steps);
         } else if (!input[key] && this.is_down(key)) {
-          _results.push(this.inputs["" + key + "_up"].push(this.steps));
-        } else {
-          _results.push(void 0);
+          this.inputs["" + key + "_up"].push(this.steps);
         }
       }
-      return _results;
+      if (input.space) {
+        return this.inputs['space_pressed'].push(this.steps);
+      }
     };
 
     Replay.prototype.last = function(input) {
@@ -2528,7 +2548,11 @@
     };
 
     Replay.prototype.is_down = function(key) {
-      return this.last("" + key + "_down") > this.last("" + key + "_up");
+      return this.last("" + key + "_down") >= this.last("" + key + "_up");
+    };
+
+    Replay.prototype.is_pressed = function(key) {
+      return this.last("" + key + "_pressed") === this.level.physics.steps;
     };
 
     Replay.prototype.load = function(filename) {
@@ -2536,17 +2560,21 @@
         _this = this;
       options = this.level.options;
       $.get("" + options.replays_path + "/" + filename, function(data) {
-        _this.frames = ReplayConversionService.string_to_frames(data);
+        _this.inputs = ReplayConversionService.string_to_frames(data);
         return _this.success = true;
       });
       return this;
     };
 
     Replay.prototype.save = function() {
+      console.log(ReplayConversionService.inputs_to_string(this.inputs));
+      console.log(ReplayConversionService.string_to_inputs(ReplayConversionService.inputs_to_string(this.inputs)));
+      console.log(ReplayConversionService.inputs_to_string(ReplayConversionService.string_to_inputs(ReplayConversionService.inputs_to_string(this.inputs))));
       return $.post(this.level.options.scores_path, {
         level: this.level.infos.identifier,
         time: this.level.current_time,
-        steps: this.steps
+        steps: this.steps,
+        replay: ReplayConversionService.inputs_to_string(this.inputs)
       });
     };
 
@@ -2578,23 +2606,24 @@
       this.assets = level.assets;
       this.world = level.physics.world;
       this.moto = moto;
-      this.mirror = this.moto.mirror;
+      this.mirror = moto.mirror;
+      this.ghost = moto.ghost;
     }
 
     Rider.prototype.destroy = function() {
-      this.world.DestroyBody(this.head);
-      this.world.DestroyBody(this.torso);
-      this.world.DestroyBody(this.lower_leg);
-      this.world.DestroyBody(this.upper_leg);
-      this.world.DestroyBody(this.lower_arm);
-      this.world.DestroyBody(this.upper_arm);
       this.world.DestroyJoint(this.neck_joint);
       this.world.DestroyJoint(this.ankle_joint);
       this.world.DestroyJoint(this.wrist_joint);
       this.world.DestroyJoint(this.knee_joint);
       this.world.DestroyJoint(this.elbow_joint);
       this.world.DestroyJoint(this.shoulder_joint);
-      return this.world.DestroyJoint(this.hip_joint);
+      this.world.DestroyJoint(this.hip_joint);
+      this.world.DestroyBody(this.head);
+      this.world.DestroyBody(this.torso);
+      this.world.DestroyBody(this.lower_leg);
+      this.world.DestroyBody(this.upper_leg);
+      this.world.DestroyBody(this.lower_arm);
+      return this.world.DestroyBody(this.upper_arm);
     };
 
     Rider.prototype.init = function() {
@@ -2602,7 +2631,11 @@
       parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm];
       for (_i = 0, _len = parts.length; _i < _len; _i++) {
         part = parts[_i];
-        this.assets.moto.push(part.texture);
+        if (this.ghost) {
+          this.assets.moto.push(part.ghost_texture);
+        } else {
+          this.assets.moto.push(part.texture);
+        }
       }
       this.player_start = this.level.entities.player_start;
       this.head = this.create_head();
@@ -2655,7 +2688,8 @@
       bodyDef.position.y = this.player_start.y + Constants.head.position.y;
       bodyDef.userData = {
         name: 'rider',
-        part: 'head'
+        part: 'head',
+        rider: this
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.world.CreateBody(bodyDef);
@@ -2679,7 +2713,8 @@
       bodyDef.angle = this.mirror * part_constants.angle;
       bodyDef.userData = {
         name: 'rider',
-        part: name
+        part: name,
+        rider: this
       };
       bodyDef.type = b2Body.b2_dynamicBody;
       body = this.world.CreateBody(bodyDef);
@@ -2739,23 +2774,16 @@
     };
 
     Rider.prototype.display_part = function(part, part_constants) {
-      return Rider.display_part(this.level, part, part_constants, this.mirror);
-    };
-
-    Rider.display_part = function(level, part, part_constants, mirror, texture_prefix) {
       var angle, position, texture;
-      if (texture_prefix == null) {
-        texture_prefix = '';
-      }
-      position = part.GetPosition ? part.GetPosition() : part.position;
-      angle = part.GetAngle ? part.GetAngle() : part.angle;
-      texture = part_constants["" + texture_prefix + "texture"];
-      level.ctx.save();
-      level.ctx.translate(position.x, position.y);
-      level.ctx.scale(mirror, -1);
-      level.ctx.rotate(mirror * (-angle));
-      level.ctx.drawImage(level.assets.get(texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
-      return level.ctx.restore();
+      position = part.GetPosition();
+      angle = part.GetAngle();
+      texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
+      this.level.ctx.save();
+      this.level.ctx.translate(position.x, position.y);
+      this.level.ctx.scale(this.mirror, -1);
+      this.level.ctx.rotate(this.mirror * (-angle));
+      this.level.ctx.drawImage(this.level.assets.get(texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
+      return this.level.ctx.restore();
     };
 
     return Rider;
@@ -2766,7 +2794,7 @@
     function MotoFlipService() {}
 
     MotoFlipService.execute = function(moto) {
-      var body, head, left_axle, left_wheel, level, lower_arm, lower_leg, mirror, right_axle, right_wheel, torso, upper_arm, upper_leg;
+      var body, head, left_axle, left_wheel, lower_arm, lower_leg, right_axle, right_wheel, torso, upper_arm, upper_leg;
       body = {
         position: moto.body.GetPosition(),
         angle: moto.body.GetAngle(),
@@ -2833,10 +2861,8 @@
         linear: moto.rider.upper_arm.GetLinearVelocity(),
         angular: moto.rider.upper_arm.GetAngularVelocity()
       };
-      mirror = moto.mirror === 1;
-      level = moto.level;
+      moto.mirror = moto.rider.mirror = -moto.mirror;
       moto.destroy();
-      moto = new Moto(level, mirror);
       moto.init();
       moto.body.SetPosition(body.position);
       moto.body.SetAngle(body.angle);
@@ -2881,8 +2907,7 @@
       moto.rider.upper_arm.SetPosition(upper_arm.position);
       moto.rider.upper_arm.SetAngle(upper_arm.angle);
       moto.rider.upper_arm.SetLinearVelocity(upper_arm.linear);
-      moto.rider.upper_arm.SetAngularVelocity(upper_arm.angular);
-      return moto;
+      return moto.rider.upper_arm.SetAngularVelocity(upper_arm.angular);
     };
 
     return MotoFlipService;
@@ -2892,18 +2917,20 @@
   ReplayConversionService = (function() {
     function ReplayConversionService() {}
 
-    ReplayConversionService.frames_to_string = function(frames) {
-      var element, frame, string, _i, _j, _len, _len1, _ref;
+    ReplayConversionService.inputs_to_string = function(inputs) {
+      var key, step, string, _i, _j, _len, _len1, _ref, _ref1;
       string = '';
-      for (_i = 0, _len = frames.length; _i < _len; _i++) {
-        frame = frames[_i];
-        string += frame.mirror ? '1' : '0';
-        _ref = ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
-        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-          element = _ref[_j];
-          string += frame[element].position.x.toFixed(2) + '';
-          string += frame[element].position.y.toFixed(2) + '';
-          string += frame[element].angle.toFixed(2) + '';
+      _ref = ['up_down', 'up_up', 'down_down', 'down_up', 'left_down', 'left_up', 'right_down', 'right_up', 'space_pressed'];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        key = _ref[_i];
+        string += "" + key + ":";
+        _ref1 = inputs[key];
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          step = _ref1[_j];
+          string += "" + step + ",";
+        }
+        if (string[string.length - 1] === ',') {
+          string = string.slice(0, -1);
         }
         string += '|';
       }
@@ -2911,42 +2938,25 @@
       return LZString.compressToBase64(string);
     };
 
-    ReplayConversionService.string_to_frames = function(string) {
-      var axe, element, frame, frame_string, frames, frames_string, number, position, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
-      frames = [];
+    ReplayConversionService.string_to_inputs = function(string) {
+      var i, inputs, key, keys, name, splitted, step, values, _i, _j, _len, _len1;
+      inputs = {};
       string = LZString.decompressFromBase64(string);
-      frames_string = string.split('|');
-      for (_i = 0, _len = frames_string.length; _i < _len; _i++) {
-        frame_string = frames_string[_i];
-        frame = {};
-        frame['mirror'] = frame_string[0] === '1';
-        position = 1;
-        _ref = ['left_wheel', 'right_wheel', 'body', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
-        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-          element = _ref[_j];
-          frame[element] = {};
-          frame[element]['position'] = {};
-          _ref1 = ['x', 'y'];
-          for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-            axe = _ref1[_k];
-            number = this.next_number(frame_string, position);
-            frame[element]['position'][axe] = parseFloat(number);
-            position = position + number.length;
+      keys = string.split('|');
+      for (_i = 0, _len = keys.length; _i < _len; _i++) {
+        key = keys[_i];
+        splitted = key.split(':');
+        name = splitted[0];
+        values = splitted[1].split(',');
+        inputs[name] = [];
+        if (values[0] !== '') {
+          for (i = _j = 0, _len1 = values.length; _j < _len1; i = ++_j) {
+            step = values[i];
+            inputs[name][i] = parseInt(step);
           }
-          number = this.next_number(frame_string, position);
-          frame[element]['angle'] = parseFloat(number);
-          position = position + number.length;
         }
-        frames.push(frame);
       }
-      return frames;
-    };
-
-    ReplayConversionService.next_number = function(string, position) {
-      var number, number_parts;
-      number = string.substring(position, position + 12);
-      number_parts = number.split('.');
-      return number_parts[0] + '.' + number_parts[1].substring(0, 2);
+      return inputs;
     };
 
     return ReplayConversionService;

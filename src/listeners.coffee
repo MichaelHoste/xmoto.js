@@ -26,23 +26,33 @@ class Listeners
         # End of level
         else if Listeners.does_contact_moto_rider(a, b, 'end_of_level') and not @level.need_to_restart
           if @level.got_strawberries()
-            console.log(@level.replay.inputs)
-            @trigger_restart()
+            if a.name == 'rider' || b.name == 'rider'
+              moto = if a.name == 'rider' then a.rider.moto else b.rider.moto
+            else
+              moto = if a.name == 'moto' then a.moto else b.moto
+
+            @trigger_restart(moto)
 
         # Fall of rider
         else if Constants.hooking == false and
                 Listeners.does_contact(a, b, 'rider', 'ground') and
                 a.part != 'lower_leg' and b.part != 'lower_leg'
-          @kill_moto()
+          moto = if a.name == 'rider' then a.rider.moto else b.rider.moto
+          @kill_moto(moto)
 
         else if Constants.hooking == true and
                 Listeners.does_contact(a, b, 'rider', 'ground') and
                 (a.part == 'head' or b.part == 'head')
-          @kill_moto()
+          moto = if a.name == 'rider' then a.rider.moto else b.rider.moto
+          @kill_moto(moto)
 
         # Wrecker contact
         else if Listeners.does_contact_moto_rider(a, b, 'wrecker')
-          @kill_moto()
+          if a.name == 'rider' || b.name == 'rider'
+            moto = if a.name == 'rider' then a.rider.moto else b.rider.moto
+          else
+            moto = if a.name == 'moto' then a.moto else b.moto
+          @kill_moto(moto)
 
     @world.SetContactListener(listener)
 
@@ -52,13 +62,16 @@ class Listeners
   @does_contact: (a, b, obj1, obj2) ->
     (a.name == obj1 and b.name == obj2) or (a.name == obj2 and b.name == obj1)
 
-  trigger_restart: ->
+  trigger_restart: (moto) ->
     #createjs.Sound.play('EndOfLevel')
-    @level.replay.success  = true
-    @level.need_to_restart = true
 
-  kill_moto: ->
-    moto = @level.moto
+    console.log(@level.replay.inputs)
+
+    if not moto.ghost
+      @level.replay.success  = true
+      @level.need_to_restart = true
+
+  kill_moto: (moto) ->
     moto.dead = true
 
     # Cause the game to "hard" crash because reactivation of collisions when in the middle of it

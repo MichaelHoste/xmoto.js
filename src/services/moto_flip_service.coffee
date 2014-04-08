@@ -75,11 +75,8 @@ class MotoFlipService
       linear:   moto.rider.upper_arm.GetLinearVelocity()
       angular:  moto.rider.upper_arm.GetAngularVelocity()
 
-    mirror = moto.mirror == 1
-    level  = moto.level
-
+    moto.mirror = moto.rider.mirror = -moto.mirror
     moto.destroy()
-    moto = new Moto(level, mirror)
     moto.init()
 
     moto.body           .SetPosition(body.position)
@@ -138,5 +135,3 @@ class MotoFlipService
     moto.rider.upper_arm.SetAngle(upper_arm.angle)
     moto.rider.upper_arm.SetLinearVelocity(upper_arm.linear)
     moto.rider.upper_arm.SetAngularVelocity(upper_arm.angular)
-
-    moto

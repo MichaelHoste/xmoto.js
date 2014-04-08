@@ -21,6 +21,9 @@ class Ghosts
     for part in parts
       @assets.moto.push(part.ghost_texture)
 
+  reload: ->
+    @player.reload()
+
   move: ->
     if @options.best_score_ghost && @player.replay
       @player.move()

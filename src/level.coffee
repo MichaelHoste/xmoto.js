@@ -145,6 +145,8 @@ class Level
   restart: ->
     @replay = new Replay(this)
 
+    @ghosts.reload()
+
     @moto.destroy()
     @moto = new Moto(this)
     @moto.init()

@@ -5,22 +5,22 @@ class Replay
     @success = false
     @steps   = 0
     @inputs  =
-      up_down:    []
-      up_up:      []
-      down_down:  []
-      down_up:    []
-      left_down:  []
-      left_up:    []
-      right_down: []
-      right_up:   []
-      space_down: []
+      up_down:       []
+      up_up:         []
+      down_down:     []
+      down_up:       []
+      left_down:     []
+      left_up:       []
+      right_down:    []
+      right_up:      []
+      space_pressed: []
 
   clone: ->
     new_replay = new Replay(@level)
     new_replay.success = @success
     new_replay.steps   = @steps
     for key in [ 'up_down', 'up_up', 'down_down', 'down_up', 'left_down',
-                 'left_up', 'right_down', 'right_up', 'space_down' ]
+                 'left_up', 'right_down', 'right_up', 'space_pressed' ]
       new_replay.inputs[key] = @inputs[key].slice() # copy array
     return new_replay
 
@@ -34,6 +34,10 @@ class Replay
       else if !input[key] && @is_down(key)
         @inputs["#{key}_up"].push(@steps)
 
+    if input.space
+      @inputs['space_pressed'].push(@steps)
+
+  # TODO dichotomic search
   last: (input) ->
     last_element = null
     input_length = @inputs[input].length
@@ -50,20 +54,27 @@ class Replay
     @last("#{key}_up") >= @last("#{key}_down")
 
   is_down: (key) ->
-    @last("#{key}_down") > @last("#{key}_up")
+    @last("#{key}_down") >= @last("#{key}_up")
+
+  is_pressed: (key) ->
+    @last("#{key}_pressed") == @level.physics.steps
 
   load: (filename) ->
     options = @level.options
     $.get("#{options.replays_path}/#{filename}", (data) =>
-      @frames  = ReplayConversionService.string_to_frames(data)
+      @inputs  = ReplayConversionService.string_to_frames(data)
       @success = true
     )
     return this
 
   save: ->
+    console.log(ReplayConversionService.inputs_to_string(@inputs))
+    console.log(ReplayConversionService.string_to_inputs(ReplayConversionService.inputs_to_string(@inputs)))
+    console.log(ReplayConversionService.inputs_to_string(ReplayConversionService.string_to_inputs(ReplayConversionService.inputs_to_string(@inputs))))
+
     $.post(@level.options.scores_path,
       level:  @level.infos.identifier
       time:   @level.current_time
       steps:  @steps
-      #replay: ReplayConversionService.frames_to_string(@frames)
+      replay: ReplayConversionService.inputs_to_string(@inputs)
     )
