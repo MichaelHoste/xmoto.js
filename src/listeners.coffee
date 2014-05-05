@@ -64,9 +64,6 @@ class Listeners
 
   trigger_restart: (moto) ->
     #createjs.Sound.play('EndOfLevel')
-
-    console.log(@level.replay.inputs)
-
     if not moto.ghost
       @level.replay.success  = true
       @level.need_to_restart = true

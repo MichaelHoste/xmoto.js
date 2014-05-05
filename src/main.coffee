@@ -1,3 +1,6 @@
+window.debug1 = ""
+window.debug2 = ""
+
 $.xmoto = (level_filename, options = {}) ->
   initialize = (options) ->
     defaults =

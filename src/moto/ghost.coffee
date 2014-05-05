@@ -22,8 +22,7 @@ class Ghost
       space: @replay.is_pressed('space')
 
     if !@level.moto.dead
-      ;
-      #console.log("#{@level.physics.steps} - #{current_input.up} #{current_input.down} #{current_input.left} #{current_input.right} #{current_input.space}")
+      window.debug2 += "#{@level.physics.steps} - #{if current_input.up then 1 else 0} #{if current_input.down then 1 else 0} #{if current_input.left then 1 else 0} #{if current_input.right then 1 else 0} #{if current_input.space then 1 else 0}\n"
 
     @moto.move(current_input)
 

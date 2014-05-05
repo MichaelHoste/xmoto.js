@@ -518,9 +518,10 @@
       preventDefault = function(e) {
         e = e || window.event;
         if (e.preventDefault) {
-          e.preventDefault();
+          return e.preventDefault();
+        } else {
+          return e.returnValue = false;
         }
-        return e.returnValue = false;
       };
       keydown = function(e) {
         var i, _i, _len;
@@ -803,7 +804,6 @@
     };
 
     Listeners.prototype.trigger_restart = function(moto) {
-      console.log(this.level.replay.inputs);
       if (!moto.ghost) {
         this.level.replay.success = true;
         return this.level.need_to_restart = true;
@@ -823,6 +823,10 @@
     return Listeners;
 
   })();
+
+  window.debug1 = "";
+
+  window.debug2 = "";
 
   $.xmoto = function(level_filename, options) {
     var initialize, level;
@@ -955,7 +959,7 @@
         this.steps = this.steps + 1;
         this.last_step += this.step;
         if (!this.level.moto.dead && !this.level.ghosts.player.replay) {
-
+          window.debug1 += "" + this.level.physics.steps + " - " + (this.level.input.up ? 1 : 0) + " " + (this.level.input.down ? 1 : 0) + " " + (this.level.input.left ? 1 : 0) + " " + (this.level.input.right ? 1 : 0) + " " + (this.level.input.space ? 1 : 0) + "\n";
         }
         this.level.moto.move();
         this.level.ghosts.move();
@@ -1974,7 +1978,7 @@
         space: this.replay.is_pressed('space')
       };
       if (!this.level.moto.dead) {
-
+        window.debug2 += "" + this.level.physics.steps + " - " + (current_input.up ? 1 : 0) + " " + (current_input.down ? 1 : 0) + " " + (current_input.left ? 1 : 0) + " " + (current_input.right ? 1 : 0) + " " + (current_input.space ? 1 : 0) + "\n";
       }
       return this.moto.move(current_input);
     };

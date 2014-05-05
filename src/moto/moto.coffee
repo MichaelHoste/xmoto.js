@@ -170,7 +170,7 @@ class Moto
     bodyDef.position.y = @player_start.y +           Constants.body.position.y
 
     bodyDef.userData =
-      name:   'moto'
+      name: 'moto'
       moto: this
 
     bodyDef.type = b2Body.b2_dynamicBody

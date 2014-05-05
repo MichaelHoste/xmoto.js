@@ -22,7 +22,8 @@ class Input
       e = e || window.event
       if e.preventDefault
         e.preventDefault()
-      e.returnValue = false
+      else
+        e.returnValue = false
 
     keydown = (e) ->
       for i in keys
