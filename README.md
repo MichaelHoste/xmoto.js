@@ -63,3 +63,15 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 Improve XML levels compatibility!
 
 [and other stuffs](https://github.com/MichaelHoste/xmoto.js/issues)
+
+### Investigation replays
+
+ * Le personnage qui était désarticulé quand il mourrait été dû au trigger de la mort qui s'exécutait plusieurs fois et les limites des joints des membres qui étaient agrandies chaque fois.
+ * Quand un replay est fait du premier coup sur Chrome, il semble fonctionner CHAQUE FOIS si XMoto est exécuté avec le replay en paramètre. Ce n'est pas le cas pour Firefox...
+ * Quand un replay est fait du deuxième coup sur Chrome, il ne fonctionnera pas du deuxième coup et plantera chaque fois différemment (ou presque)
+ * Sur Firefox, il se crashe toujours de la même manière la première fois que le replay est exécuté. Après ça varie.
+ * Quand player ET Ghost sont liés aux inputs du clavier, tout est synchro !
+ * Que faire étant donné que même Chrome/Firefox ne fonctionne jamais de manière déterministique.
+   * Lire des articles sur box2D non-deterministic (messages forum).
+   * Se renseigner sur une autre version de box2D et essayer rapidement.
+   * Repartir sur une ancienne version du code qui enregistre les frames en améliorant certaines parties liées à la branche "new replays"
