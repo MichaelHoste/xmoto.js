@@ -2125,10 +2125,6 @@
     }
 
     Moto.prototype.destroy = function() {
-      this.world.DestroyJoint(this.left_revolute_joint);
-      this.world.DestroyJoint(this.left_prismatic_joint);
-      this.world.DestroyJoint(this.right_revolute_joint);
-      this.world.DestroyJoint(this.right_prismatic_joint);
       this.rider.destroy();
       this.world.DestroyBody(this.body);
       this.world.DestroyBody(this.left_wheel);
@@ -2615,13 +2611,6 @@
     }
 
     Rider.prototype.destroy = function() {
-      this.world.DestroyJoint(this.neck_joint);
-      this.world.DestroyJoint(this.ankle_joint);
-      this.world.DestroyJoint(this.wrist_joint);
-      this.world.DestroyJoint(this.knee_joint);
-      this.world.DestroyJoint(this.elbow_joint);
-      this.world.DestroyJoint(this.shoulder_joint);
-      this.world.DestroyJoint(this.hip_joint);
       this.world.DestroyBody(this.head);
       this.world.DestroyBody(this.torso);
       this.world.DestroyBody(this.lower_leg);

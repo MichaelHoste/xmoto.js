@@ -20,11 +20,6 @@ class Moto
     @rider    = new Rider(level, this)
 
   destroy: ->
-    @world.DestroyJoint(@left_revolute_joint)
-    @world.DestroyJoint(@left_prismatic_joint)
-    @world.DestroyJoint(@right_revolute_joint)
-    @world.DestroyJoint(@right_prismatic_joint)
-
     @rider.destroy()
 
     @world.DestroyBody(@body)

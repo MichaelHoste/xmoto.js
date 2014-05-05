@@ -19,14 +19,6 @@ class Rider
     @ghost  = moto.ghost
 
   destroy: ->
-    @world.DestroyJoint(@neck_joint)
-    @world.DestroyJoint(@ankle_joint)
-    @world.DestroyJoint(@wrist_joint)
-    @world.DestroyJoint(@knee_joint)
-    @world.DestroyJoint(@elbow_joint)
-    @world.DestroyJoint(@shoulder_joint)
-    @world.DestroyJoint(@hip_joint)
-
     @world.DestroyBody(@head)
     @world.DestroyBody(@torso)
     @world.DestroyBody(@lower_leg)
