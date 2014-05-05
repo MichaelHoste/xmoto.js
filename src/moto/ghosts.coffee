@@ -22,7 +22,8 @@ class Ghosts
       @assets.moto.push(part.ghost_texture)
 
   reload: ->
-    @player.reload()
+    if @options.best_score_ghost && @player.replay
+      @player.reload()
 
   move: ->
     if @options.best_score_ghost && @player.replay
@@ -47,12 +48,12 @@ class Ghosts
       return null
 
   load_player: ->
-    replay_file  = @options.best_score_file
+    data         = @options.best_score_file
     replay_steps = @options.best_score_steps
 
-    if replay_file.length > 0
+    if data.length > 0
       replay  = new Replay(@level)
-      replay.load("#{replay_file}")
+      replay.load(data)
       replay.steps = replay_steps
       return new Ghost(@level, replay)
     else

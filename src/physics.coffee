@@ -53,6 +53,7 @@ class Physics
         @save_replay_and_init_ghosts(replay)
       else
         console.log("FAIL : you didn't improve your personal score : #{time} (#{replay.steps} steps)")
+        @save_replay_and_init_ghosts(replay)
 
     @level.restart()
     @init()

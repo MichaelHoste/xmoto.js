@@ -811,13 +811,15 @@
     };
 
     Listeners.prototype.kill_moto = function(moto) {
-      moto.dead = true;
-      this.world.DestroyJoint(moto.rider.ankle_joint);
-      this.world.DestroyJoint(moto.rider.wrist_joint);
-      moto.rider.shoulder_joint.m_enableLimit = false;
-      moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 3;
-      moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3;
-      return moto.rider.hip_joint.m_lowerAngle = moto.rider.hip_joint.m_lowerAngle * 3;
+      if (!moto.dead) {
+        moto.dead = true;
+        this.world.DestroyJoint(moto.rider.ankle_joint);
+        this.world.DestroyJoint(moto.rider.wrist_joint);
+        moto.rider.shoulder_joint.m_enableLimit = false;
+        moto.rider.knee_joint.m_lowerAngle = moto.rider.knee_joint.m_lowerAngle * 3;
+        moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3;
+        return moto.rider.hip_joint.m_lowerAngle = moto.rider.hip_joint.m_lowerAngle * 3;
+      }
     };
 
     return Listeners;
@@ -839,7 +841,7 @@
         canvas: '#xmoto',
         loading: '#loading',
         chrono: '#chrono',
-        best_score_file: '',
+        best_score_file: 'K4Bw+gJg9g7gdgLgIwHYA0TUYCzbQJgAYBOA4vAZiULWxQFY16V8niAONdpRze1pERqCKAqniTZiANgz1sSDNPqzU0ihnbMChfKz2FO+Ctn1TZ+fjXzLrDUvhTt2AH1BhQyNCnRIK1wwJ8RX9WCmUmHiYnbyRZdmJFTHZhIk5BUwwKelIeEjlpXMKklI0kYnwHQnprRzNCCxr0GyoCZUZHaWaK7BdoeEhYRD6hjxBkFwAbAFMAMwAXQfhkejKUWVFSXC31NHVZQtJiClzw3xQo8pjgioIpDtWO7lcZhbGvHlznNHCabBzaCgNNJ/rFZMR5FkYqh8BIOBYhAQavp5Hh8OxHC4AE4ASwA5gALRb9RCWUgUGLrVjEY4Yai8PzCCjMnANHCOOSZOLSATrErEZoKYjY/FE96KRw0CjsPDrXKEXR0vR0ilZejpbD5SSqngoYTSdiqFK8RKCyouADOIAAhgBjaZgEBY6YWi3TCAIRJJcjYIAAA=',
         best_score_steps: 99999999999,
         best_score_ghost: true,
         replays: [],
@@ -939,6 +941,7 @@
           this.save_replay_and_init_ghosts(replay);
         } else {
           console.log("FAIL : you didn't improve your personal score : " + time + " (" + replay.steps + " steps)");
+          this.save_replay_and_init_ghosts(replay);
         }
       }
       this.level.restart();
@@ -2019,7 +2022,9 @@
     };
 
     Ghosts.prototype.reload = function() {
-      return this.player.reload();
+      if (this.options.best_score_ghost && this.player.replay) {
+        return this.player.reload();
+      }
     };
 
     Ghosts.prototype.move = function() {
@@ -2057,12 +2062,12 @@
     };
 
     Ghosts.prototype.load_player = function() {
-      var replay, replay_file, replay_steps;
-      replay_file = this.options.best_score_file;
+      var data, replay, replay_steps;
+      data = this.options.best_score_file;
       replay_steps = this.options.best_score_steps;
-      if (replay_file.length > 0) {
+      if (data.length > 0) {
         replay = new Replay(this.level);
-        replay.load("" + replay_file);
+        replay.load(data);
         replay.steps = replay_steps;
         return new Ghost(this.level, replay);
       } else {
@@ -2555,14 +2560,11 @@
       return this.last("" + key + "_pressed") === this.level.physics.steps;
     };
 
-    Replay.prototype.load = function(filename) {
-      var options,
-        _this = this;
+    Replay.prototype.load = function(data) {
+      var options;
       options = this.level.options;
-      $.get("" + options.replays_path + "/" + filename, function(data) {
-        _this.inputs = ReplayConversionService.string_to_frames(data);
-        return _this.success = true;
-      });
+      this.inputs = ReplayConversionService.string_to_inputs(data);
+      this.success = true;
       return this;
     };
 
@@ -2653,7 +2655,7 @@
     Rider.prototype.eject = function() {
       var adjusted_force_vector, eject_angle, force_vector;
       if (!this.moto.dead) {
-        this.level.listeners.kill_moto();
+        this.level.listeners.kill_moto(this.moto);
         force_vector = {
           x: 150.0 * this.moto.mirror,
           y: 0

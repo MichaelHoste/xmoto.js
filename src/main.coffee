@@ -11,7 +11,7 @@ $.xmoto = (level_filename, options = {}) ->
       chrono:       '#chrono'         # chrono selector
 
       # Best replay from current user
-      best_score_file:  ''
+      best_score_file:  'K4Bw+gJg9g7gdgLgIwHYA0TUYCzbQJgAYBOA4vAZiULWxQFY16V8niAONdpRze1pERqCKAqniTZiANgz1sSDNPqzU0ihnbMChfKz2FO+Ctn1TZ+fjXzLrDUvhTt2AH1BhQyNCnRIK1wwJ8RX9WCmUmHiYnbyRZdmJFTHZhIk5BUwwKelIeEjlpXMKklI0kYnwHQnprRzNCCxr0GyoCZUZHaWaK7BdoeEhYRD6hjxBkFwAbAFMAMwAXQfhkejKUWVFSXC31NHVZQtJiClzw3xQo8pjgioIpDtWO7lcZhbGvHlznNHCabBzaCgNNJ/rFZMR5FkYqh8BIOBYhAQavp5Hh8OxHC4AE4ASwA5gALRb9RCWUgUGLrVjEY4Yai8PzCCjMnANHCOOSZOLSATrErEZoKYjY/FE96KRw0CjsPDrXKEXR0vR0ilZejpbD5SSqngoYTSdiqFK8RKCyouADOIAAhgBjaZgEBY6YWi3TCAIRJJcjYIAAA='
       best_score_steps: 99999999999
       best_score_ghost: true          # Always show ghost for best score
 

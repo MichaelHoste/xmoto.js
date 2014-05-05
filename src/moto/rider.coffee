@@ -59,7 +59,7 @@ class Rider
 
   eject: ->
     if !@moto.dead
-      @level.listeners.kill_moto()
+      @level.listeners.kill_moto(@moto)
 
       force_vector          = { x: 150.0 * @moto.mirror, y: 0 }
       eject_angle           = @mirror * @moto.body.GetAngle() + Math.PI/4.0

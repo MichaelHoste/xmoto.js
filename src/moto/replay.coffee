@@ -59,12 +59,10 @@ class Replay
   is_pressed: (key) ->
     @last("#{key}_pressed") == @level.physics.steps
 
-  load: (filename) ->
+  load: (data) ->
     options = @level.options
-    $.get("#{options.replays_path}/#{filename}", (data) =>
-      @inputs  = ReplayConversionService.string_to_frames(data)
-      @success = true
-    )
+    @inputs  = ReplayConversionService.string_to_inputs(data)
+    @success = true
     return this
 
   save: ->
