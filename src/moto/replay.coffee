@@ -37,7 +37,6 @@ class Replay
             y:              value[part].linear_velocity.y
           angular_velocity: value[part].angular_velocity
 
-    console.log(new_replay)
     return new_replay
 
   add_step: ->
@@ -88,7 +87,8 @@ class Replay
 
   load: (data) ->
     options = @level.options
-    @inputs  = ReplayConversionService.string_to_inputs(data)
+    @inputs      = ReplayConversionService.string_to_inputs(data.split("\n")[0])
+    @milestones  = ReplayConversionService.string_to_milestones(data.split("\n")[1])
     @success = true
     return this
 
@@ -97,7 +97,8 @@ class Replay
     #b = ReplayConversionService.string_to_milestones(a)
     #c = ReplayConversionService.milestones_to_string(b)
 
-    #console.log(ReplayConversionService.inputs_to_string(@inputs))
+    console.log(ReplayConversionService.inputs_to_string(@inputs))
+    console.log(ReplayConversionService.milestones_to_string(@milestones))
     #console.log(ReplayConversionService.string_to_inputs(ReplayConversionService.inputs_to_string(@inputs)))
     #console.log(ReplayConversionService.inputs_to_string(ReplayConversionService.string_to_inputs(ReplayConversionService.inputs_to_string(@inputs))))
 
