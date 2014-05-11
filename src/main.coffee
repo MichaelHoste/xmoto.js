@@ -11,7 +11,7 @@ $.xmoto = (level_filename, options = {}) ->
       chrono:       '#chrono'         # chrono selector
 
       # Best replay from current user
-      best_score_file:  'K4Bw+gJg9g7gdgLgIwCYA0SDMBWNnV4BsuALAJzoDshJalAHIRgAzktnMZL2erP0ZMhMoMq4kJTLSTYhGbIUrz6mDIRQCklHBnr1aKZjTQpuAlFPQoS9JCfLnsjE8WYAfUGFDI6nQ0yklGzthJUpKWltVJH50JHjxJAoMFGxeTEo7LDJxEmxxfM1sBnkONWpdIwwybhNUXBRUu2tCJmt6EVSqlEIkkwikN2h4SFhEIbGvEGQ3ABsAUwAzABdR+GQpNWkylEoRTGZVEj6SVrRC8/pcXpC0ukJVHmiZEVRFNWYsxisjKySlRo9EwoMgAjLNC49BQuBhzJarbxZSQYCImZh+ehKfAiPKccjoBS0bA1NC9a5OOiUdC2OJaXi7JRIXq8RidIydQwGCydA7mDKOYw9QWUfhuABOAEsAOYAC1Ww0Q1jsQlUmREKiYMVSLEwmiwWW40Ua6WYr2OWWwIK2WWoHN6LgO4ulcqmPmsWOMVKY+mkh2irEZMgNJNQeUEmGix0Z+XEihtHWBqJ6GTcAGcQABDADG8zAIDF81TqfmEAQKhZIKAAAA=='
+      best_score_file:  ''#'K4Bw+gJg9g7gdgLgIwCYA0SDMBWNnV4BsuALAJzoDshJalAHIRgAzktnMZL2erP0ZMhMoMq4kJTLSTYhGbIUrz6mDIRQCklHBnr1aKZjTQpuAlFPQoS9JCfLnsjE8WYAfUGFDI6nQ0yklGzthJUpKWltVJH50JHjxJAoMFGxeTEo7LDJxEmxxfM1sBnkONWpdIwwybhNUXBRUu2tCJmt6EVSqlEIkkwikN2h4SFhEIbGvEGQ3ABsAUwAzABdR+GQpNWkylEoRTGZVEj6SVrRC8/pcXpC0ukJVHmiZEVRFNWYsxisjKySlRo9EwoMgAjLNC49BQuBhzJarbxZSQYCImZh+ehKfAiPKccjoBS0bA1NC9a5OOiUdC2OJaXi7JRIXq8RidIydQwGCydA7mDKOYw9QWUfhuABOAEsAOYAC1Ww0Q1jsQlUmREKiYMVSLEwmiwWW40Ua6WYr2OWWwIK2WWoHN6LgO4ulcqmPmsWOMVKY+mkh2irEZMgNJNQeUEmGix0Z+XEihtHWBqJ6GTcAGcQABDADG8zAIDF81TqfmEAQKhZIKAAAA=='
       best_score_steps: 99999999999
       best_score_ghost: true          # Always show ghost for best score
 

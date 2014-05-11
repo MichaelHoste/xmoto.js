@@ -1,5 +1,6 @@
-b2Vec2          = Box2D.Common.Math.b2Vec2
-b2AABB          = Box2D.Collision.b2AABB
+b2Vec2        = b2.Vec2
+b2AABB        = b2.AABB
+b2TestOverlap = b2.TestOverlap
 
 class Edges
 
@@ -83,4 +84,4 @@ edge_AABB = (edge) ->
   return aabb
 
 visible_edge = (zone, edge) ->
-  edge.aabb.TestOverlap(zone.aabb)
+  b2TestOverlap(edge.aabb, zone.aabb)

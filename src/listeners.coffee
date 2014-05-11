@@ -1,3 +1,5 @@
+b2ContactListener = b2.ContactListener
+
 class Listeners
 
   constructor: (level) ->
@@ -7,7 +9,7 @@ class Listeners
 
   init: ->
     # Add listeners for end of level
-    listener = new Box2D.Dynamics.b2ContactListener
+    listener = new b2ContactListener
 
     listener.BeginContact = (contact) =>
       moto = @level.moto
@@ -19,7 +21,7 @@ class Listeners
         if Listeners.does_contact_moto_rider(a, b, 'strawberry')
           strawberry = if a == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
           entity = strawberry.GetBody().GetUserData().entity
-          if entity.display
+          if entity && entity.display
             entity.display = false
             #createjs.Sound.play('PickUpStrawberry')
 
@@ -54,7 +56,7 @@ class Listeners
             moto = if a.name == 'moto' then a.moto else b.moto
           @kill_moto(moto)
 
-    @world.SetContactListener(listener)
+    #@world.SetContactListener(listener)
 
   @does_contact_moto_rider: (a, b, obj) ->
     Listeners.does_contact(a, b, obj, 'rider') or Listeners.does_contact(a, b, obj, 'moto')
@@ -69,26 +71,28 @@ class Listeners
       @level.need_to_restart = true
 
   kill_moto: (moto) ->
-    if !moto.dead
-      moto.dead = true
-
-      # Cause the game to "hard" crash because reactivation of collisions when in the middle of it
-      #@level.moto.rider.torso.GetFixtureList().SetSensor(false)
-      #@level.moto.rider.lower_leg.GetFixtureList().SetSensor(false)
-      #@level.moto.rider.upper_leg.GetFixtureList().SetSensor(false)
-      #@level.moto.rider.lower_arm.GetFixtureList().SetSensor(false)
-      #@level.moto.rider.upper_arm.GetFixtureList().SetSensor(false)
-      #@level.moto.body.GetFixtureList().SetSensor(false)
-      #@level.moto.left_axle.GetFixtureList().SetSensor(false)
-      #@level.moto.right_axle.GetFixtureList().SetSensor(false)
-
-      #createjs.Sound.play('Headcrash')
-
-      @world.DestroyJoint(moto.rider.ankle_joint)
-      @world.DestroyJoint(moto.rider.wrist_joint)
-      moto.rider.shoulder_joint.m_enableLimit = false
-
-      moto.rider.knee_joint.m_lowerAngle  = moto.rider.knee_joint.m_lowerAngle  * 3
-      moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3
-      moto.rider.hip_joint.m_lowerAngle   = moto.rider.hip_joint.m_lowerAngle   * 3
-
+    ;
+    #if !moto.dead
+    #  moto.dead = true
+#
+    #  # Cause the game to "hard" crash because reactivation of collisions when in the middle of it
+    #  #@level.moto.rider.torso.GetFixtureList().SetSensor(false)
+    #  #@level.moto.rider.lower_leg.GetFixtureList().SetSensor(false)
+    #  #@level.moto.rider.upper_leg.GetFixtureList().SetSensor(false)
+    #  #@level.moto.rider.lower_arm.GetFixtureList().SetSensor(false)
+    #  #@level.moto.rider.upper_arm.GetFixtureList().SetSensor(false)
+    #  #@level.moto.body.GetFixtureList().SetSensor(false)
+    #  #@level.moto.left_axle.GetFixtureList().SetSensor(false)
+    #  #@level.moto.right_axle.GetFixtureList().SetSensor(false)
+#
+    #  #createjs.Sound.play('Headcrash')
+#
+    #  @world.DestroyJoint(moto.rider.ankle_joint)
+    #  @world.DestroyJoint(moto.rider.wrist_joint)
+    #  moto.rider.shoulder_joint.m_enableLimit = false
+#
+    #  moto.rider.knee_joint.m_lowerAngle  = moto.rider.knee_joint.m_lowerAngle  * 3
+    #  moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3
+    #  moto.rider.hip_joint.m_lowerAngle   = moto.rider.hip_joint.m_lowerAngle   * 3
+#
+#

@@ -1,18 +1,18 @@
-b2World         = Box2D.Dynamics.b2World
-b2Vec2          = Box2D.Common.Math.b2Vec2
-b2AABB          = Box2D.Collision.b2AABB
-b2BodyDef       = Box2D.Dynamics.b2BodyDef
-b2Body          = Box2D.Dynamics.b2Body
-b2FixtureDef    = Box2D.Dynamics.b2FixtureDef
-b2Fixture       = Box2D.Dynamics.b2Fixture
-b2MassData      = Box2D.Collision.Shapes.b2MassData
-b2PolygonShape  = Box2D.Collision.Shapes.b2PolygonShape
-b2CircleShape   = Box2D.Collision.Shapes.b2CircleShape
-b2EdgeShape     = Box2D.Collision.Shapes.b2EdgeShape
-b2EdgeChainDef  = Box2D.Collision.Shapes.b2EdgeChainDef
-b2DebugDraw     = Box2D.Dynamics.b2DebugDraw
-b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
-b2Settings      = Box2D.Common.b2Settings
+b2World         = b2.World
+b2Vec2          = b2.Vec2
+b2AABB          = b2.AABB
+b2BodyDef       = b2.BodyDef
+b2Body          = b2.Body
+b2FixtureDef    = b2.FixtureDef
+b2Fixture       = b2.Fixture
+b2MassData      = b2.MassData
+b2PolygonShape  = b2.PolygonShape
+b2CircleShape   = b2.CircleShape
+b2EdgeShape     = b2.EdgeShape
+b2EdgeChainDef  = b2.EdgeChainDef
+b2DebugDraw     = b2.DebugDraw
+b2MouseJointDef = b2.MouseJointDef
+b2Settings      = b2.Settings
 
 class Physics
 
@@ -21,18 +21,18 @@ class Physics
     @world = new b2World(new b2Vec2(0, -Constants.gravity), true) # gravity vector, and doSleep
 
     # Double default precision between wheel and ground
-    b2Settings.b2_linearSlop = 0.0025
+    #b2Settings.b2_linearSlop = 0.0025
 
     # debug initialization
-    debugDraw = new b2DebugDraw()
-    debugDraw.SetSprite(@level.ctx)                # context
+    #debugDraw = new b2DebugDraw()
+    #debugDraw.SetSprite(@level.ctx)                # context
     @level.ctx.lineWidth = 0.05                    # thickness of line (debugDraw.SetLineThickness doesn't work)
-    debugDraw.SetFillAlpha(0.5)                    # transparency
-    debugDraw.m_sprite.graphics.clear = -> return; # Don't allow box2D to (badly) clear the canvas
+    #debugDraw.SetFillAlpha(0.5)                    # transparency
+    #debugDraw.m_sprite.graphics.clear = -> return; # Don't allow box2D to (badly) clear the canvas
 
     # Assign debug to world
-    debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit)
-    @world.SetDebugDraw(debugDraw)
+    #debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit)
+    #@world.SetDebugDraw(debugDraw)
 
     @world
 
@@ -66,6 +66,7 @@ class Physics
 
   update: ->
     while (new Date()).getTime() - @last_step > @step
+      console.log('yes')
       @steps = @steps + 1
       @last_step += @step
 
@@ -83,6 +84,7 @@ class Physics
       if @level.need_to_restart
         @restart()
         @level.need_to_restart = false
+    console.log('not')
 
   # for debugging
   display: ->
@@ -137,7 +139,7 @@ class Physics
       # Create fixture
       fixDef = new b2FixtureDef()
 
-      fixDef.shape             = new b2PolygonShape()
+      fixDef.shape             = new b2EdgeShape()
       fixDef.density           = density
       fixDef.restitution       = restitution
       fixDef.friction          = friction
@@ -146,7 +148,7 @@ class Physics
       # Create line (from polygon because box2Dweb cannot do otherwise)
       vertex1 = vertex
       vertex2 = if i == block.vertices.length-1 then block.vertices[0] else block.vertices[i+1]
-      fixDef.shape.SetAsArray([new b2Vec2(vertex1.x, vertex1.y), new b2Vec2(vertex2.x, vertex2.y)], 2)
+      fixDef.shape.Set(new b2Vec2(vertex1.x, vertex1.y), new b2Vec2(vertex2.x, vertex2.y))
 
       # Assign fixture (line) to body
       body.CreateFixture(fixDef)
@@ -161,4 +163,4 @@ class Physics
       for vertex in shape
         b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y))
 
-    fix_def.shape.SetAsArray(b2vertices)
+    fix_def.shape.Set(b2vertices, b2vertices.length)

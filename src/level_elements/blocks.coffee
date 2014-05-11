@@ -1,5 +1,7 @@
-b2Vec2 = Box2D.Common.Math.b2Vec2
-b2AABB = Box2D.Collision.b2AABB
+b2Vec2        = b2.Vec2
+b2AABB        = b2.AABB
+b2TestOverlap = b2.TestOverlap
+
 
 class Blocks
 
@@ -137,7 +139,7 @@ block_AABB = (block) ->
   return aabb
 
 visible_block = (zone, block) ->
-  block.aabb.TestOverlap(zone.aabb)
+  b2TestOverlap(block.aabb, zone.aabb)
 
 # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
 sort_blocks_by_texture = (a, b) ->

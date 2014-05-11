@@ -1,4 +1,5 @@
-b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+b2FixtureDef  = b2.FixtureDef
+b2TestOverlap = b2.TestOverlap
 
 class Entities
 
@@ -188,4 +189,4 @@ entity_AABB = (entity) ->
   return aabb
 
 visible_entity = (zone, entity) ->
-  entity.display and entity.aabb.TestOverlap(zone.aabb)
+  entity.display && b2TestOverlap(entity.aabb, zone.aabb)

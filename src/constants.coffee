@@ -1,4 +1,4 @@
-b2Vec2 = Box2D.Common.Math.b2Vec2
+b2Vec2 = b2.Vec2
 
 class Constants
 
@@ -16,7 +16,7 @@ class Constants
 
   # FRAMERATE
 
-  @fps        = 60.0
+  @fps        = 2.0
 
   # DISPLAY
 

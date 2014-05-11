@@ -1,5 +1,5 @@
-b2AABB = Box2D.Collision.b2AABB
-b2Vec2 = Box2D.Common.Math.b2Vec2
+b2AABB = b2.AABB
+b2Vec2 = b2.Vec2
 
 class Buffer
 
