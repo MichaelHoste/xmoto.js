@@ -3,29 +3,21 @@ $.xmoto = (level_filename, options = {}) ->
     defaults =
 
       # Selectors
-      canvas:       '#xmoto'          # canvas selector
-      loading:      '#loading'        # loading selector
-      chrono:       '#chrono'         # chrono selector
-
-      # Best replay from current user
-      best_score_file:  ""
-      best_score_steps: 99999999999
-      best_score_ghost: true          # Always show ghost for best score
+      canvas:  '#xmoto'     # canvas selector
+      loading: '#loading'   # loading selector
+      chrono:  '#chrono'    # chrono selector
 
       # Replays
-      replays: []                     # [ {file: , steps: , name: , picture: }, ... ]
-
-      # Replay mode
-      replay_mode: false              # Not playable, just watch replay from replay_file
-      replay_file: ''                 # "replay" file (not playable) (ex. "4.replay")
+      replays:     []       # [ {file: , steps: , name: , picture:, is_player: }, ... ]
+      replay_mode: false    # Not playable if true, just watch replays from replays
 
       # Zoom
-      zoom: Constants.default_scale.x # Zoom of camera
+      zoom: Constants.default_scale.x   # Zoom of camera
 
       # Paths
-      levels_path:  '/data/Levels'        # Path where are the levels (ex. /data/Levels/l1.lvl)
-      scores_path:  '/level_user_links'   # Path where to POST a score
-      replays_path: '/data/Replays'       # Path where all the replay files are stored (ex. /data/Replays/1.replay)
+      levels_path:  '/data/Levels'      # Path where are the levels (ex. /data/Levels/l1.lvl)
+      scores_path:  '/level_user_links' # Path where to POST a score
+      replays_path: '/data/Replays'     # Path where all the replay files are stored (ex. /data/Replays/1.replay)
 
     return $.extend(defaults, options)
 

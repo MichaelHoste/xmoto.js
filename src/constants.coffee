@@ -20,8 +20,9 @@ class Constants
 
   # REPLAYS
 
-  @replay_key_step = 60 # Key step every x steps during replay (to beat non-deterministic behaviour)
-                        # See https://github.com/MichaelHoste/xmoto.js/issues/8
+  @replay_key_step = 60          # Key step every x steps during replay (to beat non-deterministic behaviour)
+                                 # See https://github.com/MichaelHoste/xmoto.js/issues/8
+  @replay_key_step_precision = 4 # Number of decimals when saving key step position
 
   # DISPLAY
 

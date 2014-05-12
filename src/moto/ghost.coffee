@@ -14,6 +14,10 @@ class Ghost
     @moto.init()
 
   move: ->
+    @move_with_input()    # every steps
+    @move_with_key_step() # only when key step
+
+  move_with_input: ->
     current_input =
       up:    @replay.is_down('up')
       down:  @replay.is_down('down')
@@ -23,6 +27,7 @@ class Ghost
 
     @moto.move(current_input)
 
+  move_with_key_step: ->
     key_step = @replay.key_steps[@level.physics.steps]
     if key_step
       for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle']
@@ -31,7 +36,7 @@ class Ghost
       for part in ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
         set_part_position(@moto.rider, part, key_step)
 
-  display: (transparent = true) ->
+  display: ->
     @moto.display()
 
 set_part_position = (entity, part, key_step) ->

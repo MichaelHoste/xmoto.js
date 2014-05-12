@@ -42,12 +42,12 @@ class ReplayConversionService
     for step, key_step of key_steps
       for key in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle',
                   'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
-        a = key_step[key].position.x       .toFixed(4)
-        b = key_step[key].position.y       .toFixed(4)
-        c = key_step[key].angle            .toFixed(4)
-        d = key_step[key].linear_velocity.x.toFixed(4)
-        e = key_step[key].linear_velocity.y.toFixed(4)
-        f = key_step[key].angular_velocity .toFixed(4)
+        a = key_step[key].position.x       .toFixed(Constants.replay_key_step_precision)
+        b = key_step[key].position.y       .toFixed(Constants.replay_key_step_precision)
+        c = key_step[key].angle            .toFixed(Constants.replay_key_step_precision)
+        d = key_step[key].linear_velocity.x.toFixed(Constants.replay_key_step_precision)
+        e = key_step[key].linear_velocity.y.toFixed(Constants.replay_key_step_precision)
+        f = key_step[key].angular_velocity .toFixed(Constants.replay_key_step_precision)
         string += "#{a},#{b},#{c},#{d},#{e},#{f}|"
       string = string.slice(0, -1) # remove last '|'
       string += '='

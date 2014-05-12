@@ -5,12 +5,10 @@ class Ghosts
     @assets  = level.assets
     @options = level.options
 
-    @replay = @load_replay() # Create replay in "replay only" mode (from options)
-    @player = @load_player() # Create replay and load the user's best score (from an id in the DOM)
-    @others = @load_others() # Create replays from other players from DOM
+    @load_replays()
 
   init: ->
-    if @options.best_score_ghost && @player.replay
+    if @player.replay
       @player.init()
 
     # Assets
@@ -22,34 +20,26 @@ class Ghosts
       @assets.moto.push(part.ghost_texture)
 
   reload: ->
-    if @options.best_score_ghost && @player.replay
+    if @player.replay
       @player.reload()
 
   move: ->
-    if @options.best_score_ghost && @player.replay
+    if @player.replay
       @player.move()
 
   display: ->
-    if @options.best_score_ghost && @player.replay
+    if @player.replay
       @player.display()
 
     if @replay
-      @replay.display(false) # false means "not transparent"
+      @replay.display()
 
     for ghost in @others
       ghost.display()
 
-  load_replay: ->
-    if @options.replay_mode
-      replay = new Replay(@level)
-      replay.load(@options.replay_file)
-      return new Ghost(@level, replay)
-    else
-      return null
-
-  load_player: ->
-    data         = @options.best_score_file
-    replay_steps = @options.best_score_steps
+  load_replays: ->
+    # look if the user replay is in replays !
+    data = @options.replays
 
     if data.length > 0
       replay  = new Replay(@level)
@@ -59,17 +49,16 @@ class Ghosts
     else
       return new Ghost(@level, null)
 
-  load_others: ->
-    others  = []
-
-    for option_replay in @options.replays
-      replay_file  = option_replay.file
-      replay_steps = option_replay.steps
-
-      if replay_file.length > 0
-        replay = new Replay(@level)
-        replay.load("#{replay_file}")
-        replay.steps = replay_steps
-        others.push(new Ghost(@level, replay))
-
-    return others
+    #others  = []
+#
+    #for option_replay in @options.replays
+    #  replay_file  = option_replay.file
+    #  replay_steps = option_replay.steps
+#
+    #  if replay_file.length > 0
+    #    replay = new Replay(@level)
+    #    replay.load("#{replay_file}")
+    #    replay.steps = replay_steps
+    #    others.push(new Ghost(@level, replay))
+#
+    #return others

@@ -225,6 +225,8 @@
 
     Constants.replay_key_step = 60;
 
+    Constants.replay_key_step_precision = 4;
+
     Constants.automatic_scale = true;
 
     Constants.manual_scale = true;
@@ -839,12 +841,8 @@
         canvas: '#xmoto',
         loading: '#loading',
         chrono: '#chrono',
-        best_score_file: "",
-        best_score_steps: 99999999999,
-        best_score_ghost: true,
         replays: [],
         replay_mode: false,
-        replay_file: '',
         zoom: Constants.default_scale.x,
         levels_path: '/data/Levels',
         scores_path: '/level_user_links',
@@ -1967,7 +1965,12 @@
     };
 
     Ghost.prototype.move = function() {
-      var current_input, key_step, part, _i, _j, _len, _len1, _ref, _ref1, _results;
+      this.move_with_input();
+      return this.move_with_key_step();
+    };
+
+    Ghost.prototype.move_with_input = function() {
+      var current_input;
       current_input = {
         up: this.replay.is_down('up'),
         down: this.replay.is_down('down'),
@@ -1975,7 +1978,11 @@
         right: this.replay.is_down('right'),
         space: this.replay.is_pressed('space')
       };
-      this.moto.move(current_input);
+      return this.moto.move(current_input);
+    };
+
+    Ghost.prototype.move_with_key_step = function() {
+      var key_step, part, _i, _j, _len, _len1, _ref, _ref1, _results;
       key_step = this.replay.key_steps[this.level.physics.steps];
       if (key_step) {
         _ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
@@ -1993,10 +2000,7 @@
       }
     };
 
-    Ghost.prototype.display = function(transparent) {
-      if (transparent == null) {
-        transparent = true;
-      }
+    Ghost.prototype.display = function() {
       return this.moto.display();
     };
 
@@ -2022,14 +2026,12 @@
       this.level = level;
       this.assets = level.assets;
       this.options = level.options;
-      this.replay = this.load_replay();
-      this.player = this.load_player();
-      this.others = this.load_others();
+      this.load_replays();
     }
 
     Ghosts.prototype.init = function() {
       var part, parts, _i, _len, _results;
-      if (this.options.best_score_ghost && this.player.replay) {
+      if (this.player.replay) {
         this.player.init();
       }
       parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
@@ -2042,24 +2044,24 @@
     };
 
     Ghosts.prototype.reload = function() {
-      if (this.options.best_score_ghost && this.player.replay) {
+      if (this.player.replay) {
         return this.player.reload();
       }
     };
 
     Ghosts.prototype.move = function() {
-      if (this.options.best_score_ghost && this.player.replay) {
+      if (this.player.replay) {
         return this.player.move();
       }
     };
 
     Ghosts.prototype.display = function() {
       var ghost, _i, _len, _ref, _results;
-      if (this.options.best_score_ghost && this.player.replay) {
+      if (this.player.replay) {
         this.player.display();
       }
       if (this.replay) {
-        this.replay.display(false);
+        this.replay.display();
       }
       _ref = this.others;
       _results = [];
@@ -2070,21 +2072,9 @@
       return _results;
     };
 
-    Ghosts.prototype.load_replay = function() {
-      var replay;
-      if (this.options.replay_mode) {
-        replay = new Replay(this.level);
-        replay.load(this.options.replay_file);
-        return new Ghost(this.level, replay);
-      } else {
-        return null;
-      }
-    };
-
-    Ghosts.prototype.load_player = function() {
-      var data, replay, replay_steps;
-      data = this.options.best_score_file;
-      replay_steps = this.options.best_score_steps;
+    Ghosts.prototype.load_replays = function() {
+      var data, replay;
+      data = this.options.replays;
       if (data.length > 0) {
         replay = new Replay(this.level);
         replay.load(data);
@@ -2093,24 +2083,6 @@
       } else {
         return new Ghost(this.level, null);
       }
-    };
-
-    Ghosts.prototype.load_others = function() {
-      var option_replay, others, replay, replay_file, replay_steps, _i, _len, _ref;
-      others = [];
-      _ref = this.options.replays;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        option_replay = _ref[_i];
-        replay_file = option_replay.file;
-        replay_steps = option_replay.steps;
-        if (replay_file.length > 0) {
-          replay = new Replay(this.level);
-          replay.load("" + replay_file);
-          replay.steps = replay_steps;
-          others.push(new Ghost(this.level, replay));
-        }
-      }
-      return others;
     };
 
     return Ghosts;
@@ -2359,9 +2331,6 @@
 
     Moto.prototype.display = function() {
       if (Constants.debug) {
-        return false;
-      }
-      if (this.level.options.replay_mode) {
         return false;
       }
       this.display_wheel(this.left_wheel, Constants.left_wheel);
@@ -3048,12 +3017,12 @@
         _ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           key = _ref[_i];
-          a = key_step[key].position.x.toFixed(4);
-          b = key_step[key].position.y.toFixed(4);
-          c = key_step[key].angle.toFixed(4);
-          d = key_step[key].linear_velocity.x.toFixed(4);
-          e = key_step[key].linear_velocity.y.toFixed(4);
-          f = key_step[key].angular_velocity.toFixed(4);
+          a = key_step[key].position.x.toFixed(Constants.replay_key_step_precision);
+          b = key_step[key].position.y.toFixed(Constants.replay_key_step_precision);
+          c = key_step[key].angle.toFixed(Constants.replay_key_step_precision);
+          d = key_step[key].linear_velocity.x.toFixed(Constants.replay_key_step_precision);
+          e = key_step[key].linear_velocity.y.toFixed(Constants.replay_key_step_precision);
+          f = key_step[key].angular_velocity.toFixed(Constants.replay_key_step_precision);
           string += "" + a + "," + b + "," + c + "," + d + "," + e + "," + f + "|";
         }
         string = string.slice(0, -1);
