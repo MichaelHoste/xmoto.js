@@ -60,8 +60,8 @@ class ReplayConversionService
     step_interval     = parseInt(string.split('@')[0])
     current_interval  = step_interval
 
-    if milestones_string.indexOf("=") == -1
-      return milestones
+    # If no "=", then there are no key-steps and we return empty object
+    return milestones if milestones_string.indexOf("=") == -1
 
     for milestone_string in milestones_string.split('=')
       milestone = {}

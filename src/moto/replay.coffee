@@ -20,9 +20,13 @@ class Replay
     new_replay = new Replay(@level)
     new_replay.success = @success
     new_replay.steps   = @steps
+
+    # Copy inputs
     for key in [ 'up_down', 'up_up', 'down_down', 'down_up', 'left_down',
                  'left_up', 'right_down', 'right_up', 'space_pressed' ]
       new_replay.inputs[key] = @inputs[key].slice() # copy array
+
+    # Copy key-steps
     for key, value of @milestones
       new_replay.milestones[key] = {}
       for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle',
