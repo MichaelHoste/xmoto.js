@@ -2629,8 +2629,10 @@
     };
 
     Replay.prototype.load = function(data) {
-      this.inputs = ReplayConversionService.string_to_inputs(data.split("\n")[0]);
-      this.key_steps = ReplayConversionService.string_to_key_steps(data.split("\n")[1]);
+      var splitted;
+      splitted = data.split("\n");
+      this.inputs = ReplayConversionService.string_to_inputs(splitted[0]);
+      this.key_steps = ReplayConversionService.string_to_key_steps(splitted[1]);
       this.success = true;
       return this;
     };

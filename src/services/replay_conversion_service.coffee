@@ -1,8 +1,8 @@
 # Convert replay from object to minified string to be send to the server
 # And vice versa
-
 class ReplayConversionService
 
+  # String is like : "keyA:199,240,569|keyB:29,40,55..."
   @inputs_to_string: (inputs) ->
     string = ''
 
@@ -34,6 +34,9 @@ class ReplayConversionService
 
     return inputs
 
+  # String is like : "60@step1=step2=step3=..." where 60 is the key-step interval of the replay
+  # step1 is like : "part1_positions|part2_positions|...|part10_positions"
+  # part1_positions is like : "11.1234,22.1234,33.1234,44.1234,55.1234,66.1234" (each position and angle values)
   @key_steps_to_string: (key_steps) ->
     string = "#{Constants.replay_key_step}@"
     for step, key_step of key_steps

@@ -1,3 +1,5 @@
+# Sere here for replay informations :
+# https://github.com/MichaelHoste/xmoto.js/issues/8
 class Replay
 
   constructor: (level) ->
@@ -96,15 +98,16 @@ class Replay
     @last("#{key}_pressed") == @level.physics.steps
 
   load: (data) ->
-    @inputs     = ReplayConversionService.string_to_inputs(data.split("\n")[0])
-    @key_steps = ReplayConversionService.string_to_key_steps(data.split("\n")[1])
-    @success    = true
+    splitted   = data.split("\n")
+    @inputs    = ReplayConversionService.string_to_inputs(splitted[0])
+    @key_steps = ReplayConversionService.string_to_key_steps(splitted[1])
+    @success   = true
     return this
 
   save: ->
-    inputs_string     = ReplayConversionService.inputs_to_string(@inputs)
+    inputs_string    = ReplayConversionService.inputs_to_string(@inputs)
     key_steps_string = ReplayConversionService.key_steps_to_string(@key_steps)
-    replay_string     = inputs_string + "\n" + key_steps_string
+    replay_string    = inputs_string + "\n" + key_steps_string
 
     console.log(replay_string)
 
