@@ -2056,20 +2056,9 @@
     };
 
     Ghosts.prototype.display = function() {
-      var ghost, _i, _len, _ref, _results;
       if (this.player.replay) {
-        this.player.display();
+        return this.player.display();
       }
-      if (this.replay) {
-        this.replay.display();
-      }
-      _ref = this.others;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        ghost = _ref[_i];
-        _results.push(ghost.display());
-      }
-      return _results;
     };
 
     Ghosts.prototype.load_replays = function() {
@@ -2079,9 +2068,9 @@
         replay = new Replay(this.level);
         replay.load(data);
         replay.steps = replay_steps;
-        return new Ghost(this.level, replay);
+        return this.player = new Ghost(this.level, replay);
       } else {
-        return new Ghost(this.level, null);
+        return this.player = new Ghost(this.level, null);
       }
     };
 

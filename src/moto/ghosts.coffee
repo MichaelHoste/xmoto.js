@@ -31,12 +31,6 @@ class Ghosts
     if @player.replay
       @player.display()
 
-    if @replay
-      @replay.display()
-
-    for ghost in @others
-      ghost.display()
-
   load_replays: ->
     # look if the user replay is in replays !
     data = @options.replays
@@ -45,9 +39,9 @@ class Ghosts
       replay  = new Replay(@level)
       replay.load(data)
       replay.steps = replay_steps
-      return new Ghost(@level, replay)
+      @player = new Ghost(@level, replay)
     else
-      return new Ghost(@level, null)
+      @player = new Ghost(@level, null)
 
     #others  = []
 #
