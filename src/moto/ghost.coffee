@@ -37,6 +37,7 @@ class Ghost
         set_part_position(@moto.rider, part, key_step)
 
   display: ->
+    #if not @moto.dead
     @moto.display()
 
 set_part_position = (entity, part, key_step) ->

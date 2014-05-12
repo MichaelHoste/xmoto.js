@@ -8,7 +8,7 @@ $.xmoto = (level_filename, options = {}) ->
       chrono:  '#chrono'    # chrono selector
 
       # Replays
-      replays:     []       # [ {file: , steps: , name: , picture:, is_player: }, ... ]
+      replays:     []       # [ {file_or_string: , steps: , name: , picture:, is_player: }, ... ]
       replay_mode: false    # Not playable if true, just watch replays from replays
 
       # Zoom

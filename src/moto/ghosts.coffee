@@ -5,6 +5,9 @@ class Ghosts
     @assets  = level.assets
     @options = level.options
 
+    @player = {}
+    @others = []
+
     @load_replays()
 
   init: ->
@@ -32,16 +35,14 @@ class Ghosts
       @player.display()
 
   load_replays: ->
-    # look if the user replay is in replays !
-    data = @options.replays
-
-    if data.length > 0
-      replay  = new Replay(@level)
-      replay.load(data)
-      replay.steps = replay_steps
-      @player = new Ghost(@level, replay)
-    else
-      @player = new Ghost(@level, null)
+    for option_replay in @options.replays
+      replay = new Replay(@level)
+      replay.load(option_replay.file_or_string)
+      replay.steps = option_replay.steps
+      if option_replay.is_player
+        @player = new Ghost(@level, replay)
+      else
+        @others << new Ghost(@level, replay)
 
     #others  = []
 #

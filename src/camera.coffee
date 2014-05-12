@@ -30,13 +30,8 @@ class Camera
 
   # must be an something with x and y values
   target: ->
-    options = @level.options
-    if @level.ghosts.player and @level.ghosts.player.replay
-      position = @level.ghosts.player.moto.body.GetPosition()
-    else if options.replay_mode
-      position = @level.ghosts.replay.moto.body.GetPosition()
-    else
-      position = @level.moto.body.GetPosition()
+    #options = @level.options
+    position = @level.moto.body.GetPosition()
 
     adjusted_position =
       x: position.x + @offset.x

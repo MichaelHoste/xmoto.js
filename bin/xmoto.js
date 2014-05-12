@@ -146,15 +146,8 @@
     };
 
     Camera.prototype.target = function() {
-      var adjusted_position, options, position;
-      options = this.level.options;
-      if (this.level.ghosts.player && this.level.ghosts.player.replay) {
-        position = this.level.ghosts.player.moto.body.GetPosition();
-      } else if (options.replay_mode) {
-        position = this.level.ghosts.replay.moto.body.GetPosition();
-      } else {
-        position = this.level.moto.body.GetPosition();
-      }
+      var adjusted_position, position;
+      position = this.level.moto.body.GetPosition();
       return adjusted_position = {
         x: position.x + this.offset.x,
         y: position.y + this.offset.y
@@ -808,7 +801,9 @@
     };
 
     Listeners.prototype.trigger_restart = function(moto) {
-      if (!moto.ghost) {
+      if (moto.ghost) {
+        return moto.dead = true;
+      } else {
         this.level.replay.success = true;
         return this.level.need_to_restart = true;
       }
@@ -933,11 +928,10 @@
       if (replay.success) {
         time = (replay.steps / 60.0).toFixed(2).replace('.', ':');
         if ((!player_ghost.replay) || player_ghost.replay.steps > replay.steps) {
-          console.log("WIN : you improved your personal score : " + time + " (" + replay.steps + " steps)");
           this.save_replay_and_init_ghosts(replay);
+          console.log("WIN : you improved your personal score : " + time + " (" + replay.steps + " steps)");
         } else {
           console.log("FAIL : you didn't improve your personal score : " + time + " (" + replay.steps + " steps)");
-          this.save_replay_and_init_ghosts(replay);
         }
       }
       this.level.restart();
@@ -2026,6 +2020,8 @@
       this.level = level;
       this.assets = level.assets;
       this.options = level.options;
+      this.player = {};
+      this.others = [];
       this.load_replays();
     }
 
@@ -2062,16 +2058,21 @@
     };
 
     Ghosts.prototype.load_replays = function() {
-      var data, replay;
-      data = this.options.replays;
-      if (data.length > 0) {
+      var option_replay, replay, _i, _len, _ref, _results;
+      _ref = this.options.replays;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option_replay = _ref[_i];
         replay = new Replay(this.level);
-        replay.load(data);
-        replay.steps = replay_steps;
-        return this.player = new Ghost(this.level, replay);
-      } else {
-        return this.player = new Ghost(this.level, null);
+        replay.load(option_replay.file_or_string);
+        replay.steps = option_replay.steps;
+        if (option_replay.is_player) {
+          _results.push(this.player = new Ghost(this.level, replay));
+        } else {
+          _results.push(this.others << new Ghost(this.level, replay));
+        }
       }
+      return _results;
     };
 
     return Ghosts;

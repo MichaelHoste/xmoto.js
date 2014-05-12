@@ -49,11 +49,10 @@ class Physics
     if replay.success
       time = (replay.steps / 60.0).toFixed(2).replace('.', ':')
       if (not player_ghost.replay) || player_ghost.replay.steps > replay.steps
-        console.log("WIN : you improved your personal score : #{time} (#{replay.steps} steps)")
         @save_replay_and_init_ghosts(replay)
+        console.log("WIN : you improved your personal score : #{time} (#{replay.steps} steps)")
       else
         console.log("FAIL : you didn't improve your personal score : #{time} (#{replay.steps} steps)")
-        @save_replay_and_init_ghosts(replay)
 
     @level.restart()
     @init()
