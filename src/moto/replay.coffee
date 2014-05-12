@@ -14,7 +14,7 @@ class Replay
       right_down:    []
       right_up:      []
       space_pressed: []
-    @milestones = {}
+    @key_steps = {}
 
   clone: ->
     new_replay = new Replay(@level)
@@ -27,11 +27,11 @@ class Replay
       new_replay.inputs[key] = @inputs[key].slice() # copy array
 
     # Copy key-steps
-    for key, value of @milestones
-      new_replay.milestones[key] = {}
+    for key, value of @key_steps
+      new_replay.key_steps[key] = {}
       for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle',
                    'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
-        new_replay.milestones[key][part] =
+        new_replay.key_steps[key][part] =
           position:
             x:              value[part].position.x
             y:              value[part].position.y
@@ -45,9 +45,11 @@ class Replay
 
   add_step: ->
     @steps = @level.physics.steps
+    @add_inputs()
+    @add_key_steps()
+
+  add_inputs: ->
     input  = @level.input
-    moto   = @level.moto
-    rider  = moto.rider
 
     for key in [ 'up', 'down', 'left', 'right']
       if input[key] && @is_up(key)
@@ -58,14 +60,18 @@ class Replay
     if input.space
       @inputs['space_pressed'].push(@steps)
 
+  add_key_steps: ->
+    moto   = @level.moto
+    rider  = moto.rider
+
     if @steps % Constants.replay_key_step == 0
-      milestone = @milestones[@steps.toString()] = {}
+      key_step = @key_steps[@steps.toString()] = {}
 
       for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle']
-        milestone[part] = physics_values(moto[part])
+        key_step[part] = physics_values(moto[part])
 
       for part in ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
-        milestone[part] = physics_values(rider[part])
+        key_step[part] = physics_values(rider[part])
 
   # TODO dichotomic search
   last: (input) ->
@@ -91,14 +97,14 @@ class Replay
 
   load: (data) ->
     @inputs     = ReplayConversionService.string_to_inputs(data.split("\n")[0])
-    @milestones = ReplayConversionService.string_to_milestones(data.split("\n")[1])
+    @key_steps = ReplayConversionService.string_to_key_steps(data.split("\n")[1])
     @success    = true
     return this
 
   save: ->
     inputs_string     = ReplayConversionService.inputs_to_string(@inputs)
-    milestones_string = ReplayConversionService.milestones_to_string(@milestones)
-    replay_string     = inputs_string + "\n" + milestones_string
+    key_steps_string = ReplayConversionService.key_steps_to_string(@key_steps)
+    replay_string     = inputs_string + "\n" + key_steps_string
 
     console.log(replay_string)
 

@@ -34,17 +34,17 @@ class ReplayConversionService
 
     return inputs
 
-  @milestones_to_string: (milestones) ->
+  @key_steps_to_string: (key_steps) ->
     string = "#{Constants.replay_key_step}@"
-    for step, milestone of milestones
+    for step, key_step of key_steps
       for key in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle',
                   'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
-        a = milestone[key].position.x       .toFixed(4)
-        b = milestone[key].position.y       .toFixed(4)
-        c = milestone[key].angle            .toFixed(4)
-        d = milestone[key].linear_velocity.x.toFixed(4)
-        e = milestone[key].linear_velocity.y.toFixed(4)
-        f = milestone[key].angular_velocity .toFixed(4)
+        a = key_step[key].position.x       .toFixed(4)
+        b = key_step[key].position.y       .toFixed(4)
+        c = key_step[key].angle            .toFixed(4)
+        d = key_step[key].linear_velocity.x.toFixed(4)
+        e = key_step[key].linear_velocity.y.toFixed(4)
+        f = key_step[key].angular_velocity .toFixed(4)
         string += "#{a},#{b},#{c},#{d},#{e},#{f}|"
       string = string.slice(0, -1) # remove last '|'
       string += '='
@@ -52,24 +52,24 @@ class ReplayConversionService
 
     return LZString.compressToBase64(string)
 
-  @string_to_milestones: (string) ->
-    milestones        = {}
-    string            = LZString.decompressFromBase64(string)
-    milestones_string = string.split('@')[1]
+  @string_to_key_steps: (string) ->
+    key_steps        = {}
+    string           = LZString.decompressFromBase64(string)
+    key_steps_string = string.split('@')[1]
 
     step_interval     = parseInt(string.split('@')[0])
     current_interval  = step_interval
 
     # If no "=", then there are no key-steps and we return empty object
-    return milestones if milestones_string.indexOf("=") == -1
+    return key_steps if key_steps_string.indexOf("=") == -1
 
-    for milestone_string in milestones_string.split('=')
-      milestone = {}
-      part_string = milestone_string.split('|')
+    for key_step_string in key_steps_string.split('=')
+      key_step = {}
+      part_string = key_step_string.split('|')
       for element, i in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle',
                          'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
         value_string = part_string[i].split(',')
-        milestone[element] =
+        key_step[element] =
           position:
             x:              parseFloat(value_string[0])
             y:              parseFloat(value_string[1])
@@ -79,7 +79,7 @@ class ReplayConversionService
             y:              parseFloat(value_string[4])
           angular_velocity: parseFloat(value_string[5])
 
-      milestones[current_interval] = milestone
+      key_steps[current_interval] = key_step
       current_interval += step_interval
 
-    return milestones
+    return key_steps
