@@ -10,13 +10,18 @@ class Constants
                              # (no collisions and no kill except for head)
   @gravity           =  9.81 # Default gravity of the game
   @max_moto_speed    = 70.00 # Max rotation speed of the wheels. Limit the max speed of the moto
-  @air_density       =  0.03 # Friction of air
+  @air_density       =  0.02 # Friction of air
   @moto_acceleration =  9.00 # Acceleration of moto
   @biker_force       = 11.00 # Force of biker when he rotates the moto
 
   # FRAMERATE
 
-  @fps        = 60.0
+  @fps = 60.0
+
+  # REPLAYS
+
+  @replay_key_step = 60 # Key step every x steps during replay (to beat non-deterministic behaviour)
+                        # See https://github.com/MichaelHoste/xmoto.js/issues/8
 
   # DISPLAY
 

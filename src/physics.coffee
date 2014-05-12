@@ -69,9 +69,6 @@ class Physics
       @steps = @steps + 1
       @last_step += @step
 
-      if !@level.moto.dead && !@level.ghosts.player.replay
-        window.debug1 += "#{@level.physics.steps} - #{if @level.input.up then 1 else 0} #{if @level.input.down then 1 else 0} #{if @level.input.left then 1 else 0} #{if @level.input.right then 1 else 0} #{if @level.input.space then 1 else 0}\n"
-
       @level.moto.move()
       @level.ghosts.move()
       @level.replay.add_step()

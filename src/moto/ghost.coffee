@@ -21,9 +21,6 @@ class Ghost
       right: @replay.is_down('right')
       space: @replay.is_pressed('space')
 
-    if !@level.moto.dead
-      window.debug2 += "#{@level.physics.steps} - #{if current_input.up then 1 else 0} #{if current_input.down then 1 else 0} #{if current_input.left then 1 else 0} #{if current_input.right then 1 else 0} #{if current_input.space then 1 else 0}\n"
-
     @moto.move(current_input)
 
     milestone = @replay.milestones[@level.physics.steps]

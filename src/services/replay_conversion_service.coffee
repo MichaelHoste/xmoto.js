@@ -35,20 +35,20 @@ class ReplayConversionService
     return inputs
 
   @milestones_to_string: (milestones) ->
-    string = '30@'
+    string = "#{Constants.replay_key_step}@"
     for step, milestone of milestones
       for key in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle',
                   'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
-        a = milestone[key].position.x
-        b = milestone[key].position.y
-        c = milestone[key].angle
-        d = milestone[key].linear_velocity.x
-        e = milestone[key].linear_velocity.y
-        f = milestone[key].angular_velocity
+        a = milestone[key].position.x       .toFixed(4)
+        b = milestone[key].position.y       .toFixed(4)
+        c = milestone[key].angle            .toFixed(4)
+        d = milestone[key].linear_velocity.x.toFixed(4)
+        e = milestone[key].linear_velocity.y.toFixed(4)
+        f = milestone[key].angular_velocity .toFixed(4)
         string += "#{a},#{b},#{c},#{d},#{e},#{f}|"
       string = string.slice(0, -1) # remove last '|'
       string += '='
-    string = string.slice(0, -1) # remove last '='
+    string = string.slice(0, -1) if string[string.length-1] == '=' # remove last '='
 
     return LZString.compressToBase64(string)
 
@@ -59,6 +59,9 @@ class ReplayConversionService
 
     step_interval     = parseInt(string.split('@')[0])
     current_interval  = step_interval
+
+    if milestones_string.indexOf("=") == -1
+      return milestones
 
     for milestone_string in milestones_string.split('=')
       milestone = {}

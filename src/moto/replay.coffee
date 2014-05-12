@@ -54,7 +54,7 @@ class Replay
     if input.space
       @inputs['space_pressed'].push(@steps)
 
-    if @steps % 30 == 0
+    if @steps % Constants.replay_key_step == 0
       milestone = @milestones[@steps.toString()] = {}
 
       for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle']
@@ -86,27 +86,23 @@ class Replay
     @last("#{key}_pressed") == @level.physics.steps
 
   load: (data) ->
-    options = @level.options
-    @inputs      = ReplayConversionService.string_to_inputs(data.split("\n")[0])
-    @milestones  = ReplayConversionService.string_to_milestones(data.split("\n")[1])
-    @success = true
+    @inputs     = ReplayConversionService.string_to_inputs(data.split("\n")[0])
+    @milestones = ReplayConversionService.string_to_milestones(data.split("\n")[1])
+    @success    = true
     return this
 
   save: ->
-    #a = ReplayConversionService.milestones_to_string(@milestones)
-    #b = ReplayConversionService.string_to_milestones(a)
-    #c = ReplayConversionService.milestones_to_string(b)
+    inputs_string     = ReplayConversionService.inputs_to_string(@inputs)
+    milestones_string = ReplayConversionService.milestones_to_string(@milestones)
+    replay_string     = inputs_string + "\n" + milestones_string
 
-    console.log(ReplayConversionService.inputs_to_string(@inputs))
-    console.log(ReplayConversionService.milestones_to_string(@milestones))
-    #console.log(ReplayConversionService.string_to_inputs(ReplayConversionService.inputs_to_string(@inputs)))
-    #console.log(ReplayConversionService.inputs_to_string(ReplayConversionService.string_to_inputs(ReplayConversionService.inputs_to_string(@inputs))))
+    console.log(replay_string)
 
     $.post(@level.options.scores_path,
       level:  @level.infos.identifier
       time:   @level.current_time
       steps:  @steps
-      replay: ReplayConversionService.inputs_to_string(@inputs)
+      replay: replay_string
     )
 
 physics_values = (object) ->
