@@ -3131,17 +3131,19 @@
 
   Assets = (function() {
     function Assets() {
-      this.queue = new createjs.LoadQueue(false);
       this.theme = new Theme('modern.xml');
       this.textures = [];
       this.anims = [];
       this.effects = [];
       this.moto = [];
       this.sounds = [];
+      this.resources = [];
     }
 
     Assets.prototype.load = function(callback) {
-      var item, items, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
+      var item, items, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4,
+        _this = this;
+      PIXI.loader.reset();
       items = [];
       _ref = this.textures;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -3175,13 +3177,19 @@
           src: "/data/Textures/Riders/" + (item.toLowerCase()) + ".png"
         });
       }
-      items = this.remove_duplicate_textures(items);
-      this.queue.addEventListener("complete", callback);
-      return this.queue.loadManifest(items);
+      _ref4 = this.remove_duplicate_textures(items);
+      for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
+        item = _ref4[_m];
+        PIXI.loader.add(item.id, item.src);
+      }
+      return PIXI.loader.load(function(loader, resources) {
+        _this.resources = resources;
+        return callback();
+      });
     };
 
     Assets.prototype.get = function(name) {
-      return this.queue.getResult(name);
+      return this.resources[name].data;
     };
 
     Assets.prototype.remove_duplicate_textures = function(array) {
