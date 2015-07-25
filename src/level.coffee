@@ -25,7 +25,7 @@ class Level
     # Listeners
     @listeners     = new Listeners(this)
 
-    # Replay: actual run of the player
+    # Replay: actual run of the player (not saved yet)
     @replay        = new Replay(this)
 
     # Ghosts: previous saved run of various players (included himself)
@@ -83,7 +83,11 @@ class Level
 
   display: ->
     @init_canvas()  if not @canvas_width
-    @update_timer() if not @moto.dead
+
+    dead_player = @options.playable  && !@moto.dead
+    dead_replay = !@options.playable && !@ghosts.player.moto.dead
+
+    @update_timer() if dead_player || dead_replay
 
     # visible screen limits of the world (don't show anything outside of these limits)
     @compute_visibility()
@@ -104,7 +108,7 @@ class Level
 
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
     @entities.display_items()
-    @moto    .display()
+    @moto    .display() if @options.playable
     @ghosts  .display()
 
     @particles.display()

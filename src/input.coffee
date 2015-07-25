@@ -3,11 +3,11 @@ class Input
   constructor: (level) ->
     @level  = level
     @assets = level.assets
-    @up    = false
-    @down  = false
-    @left  = false
-    @right = false
-    @space = false
+    @up     = false
+    @down   = false
+    @left   = false
+    @right  = false
+    @space  = false
 
   init: ->
     @disable_scroll()

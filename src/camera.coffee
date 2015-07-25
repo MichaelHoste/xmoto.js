@@ -17,8 +17,14 @@ class Camera
     if Constants.manual_scale
       @init_scroll()
 
+  active_object: ->
+    if @level.options.playable
+      @level.moto.body
+    else
+      @level.ghosts.player.moto.body
+
   move: ->
-    velocity = @level.moto.body.GetLinearVelocity()
+    velocity = @active_object().GetLinearVelocity()
 
     if Constants.automatic_scale
       speed = Math2D.distance_between_points(new b2Vec2(0, 0), velocity)
@@ -28,10 +34,10 @@ class Camera
       @offset.x = @offset.x * 0.97 + velocity.x/3.0 * 0.03
       @offset.y = @offset.y * 0.99 + velocity.y/3.0 * 0.01
 
-  # must be an something with x and y values
+  # must be something with x and y values
   target: ->
-    #options = @level.options
-    position = @level.moto.body.GetPosition()
+    options  = @level.options
+    position = @active_object().GetPosition()
 
     adjusted_position =
       x: position.x + @offset.x

@@ -133,9 +133,17 @@
       }
     };
 
+    Camera.prototype.active_object = function() {
+      if (this.level.options.playable) {
+        return this.level.moto.body;
+      } else {
+        return this.level.ghosts.player.moto.body;
+      }
+    };
+
     Camera.prototype.move = function() {
       var speed, velocity;
-      velocity = this.level.moto.body.GetLinearVelocity();
+      velocity = this.active_object().GetLinearVelocity();
       if (Constants.automatic_scale) {
         speed = Math2D.distance_between_points(new b2Vec2(0, 0), velocity);
         this.scale.x = this.scale.x * 0.995 + (Constants.default_scale.x / (1.0 + speed / 7.5)) * 0.005;
@@ -146,8 +154,9 @@
     };
 
     Camera.prototype.target = function() {
-      var adjusted_position, position;
-      position = this.level.moto.body.GetPosition();
+      var adjusted_position, options, position;
+      options = this.level.options;
+      position = this.active_object().GetPosition();
       return adjusted_position = {
         x: position.x + this.offset.x,
         y: position.y + this.offset.y
@@ -647,10 +656,13 @@
     };
 
     Level.prototype.display = function() {
+      var dead_player, dead_replay;
       if (!this.canvas_width) {
         this.init_canvas();
       }
-      if (!this.moto.dead) {
+      dead_player = this.options.playable && !this.moto.dead;
+      dead_replay = !this.options.playable && !this.ghosts.player.moto.dead;
+      if (dead_player || dead_replay) {
         this.update_timer();
       }
       this.compute_visibility();
@@ -664,7 +676,9 @@
       this.ctx.scale(this.camera.scale.x, this.camera.scale.y);
       this.ctx.translate(-this.camera.target().x, -this.camera.target().y - 0.25);
       this.entities.display_items();
-      this.moto.display();
+      if (this.options.playable) {
+        this.moto.display();
+      }
       this.ghosts.display();
       this.particles.display();
       if (Constants.debug) {
@@ -748,13 +762,21 @@
       this.world = level.physics.world;
     }
 
+    Listeners.prototype.active_moto = function() {
+      if (this.level.options.playable) {
+        return this.level.moto;
+      } else {
+        return this.level.ghosts.player.moto;
+      }
+    };
+
     Listeners.prototype.init = function() {
       var listener,
         _this = this;
       listener = new Box2D.Dynamics.b2ContactListener;
       listener.BeginContact = function(contact) {
         var a, b, entity, moto, strawberry;
-        moto = _this.level.moto;
+        moto = _this.active_moto();
         a = contact.GetFixtureA().GetBody().GetUserData();
         b = contact.GetFixtureB().GetBody().GetUserData();
         if (!moto.dead) {
@@ -837,10 +859,10 @@
         loading: '#loading',
         chrono: '#chrono',
         replays: [],
-        replay_mode: false,
+        playable: true,
         zoom: Constants.default_scale.x,
         levels_path: '/data/Levels',
-        scores_path: '/level_user_links',
+        scores_path: '/scores',
         replays_path: '/data/Replays'
       };
       return $.extend(defaults, options);
@@ -1942,10 +1964,14 @@
   })();
 
   Ghost = (function() {
-    function Ghost(level, replay) {
+    function Ghost(level, replay, transparent) {
+      if (transparent == null) {
+        transparent = true;
+      }
       this.level = level;
       this.replay = replay;
-      this.moto = new Moto(this.level, true);
+      this.transparent = transparent;
+      this.moto = new Moto(this.level, this.transparent);
     }
 
     Ghost.prototype.init = function() {
@@ -1954,7 +1980,7 @@
 
     Ghost.prototype.reload = function() {
       this.moto.destroy();
-      this.moto = new Moto(this.level, true);
+      this.moto = new Moto(this.level, this.transparent);
       return this.moto.init();
     };
 
@@ -2025,36 +2051,75 @@
       this.load_replays();
     }
 
+    Ghosts.prototype.all_ghosts = function() {
+      var ghosts;
+      ghosts = [];
+      ghosts = ghosts.concat(this.others);
+      ghosts.push(this.player);
+      return ghosts;
+    };
+
     Ghosts.prototype.init = function() {
-      var part, parts, _i, _len, _results;
-      if (this.player.replay) {
-        this.player.init();
+      var ghost, part, parts, _i, _j, _len, _len1, _ref, _results;
+      _ref = this.all_ghosts();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ghost = _ref[_i];
+        if (ghost.replay) {
+          ghost.init();
+        }
       }
       parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
       _results = [];
-      for (_i = 0, _len = parts.length; _i < _len; _i++) {
-        part = parts[_i];
+      for (_j = 0, _len1 = parts.length; _j < _len1; _j++) {
+        part = parts[_j];
         _results.push(this.assets.moto.push(part.ghost_texture));
       }
       return _results;
     };
 
     Ghosts.prototype.reload = function() {
-      if (this.player.replay) {
-        return this.player.reload();
+      var ghost, _i, _len, _ref, _results;
+      _ref = this.all_ghosts();
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ghost = _ref[_i];
+        if (ghost.replay) {
+          _results.push(ghost.reload());
+        } else {
+          _results.push(void 0);
+        }
       }
+      return _results;
     };
 
     Ghosts.prototype.move = function() {
-      if (this.player.replay) {
-        return this.player.move();
+      var ghost, _i, _len, _ref, _results;
+      _ref = this.all_ghosts();
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ghost = _ref[_i];
+        if (ghost.replay) {
+          _results.push(ghost.move());
+        } else {
+          _results.push(void 0);
+        }
       }
+      return _results;
     };
 
     Ghosts.prototype.display = function() {
-      if (this.player.replay) {
-        return this.player.display();
+      var ghost, _i, _len, _ref, _results;
+      _ref = this.all_ghosts();
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ghost = _ref[_i];
+        if (ghost.replay) {
+          _results.push(ghost.display());
+        } else {
+          _results.push(void 0);
+        }
       }
+      return _results;
     };
 
     Ghosts.prototype.load_replays = function() {
@@ -2064,12 +2129,11 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         option_replay = _ref[_i];
         replay = new Replay(this.level);
-        replay.load(option_replay.file_or_string);
-        replay.steps = option_replay.steps;
-        if (option_replay.is_player) {
-          _results.push(this.player = new Ghost(this.level, replay));
+        replay.load(option_replay.replay);
+        if (!this.options.playable && option_replay.follow) {
+          _results.push(this.player = new Ghost(this.level, replay, false));
         } else {
-          _results.push(this.others << new Ghost(this.level, replay));
+          _results.push(this.others.push(new Ghost(this.level, replay)));
         }
       }
       return _results;
@@ -2601,7 +2665,6 @@
       inputs_string = ReplayConversionService.inputs_to_string(this.inputs);
       key_steps_string = ReplayConversionService.key_steps_to_string(this.key_steps);
       replay_string = inputs_string + "\n" + key_steps_string;
-      console.log(replay_string);
       return $.post(this.level.options.scores_path, {
         level: this.level.infos.identifier,
         time: this.level.current_time,

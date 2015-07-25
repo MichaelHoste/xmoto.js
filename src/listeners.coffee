@@ -5,12 +5,19 @@ class Listeners
     @assets = level.assets
     @world  = level.physics.world
 
+  active_moto: ->
+    if @level.options.playable
+      @level.moto
+    else
+      @level.ghosts.player.moto
+
   init: ->
     # Add listeners for end of level
     listener = new Box2D.Dynamics.b2ContactListener
 
     listener.BeginContact = (contact) =>
-      moto = @level.moto
+      moto = @active_moto()
+
       a = contact.GetFixtureA().GetBody().GetUserData()
       b = contact.GetFixtureB().GetBody().GetUserData()
 

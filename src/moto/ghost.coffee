@@ -1,16 +1,17 @@
 class Ghost
 
-  constructor: (level, replay) ->
-    @level   = level
-    @replay  = replay
-    @moto    = new Moto(@level, true)
+  constructor: (level, replay, transparent = true) ->
+    @level        = level
+    @replay       = replay
+    @transparent  = transparent
+    @moto         = new Moto(@level, @transparent)
 
   init: ->
     @moto.init()
 
   reload: ->
     @moto.destroy()
-    @moto = new Moto(@level, true)
+    @moto = new Moto(@level, @transparent)
     @moto.init()
 
   move: ->

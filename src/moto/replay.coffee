@@ -51,7 +51,7 @@ class Replay
     @add_key_steps()
 
   add_inputs: ->
-    input  = @level.input
+    input = @level.input
 
     for key in [ 'up', 'down', 'left', 'right']
       if input[key] && @is_up(key)
@@ -108,8 +108,6 @@ class Replay
     inputs_string    = ReplayConversionService.inputs_to_string(@inputs)
     key_steps_string = ReplayConversionService.key_steps_to_string(@key_steps)
     replay_string    = inputs_string + "\n" + key_steps_string
-
-    console.log(replay_string)
 
     $.post(@level.options.scores_path,
       level:  @level.infos.identifier
