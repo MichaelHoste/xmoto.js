@@ -30,18 +30,25 @@ $.xmoto = (level_filename, options = {}) ->
 
   level = new Level(options)
   level.load_from_file(level_filename)
-  level.assets.load( ->
-    update = ->
-      level.physics.update()
-      level.display()
-      window.game_loop = window.requestAnimationFrame(update)
 
-    level.start_time   = new Date().getTime()
-    level.current_time = 0
-    level.physics.init()
+  @renderer = new PIXI.autoDetectRenderer(1000, 600, {
+    antialias:       true,
+    backgroundColor: 0xFFFFFF
+  })
+
+  $('#xmoto-pixi')[0].appendChild(@renderer.view)
+
+  level.assets.load( =>
+    level.init()
 
     window.cancelAnimationFrame(window.game_loop)
     $(options.loading).hide()
+
+    update = =>
+      level.physics.update()
+      level.display()
+      window.game_loop = requestAnimationFrame(update)
+      @renderer.render(level.stage)
 
     update()
   )

@@ -9,7 +9,7 @@ class Assets
     @moto     = [] # moto list
     @sounds   = [] # Sounds
 
-    @resources = []
+    @resources = {}
 
   load: (callback) ->
     PIXI.loader.reset()
@@ -47,6 +47,9 @@ class Assets
   # Get an asset by its name ("id")
   get: (name) ->
     @resources[name].data
+
+  get_url: (name) ->
+    @resources[name].url
 
   remove_duplicate_textures: (array) ->
     unique = []

@@ -26,8 +26,14 @@ class Rider
     @world.DestroyBody(@lower_arm)
     @world.DestroyBody(@upper_arm)
 
-  init: ->
-    # Assets
+    @level.camera.container2.removeChild(@head_sprite)
+    @level.camera.container2.removeChild(@torso_sprite)
+    @level.camera.container2.removeChild(@lower_leg_sprite)
+    @level.camera.container2.removeChild(@upper_leg_sprite)
+    @level.camera.container2.removeChild(@lower_arm_sprite)
+    @level.camera.container2.removeChild(@upper_arm_sprite)
+
+  load_assets: ->
     parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
               Constants.upper_arm, Constants.lower_arm ]
     for part in parts
@@ -36,7 +42,7 @@ class Rider
       else
         @assets.moto.push(part.texture)
 
-    # Creation of moto parts
+  init_physics_parts: ->
     @player_start = @level.entities.player_start
 
     @head      = @create_head()
@@ -53,6 +59,17 @@ class Rider
     @elbow_joint    = @create_joint(Constants.elbow,    @upper_arm, @lower_arm)
     @shoulder_joint = @create_joint(Constants.shoulder, @upper_arm, @torso, true)
     @hip_joint      = @create_joint(Constants.hip,      @upper_leg, @torso, true)
+
+  init_sprites: ->
+    for part in ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
+      if @ghost
+        asset_name = Constants[part].ghost_texture
+      else
+        asset_name = Constants[part].texture
+
+      console.log asset_name
+      @["#{part}_sprite"] = new PIXI.Sprite.fromImage(@assets.get_url(asset_name))
+      @level.camera.container2.addChild(@["#{part}_sprite"])
 
   position: ->
     @moto.body.GetPosition()
@@ -167,13 +184,15 @@ class Rider
     @world.CreateJoint(jointDef)
 
   display: ->
-    @display_part(@torso,     Constants.torso)
-    @display_part(@upper_leg, Constants.upper_leg)
-    @display_part(@lower_leg, Constants.lower_leg)
-    @display_part(@upper_arm, Constants.upper_arm)
-    @display_part(@lower_arm, Constants.lower_arm)
+    @display_part(@torso,     'torso')
+    @display_part(@upper_leg, 'upper_leg')
+    @display_part(@lower_leg, 'lower_leg')
+    @display_part(@upper_arm, 'upper_arm')
+    @display_part(@lower_arm, 'lower_arm')
 
-  display_part: (part, part_constants) ->
+  display_part: (part, name) ->
+    part_constants = Constants[name]
+
     position = part.GetPosition()
     angle    = part.GetAngle()
     texture  = if @ghost then part_constants.ghost_texture else part_constants.texture
@@ -192,3 +211,13 @@ class Rider
     )
 
     @level.ctx.restore()
+
+    sprite = @["#{name}_sprite"]
+
+    sprite.width    = part_constants.texture_size.x * @mirror
+    sprite.height   = part_constants.texture_size.y
+    sprite.anchor.x = 0.5
+    sprite.anchor.y = 0.5
+    sprite.x        =  position.x
+    sprite.y        = -position.y
+    sprite.rotation = -angle

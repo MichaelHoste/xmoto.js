@@ -9,6 +9,7 @@ class Level
     # Context
     @canvas = $(@options.canvas).get(0)
     @ctx    = @canvas.getContext('2d')
+    @stage  = new PIXI.Container()
 
     # Assets manager
     @assets        = new Assets()
@@ -69,21 +70,25 @@ class Level
     @script       .parse(xml).init()
     @entities     .parse(xml).init()
 
-    # Moto and ghosts (level independant)
+    @moto.load_assets()
+    @ghosts.load_assets()
+
+  init: ->
+    @start_time   = new Date().getTime()
+    @current_time = 0
+
+    @canvas_width  = parseFloat(@canvas.width)
+    @canvas_height = parseFloat(@canvas.height)
+
     @moto.init()
     @ghosts.init()
 
+    @physics.init()
     @input.init()
     @camera.init()
     @listeners.init()
 
-  init_canvas: ->
-    @canvas_width  = parseFloat(@canvas.width)
-    @canvas_height = parseFloat(@canvas.height)
-
   display: ->
-    @init_canvas()  if not @canvas_width
-
     dead_player = @options.playable  && !@moto.dead
     dead_replay = !@options.playable && !@ghosts.player.moto.dead
 
@@ -105,6 +110,18 @@ class Level
     @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
     @ctx.scale(@camera.scale.x, @camera.scale.y)                    # Scale (zoom)
     @ctx.translate(-@camera.target().x, -@camera.target().y - 0.25) # Camera on moto
+
+    @camera.container.x = @canvas_width/2
+    @camera.container.y = @canvas_height/2
+
+    @camera.container.scale.x = @camera.scale.x
+    @camera.container.scale.y = -@camera.scale.y
+
+    @camera.container2.x = -@camera.target().x
+    @camera.container2.y = @camera.target().y + 0.25
+
+    #@camera.container.x = @camera.target().x
+    #@camera.container.y = @camera.target().y - 0.25
 
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
     @entities.display_items()

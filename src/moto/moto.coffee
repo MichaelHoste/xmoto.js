@@ -28,8 +28,13 @@ class Moto
     @world.DestroyBody(@left_axle)
     @world.DestroyBody(@right_axle)
 
-  init: ->
-    # Assets
+    @level.camera.container2.removeChild(@body_sprite)
+    @level.camera.container2.removeChild(@left_wheel_sprite)
+    @level.camera.container2.removeChild(@right_wheel_sprite)
+    @level.camera.container2.removeChild(@left_axle_sprite)
+    @level.camera.container2.removeChild(@right_axle_sprite)
+
+  load_assets: ->
     parts = [ Constants.body, Constants.left_wheel, Constants.right_wheel,
               Constants.left_axle, Constants.right_axle ]
     for part in parts
@@ -38,7 +43,13 @@ class Moto
       else
         @assets.moto.push(part.texture)
 
-    # Creation of moto parts
+    @rider.load_assets()
+
+  init: ->
+    @init_physics_parts()
+    @init_sprites()
+
+  init_physics_parts: ->
     @player_start = @level.entities.player_start
 
     @body         = @create_body()
@@ -53,7 +64,19 @@ class Moto
     @left_prismatic_joint  = @create_prismatic_joint(@left_axle,  Constants.left_suspension)
     @right_prismatic_joint = @create_prismatic_joint(@right_axle, Constants.right_suspension)
 
-    @rider.init()
+    @rider.init_physics_parts()
+
+  init_sprites: ->
+    for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle']
+      if @ghost
+        asset_name = Constants[part].ghost_texture
+      else
+        asset_name = Constants[part].texture
+
+      @["#{part}_sprite"] = new PIXI.Sprite.fromImage(@assets.get_url(asset_name))
+      @level.camera.container2.addChild(@["#{part}_sprite"])
+
+    @rider.init_sprites()
 
   move: (input = @level.input) ->
     moto_acceleration = Constants.moto_acceleration
@@ -283,6 +306,19 @@ class Moto
 
     @level.ctx.restore()
 
+    if part_constants.position.x < 0
+      wheel_sprite = @left_wheel_sprite
+    else
+      wheel_sprite = @right_wheel_sprite
+
+    wheel_sprite.width  = 2 * part_constants.radius * @mirror
+    wheel_sprite.height = 2 * part_constants.radius
+    wheel_sprite.anchor.x = 0.5
+    wheel_sprite.anchor.y = 0.5
+    wheel_sprite.x = position.x
+    wheel_sprite.y = -position.y
+    wheel_sprite.rotation = -angle
+
   display_body: (part, part_constants) ->
     position = if part.GetPosition then part.GetPosition() else part.position
     angle    = if part.GetAngle    then part.GetAngle()    else part.angle
@@ -303,6 +339,15 @@ class Moto
 
     @level.ctx.restore()
 
+    #
+    @body_sprite.width  = part_constants.texture_size.x * @mirror
+    @body_sprite.height = part_constants.texture_size.y
+    @body_sprite.anchor.x = 0.5
+    @body_sprite.anchor.y = 0.5
+    @body_sprite.x = position.x
+    @body_sprite.y = -position.y
+    @body_sprite.rotation = -angle
+
   display_left_axle: (part, part_constants) ->
     axle_thickness = 0.09
 
@@ -317,7 +362,7 @@ class Moto
       y: -0.30
 
     texture = if @ghost then part_constants.ghost_texture else part_constants.texture
-    @display_axle_common(wheel_position, axle_position, axle_thickness, texture)
+    @display_axle_common(wheel_position, axle_position, axle_thickness, texture, 'left')
 
   display_right_axle: (part, part_constants) ->
     axle_thickness = 0.07
@@ -333,10 +378,9 @@ class Moto
       y: 0.025
 
     texture = if @ghost then part_constants.ghost_texture else part_constants.texture
-    @display_axle_common(wheel_position, axle_position, axle_thickness, texture)
+    @display_axle_common(wheel_position, axle_position, axle_thickness, texture, 'right')
 
-
-  display_axle_common: (wheel_position, axle_position, axle_thickness, texture) ->
+  display_axle_common: (wheel_position, axle_position, axle_thickness, texture, side) ->
     body_position = @body.GetPosition()
     body_angle    = @body.GetAngle()
 
@@ -364,3 +408,13 @@ class Moto
     )
 
     @level.ctx.restore()
+
+    axle_sprite = @["#{side}_axle_sprite"]
+
+    axle_sprite.width    = distance * @mirror
+    axle_sprite.height   = axle_thickness
+    axle_sprite.anchor.x = 0.0
+    axle_sprite.anchor.y = 0.5
+    axle_sprite.x        =  wheel_position.x
+    axle_sprite.y        = -wheel_position.y
+    axle_sprite.rotation = -angle

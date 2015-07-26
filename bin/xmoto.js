@@ -125,6 +125,10 @@
         x: 0,
         y: 0
       };
+      this.container = new PIXI.Container();
+      this.level.stage.addChild(this.container);
+      this.container2 = new PIXI.Container();
+      this.container.addChild(this.container2);
     }
 
     Camera.prototype.init = function() {
@@ -605,6 +609,7 @@
       this.options = options;
       this.canvas = $(this.options.canvas).get(0);
       this.ctx = this.canvas.getContext('2d');
+      this.stage = new PIXI.Container();
       this.assets = new Assets();
       this.physics = new Physics(this);
       this.input = new Input(this);
@@ -643,23 +648,25 @@
       this.layer_offsets.parse(xml).init();
       this.script.parse(xml).init();
       this.entities.parse(xml).init();
+      this.moto.load_assets();
+      return this.ghosts.load_assets();
+    };
+
+    Level.prototype.init = function() {
+      this.start_time = new Date().getTime();
+      this.current_time = 0;
+      this.canvas_width = parseFloat(this.canvas.width);
+      this.canvas_height = parseFloat(this.canvas.height);
       this.moto.init();
       this.ghosts.init();
+      this.physics.init();
       this.input.init();
       this.camera.init();
       return this.listeners.init();
     };
 
-    Level.prototype.init_canvas = function() {
-      this.canvas_width = parseFloat(this.canvas.width);
-      return this.canvas_height = parseFloat(this.canvas.height);
-    };
-
     Level.prototype.display = function() {
       var dead_player, dead_replay;
-      if (!this.canvas_width) {
-        this.init_canvas();
-      }
       dead_player = this.options.playable && !this.moto.dead;
       dead_replay = !this.options.playable && !this.ghosts.player.moto.dead;
       if (dead_player || dead_replay) {
@@ -675,6 +682,12 @@
       this.ctx.translate(this.canvas_width / 2, this.canvas_height / 2);
       this.ctx.scale(this.camera.scale.x, this.camera.scale.y);
       this.ctx.translate(-this.camera.target().x, -this.camera.target().y - 0.25);
+      this.camera.container.x = this.canvas_width / 2;
+      this.camera.container.y = this.canvas_height / 2;
+      this.camera.container.scale.x = this.camera.scale.x;
+      this.camera.container.scale.y = -this.camera.scale.y;
+      this.camera.container2.x = -this.camera.target().x;
+      this.camera.container2.y = this.camera.target().y + 0.25;
       this.entities.display_items();
       if (this.options.playable) {
         this.moto.display();
@@ -848,7 +861,8 @@
   })();
 
   $.xmoto = function(level_filename, options) {
-    var initialize, level;
+    var initialize, level,
+      _this = this;
     if (options == null) {
       options = {};
     }
@@ -875,18 +889,22 @@
     $(options.loading).show();
     level = new Level(options);
     level.load_from_file(level_filename);
+    this.renderer = new PIXI.autoDetectRenderer(1000, 600, {
+      antialias: true,
+      backgroundColor: 0xFFFFFF
+    });
+    $('#xmoto-pixi')[0].appendChild(this.renderer.view);
     return level.assets.load(function() {
       var update;
+      level.init();
+      window.cancelAnimationFrame(window.game_loop);
+      $(options.loading).hide();
       update = function() {
         level.physics.update();
         level.display();
-        return window.game_loop = window.requestAnimationFrame(update);
+        window.game_loop = requestAnimationFrame(update);
+        return _this.renderer.render(level.stage);
       };
-      level.start_time = new Date().getTime();
-      level.current_time = 0;
-      level.physics.init();
-      window.cancelAnimationFrame(window.game_loop);
-      $(options.loading).hide();
       return update();
     });
   };
@@ -2051,6 +2069,17 @@
       this.load_replays();
     }
 
+    Ghosts.prototype.load_assets = function() {
+      var part, parts, _i, _len, _results;
+      parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
+      _results = [];
+      for (_i = 0, _len = parts.length; _i < _len; _i++) {
+        part = parts[_i];
+        _results.push(this.assets.moto.push(part.ghost_texture));
+      }
+      return _results;
+    };
+
     Ghosts.prototype.all_ghosts = function() {
       var ghosts;
       ghosts = [];
@@ -2060,19 +2089,16 @@
     };
 
     Ghosts.prototype.init = function() {
-      var ghost, part, parts, _i, _j, _len, _len1, _ref, _results;
+      var ghost, _i, _len, _ref, _results;
       _ref = this.all_ghosts();
+      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         ghost = _ref[_i];
         if (ghost.replay) {
-          ghost.init();
+          _results.push(ghost.init());
+        } else {
+          _results.push(void 0);
         }
-      }
-      parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
-      _results = [];
-      for (_j = 0, _len1 = parts.length; _j < _len1; _j++) {
-        part = parts[_j];
-        _results.push(this.assets.moto.push(part.ghost_texture));
       }
       return _results;
     };
@@ -2181,10 +2207,15 @@
       this.world.DestroyBody(this.left_wheel);
       this.world.DestroyBody(this.right_wheel);
       this.world.DestroyBody(this.left_axle);
-      return this.world.DestroyBody(this.right_axle);
+      this.world.DestroyBody(this.right_axle);
+      this.level.camera.container2.removeChild(this.body_sprite);
+      this.level.camera.container2.removeChild(this.left_wheel_sprite);
+      this.level.camera.container2.removeChild(this.right_wheel_sprite);
+      this.level.camera.container2.removeChild(this.left_axle_sprite);
+      return this.level.camera.container2.removeChild(this.right_axle_sprite);
     };
 
-    Moto.prototype.init = function() {
+    Moto.prototype.load_assets = function() {
       var part, parts, _i, _len;
       parts = [Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
       for (_i = 0, _len = parts.length; _i < _len; _i++) {
@@ -2195,6 +2226,15 @@
           this.assets.moto.push(part.texture);
         }
       }
+      return this.rider.load_assets();
+    };
+
+    Moto.prototype.init = function() {
+      this.init_physics_parts();
+      return this.init_sprites();
+    };
+
+    Moto.prototype.init_physics_parts = function() {
       this.player_start = this.level.entities.player_start;
       this.body = this.create_body();
       this.left_wheel = this.create_wheel(Constants.left_wheel);
@@ -2205,7 +2245,23 @@
       this.right_revolute_joint = this.create_revolute_joint(this.right_axle, this.right_wheel);
       this.left_prismatic_joint = this.create_prismatic_joint(this.left_axle, Constants.left_suspension);
       this.right_prismatic_joint = this.create_prismatic_joint(this.right_axle, Constants.right_suspension);
-      return this.rider.init();
+      return this.rider.init_physics_parts();
+    };
+
+    Moto.prototype.init_sprites = function() {
+      var asset_name, part, _i, _len, _ref;
+      _ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        part = _ref[_i];
+        if (this.ghost) {
+          asset_name = Constants[part].ghost_texture;
+        } else {
+          asset_name = Constants[part].texture;
+        }
+        this["" + part + "_sprite"] = new PIXI.Sprite.fromImage(this.assets.get_url(asset_name));
+        this.level.camera.container2.addChild(this["" + part + "_sprite"]);
+      }
+      return this.rider.init_sprites();
     };
 
     Moto.prototype.move = function(input) {
@@ -2396,7 +2452,7 @@
     };
 
     Moto.prototype.display_wheel = function(part, part_constants) {
-      var angle, position, texture;
+      var angle, position, texture, wheel_sprite;
       position = part.GetPosition();
       angle = part.GetAngle();
       this.level.ctx.save();
@@ -2404,7 +2460,19 @@
       this.level.ctx.rotate(angle);
       texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
       this.level.ctx.drawImage(this.level.assets.get(texture), -part_constants.radius, -part_constants.radius, part_constants.radius * 2, part_constants.radius * 2);
-      return this.level.ctx.restore();
+      this.level.ctx.restore();
+      if (part_constants.position.x < 0) {
+        wheel_sprite = this.left_wheel_sprite;
+      } else {
+        wheel_sprite = this.right_wheel_sprite;
+      }
+      wheel_sprite.width = 2 * part_constants.radius * this.mirror;
+      wheel_sprite.height = 2 * part_constants.radius;
+      wheel_sprite.anchor.x = 0.5;
+      wheel_sprite.anchor.y = 0.5;
+      wheel_sprite.x = position.x;
+      wheel_sprite.y = -position.y;
+      return wheel_sprite.rotation = -angle;
     };
 
     Moto.prototype.display_body = function(part, part_constants) {
@@ -2417,7 +2485,14 @@
       this.level.ctx.rotate(this.mirror * (-angle));
       texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
       this.level.ctx.drawImage(this.level.assets.get(texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
-      return this.level.ctx.restore();
+      this.level.ctx.restore();
+      this.body_sprite.width = part_constants.texture_size.x * this.mirror;
+      this.body_sprite.height = part_constants.texture_size.y;
+      this.body_sprite.anchor.x = 0.5;
+      this.body_sprite.anchor.y = 0.5;
+      this.body_sprite.x = position.x;
+      this.body_sprite.y = -position.y;
+      return this.body_sprite.rotation = -angle;
     };
 
     Moto.prototype.display_left_axle = function(part, part_constants) {
@@ -2433,7 +2508,7 @@
         y: -0.30
       };
       texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
-      return this.display_axle_common(wheel_position, axle_position, axle_thickness, texture);
+      return this.display_axle_common(wheel_position, axle_position, axle_thickness, texture, 'left');
     };
 
     Moto.prototype.display_right_axle = function(part, part_constants) {
@@ -2449,11 +2524,11 @@
         y: 0.025
       };
       texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
-      return this.display_axle_common(wheel_position, axle_position, axle_thickness, texture);
+      return this.display_axle_common(wheel_position, axle_position, axle_thickness, texture, 'right');
     };
 
-    Moto.prototype.display_axle_common = function(wheel_position, axle_position, axle_thickness, texture) {
-      var angle, axle_adjusted_position, body_angle, body_position, distance;
+    Moto.prototype.display_axle_common = function(wheel_position, axle_position, axle_thickness, texture, side) {
+      var angle, axle_adjusted_position, axle_sprite, body_angle, body_position, distance;
       body_position = this.body.GetPosition();
       body_angle = this.body.GetAngle();
       axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position);
@@ -2464,7 +2539,15 @@
       this.level.ctx.scale(this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
       this.level.ctx.drawImage(this.level.assets.get(texture), 0.0, -axle_thickness / 2, distance, axle_thickness);
-      return this.level.ctx.restore();
+      this.level.ctx.restore();
+      axle_sprite = this["" + side + "_axle_sprite"];
+      axle_sprite.width = distance * this.mirror;
+      axle_sprite.height = axle_thickness;
+      axle_sprite.anchor.x = 0.0;
+      axle_sprite.anchor.y = 0.5;
+      axle_sprite.x = wheel_position.x;
+      axle_sprite.y = -wheel_position.y;
+      return axle_sprite.rotation = -angle;
     };
 
     return Moto;
@@ -2726,20 +2809,31 @@
       this.world.DestroyBody(this.lower_leg);
       this.world.DestroyBody(this.upper_leg);
       this.world.DestroyBody(this.lower_arm);
-      return this.world.DestroyBody(this.upper_arm);
+      this.world.DestroyBody(this.upper_arm);
+      this.level.camera.container2.removeChild(this.head_sprite);
+      this.level.camera.container2.removeChild(this.torso_sprite);
+      this.level.camera.container2.removeChild(this.lower_leg_sprite);
+      this.level.camera.container2.removeChild(this.upper_leg_sprite);
+      this.level.camera.container2.removeChild(this.lower_arm_sprite);
+      return this.level.camera.container2.removeChild(this.upper_arm_sprite);
     };
 
-    Rider.prototype.init = function() {
-      var part, parts, _i, _len;
+    Rider.prototype.load_assets = function() {
+      var part, parts, _i, _len, _results;
       parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm];
+      _results = [];
       for (_i = 0, _len = parts.length; _i < _len; _i++) {
         part = parts[_i];
         if (this.ghost) {
-          this.assets.moto.push(part.ghost_texture);
+          _results.push(this.assets.moto.push(part.ghost_texture));
         } else {
-          this.assets.moto.push(part.texture);
+          _results.push(this.assets.moto.push(part.texture));
         }
       }
+      return _results;
+    };
+
+    Rider.prototype.init_physics_parts = function() {
       this.player_start = this.level.entities.player_start;
       this.head = this.create_head();
       this.torso = this.create_part(Constants.torso, 'torso');
@@ -2754,6 +2848,24 @@
       this.elbow_joint = this.create_joint(Constants.elbow, this.upper_arm, this.lower_arm);
       this.shoulder_joint = this.create_joint(Constants.shoulder, this.upper_arm, this.torso, true);
       return this.hip_joint = this.create_joint(Constants.hip, this.upper_leg, this.torso, true);
+    };
+
+    Rider.prototype.init_sprites = function() {
+      var asset_name, part, _i, _len, _ref, _results;
+      _ref = ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        part = _ref[_i];
+        if (this.ghost) {
+          asset_name = Constants[part].ghost_texture;
+        } else {
+          asset_name = Constants[part].texture;
+        }
+        console.log(asset_name);
+        this["" + part + "_sprite"] = new PIXI.Sprite.fromImage(this.assets.get_url(asset_name));
+        _results.push(this.level.camera.container2.addChild(this["" + part + "_sprite"]));
+      }
+      return _results;
     };
 
     Rider.prototype.position = function() {
@@ -2869,15 +2981,16 @@
     };
 
     Rider.prototype.display = function() {
-      this.display_part(this.torso, Constants.torso);
-      this.display_part(this.upper_leg, Constants.upper_leg);
-      this.display_part(this.lower_leg, Constants.lower_leg);
-      this.display_part(this.upper_arm, Constants.upper_arm);
-      return this.display_part(this.lower_arm, Constants.lower_arm);
+      this.display_part(this.torso, 'torso');
+      this.display_part(this.upper_leg, 'upper_leg');
+      this.display_part(this.lower_leg, 'lower_leg');
+      this.display_part(this.upper_arm, 'upper_arm');
+      return this.display_part(this.lower_arm, 'lower_arm');
     };
 
-    Rider.prototype.display_part = function(part, part_constants) {
-      var angle, position, texture;
+    Rider.prototype.display_part = function(part, name) {
+      var angle, part_constants, position, sprite, texture;
+      part_constants = Constants[name];
       position = part.GetPosition();
       angle = part.GetAngle();
       texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
@@ -2886,7 +2999,15 @@
       this.level.ctx.scale(this.mirror, -1);
       this.level.ctx.rotate(this.mirror * (-angle));
       this.level.ctx.drawImage(this.level.assets.get(texture), -part_constants.texture_size.x / 2, -part_constants.texture_size.y / 2, part_constants.texture_size.x, part_constants.texture_size.y);
-      return this.level.ctx.restore();
+      this.level.ctx.restore();
+      sprite = this["" + name + "_sprite"];
+      sprite.width = part_constants.texture_size.x * this.mirror;
+      sprite.height = part_constants.texture_size.y;
+      sprite.anchor.x = 0.5;
+      sprite.anchor.y = 0.5;
+      sprite.x = position.x;
+      sprite.y = -position.y;
+      return sprite.rotation = -angle;
     };
 
     return Rider;
@@ -3137,7 +3258,7 @@
       this.effects = [];
       this.moto = [];
       this.sounds = [];
-      this.resources = [];
+      this.resources = {};
     }
 
     Assets.prototype.load = function(callback) {
@@ -3190,6 +3311,10 @@
 
     Assets.prototype.get = function(name) {
       return this.resources[name].data;
+    };
+
+    Assets.prototype.get_url = function(name) {
+      return this.resources[name].url;
     };
 
     Assets.prototype.remove_duplicate_textures = function(array) {
