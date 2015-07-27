@@ -68,10 +68,11 @@ class Level
     @limits       .parse(xml).init()
     @layer_offsets.parse(xml).init()
     @script       .parse(xml).init()
-    @entities     .parse(xml).init()
+    @entities     .parse(xml)
 
-    @moto.load_assets()
-    @ghosts.load_assets()
+    @entities.load_assets()
+    @moto    .load_assets()
+    @ghosts  .load_assets()
 
   init: ->
     @start_time   = new Date().getTime()
@@ -80,12 +81,12 @@ class Level
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height)
 
-    @moto.init()
-    @ghosts.init()
-
-    @physics.init()
-    @input.init()
-    @camera.init()
+    @entities .init()
+    @moto     .init()
+    @ghosts   .init()
+    @physics  .init()
+    @input    .init()
+    @camera   .init()
     @listeners.init()
 
   display: ->

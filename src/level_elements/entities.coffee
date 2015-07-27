@@ -25,7 +25,7 @@ class Entities
         position:
           x:     parseFloat($(xml_entity).find('position').attr('x'))
           y:     parseFloat($(xml_entity).find('position').attr('y'))
-          angle: parseFloat($(xml_entity).find('position').attr('angle'))
+          angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0
         params: []
 
       # parse params xml
@@ -58,7 +58,6 @@ class Entities
         entity.center.x    = entity.size.r     if not entity.center.x
         entity.center.y    = entity.size.r     if not entity.center.y
 
-
         entity.delay    = sprite.delay
         entity.frames   = sprite.frames
         entity.display  = true # if an entity has a texture, it needs to be displayed
@@ -69,15 +68,25 @@ class Entities
 
     return this
 
-  init: ->
+  load_assets: ->
     for entity in @list
-
       if entity.display
         if entity.frames == 0
           @assets.anims.push(entity.file)
         else
           for i in [0..entity.frames-1]
             @assets.anims.push(frame_name(entity, i))
+
+  init: ->
+    for entity in @list
+      if entity.frames > 0
+        for i in [0..entity.frames - 1]
+          entity["sprite_#{i}"] = new PIXI.Sprite.fromImage(@assets.get_url(frame_name(entity, i)))
+          @level.camera.container2.addChild(entity["sprite_#{i}"])
+      else
+        if entity.file
+          entity.sprite = new PIXI.Sprite.fromImage(@assets.get_url(entity.file))
+          @level.camera.container2.addChild(entity.sprite)
 
       # End of level
       if entity.type_id == 'EndOfLevel'
@@ -159,6 +168,29 @@ class Entities
                   entity.size.width,
                   entity.size.height)
     ctx.restore()
+
+    for entity in @list
+      if entity.frames > 0
+        for i in [0..entity.frames - 1]
+          if i != num
+            entity["sprite_#{i}"].x = -100000
+          else
+            entity["sprite_#{i}"].width    = entity.size.width
+            entity["sprite_#{i}"].height   = entity.size.height
+            entity["sprite_#{i}"].anchor.x = entity.center.x / entity.size.width
+            entity["sprite_#{i}"].anchor.y = 1 - (entity.center.y / entity.size.height)
+            entity["sprite_#{i}"].x        =  entity.position.x
+            entity["sprite_#{i}"].y        = -entity.position.y
+            entity["sprite_#{i}"].rotation = -entity.position.angle
+      else
+        if entity.file
+          entity.sprite.width    = entity.size.width
+          entity.sprite.height   = entity.size.height
+          entity.sprite.anchor.x = entity.center.x / entity.size.width
+          entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height)
+          entity.sprite.x        =  entity.position.x
+          entity.sprite.y        = -entity.position.y
+          entity.sprite.rotation = -entity.position.angle
 
   entity_texture_name: (entity) ->
     if entity.type_id == 'Sprite'

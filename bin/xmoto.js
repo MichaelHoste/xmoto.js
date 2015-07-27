@@ -647,7 +647,8 @@
       this.limits.parse(xml).init();
       this.layer_offsets.parse(xml).init();
       this.script.parse(xml).init();
-      this.entities.parse(xml).init();
+      this.entities.parse(xml);
+      this.entities.load_assets();
       this.moto.load_assets();
       return this.ghosts.load_assets();
     };
@@ -657,6 +658,7 @@
       this.current_time = 0;
       this.canvas_width = parseFloat(this.canvas.width);
       this.canvas_height = parseFloat(this.canvas.height);
+      this.entities.init();
       this.moto.init();
       this.ghosts.init();
       this.physics.init();
@@ -1459,7 +1461,7 @@
           position: {
             x: parseFloat($(xml_entity).find('position').attr('x')),
             y: parseFloat($(xml_entity).find('position').attr('y')),
-            angle: parseFloat($(xml_entity).find('position').attr('angle'))
+            angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0
           },
           params: []
         };
@@ -1516,19 +1518,47 @@
       return this;
     };
 
-    Entities.prototype.init = function() {
-      var entity, i, _i, _j, _len, _ref, _ref1, _results;
+    Entities.prototype.load_assets = function() {
+      var entity, i, _i, _len, _ref, _results;
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
         if (entity.display) {
           if (entity.frames === 0) {
-            this.assets.anims.push(entity.file);
+            _results.push(this.assets.anims.push(entity.file));
           } else {
-            for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-              this.assets.anims.push(frame_name(entity, i));
-            }
+            _results.push((function() {
+              var _j, _ref1, _results1;
+              _results1 = [];
+              for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+                _results1.push(this.assets.anims.push(frame_name(entity, i)));
+              }
+              return _results1;
+            }).call(this));
+          }
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Entities.prototype.init = function() {
+      var entity, i, _i, _j, _len, _ref, _ref1, _results;
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        entity = _ref[_i];
+        if (entity.frames > 0) {
+          for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+            entity["sprite_" + i] = new PIXI.Sprite.fromImage(this.assets.get_url(frame_name(entity, i)));
+            this.level.camera.container2.addChild(entity["sprite_" + i]);
+          }
+        } else {
+          if (entity.file) {
+            entity.sprite = new PIXI.Sprite.fromImage(this.assets.get_url(entity.file));
+            this.level.camera.container2.addChild(entity.sprite);
           }
         }
         if (entity.type_id === 'EndOfLevel') {
@@ -1616,7 +1646,7 @@
     };
 
     Entities.prototype.display_entity = function(ctx, entity) {
-      var num, texture_name;
+      var i, num, texture_name, _i, _len, _ref, _results;
       if (entity.frames) {
         num = this.level.current_time % (entity.frames * entity.delay * 1000);
         num = Math.floor(num / (entity.delay * 1000));
@@ -1628,7 +1658,45 @@
       ctx.translate(entity.position.x, entity.position.y);
       ctx.scale(1, -1);
       ctx.drawImage(this.assets.get(texture_name), -entity.size.width + entity.center.x, -entity.size.height + entity.center.y, entity.size.width, entity.size.height);
-      return ctx.restore();
+      ctx.restore();
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        entity = _ref[_i];
+        if (entity.frames > 0) {
+          _results.push((function() {
+            var _j, _ref1, _results1;
+            _results1 = [];
+            for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+              if (i !== num) {
+                _results1.push(entity["sprite_" + i].x = -100000);
+              } else {
+                entity["sprite_" + i].width = entity.size.width;
+                entity["sprite_" + i].height = entity.size.height;
+                entity["sprite_" + i].anchor.x = entity.center.x / entity.size.width;
+                entity["sprite_" + i].anchor.y = 1 - (entity.center.y / entity.size.height);
+                entity["sprite_" + i].x = entity.position.x;
+                entity["sprite_" + i].y = -entity.position.y;
+                _results1.push(entity["sprite_" + i].rotation = -entity.position.angle);
+              }
+            }
+            return _results1;
+          })());
+        } else {
+          if (entity.file) {
+            entity.sprite.width = entity.size.width;
+            entity.sprite.height = entity.size.height;
+            entity.sprite.anchor.x = entity.center.x / entity.size.width;
+            entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height);
+            entity.sprite.x = entity.position.x;
+            entity.sprite.y = -entity.position.y;
+            _results.push(entity.sprite.rotation = -entity.position.angle);
+          } else {
+            _results.push(void 0);
+          }
+        }
+      }
+      return _results;
     };
 
     Entities.prototype.entity_texture_name = function(entity) {
