@@ -60,6 +60,7 @@ class Entities
 
         entity.delay    = sprite.delay
         entity.frames   = sprite.frames
+        console.log sprite
         entity.display  = true # if an entity has a texture, it needs to be displayed
 
         entity.aabb = entity_AABB(entity)
@@ -78,16 +79,11 @@ class Entities
             @assets.anims.push(frame_name(entity, i))
 
   init: ->
-    for entity in @list
-      if entity.frames > 0
-        for i in [0..entity.frames - 1]
-          entity["sprite_#{i}"] = new PIXI.Sprite.fromImage(@assets.get_url(frame_name(entity, i)))
-          @level.camera.container2.addChild(entity["sprite_#{i}"])
-      else
-        if entity.file
-          entity.sprite = new PIXI.Sprite.fromImage(@assets.get_url(entity.file))
-          @level.camera.container2.addChild(entity.sprite)
+    @init_physics_parts()
+    @init_sprites()
 
+  init_physics_parts: ->
+    for entity in @list
       # End of level
       if entity.type_id == 'EndOfLevel'
         @create_entity(entity, 'end_of_level')
@@ -107,6 +103,22 @@ class Entities
         @player_start =
           x: entity.position.x
           y: entity.position.y
+
+  init_sprites: ->
+    for entity in @list
+      if entity.frames > 0
+        textures = []
+        for i in [0..entity.frames - 1]
+          textures.push(PIXI.Texture.fromImage(@assets.get_url(frame_name(entity, i))))
+
+        entity.sprite = new PIXI.extras.MovieClip(textures)
+        entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay
+        entity.sprite.play()
+        @level.camera.container2.addChild(entity.sprite)
+      else
+        if entity.file
+          entity.sprite = new PIXI.Sprite.fromImage(@assets.get_url(entity.file))
+          @level.camera.container2.addChild(entity.sprite)
 
   create_entity: (entity, name) ->
     # Create fixture
@@ -140,6 +152,8 @@ class Entities
       if entity.type_id == 'Sprite'
         if visible_entity(@level.buffer.visible, entity)
           @display_entity(ctx, entity)
+        else
+          entity.sprite.position.x = -10000
 
   display_items : ->
     return false if Constants.debug
@@ -150,6 +164,8 @@ class Entities
       if entity.type_id == 'EndOfLevel' or entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
         if visible_entity(@level.visible, entity)
           @display_entity(ctx, entity)
+        else
+          entity.sprite.position.x = -10000
 
   display_entity: (ctx, entity) ->
     if entity.frames
@@ -171,17 +187,13 @@ class Entities
 
     for entity in @list
       if entity.frames > 0
-        for i in [0..entity.frames - 1]
-          if i != num
-            entity["sprite_#{i}"].x = -100000
-          else
-            entity["sprite_#{i}"].width    = entity.size.width
-            entity["sprite_#{i}"].height   = entity.size.height
-            entity["sprite_#{i}"].anchor.x = entity.center.x / entity.size.width
-            entity["sprite_#{i}"].anchor.y = 1 - (entity.center.y / entity.size.height)
-            entity["sprite_#{i}"].x        =  entity.position.x
-            entity["sprite_#{i}"].y        = -entity.position.y
-            entity["sprite_#{i}"].rotation = -entity.position.angle
+        entity.sprite.width    = entity.size.width
+        entity.sprite.height   = entity.size.height
+        entity.sprite.anchor.x = entity.center.x / entity.size.width
+        entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height)
+        entity.sprite.x        =  entity.position.x
+        entity.sprite.y        = -entity.position.y
+        entity.sprite.rotation = -entity.position.angle
       else
         if entity.file
           entity.sprite.width    = entity.size.width

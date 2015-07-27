@@ -1510,6 +1510,7 @@
           }
           entity.delay = sprite.delay;
           entity.frames = sprite.frames;
+          console.log(sprite);
           entity.display = true;
           entity.aabb = entity_AABB(entity);
         }
@@ -1545,22 +1546,16 @@
     };
 
     Entities.prototype.init = function() {
-      var entity, i, _i, _j, _len, _ref, _ref1, _results;
+      this.init_physics_parts();
+      return this.init_sprites();
+    };
+
+    Entities.prototype.init_physics_parts = function() {
+      var entity, _i, _len, _ref, _results;
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
-        if (entity.frames > 0) {
-          for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-            entity["sprite_" + i] = new PIXI.Sprite.fromImage(this.assets.get_url(frame_name(entity, i)));
-            this.level.camera.container2.addChild(entity["sprite_" + i]);
-          }
-        } else {
-          if (entity.file) {
-            entity.sprite = new PIXI.Sprite.fromImage(this.assets.get_url(entity.file));
-            this.level.camera.container2.addChild(entity.sprite);
-          }
-        }
         if (entity.type_id === 'EndOfLevel') {
           this.create_entity(entity, 'end_of_level');
           _results.push(this.end_of_level = entity);
@@ -1577,6 +1572,33 @@
           });
         } else {
           _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Entities.prototype.init_sprites = function() {
+      var entity, i, textures, _i, _j, _len, _ref, _ref1, _results;
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        entity = _ref[_i];
+        if (entity.frames > 0) {
+          textures = [];
+          for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+            textures.push(PIXI.Texture.fromImage(this.assets.get_url(frame_name(entity, i))));
+          }
+          entity.sprite = new PIXI.extras.MovieClip(textures);
+          entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay;
+          entity.sprite.play();
+          _results.push(this.level.camera.container2.addChild(entity.sprite));
+        } else {
+          if (entity.file) {
+            entity.sprite = new PIXI.Sprite.fromImage(this.assets.get_url(entity.file));
+            _results.push(this.level.camera.container2.addChild(entity.sprite));
+          } else {
+            _results.push(void 0);
+          }
         }
       }
       return _results;
@@ -1613,7 +1635,7 @@
           if (visible_entity(this.level.buffer.visible, entity)) {
             _results.push(this.display_entity(ctx, entity));
           } else {
-            _results.push(void 0);
+            _results.push(entity.sprite.position.x = -10000);
           }
         } else {
           _results.push(void 0);
@@ -1636,7 +1658,7 @@
           if (visible_entity(this.level.visible, entity)) {
             _results.push(this.display_entity(ctx, entity));
           } else {
-            _results.push(void 0);
+            _results.push(entity.sprite.position.x = -10000);
           }
         } else {
           _results.push(void 0);
@@ -1646,7 +1668,7 @@
     };
 
     Entities.prototype.display_entity = function(ctx, entity) {
-      var i, num, texture_name, _i, _len, _ref, _results;
+      var num, texture_name, _i, _len, _ref, _results;
       if (entity.frames) {
         num = this.level.current_time % (entity.frames * entity.delay * 1000);
         num = Math.floor(num / (entity.delay * 1000));
@@ -1664,24 +1686,13 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
         if (entity.frames > 0) {
-          _results.push((function() {
-            var _j, _ref1, _results1;
-            _results1 = [];
-            for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-              if (i !== num) {
-                _results1.push(entity["sprite_" + i].x = -100000);
-              } else {
-                entity["sprite_" + i].width = entity.size.width;
-                entity["sprite_" + i].height = entity.size.height;
-                entity["sprite_" + i].anchor.x = entity.center.x / entity.size.width;
-                entity["sprite_" + i].anchor.y = 1 - (entity.center.y / entity.size.height);
-                entity["sprite_" + i].x = entity.position.x;
-                entity["sprite_" + i].y = -entity.position.y;
-                _results1.push(entity["sprite_" + i].rotation = -entity.position.angle);
-              }
-            }
-            return _results1;
-          })());
+          entity.sprite.width = entity.size.width;
+          entity.sprite.height = entity.size.height;
+          entity.sprite.anchor.x = entity.center.x / entity.size.width;
+          entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height);
+          entity.sprite.x = entity.position.x;
+          entity.sprite.y = -entity.position.y;
+          _results.push(entity.sprite.rotation = -entity.position.angle);
         } else {
           if (entity.file) {
             entity.sprite.width = entity.size.width;
