@@ -63,13 +63,14 @@ class Level
   load_level: (xml) ->
     # Level dependent objects
     @infos        .parse(xml).init()
-    @sky          .parse(xml).init()
+    @sky          .parse(xml)
     @blocks       .parse(xml).init()
     @limits       .parse(xml).init()
     @layer_offsets.parse(xml).init()
     @script       .parse(xml).init()
     @entities     .parse(xml)
 
+    @sky     .load_assets()
     @entities.load_assets()
     @moto    .load_assets()
     @ghosts  .load_assets()
@@ -81,6 +82,7 @@ class Level
     @canvas_width  = parseFloat(@canvas.width)
     @canvas_height = parseFloat(@canvas.height)
 
+    @sky      .init()
     @entities .init()
     @moto     .init()
     @ghosts   .init()
@@ -120,9 +122,6 @@ class Level
 
     @camera.container2.x = -@camera.target().x
     @camera.container2.y = @camera.target().y + 0.25
-
-    #@camera.container.x = @camera.target().x
-    #@camera.container.y = @camera.target().y - 0.25
 
     # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
     @entities.display_items()

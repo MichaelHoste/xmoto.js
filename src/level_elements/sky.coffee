@@ -15,13 +15,23 @@ class Sky
     @zoom      = parseFloat(xml_sky.attr('zoom'))
     @offset    = parseFloat(xml_sky.attr('offset'))
 
-    @name = 'sky1' if @name == ''
+    @name      = 'sky1' if @name == ''
     @file_name = @theme.texture_params(@name).file
 
     return this
 
-  init: ->
+  load_assets: ->
     @assets.textures.push(@file_name)
+
+  init: ->
+    @init_sprites()
+
+  init_sprites: ->
+    texture = PIXI.Texture.fromImage(@assets.get_url(@file_name))
+    @sprite = new PIXI.extras.TilingSprite(texture, @level.canvas_width, @level.canvas_height)
+    @sprite.position.x = -@level.canvas_width / 2
+    @sprite.position.y = -@level.canvas_height / 2
+    @level.camera.container.addChildAt(@sprite, 0)
 
   display: ->
     ctx = @level.ctx
@@ -43,3 +53,9 @@ class Sky
       ctx.fillStyle = ctx.createPattern(@assets.get(@file_name), "repeat")
       ctx.fill()
       ctx.restore()
+
+    @sprite.tileScale.x = 0.07
+    @sprite.tileScale.y = 0.07
+
+    @sprite.tilePosition.x = -@level.camera.target().x / 4
+    @sprite.tilePosition.y =  @level.camera.target().y / 2

@@ -126,9 +126,9 @@
         y: 0
       };
       this.container = new PIXI.Container();
-      this.level.stage.addChild(this.container);
       this.container2 = new PIXI.Container();
       this.container.addChild(this.container2);
+      this.level.stage.addChild(this.container);
     }
 
     Camera.prototype.init = function() {
@@ -642,12 +642,13 @@
 
     Level.prototype.load_level = function(xml) {
       this.infos.parse(xml).init();
-      this.sky.parse(xml).init();
+      this.sky.parse(xml);
       this.blocks.parse(xml).init();
       this.limits.parse(xml).init();
       this.layer_offsets.parse(xml).init();
       this.script.parse(xml).init();
       this.entities.parse(xml);
+      this.sky.load_assets();
       this.entities.load_assets();
       this.moto.load_assets();
       return this.ghosts.load_assets();
@@ -658,6 +659,7 @@
       this.current_time = 0;
       this.canvas_width = parseFloat(this.canvas.width);
       this.canvas_height = parseFloat(this.canvas.height);
+      this.sky.init();
       this.entities.init();
       this.moto.init();
       this.ghosts.init();
@@ -863,7 +865,7 @@
   })();
 
   $.xmoto = function(level_filename, options) {
-    var initialize, level,
+    var initialize, level, renderer,
       _this = this;
     if (options == null) {
       options = {};
@@ -889,13 +891,13 @@
       y: -options.zoom
     };
     $(options.loading).show();
-    level = new Level(options);
-    level.load_from_file(level_filename);
-    this.renderer = new PIXI.autoDetectRenderer(1000, 600, {
+    renderer = new PIXI.autoDetectRenderer(1000, 600, {
       antialias: true,
       backgroundColor: 0xFFFFFF
     });
-    $('#xmoto-pixi')[0].appendChild(this.renderer.view);
+    $('#xmoto-pixi')[0].appendChild(renderer.view);
+    level = new Level(options);
+    level.load_from_file(level_filename);
     return level.assets.load(function() {
       var update;
       level.init();
@@ -905,7 +907,7 @@
         level.physics.update();
         level.display();
         window.game_loop = requestAnimationFrame(update);
-        return _this.renderer.render(level.stage);
+        return renderer.render(level.stage);
       };
       return update();
     });
@@ -2030,8 +2032,21 @@
       return this;
     };
 
-    Sky.prototype.init = function() {
+    Sky.prototype.load_assets = function() {
       return this.assets.textures.push(this.file_name);
+    };
+
+    Sky.prototype.init = function() {
+      return this.init_sprites();
+    };
+
+    Sky.prototype.init_sprites = function() {
+      var texture;
+      texture = PIXI.Texture.fromImage(this.assets.get_url(this.file_name));
+      this.sprite = new PIXI.extras.TilingSprite(texture, this.level.canvas_width, this.level.canvas_height);
+      this.sprite.position.x = -this.level.canvas_width / 2;
+      this.sprite.position.y = -this.level.canvas_height / 2;
+      return this.level.camera.container.addChildAt(this.sprite, 0);
     };
 
     Sky.prototype.display = function() {
@@ -2045,15 +2060,19 @@
       ctx.closePath();
       if (Constants.debug) {
         ctx.fillStyle = "#222228";
-        return ctx.fill();
+        ctx.fill();
       } else {
         ctx.save();
         ctx.scale(4.0, 4.0);
         ctx.translate(-this.level.camera.target().x * 4, this.level.camera.target().y * 2);
         ctx.fillStyle = ctx.createPattern(this.assets.get(this.file_name), "repeat");
         ctx.fill();
-        return ctx.restore();
+        ctx.restore();
       }
+      this.sprite.tileScale.x = 0.07;
+      this.sprite.tileScale.y = 0.07;
+      this.sprite.tilePosition.x = -this.level.camera.target().x / 4;
+      return this.sprite.tilePosition.y = this.level.camera.target().y / 2;
     };
 
     return Sky;

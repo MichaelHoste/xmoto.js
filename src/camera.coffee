@@ -13,11 +13,11 @@ class Camera
       x: 0
       y: 0
 
-    @container = new PIXI.Container()
-    @level.stage.addChild(@container)
-
+    @container  = new PIXI.Container()
     @container2 = new PIXI.Container()
+
     @container.addChild(@container2)
+    @level.stage.addChild(@container)
 
   init: ->
     if Constants.manual_scale
