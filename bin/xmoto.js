@@ -2044,9 +2044,9 @@
       var texture;
       texture = PIXI.Texture.fromImage(this.assets.get_url(this.file_name));
       this.sprite = new PIXI.extras.TilingSprite(texture, this.level.canvas_width, this.level.canvas_height);
-      this.sprite.position.x = -this.level.canvas_width / 2;
-      this.sprite.position.y = -this.level.canvas_height / 2;
-      return this.level.camera.container.addChildAt(this.sprite, 0);
+      this.sprite.position.x = 0;
+      this.sprite.position.y = 0;
+      return this.level.stage.addChildAt(this.sprite, 0);
     };
 
     Sky.prototype.display = function() {
@@ -2069,10 +2069,10 @@
         ctx.fill();
         ctx.restore();
       }
-      this.sprite.tileScale.x = 0.07;
-      this.sprite.tileScale.y = 0.07;
-      this.sprite.tilePosition.x = -this.level.camera.target().x / 4;
-      return this.sprite.tilePosition.y = this.level.camera.target().y / 2;
+      this.sprite.tileScale.x = 4;
+      this.sprite.tileScale.y = 4;
+      this.sprite.tilePosition.x = -this.level.camera.target().x * 15;
+      return this.sprite.tilePosition.y = this.level.camera.target().y * 7;
     };
 
     return Sky;

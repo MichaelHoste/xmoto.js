@@ -29,9 +29,9 @@ class Sky
   init_sprites: ->
     texture = PIXI.Texture.fromImage(@assets.get_url(@file_name))
     @sprite = new PIXI.extras.TilingSprite(texture, @level.canvas_width, @level.canvas_height)
-    @sprite.position.x = -@level.canvas_width / 2
-    @sprite.position.y = -@level.canvas_height / 2
-    @level.camera.container.addChildAt(@sprite, 0)
+    @sprite.position.x = 0
+    @sprite.position.y = 0
+    @level.stage.addChildAt(@sprite, 0)
 
   display: ->
     ctx = @level.ctx
@@ -54,8 +54,8 @@ class Sky
       ctx.fill()
       ctx.restore()
 
-    @sprite.tileScale.x = 0.07
-    @sprite.tileScale.y = 0.07
+    @sprite.tileScale.x = 4
+    @sprite.tileScale.y = 4
 
-    @sprite.tilePosition.x = -@level.camera.target().x / 4
-    @sprite.tilePosition.y =  @level.camera.target().y / 2
+    @sprite.tilePosition.x = -@level.camera.target().x * 15
+    @sprite.tilePosition.y =  @level.camera.target().y * 7
