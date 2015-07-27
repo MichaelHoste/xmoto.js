@@ -96,15 +96,35 @@ class Blocks
   init_sprites: ->
     # draw back blocks before front blocks
     for block in @back_list.concat(@front_list)
+      # Create mask
+      points = []
+
+      for vertex, i in block.vertices
+        points.push(new PIXI.Point(vertex.x, -vertex.y))
+
+      mask = new PIXI.Graphics()
+      mask.beginFill(0x8bc5ff, 0.4)
+      mask.drawPolygon(points)
+      mask.x =  block.position.x
+      mask.y = -block.position.y
+      @level.camera.container2.addChild(mask)
+      #mask.anchor.x   =     Math.abs(block.aabb.lowerBound.x) / size_x
+      #mask.anchor.y   = 1 - Math.abs(block.aabb.lowerBound.y) / size_y
+
+      # Create tilingSprite
       texture = PIXI.Texture.fromImage(@assets.get_url(block.texture_name))
       size_x  = block.aabb.upperBound.x - block.aabb.lowerBound.x
       size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
 
       @sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
-      @sprite.position.x =  block.position.x
-      @sprite.position.y = -block.position.y
+      @sprite.x =  block.position.x
+      @sprite.y = -block.position.y
       @sprite.anchor.x   =     Math.abs(block.aabb.lowerBound.x) / size_x
       @sprite.anchor.y   = 1 - Math.abs(block.aabb.lowerBound.y) / size_y
+      @sprite.tileScale.x = 1.0/40
+      @sprite.tileScale.y = 1.0/40
+      @sprite.mask = mask
+
       @level.camera.container2.addChild(@sprite)
 
   display: (ctx) ->
