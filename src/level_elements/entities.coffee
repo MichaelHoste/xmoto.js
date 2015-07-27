@@ -60,7 +60,6 @@ class Entities
 
         entity.delay    = sprite.delay
         entity.frames   = sprite.frames
-        console.log sprite
         entity.display  = true # if an entity has a texture, it needs to be displayed
 
         entity.aabb = entity_AABB(entity)

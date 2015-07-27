@@ -67,7 +67,6 @@ class Rider
       else
         asset_name = Constants[part].texture
 
-      console.log asset_name
       @["#{part}_sprite"] = new PIXI.Sprite.fromImage(@assets.get_url(asset_name))
       @level.camera.container2.addChild(@["#{part}_sprite"])
 

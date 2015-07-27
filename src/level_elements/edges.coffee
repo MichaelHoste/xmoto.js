@@ -3,20 +3,15 @@ b2AABB          = Box2D.Collision.b2AABB
 
 class Edges
 
-  constructor: (level, blocks) ->
+  constructor: (level) ->
     @level  = level
     @assets = @level.assets
     @theme  = @assets.theme
-    @blocks = blocks
 
     @list   = [] # List of edges
 
-    # Assets
-    for block in @blocks
-      for vertex in block.vertices
-        if vertex.edge
-          texture_file = @theme.edge_params(vertex.edge).file
-          @assets.effects.push(texture_file)
+  parse: (blocks) ->
+    @blocks = blocks
 
     # Create edges
     for block in @blocks
@@ -36,6 +31,19 @@ class Edges
           edge.aabb = edge_AABB(edge)
 
           @list.push(edge)
+
+  load_assets: ->
+    for block in @blocks
+      for vertex in block.vertices
+        if vertex.edge
+          texture_file = @theme.edge_params(vertex.edge).file
+          @assets.effects.push(texture_file)
+
+  init_physics_parts: ->
+    ;
+
+  init_sprites: ->
+    ;
 
   # only display edges present on the screen zone
   display: (ctx) ->

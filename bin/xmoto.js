@@ -643,12 +643,13 @@
     Level.prototype.load_level = function(xml) {
       this.infos.parse(xml).init();
       this.sky.parse(xml);
-      this.blocks.parse(xml).init();
+      this.blocks.parse(xml);
       this.limits.parse(xml).init();
       this.layer_offsets.parse(xml).init();
       this.script.parse(xml).init();
       this.entities.parse(xml);
       this.sky.load_assets();
+      this.blocks.load_assets();
       this.entities.load_assets();
       this.moto.load_assets();
       return this.ghosts.load_assets();
@@ -660,6 +661,7 @@
       this.canvas_width = parseFloat(this.canvas.width);
       this.canvas_height = parseFloat(this.canvas.height);
       this.sky.init();
+      this.blocks.init();
       this.entities.init();
       this.moto.init();
       this.ghosts.init();
@@ -1123,6 +1125,7 @@
       this.list = [];
       this.back_list = [];
       this.front_list = [];
+      this.edges = new Edges(this.level);
     }
 
     Blocks.prototype.parse = function(xml) {
@@ -1193,24 +1196,54 @@
       this.list.sort(sort_blocks_by_texture);
       this.back_list.sort(sort_blocks_by_texture);
       this.front_list.sort(sort_blocks_by_texture);
+      this.edges.parse(this.list);
       return this;
     };
 
-    Blocks.prototype.init = function() {
-      var block, ground, texture_file, _i, _j, _len, _len1, _ref, _ref1;
+    Blocks.prototype.load_assets = function() {
+      var block, _i, _len, _ref;
       _ref = this.list;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
-        texture_file = block.texture_name;
-        this.assets.textures.push(texture_file);
+        this.assets.textures.push(block.texture_name);
       }
+      return this.edges.load_assets();
+    };
+
+    Blocks.prototype.init = function() {
+      this.init_physics_parts();
+      return this.init_sprites();
+    };
+
+    Blocks.prototype.init_physics_parts = function() {
+      var block, ground, _i, _len, _ref, _results;
       ground = Constants.ground;
-      _ref1 = this.front_list;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        block = _ref1[_j];
-        this.level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction);
+      _ref = this.front_list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        block = _ref[_i];
+        _results.push(this.level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction));
       }
-      return this.edges = new Edges(this.level, this.list);
+      return _results;
+    };
+
+    Blocks.prototype.init_sprites = function() {
+      var block, size_x, size_y, texture, _i, _len, _ref, _results;
+      _ref = this.back_list.concat(this.front_list);
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        block = _ref[_i];
+        texture = PIXI.Texture.fromImage(this.assets.get_url(block.texture_name));
+        size_x = block.aabb.upperBound.x - block.aabb.lowerBound.x;
+        size_y = block.aabb.upperBound.y - block.aabb.lowerBound.y;
+        this.sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y);
+        this.sprite.position.x = block.position.x;
+        this.sprite.position.y = -block.position.y;
+        this.sprite.anchor.x = Math.abs(block.aabb.lowerBound.x) / size_x;
+        this.sprite.anchor.y = 1 - Math.abs(block.aabb.lowerBound.y) / size_y;
+        _results.push(this.level.camera.container2.addChild(this.sprite));
+      }
+      return _results;
     };
 
     Blocks.prototype.display = function(ctx) {
@@ -1257,26 +1290,26 @@
       vertex = _ref[_i];
       if (first) {
         lower_bound = {
-          x: vertex.absolute_x,
-          y: vertex.absolute_y
+          x: vertex.x,
+          y: vertex.y
         };
         upper_bound = {
-          x: vertex.absolute_x,
-          y: vertex.absolute_y
+          x: vertex.x,
+          y: vertex.y
         };
         first = false;
       } else {
-        if (vertex.absolute_x < lower_bound.x) {
-          lower_bound.x = vertex.absolute_x;
+        if (vertex.x < lower_bound.x) {
+          lower_bound.x = vertex.x;
         }
-        if (vertex.absolute_y < lower_bound.y) {
-          lower_bound.y = vertex.absolute_y;
+        if (vertex.y < lower_bound.y) {
+          lower_bound.y = vertex.y;
         }
-        if (vertex.absolute_x > upper_bound.x) {
-          upper_bound.x = vertex.absolute_x;
+        if (vertex.x > upper_bound.x) {
+          upper_bound.x = vertex.x;
         }
-        if (vertex.absolute_y > upper_bound.y) {
-          upper_bound.y = vertex.absolute_y;
+        if (vertex.y > upper_bound.y) {
+          upper_bound.y = vertex.y;
         }
       }
     }
@@ -1305,61 +1338,90 @@
   b2AABB = Box2D.Collision.b2AABB;
 
   Edges = (function() {
-    function Edges(level, blocks) {
-      var block, edge, i, texture_file, vertex, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
+    function Edges(level) {
       this.level = level;
       this.assets = this.level.assets;
       this.theme = this.assets.theme;
-      this.blocks = blocks;
       this.list = [];
+    }
+
+    Edges.prototype.parse = function(blocks) {
+      var block, edge, i, vertex, _i, _len, _ref, _results;
+      this.blocks = blocks;
       _ref = this.blocks;
+      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
-        _ref1 = block.vertices;
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          vertex = _ref1[_j];
-          if (vertex.edge) {
-            texture_file = this.theme.edge_params(vertex.edge).file;
-            this.assets.effects.push(texture_file);
+        _results.push((function() {
+          var _j, _len1, _ref1, _results1;
+          _ref1 = block.vertices;
+          _results1 = [];
+          for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+            vertex = _ref1[i];
+            if (vertex.edge) {
+              edge = {
+                vertex1: vertex,
+                vertex2: i === block.vertices.length - 1 ? block.vertices[0] : block.vertices[i + 1],
+                block: block,
+                texture: vertex.edge,
+                theme: this.theme.edge_params(vertex.edge)
+              };
+              edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
+              edge.vertices = [
+                {
+                  x: edge.vertex1.absolute_x,
+                  y: edge.vertex1.absolute_y - edge.theme.depth
+                }, {
+                  x: edge.vertex2.absolute_x,
+                  y: edge.vertex2.absolute_y - edge.theme.depth
+                }, {
+                  x: edge.vertex2.absolute_x,
+                  y: edge.vertex2.absolute_y
+                }, {
+                  x: edge.vertex1.absolute_x,
+                  y: edge.vertex1.absolute_y
+                }
+              ];
+              edge.aabb = edge_AABB(edge);
+              _results1.push(this.list.push(edge));
+            } else {
+              _results1.push(void 0);
+            }
           }
-        }
+          return _results1;
+        }).call(this));
       }
-      _ref2 = this.blocks;
-      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-        block = _ref2[_k];
-        _ref3 = block.vertices;
-        for (i = _l = 0, _len3 = _ref3.length; _l < _len3; i = ++_l) {
-          vertex = _ref3[i];
-          if (vertex.edge) {
-            edge = {
-              vertex1: vertex,
-              vertex2: i === block.vertices.length - 1 ? block.vertices[0] : block.vertices[i + 1],
-              block: block,
-              texture: vertex.edge,
-              theme: this.theme.edge_params(vertex.edge)
-            };
-            edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
-            edge.vertices = [
-              {
-                x: edge.vertex1.absolute_x,
-                y: edge.vertex1.absolute_y - edge.theme.depth
-              }, {
-                x: edge.vertex2.absolute_x,
-                y: edge.vertex2.absolute_y - edge.theme.depth
-              }, {
-                x: edge.vertex2.absolute_x,
-                y: edge.vertex2.absolute_y
-              }, {
-                x: edge.vertex1.absolute_x,
-                y: edge.vertex1.absolute_y
-              }
-            ];
-            edge.aabb = edge_AABB(edge);
-            this.list.push(edge);
+      return _results;
+    };
+
+    Edges.prototype.load_assets = function() {
+      var block, texture_file, vertex, _i, _len, _ref, _results;
+      _ref = this.blocks;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        block = _ref[_i];
+        _results.push((function() {
+          var _j, _len1, _ref1, _results1;
+          _ref1 = block.vertices;
+          _results1 = [];
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            vertex = _ref1[_j];
+            if (vertex.edge) {
+              texture_file = this.theme.edge_params(vertex.edge).file;
+              _results1.push(this.assets.effects.push(texture_file));
+            } else {
+              _results1.push(void 0);
+            }
           }
-        }
+          return _results1;
+        }).call(this));
       }
-    }
+      return _results;
+    };
+
+    Edges.prototype.init_physics_parts = function() {};
+
+    Edges.prototype.init_sprites = function() {};
 
     Edges.prototype.display = function(ctx) {
       var edge, _i, _len, _ref, _results;
@@ -1512,7 +1574,6 @@
           }
           entity.delay = sprite.delay;
           entity.frames = sprite.frames;
-          console.log(sprite);
           entity.display = true;
           entity.aabb = entity_AABB(entity);
         }
@@ -2959,7 +3020,6 @@
         } else {
           asset_name = Constants[part].texture;
         }
-        console.log(asset_name);
         this["" + part + "_sprite"] = new PIXI.Sprite.fromImage(this.assets.get_url(asset_name));
         _results.push(this.level.camera.container2.addChild(this["" + part + "_sprite"]));
       }

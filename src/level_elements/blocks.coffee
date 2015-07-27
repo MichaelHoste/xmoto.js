@@ -4,12 +4,14 @@ b2AABB = Box2D.Collision.b2AABB
 class Blocks
 
   constructor: (level) ->
-    @level  = level
-    @assets = level.assets
-    @theme  = @assets.theme
+    @level      = level
+    @assets     = level.assets
+    @theme      = @assets.theme
     @list       = [] # total list
     @back_list  = [] # background list
     @front_list = [] # front list (collisions)
+
+    @edges = new Edges(@level)
 
   parse: (xml) ->
     xml_blocks = $(xml).find('block')
@@ -72,21 +74,38 @@ class Blocks
     @back_list .sort( sort_blocks_by_texture )
     @front_list.sort( sort_blocks_by_texture )
 
+    @edges.parse(@list)
+
     return this
 
-  init: ->
-    # Assets
+  load_assets: ->
     for block in @list
-      texture_file = block.texture_name
-      @assets.textures.push(texture_file)
+      @assets.textures.push(block.texture_name)
 
-    # Collisions for blocks
+    @edges.load_assets()
+
+  init: ->
+    @init_physics_parts()
+    @init_sprites()
+
+  init_physics_parts: ->
     ground = Constants.ground
     for block in @front_list
       @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
-    # Init edges
-    @edges = new Edges(@level, @list)
+  init_sprites: ->
+    # draw back blocks before front blocks
+    for block in @back_list.concat(@front_list)
+      texture = PIXI.Texture.fromImage(@assets.get_url(block.texture_name))
+      size_x  = block.aabb.upperBound.x - block.aabb.lowerBound.x
+      size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
+
+      @sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
+      @sprite.position.x =  block.position.x
+      @sprite.position.y = -block.position.y
+      @sprite.anchor.x   =     Math.abs(block.aabb.lowerBound.x) / size_x
+      @sprite.anchor.y   = 1 - Math.abs(block.aabb.lowerBound.y) / size_y
+      @level.camera.container2.addChild(@sprite)
 
   display: (ctx) ->
     return false if Constants.debug
@@ -119,17 +138,17 @@ block_AABB = (block) ->
   for vertex in block.vertices
     if first
       lower_bound =
-        x: vertex.absolute_x
-        y: vertex.absolute_y
+        x: vertex.x
+        y: vertex.y
       upper_bound =
-        x: vertex.absolute_x
-        y: vertex.absolute_y
+        x: vertex.x
+        y: vertex.y
       first = false
     else
-      lower_bound.x = vertex.absolute_x if vertex.absolute_x < lower_bound.x
-      lower_bound.y = vertex.absolute_y if vertex.absolute_y < lower_bound.y
-      upper_bound.x = vertex.absolute_x if vertex.absolute_x > upper_bound.x
-      upper_bound.y = vertex.absolute_y if vertex.absolute_y > upper_bound.y
+      lower_bound.x = vertex.x if vertex.x < lower_bound.x
+      lower_bound.y = vertex.y if vertex.y < lower_bound.y
+      upper_bound.x = vertex.x if vertex.x > upper_bound.x
+      upper_bound.y = vertex.y if vertex.y > upper_bound.y
 
   aabb = new b2AABB()
   aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
