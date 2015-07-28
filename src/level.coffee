@@ -65,13 +65,14 @@ class Level
     @infos        .parse(xml).init()
     @sky          .parse(xml)
     @blocks       .parse(xml)
-    @limits       .parse(xml).init()
+    @limits       .parse(xml)
     @layer_offsets.parse(xml).init()
     @script       .parse(xml).init()
     @entities     .parse(xml)
 
     @sky     .load_assets()
     @blocks  .load_assets()
+    @limits  .load_assets()
     @entities.load_assets()
     @moto    .load_assets()
     @ghosts  .load_assets()
@@ -85,6 +86,7 @@ class Level
 
     @sky      .init()
     @blocks   .init()
+    @limits   .init()
     @entities .init()
     @moto     .init()
     @ghosts   .init()

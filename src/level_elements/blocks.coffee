@@ -108,8 +108,6 @@ class Blocks
       mask.x =  block.position.x
       mask.y = -block.position.y
       @level.camera.container2.addChild(mask)
-      #mask.anchor.x   =     Math.abs(block.aabb.lowerBound.x) / size_x
-      #mask.anchor.y   = 1 - Math.abs(block.aabb.lowerBound.y) / size_y
 
       # Create tilingSprite
       texture = PIXI.Texture.fromImage(@assets.get_url(block.texture_name))

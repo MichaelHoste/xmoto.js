@@ -644,12 +644,13 @@
       this.infos.parse(xml).init();
       this.sky.parse(xml);
       this.blocks.parse(xml);
-      this.limits.parse(xml).init();
+      this.limits.parse(xml);
       this.layer_offsets.parse(xml).init();
       this.script.parse(xml).init();
       this.entities.parse(xml);
       this.sky.load_assets();
       this.blocks.load_assets();
+      this.limits.load_assets();
       this.entities.load_assets();
       this.moto.load_assets();
       return this.ghosts.load_assets();
@@ -662,6 +663,7 @@
       this.canvas_height = parseFloat(this.canvas.height);
       this.sky.init();
       this.blocks.init();
+      this.limits.init();
       this.entities.init();
       this.moto.init();
       this.ghosts.init();
@@ -1929,9 +1931,17 @@
       return this;
     };
 
+    Limits.prototype.load_assets = function() {
+      return this.assets.textures.push(this.texture_name);
+    };
+
     Limits.prototype.init = function() {
+      this.init_physics_parts();
+      return this.init_sprites();
+    };
+
+    Limits.prototype.init_physics_parts = function() {
       var ground, vertices;
-      this.assets.textures.push(this.texture_name);
       ground = Constants.ground;
       vertices = [];
       vertices.push({
@@ -2005,6 +2015,51 @@
         y: this.player.top
       });
       return this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction);
+    };
+
+    Limits.prototype.init_sprites = function() {
+      var bottom_size_x, bottom_size_y, left_size_x, left_size_y, right_size_x, right_size_y, texture, top_size_x, top_size_y;
+      texture = PIXI.Texture.fromImage(this.assets.get_url(this.texture_name));
+      left_size_x = this.player.left - this.screen.left;
+      left_size_y = this.screen.top - this.screen.bottom;
+      right_size_x = this.screen.right - this.player.right;
+      right_size_y = this.screen.top - this.screen.bottom;
+      bottom_size_x = this.player.right - this.player.left;
+      bottom_size_y = this.player.bottom - this.screen.bottom;
+      top_size_x = this.player.right - this.player.left;
+      top_size_y = this.screen.top - this.player.top;
+      this.left_sprite = new PIXI.extras.TilingSprite(texture, left_size_x, left_size_y);
+      this.right_sprite = new PIXI.extras.TilingSprite(texture, right_size_x, right_size_y);
+      this.bottom_sprite = new PIXI.extras.TilingSprite(texture, bottom_size_x, bottom_size_y);
+      this.top_sprite = new PIXI.extras.TilingSprite(texture, top_size_x, top_size_y);
+      this.left_sprite.x = this.screen.left;
+      this.left_sprite.y = -this.screen.top;
+      this.left_sprite.anchor.x = 0;
+      this.left_sprite.anchor.y = 0;
+      this.left_sprite.tileScale.x = 1.0 / 40;
+      this.left_sprite.tileScale.y = 1.0 / 40;
+      this.right_sprite.x = this.player.right;
+      this.right_sprite.y = -this.screen.top;
+      this.right_sprite.anchor.x = 0;
+      this.right_sprite.anchor.y = 0;
+      this.right_sprite.tileScale.x = 1.0 / 40;
+      this.right_sprite.tileScale.y = 1.0 / 40;
+      this.bottom_sprite.x = this.player.left;
+      this.bottom_sprite.y = -this.player.bottom;
+      this.bottom_sprite.anchor.x = 0;
+      this.bottom_sprite.anchor.y = 0;
+      this.bottom_sprite.tileScale.x = 1.0 / 40;
+      this.bottom_sprite.tileScale.y = 1.0 / 40;
+      this.top_sprite.x = this.player.left;
+      this.top_sprite.y = -this.screen.top;
+      this.top_sprite.anchor.x = 0;
+      this.top_sprite.anchor.y = 0;
+      this.top_sprite.tileScale.x = 1.0 / 40;
+      this.top_sprite.tileScale.y = 1.0 / 40;
+      this.level.camera.container2.addChild(this.left_sprite);
+      this.level.camera.container2.addChild(this.right_sprite);
+      this.level.camera.container2.addChild(this.bottom_sprite);
+      return this.level.camera.container2.addChild(this.top_sprite);
     };
 
     Limits.prototype.display = function(ctx) {

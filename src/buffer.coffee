@@ -119,5 +119,6 @@ class Buffer
       0,                                                                # The x coordinate where to place the image on the canvas
       0,                                                                # The y coordinate where to place the image on the canvas
       @level.canvas_width,                                              # The width of the image to use (stretch or reduce the image)
-      @level.canvas_height)                                             # The height of the image to use (stretch or reduce the image)
+      @level.canvas_height                                              # The height of the image to use (stretch or reduce the image)
+    )
 
