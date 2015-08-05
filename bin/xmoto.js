@@ -1127,7 +1127,6 @@
       this.list = [];
       this.back_list = [];
       this.front_list = [];
-      this.sprites = [];
       this.edges = new Edges(this.level);
     }
 
@@ -1215,7 +1214,8 @@
 
     Blocks.prototype.init = function() {
       this.init_physics_parts();
-      return this.init_sprites();
+      this.init_sprites();
+      return this.edges.init();
     };
 
     Blocks.prototype.init_physics_parts = function() {
@@ -1231,7 +1231,7 @@
     };
 
     Blocks.prototype.init_sprites = function() {
-      var block, i, mask, points, size_x, size_y, sprite, texture, vertex, _i, _j, _len, _len1, _ref, _ref1, _results;
+      var block, i, mask, points, size_x, size_y, texture, vertex, _i, _j, _len, _len1, _ref, _ref1, _results;
       _ref = this.back_list.concat(this.front_list);
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1251,16 +1251,15 @@
         texture = PIXI.Texture.fromImage(this.assets.get_url(block.texture_name));
         size_x = block.aabb.upperBound.x - block.aabb.lowerBound.x;
         size_y = block.aabb.upperBound.y - block.aabb.lowerBound.y;
-        sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y);
-        sprite.x = block.position.x;
-        sprite.y = -block.position.y;
-        sprite.anchor.x = -block.aabb.lowerBound.x / size_x;
-        sprite.anchor.y = 1 + block.aabb.lowerBound.y / size_y;
-        sprite.tileScale.x = 1.0 / 40;
-        sprite.tileScale.y = 1.0 / 40;
-        sprite.mask = mask;
-        this.level.camera.container2.addChild(sprite);
-        _results.push(this.sprites.push(sprite));
+        block.sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y);
+        block.sprite.x = block.position.x;
+        block.sprite.y = -block.position.y;
+        block.sprite.anchor.x = -block.aabb.lowerBound.x / size_x;
+        block.sprite.anchor.y = 1 + block.aabb.lowerBound.y / size_y;
+        block.sprite.tileScale.x = 1.0 / 40;
+        block.sprite.tileScale.y = 1.0 / 40;
+        block.sprite.mask = mask;
+        _results.push(this.level.camera.container2.addChild(block.sprite));
       }
       return _results;
     };
@@ -1414,33 +1413,39 @@
     };
 
     Edges.prototype.load_assets = function() {
-      var block, texture_file, vertex, _i, _len, _ref, _results;
-      _ref = this.blocks;
+      var edge, _i, _len, _ref, _results;
+      _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        block = _ref[_i];
-        _results.push((function() {
-          var _j, _len1, _ref1, _results1;
-          _ref1 = block.vertices;
-          _results1 = [];
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            vertex = _ref1[_j];
-            if (vertex.edge) {
-              texture_file = this.theme.edge_params(vertex.edge).file;
-              _results1.push(this.assets.effects.push(texture_file));
-            } else {
-              _results1.push(void 0);
-            }
-          }
-          return _results1;
-        }).call(this));
+        edge = _ref[_i];
+        _results.push(this.assets.effects.push(edge.theme.file));
       }
       return _results;
     };
 
-    Edges.prototype.init_physics_parts = function() {};
+    Edges.prototype.init = function() {
+      return this.init_sprites();
+    };
 
-    Edges.prototype.init_sprites = function() {};
+    Edges.prototype.init_sprites = function() {
+      var edge, size_x, size_y, texture, _i, _len, _ref, _results;
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        edge = _ref[_i];
+        texture = PIXI.Texture.fromImage(this.assets.get_url(edge.theme.file));
+        size_x = Math.abs(edge.vertex1.x - edge.vertex2.x);
+        size_y = Math.abs(edge.vertex1.y - edge.vertex2.y);
+        edge.sprite = new PIXI.extras.TilingSprite(texture, size_x, edge.theme.depth);
+        edge.sprite.x = edge.vertex1.absolute_x;
+        edge.sprite.y = -edge.vertex1.absolute_y;
+        edge.sprite.tileScale.x = 1.0 / 100.0;
+        edge.sprite.tileScale.y = 1.0 / 100.0;
+        edge.sprite.rotation = -edge.angle;
+        _results.push(this.level.camera.container2.addChild(edge.sprite));
+      }
+      return _results;
+    };
 
     Edges.prototype.display = function(ctx) {
       var edge, _i, _len, _ref, _results;

@@ -33,17 +33,26 @@ class Edges
           @list.push(edge)
 
   load_assets: ->
-    for block in @blocks
-      for vertex in block.vertices
-        if vertex.edge
-          texture_file = @theme.edge_params(vertex.edge).file
-          @assets.effects.push(texture_file)
+    for edge in @list
+      @assets.effects.push(edge.theme.file)
 
-  init_physics_parts: ->
-    ;
+  init: ->
+    @init_sprites()
 
   init_sprites: ->
-    ;
+    for edge in @list
+      texture = PIXI.Texture.fromImage(@assets.get_url(edge.theme.file))
+      size_x  = Math.abs(edge.vertex1.x - edge.vertex2.x)
+      size_y  = Math.abs(edge.vertex1.y - edge.vertex2.y)
+
+      edge.sprite             = new PIXI.extras.TilingSprite(texture, size_x, edge.theme.depth)
+      edge.sprite.x           =  edge.vertex1.absolute_x
+      edge.sprite.y           = -edge.vertex1.absolute_y
+      edge.sprite.tileScale.x = 1.0 / 100.0
+      edge.sprite.tileScale.y = 1.0 / 100.0
+      edge.sprite.rotation    = -edge.angle
+
+      @level.camera.container2.addChild(edge.sprite)
 
   # only display edges present on the screen zone
   display: (ctx) ->

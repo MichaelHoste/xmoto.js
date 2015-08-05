@@ -7,10 +7,10 @@ class Blocks
     @level      = level
     @assets     = level.assets
     @theme      = @assets.theme
+
     @list       = [] # total list
     @back_list  = [] # background list
     @front_list = [] # front list (collisions)
-    @sprites    = []
 
     @edges = new Edges(@level)
 
@@ -89,6 +89,8 @@ class Blocks
     @init_physics_parts()
     @init_sprites()
 
+    @edges.init()
+
   init_physics_parts: ->
     ground = Constants.ground
     for block in @front_list
@@ -115,17 +117,16 @@ class Blocks
       size_x  = block.aabb.upperBound.x - block.aabb.lowerBound.x
       size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
 
-      sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
-      sprite.x =  block.position.x
-      sprite.y = -block.position.y
-      sprite.anchor.x   =   - block.aabb.lowerBound.x / size_x
-      sprite.anchor.y   = 1 + block.aabb.lowerBound.y / size_y
-      sprite.tileScale.x = 1.0/40
-      sprite.tileScale.y = 1.0/40
-      sprite.mask = mask
-      @level.camera.container2.addChild(sprite)
+      block.sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
+      block.sprite.x =  block.position.x
+      block.sprite.y = -block.position.y
+      block.sprite.anchor.x   =   - block.aabb.lowerBound.x / size_x
+      block.sprite.anchor.y   = 1 + block.aabb.lowerBound.y / size_y
+      block.sprite.tileScale.x = 1.0/40
+      block.sprite.tileScale.y = 1.0/40
+      block.sprite.mask = mask
 
-      @sprites.push(sprite)
+      @level.camera.container2.addChild(block.sprite)
 
   display: (ctx) ->
     return false if Constants.debug
