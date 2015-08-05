@@ -92,8 +92,8 @@ class Buffer
       bottom: target.y + (@canvas_height / 2) / @buffer_scale.y
       top:    target.y - (@canvas_height / 2) / @buffer_scale.y
     @visible.aabb = new b2AABB()
-    @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
-    @visible.aabb.upperBound.Set(@visible.right, @visible.top)
+    @visible.aabb.lowerBound.Set(-1000, -1000)
+    @visible.aabb.upperBound.Set(1000, 1000)
 
   display: ->
     target = @camera.target()

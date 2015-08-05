@@ -90,8 +90,8 @@
         top: target.y - (this.canvas_height / 2) / this.buffer_scale.y
       };
       this.visible.aabb = new b2AABB();
-      this.visible.aabb.lowerBound.Set(this.visible.left, this.visible.bottom);
-      return this.visible.aabb.upperBound.Set(this.visible.right, this.visible.top);
+      this.visible.aabb.lowerBound.Set(-1000, -1000);
+      return this.visible.aabb.upperBound.Set(1000, 1000);
     };
 
     Buffer.prototype.display = function() {
@@ -238,8 +238,8 @@
     Constants.manual_scale = true;
 
     Constants.default_scale = {
-      x: 10.0,
-      y: -10.0
+      x: 70.0,
+      y: -70.0
     };
 
     Constants.body = {
