@@ -238,8 +238,8 @@
     Constants.manual_scale = true;
 
     Constants.default_scale = {
-      x: 70.0,
-      y: -70.0
+      x: 10.0,
+      y: -10.0
     };
 
     Constants.body = {
@@ -1127,6 +1127,7 @@
       this.list = [];
       this.back_list = [];
       this.front_list = [];
+      this.sprites = [];
       this.edges = new Edges(this.level);
     }
 
@@ -1230,7 +1231,7 @@
     };
 
     Blocks.prototype.init_sprites = function() {
-      var block, i, mask, points, size_x, size_y, texture, vertex, _i, _j, _len, _len1, _ref, _ref1, _results;
+      var block, i, mask, points, size_x, size_y, sprite, texture, vertex, _i, _j, _len, _len1, _ref, _ref1, _results;
       _ref = this.back_list.concat(this.front_list);
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1242,7 +1243,7 @@
           points.push(new PIXI.Point(vertex.x, -vertex.y));
         }
         mask = new PIXI.Graphics();
-        mask.beginFill(0x8bc5ff, 0.4);
+        mask.beginFill(0xffffff, 1.0);
         mask.drawPolygon(points);
         mask.x = block.position.x;
         mask.y = -block.position.y;
@@ -1250,15 +1251,16 @@
         texture = PIXI.Texture.fromImage(this.assets.get_url(block.texture_name));
         size_x = block.aabb.upperBound.x - block.aabb.lowerBound.x;
         size_y = block.aabb.upperBound.y - block.aabb.lowerBound.y;
-        this.sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y);
-        this.sprite.x = block.position.x;
-        this.sprite.y = -block.position.y;
-        this.sprite.anchor.x = Math.abs(block.aabb.lowerBound.x) / size_x;
-        this.sprite.anchor.y = 1 - Math.abs(block.aabb.lowerBound.y) / size_y;
-        this.sprite.tileScale.x = 1.0 / 40;
-        this.sprite.tileScale.y = 1.0 / 40;
-        this.sprite.mask = mask;
-        _results.push(this.level.camera.container2.addChild(this.sprite));
+        sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y);
+        sprite.x = block.position.x;
+        sprite.y = -block.position.y;
+        sprite.anchor.x = -block.aabb.lowerBound.x / size_x;
+        sprite.anchor.y = 1 + block.aabb.lowerBound.y / size_y;
+        sprite.tileScale.x = 1.0 / 40;
+        sprite.tileScale.y = 1.0 / 40;
+        sprite.mask = mask;
+        this.level.camera.container2.addChild(sprite);
+        _results.push(this.sprites.push(sprite));
       }
       return _results;
     };

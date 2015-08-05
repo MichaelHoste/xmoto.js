@@ -29,8 +29,8 @@ class Constants
   @automatic_scale = true # camera zoom and dezoom when moto speed changes         (can be both)
   @manual_scale    = true # camera zoom and dezoom when player scrolls up and down (can be both)
   @default_scale   =      # default zoom of the camera
-    x:  70.0
-    y: -70.0
+    x:  10.0
+    y: -10.0
 
   # MOTO PARTS
 

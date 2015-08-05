@@ -10,6 +10,7 @@ class Blocks
     @list       = [] # total list
     @back_list  = [] # background list
     @front_list = [] # front list (collisions)
+    @sprites    = []
 
     @edges = new Edges(@level)
 
@@ -103,7 +104,7 @@ class Blocks
         points.push(new PIXI.Point(vertex.x, -vertex.y))
 
       mask = new PIXI.Graphics()
-      mask.beginFill(0x8bc5ff, 0.4)
+      mask.beginFill(0xffffff, 1.0)
       mask.drawPolygon(points)
       mask.x =  block.position.x
       mask.y = -block.position.y
@@ -114,16 +115,17 @@ class Blocks
       size_x  = block.aabb.upperBound.x - block.aabb.lowerBound.x
       size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
 
-      @sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
-      @sprite.x =  block.position.x
-      @sprite.y = -block.position.y
-      @sprite.anchor.x   =     Math.abs(block.aabb.lowerBound.x) / size_x
-      @sprite.anchor.y   = 1 - Math.abs(block.aabb.lowerBound.y) / size_y
-      @sprite.tileScale.x = 1.0/40
-      @sprite.tileScale.y = 1.0/40
-      @sprite.mask = mask
+      sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
+      sprite.x =  block.position.x
+      sprite.y = -block.position.y
+      sprite.anchor.x   =   - block.aabb.lowerBound.x / size_x
+      sprite.anchor.y   = 1 + block.aabb.lowerBound.y / size_y
+      sprite.tileScale.x = 1.0/40
+      sprite.tileScale.y = 1.0/40
+      sprite.mask = mask
+      @level.camera.container2.addChild(sprite)
 
-      @level.camera.container2.addChild(@sprite)
+      @sprites.push(sprite)
 
   display: (ctx) ->
     return false if Constants.debug
