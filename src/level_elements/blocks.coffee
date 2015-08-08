@@ -102,7 +102,7 @@ class Blocks
       # Create mask
       points = []
 
-      for vertex, i in block.vertices
+      for vertex in block.vertices
         points.push(new PIXI.Point(vertex.x, -vertex.y))
 
       mask = new PIXI.Graphics()

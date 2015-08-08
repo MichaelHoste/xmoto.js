@@ -662,9 +662,11 @@
       this.canvas_width = parseFloat(this.canvas.width);
       this.canvas_height = parseFloat(this.canvas.height);
       this.sky.init();
-      this.blocks.init();
       this.limits.init();
-      this.entities.init();
+      this.entities.init_sprites();
+      this.blocks.init();
+      this.entities.init_physics_parts();
+      this.entities.init_items();
       this.moto.init();
       this.ghosts.init();
       this.physics.init();
@@ -1231,15 +1233,15 @@
     };
 
     Blocks.prototype.init_sprites = function() {
-      var block, i, mask, points, size_x, size_y, texture, vertex, _i, _j, _len, _len1, _ref, _ref1, _results;
+      var block, mask, points, size_x, size_y, texture, vertex, _i, _j, _len, _len1, _ref, _ref1, _results;
       _ref = this.back_list.concat(this.front_list);
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
         points = [];
         _ref1 = block.vertices;
-        for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
-          vertex = _ref1[i];
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          vertex = _ref1[_j];
           points.push(new PIXI.Point(vertex.x, -vertex.y));
         }
         mask = new PIXI.Graphics();
@@ -1428,19 +1430,38 @@
     };
 
     Edges.prototype.init_sprites = function() {
-      var edge, size_x, size_y, texture, _i, _len, _ref, _results;
+      var edge, mask, points, size_x, size_y, texture, vertex, x, y, _i, _j, _len, _len1, _ref, _ref1, _results;
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         edge = _ref[_i];
+        points = [];
+        _ref1 = edge.vertices;
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          vertex = _ref1[_j];
+          points.push(new PIXI.Point(vertex.x, -vertex.y));
+        }
+        mask = new PIXI.Graphics();
+        mask.beginFill(0xffffff, 1.0);
+        mask.drawPolygon(points);
+        this.level.camera.container2.addChild(mask);
+        x = Math.abs(Math.sin(edge.angle) * edge.theme.depth);
+        y = Math.abs(Math.tan(edge.angle) * x);
         texture = PIXI.Texture.fromImage(this.assets.get_url(edge.theme.file));
-        size_x = Math.abs(edge.vertex1.x - edge.vertex2.x);
-        size_y = Math.abs(edge.vertex1.y - edge.vertex2.y);
-        edge.sprite = new PIXI.extras.TilingSprite(texture, size_x, edge.theme.depth);
-        edge.sprite.x = edge.vertex1.absolute_x;
-        edge.sprite.y = -edge.vertex1.absolute_y;
+        size_x = edge.aabb.upperBound.x - edge.aabb.lowerBound.x + 2 * x;
+        size_y = edge.theme.depth;
+        edge.sprite = new PIXI.extras.TilingSprite(texture, 2 * size_x, size_y);
+        edge.sprite.x = edge.vertex1.absolute_x - x;
+        if (edge.angle > 0) {
+          edge.sprite.y = -edge.vertex1.absolute_y + y;
+        }
+        if (edge.angle <= 0) {
+          edge.sprite.y = -edge.vertex1.absolute_y - y;
+        }
+        edge.sprite.pivot.x = 0.5;
         edge.sprite.tileScale.x = 1.0 / 100.0;
         edge.sprite.tileScale.y = 1.0 / 100.0;
+        edge.sprite.mask = mask;
         edge.sprite.rotation = -edge.angle;
         _results.push(this.level.camera.container2.addChild(edge.sprite));
       }
@@ -1632,11 +1653,6 @@
       return _results;
     };
 
-    Entities.prototype.init = function() {
-      this.init_physics_parts();
-      return this.init_sprites();
-    };
-
     Entities.prototype.init_physics_parts = function() {
       var entity, _i, _len, _ref, _results;
       _ref = this.list;
@@ -1665,30 +1681,52 @@
     };
 
     Entities.prototype.init_sprites = function() {
-      var entity, i, textures, _i, _j, _len, _ref, _ref1, _results;
+      var entity, _i, _len, _ref, _results;
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
-        if (entity.frames > 0) {
-          textures = [];
-          for (i = _j = 0, _ref1 = entity.frames - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-            textures.push(PIXI.Texture.fromImage(this.assets.get_url(frame_name(entity, i))));
-          }
-          entity.sprite = new PIXI.extras.MovieClip(textures);
-          entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay;
-          entity.sprite.play();
-          _results.push(this.level.camera.container2.addChild(entity.sprite));
+        if (entity.type_id === 'Sprite') {
+          _results.push(this.init_entity(entity));
         } else {
-          if (entity.file) {
-            entity.sprite = new PIXI.Sprite.fromImage(this.assets.get_url(entity.file));
-            _results.push(this.level.camera.container2.addChild(entity.sprite));
-          } else {
-            _results.push(void 0);
-          }
+          _results.push(void 0);
         }
       }
       return _results;
+    };
+
+    Entities.prototype.init_items = function() {
+      var entity, _i, _len, _ref, _results;
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        entity = _ref[_i];
+        if (entity.type_id === 'EndOfLevel' || entity.type_id === 'Strawberry' || entity.type_id === 'Wrecker') {
+          _results.push(this.init_entity(entity));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Entities.prototype.init_entity = function(entity) {
+      var i, textures, _i, _ref;
+      if (entity.frames > 0) {
+        textures = [];
+        for (i = _i = 0, _ref = entity.frames - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+          textures.push(PIXI.Texture.fromImage(this.assets.get_url(frame_name(entity, i))));
+        }
+        entity.sprite = new PIXI.extras.MovieClip(textures);
+        entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay;
+        entity.sprite.play();
+        return this.level.camera.container2.addChild(entity.sprite);
+      } else {
+        if (entity.file) {
+          entity.sprite = new PIXI.Sprite.fromImage(this.assets.get_url(entity.file));
+          return this.level.camera.container2.addChild(entity.sprite);
+        }
+      }
     };
 
     Entities.prototype.create_entity = function(entity, name) {

@@ -41,15 +41,34 @@ class Edges
 
   init_sprites: ->
     for edge in @list
-      texture = PIXI.Texture.fromImage(@assets.get_url(edge.theme.file))
-      size_x  = Math.abs(edge.vertex1.x - edge.vertex2.x)
-      size_y  = Math.abs(edge.vertex1.y - edge.vertex2.y)
+      # Create mask
+      points = []
 
-      edge.sprite             = new PIXI.extras.TilingSprite(texture, size_x, edge.theme.depth)
-      edge.sprite.x           =  edge.vertex1.absolute_x
-      edge.sprite.y           = -edge.vertex1.absolute_y
+      for vertex in edge.vertices
+        points.push(new PIXI.Point(vertex.x, -vertex.y))
+
+      mask = new PIXI.Graphics()
+      mask.beginFill(0xffffff, 1.0)
+      mask.drawPolygon(points)
+      @level.camera.container2.addChild(mask)
+
+      x = Math.abs(Math.sin(edge.angle) * edge.theme.depth)
+      y = Math.abs(Math.tan(edge.angle) * x)
+
+      texture = PIXI.Texture.fromImage(@assets.get_url(edge.theme.file))
+      size_x  = edge.aabb.upperBound.x - edge.aabb.lowerBound.x + 2*x
+      size_y  = edge.theme.depth# + 2*y
+
+      edge.sprite             = new PIXI.extras.TilingSprite(texture, 2*size_x, size_y)
+      edge.sprite.x           =  edge.vertex1.absolute_x - x
+      edge.sprite.y           = -edge.vertex1.absolute_y + y if edge.angle > 0
+      edge.sprite.y           = -edge.vertex1.absolute_y - y if edge.angle <= 0
+
+      #console.log 2*x/size_x
+      edge.sprite.pivot.x     = 0.5
       edge.sprite.tileScale.x = 1.0 / 100.0
       edge.sprite.tileScale.y = 1.0 / 100.0
+      edge.sprite.mask        = mask
       edge.sprite.rotation    = -edge.angle
 
       @level.camera.container2.addChild(edge.sprite)

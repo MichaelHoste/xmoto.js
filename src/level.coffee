@@ -85,9 +85,11 @@ class Level
     @canvas_height = parseFloat(@canvas.height)
 
     @sky      .init()
-    @blocks   .init()
     @limits   .init()
-    @entities .init()
+    @entities .init_sprites()
+    @blocks   .init()
+    @entities .init_physics_parts()
+    @entities .init_items()
     @moto     .init()
     @ghosts   .init()
     @physics  .init()
