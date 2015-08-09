@@ -28,23 +28,24 @@ $.xmoto = (level_filename, options = {}) ->
 
   $(options.loading).show()
 
-  renderer = new PIXI.autoDetectRenderer(1000, 600, {
+  renderer = new PIXI.CanvasRenderer(1000, 600, {
     antialias:       true,
     backgroundColor: 0xFFFFFF
   })
 
   $('#xmoto-pixi')[0].appendChild(renderer.view)
 
-  level = new Level(options)
+  level = new Level(renderer, options)
   level.load_from_file(level_filename)
 
   level.assets.load( =>
-    level.init()
+    level.init(renderer)
 
     window.cancelAnimationFrame(window.game_loop)
     $(options.loading).hide()
 
     update = =>
+      #console.log level.camera.container2.children.length
       level.physics.update()
       level.display()
       window.game_loop = requestAnimationFrame(update)

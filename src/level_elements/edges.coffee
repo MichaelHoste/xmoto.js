@@ -59,10 +59,10 @@ class Edges
       size_x  = edge.aabb.upperBound.x - edge.aabb.lowerBound.x + 2*x
       size_y  = edge.theme.depth# + 2*y
 
-      edge.sprite             = new PIXI.extras.TilingSprite(texture, 2*size_x, size_y)
-      edge.sprite.x           =  edge.vertex1.absolute_x - x
-      edge.sprite.y           = -edge.vertex1.absolute_y + y if edge.angle > 0
-      edge.sprite.y           = -edge.vertex1.absolute_y - y if edge.angle <= 0
+      edge.sprite   = new PIXI.extras.TilingSprite(texture, 4*size_x, size_y)
+      edge.sprite.x =  edge.vertex1.absolute_x - x
+      edge.sprite.y = -edge.vertex1.absolute_y + y if edge.angle > 0
+      edge.sprite.y = -edge.vertex1.absolute_y - y if edge.angle <= 0
 
       #console.log 2*x/size_x
       edge.sprite.pivot.x     = 0.5

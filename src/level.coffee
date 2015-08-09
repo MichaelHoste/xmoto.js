@@ -3,8 +3,9 @@ b2Vec2 = Box2D.Common.Math.b2Vec2
 
 class Level
 
-  constructor: (options) ->
-    @options = options
+  constructor: (renderer, options) ->
+    @renderer = renderer
+    @options  = options
 
     # Context
     @canvas = $(@options.canvas).get(0)

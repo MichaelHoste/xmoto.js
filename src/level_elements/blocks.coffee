@@ -118,10 +118,8 @@ class Blocks
       size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
 
       block.sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
-      block.sprite.x =  block.position.x
-      block.sprite.y = -block.position.y
-      block.sprite.anchor.x   =   - block.aabb.lowerBound.x / size_x
-      block.sprite.anchor.y   = 1 + block.aabb.lowerBound.y / size_y
+      block.sprite.x =  block.position.x + block.aabb.lowerBound.x
+      block.sprite.y = -block.position.y - size_y - block.aabb.lowerBound.y
       block.sprite.tileScale.x = 1.0/40
       block.sprite.tileScale.y = 1.0/40
       block.sprite.mask = mask

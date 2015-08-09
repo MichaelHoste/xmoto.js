@@ -605,7 +605,8 @@
   b2Vec2 = Box2D.Common.Math.b2Vec2;
 
   Level = (function() {
-    function Level(options) {
+    function Level(renderer, options) {
+      this.renderer = renderer;
       this.options = options;
       this.canvas = $(this.options.canvas).get(0);
       this.ctx = this.canvas.getContext('2d');
@@ -897,16 +898,16 @@
       y: -options.zoom
     };
     $(options.loading).show();
-    renderer = new PIXI.autoDetectRenderer(1000, 600, {
+    renderer = new PIXI.CanvasRenderer(1000, 600, {
       antialias: true,
       backgroundColor: 0xFFFFFF
     });
     $('#xmoto-pixi')[0].appendChild(renderer.view);
-    level = new Level(options);
+    level = new Level(renderer, options);
     level.load_from_file(level_filename);
     return level.assets.load(function() {
       var update;
-      level.init();
+      level.init(renderer);
       window.cancelAnimationFrame(window.game_loop);
       $(options.loading).hide();
       update = function() {
@@ -1254,10 +1255,8 @@
         size_x = block.aabb.upperBound.x - block.aabb.lowerBound.x;
         size_y = block.aabb.upperBound.y - block.aabb.lowerBound.y;
         block.sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y);
-        block.sprite.x = block.position.x;
-        block.sprite.y = -block.position.y;
-        block.sprite.anchor.x = -block.aabb.lowerBound.x / size_x;
-        block.sprite.anchor.y = 1 + block.aabb.lowerBound.y / size_y;
+        block.sprite.x = block.position.x + block.aabb.lowerBound.x;
+        block.sprite.y = -block.position.y - size_y - block.aabb.lowerBound.y;
         block.sprite.tileScale.x = 1.0 / 40;
         block.sprite.tileScale.y = 1.0 / 40;
         block.sprite.mask = mask;
@@ -1450,7 +1449,7 @@
         texture = PIXI.Texture.fromImage(this.assets.get_url(edge.theme.file));
         size_x = edge.aabb.upperBound.x - edge.aabb.lowerBound.x + 2 * x;
         size_y = edge.theme.depth;
-        edge.sprite = new PIXI.extras.TilingSprite(texture, 2 * size_x, size_y);
+        edge.sprite = new PIXI.extras.TilingSprite(texture, 4 * size_x, size_y);
         edge.sprite.x = edge.vertex1.absolute_x - x;
         if (edge.angle > 0) {
           edge.sprite.y = -edge.vertex1.absolute_y + y;
@@ -2226,7 +2225,7 @@
     };
 
     Sky.prototype.display = function() {
-      var ctx;
+      var ctx, position_factor_x, position_factor_y;
       ctx = this.level.ctx;
       ctx.beginPath();
       ctx.moveTo(this.level.canvas_width, this.level.canvas_height);
@@ -2247,8 +2246,14 @@
       }
       this.sprite.tileScale.x = 4;
       this.sprite.tileScale.y = 4;
-      this.sprite.tilePosition.x = -this.level.camera.target().x * 15;
-      return this.sprite.tilePosition.y = this.level.camera.target().y * 7;
+      position_factor_x = 15;
+      position_factor_y = 7;
+      if (this.level.renderer.type === PIXI.RENDERER_TYPE.CANVAS) {
+        position_factor_x /= this.sprite.tileScale.x;
+        position_factor_y /= this.sprite.tileScale.y;
+      }
+      this.sprite.tilePosition.x = -this.level.camera.target().x * position_factor_x;
+      return this.sprite.tilePosition.y = this.level.camera.target().y * position_factor_y;
     };
 
     return Sky;
