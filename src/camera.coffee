@@ -78,7 +78,6 @@ class Camera
       @container2.y = @target().y
 
       @frame.clear()
-      @frame.lineStyle(0.01, 0x333333, 1)
       @frame.beginFill(0x333333)
 
       size_x = (@options.width  / 100.0) * (Constants.default_scale.x / @scale.x)

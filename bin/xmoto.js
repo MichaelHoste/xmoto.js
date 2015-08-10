@@ -73,7 +73,6 @@
         this.container2.x = -this.target().x;
         this.container2.y = this.target().y;
         this.frame.clear();
-        this.frame.lineStyle(0.01, 0x333333, 1);
         this.frame.beginFill(0x333333);
         size_x = (this.options.width / 100.0) * (Constants.default_scale.x / this.scale.x);
         size_y = (this.options.height / 100.0) * (Constants.default_scale.y / this.scale.y);
