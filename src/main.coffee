@@ -2,7 +2,7 @@ $.xmoto = (level_filename, options = {}) ->
   initialize = ->
     options = load_options(options)
 
-    renderer = new PIXI.CanvasRenderer(options.width, options.height, {
+    renderer = new PIXI.WebGLRenderer(options.width, options.height, {
       antialias:       true,
       backgroundColor: 0xFFFFFF
     })
@@ -64,7 +64,7 @@ $.xmoto = (level_filename, options = {}) ->
       update = =>
         #console.log level.camera.container2.children.length
         level.physics.update()
-        level.update()
+        level.display()
         window.game_loop = requestAnimationFrame(update)
         renderer.render(level.stage)
 

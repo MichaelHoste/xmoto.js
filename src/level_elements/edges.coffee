@@ -28,7 +28,7 @@ class Edges
                             { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y - edge.theme.depth },
                             { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y },
                             { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y } ]
-          edge.aabb = edge_AABB(edge)
+          edge.aabb = @compute_aabb(edge)
 
           @list.push(edge)
 
@@ -74,49 +74,33 @@ class Edges
       @level.camera.container2.addChild(edge.sprite)
 
   # only display edges present on the screen zone
-  display: (ctx) ->
+  display: ->
     for edge in @list
-      if visible_edge(@level.buffer.visible, edge)
-        ctx.beginPath()
+      edge.sprite.visible = @visible(edge)
 
-        ctx.moveTo(edge.vertices[0].x, edge.vertices[0].y)
-        ctx.lineTo(edge.vertices[1].x, edge.vertices[1].y)
-        ctx.lineTo(edge.vertices[2].x, edge.vertices[2].y)
-        ctx.lineTo(edge.vertices[3].x, edge.vertices[3].y)
+  compute_aabb: (edge) ->
+    first = true
+    lower_bound = {}
+    upper_bound = {}
+    for vertex in edge.vertices
+      if first
+        lower_bound =
+          x: vertex.x
+          y: vertex.y
+        upper_bound =
+          x: vertex.x
+          y: vertex.y
+        first = false
+      else
+        lower_bound.x = vertex.x if vertex.x < lower_bound.x
+        lower_bound.y = vertex.y if vertex.y < lower_bound.y
+        upper_bound.x = vertex.x if vertex.x > upper_bound.x
+        upper_bound.y = vertex.y if vertex.y > upper_bound.y
 
-        ctx.closePath()
+    aabb = new b2AABB()
+    aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
+    aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+    return aabb
 
-        ctx.save()
-        ctx.translate(edge.vertex1.absolute_x, edge.vertex1.absolute_y) # Always start texture on the left vertex
-        ctx.rotate(edge.angle)
-        ctx.scale(1.0 / 100, -1.0 / 100)
-        ctx.fillStyle = ctx.createPattern(@assets.get(edge.theme.file), 'repeat')
-        ctx.fill()
-        ctx.restore()
-
-edge_AABB = (edge) ->
-  first = true
-  lower_bound = {}
-  upper_bound = {}
-  for vertex in edge.vertices
-    if first
-      lower_bound =
-        x: vertex.x
-        y: vertex.y
-      upper_bound =
-        x: vertex.x
-        y: vertex.y
-      first = false
-    else
-      lower_bound.x = vertex.x if vertex.x < lower_bound.x
-      lower_bound.y = vertex.y if vertex.y < lower_bound.y
-      upper_bound.x = vertex.x if vertex.x > upper_bound.x
-      upper_bound.y = vertex.y if vertex.y > upper_bound.y
-
-  aabb = new b2AABB()
-  aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
-  aabb.upperBound.Set(upper_bound.x, upper_bound.y)
-  return aabb
-
-visible_edge = (zone, edge) ->
-  edge.aabb.TestOverlap(zone.aabb)
+  visible: (edge) ->
+    edge.aabb.TestOverlap(@level.camera.aabb)

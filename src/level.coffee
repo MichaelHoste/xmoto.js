@@ -76,7 +76,7 @@ class Level
 
     @init_timer()
 
-  update: ->
+  display: ->
     dead_player = @options.playable  && !@moto.dead
     dead_replay = !@options.playable && !@ghosts.player.moto.dead
 
@@ -85,6 +85,7 @@ class Level
     @sky      .display()
     @entities .display()
     @camera   .display()
+    @blocks   .display()
     @moto     .display() if @options.playable
     @ghosts   .display()
     @particles.display()

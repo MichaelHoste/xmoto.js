@@ -24,6 +24,14 @@ class Camera
     if Constants.manual_scale
       @init_scroll()
 
+    @frame = new PIXI.Graphics()
+    @frame.alpha = 0.2
+    @container2.addChild(@frame)
+
+    @aabb = @compute_aabb()
+    console.log @aabb
+    console.log '-'
+
   active_object: ->
     if @level.options.playable
       @level.moto.body
@@ -41,6 +49,8 @@ class Camera
       @offset.x = @offset.x * 0.97 + velocity.x/3.0 * 0.03
       @offset.y = @offset.y * 0.99 + velocity.y/3.0 * 0.01
 
+    @aabb = @compute_aabb()
+
   display: ->
     if Constants.debug
       $('#xmoto canvas').hide()
@@ -52,7 +62,7 @@ class Camera
 
       ctx.translate(@options.width/2, @options.height/2) # Center of canvas
       ctx.scale(@scale.x, @scale.y)                      # Scale (zoom)
-      ctx.translate(-@target().x, -@target().y - 0.25)   # Camera on moto
+      ctx.translate(-@target().x, -@target().y)          # Camera on moto
 
       @level.physics.world.DrawDebugData()
 
@@ -65,7 +75,18 @@ class Camera
       @container.scale.y = -@scale.y
 
       @container2.x = -@target().x
-      @container2.y = @target().y + 0.25
+      @container2.y = @target().y
+
+      @frame.clear()
+      @frame.lineStyle(0.01, 0x333333, 1)
+      @frame.beginFill(0x333333)
+
+      size_x = (@options.width  / 100.0) * (Constants.default_scale.x / @scale.x)
+      size_y = (@options.height / 100.0) * (Constants.default_scale.y / @scale.y)
+
+      @frame.drawRect(-size_x/2, -size_y/2, size_x, size_y, 0.1)
+      @frame.x = @target().x
+      @frame.y = -@target().y
 
   # must be something with x and y values
   target: ->
@@ -74,7 +95,7 @@ class Camera
 
     adjusted_position =
       x: position.x + @offset.x
-      y: position.y + @offset.y
+      y: position.y + @offset.y + 0.25
 
   # If there are some issues on other systems than MacOS,
   # check this to find a solution : http://stackoverflow.com/questions/5527601/normalizing-mousewheel-speed-across-browsers
@@ -109,3 +130,12 @@ class Camera
     canvas = $(@level.options.canvas).get(0)
     canvas.addEventListener('DOMMouseScroll', scroll, false)
     canvas.addEventListener('mousewheel',     scroll, false)
+
+  compute_aabb: ->
+    size_x = (@options.width  / 100.0) * (Constants.default_scale.x / @scale.x)
+    size_y = (@options.height / 100.0) * (Constants.default_scale.y / @scale.y)
+
+    aabb = new b2AABB()
+    aabb.lowerBound.Set(@target().x - size_x/2, @target().y - size_y/2)
+    aabb.upperBound.Set(@target().x + size_x/2, @target().y + size_y/2)
+    return aabb

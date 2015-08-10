@@ -63,7 +63,8 @@ class Blocks
 
         block.vertices.push(vertex)
 
-      block.aabb = block_AABB(block)
+      block.aabb = @compute_aabb(block)
+      block.aabb = @compute_aabb(block)
 
       @list.push(block)
       if block.position.background
@@ -118,43 +119,48 @@ class Blocks
       size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
 
       block.sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
-      block.sprite.x =  block.position.x + block.aabb.lowerBound.x
-      block.sprite.y = -block.position.y - size_y - block.aabb.lowerBound.y
+      block.sprite.x =  block.aabb.lowerBound.x
+      block.sprite.y = -block.aabb.upperBound.y
       block.sprite.tileScale.x = 1.0/40
       block.sprite.tileScale.y = 1.0/40
       block.sprite.mask = mask
 
       @level.camera.container2.addChild(block.sprite)
 
-  display: (ctx) ->
+  display: ->
     return false if Constants.debug
 
-block_AABB = (block) ->
-  first = true
-  lower_bound = {}
-  upper_bound = {}
-  for vertex in block.vertices
-    if first
-      lower_bound =
-        x: vertex.x
-        y: vertex.y
-      upper_bound =
-        x: vertex.x
-        y: vertex.y
-      first = false
-    else
-      lower_bound.x = vertex.x if vertex.x < lower_bound.x
-      lower_bound.y = vertex.y if vertex.y < lower_bound.y
-      upper_bound.x = vertex.x if vertex.x > upper_bound.x
-      upper_bound.y = vertex.y if vertex.y > upper_bound.y
+    for block in @list
+      block.sprite.visible = @visible(block)
 
-  aabb = new b2AABB()
-  aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
-  aabb.upperBound.Set(upper_bound.x, upper_bound.y)
-  return aabb
+    @edges.display()
 
-visible_block = (zone, block) ->
-  block.aabb.TestOverlap(zone.aabb)
+  visible: (block) ->
+    block.aabb.TestOverlap(@level.camera.aabb)
+
+  compute_aabb: (block) ->
+    first = true
+    lower_bound = {}
+    upper_bound = {}
+    for vertex in block.vertices
+      if first
+        lower_bound =
+          x: vertex.absolute_x
+          y: vertex.absolute_y
+        upper_bound =
+          x: vertex.absolute_x
+          y: vertex.absolute_y
+        first = false
+      else
+        lower_bound.x = vertex.absolute_x if vertex.absolute_x < lower_bound.x
+        lower_bound.y = vertex.absolute_y if vertex.absolute_y < lower_bound.y
+        upper_bound.x = vertex.absolute_x if vertex.absolute_x > upper_bound.x
+        upper_bound.y = vertex.absolute_y if vertex.absolute_y > upper_bound.y
+
+    aabb = new b2AABB()
+    aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
+    aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+    return aabb
 
 # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
 sort_blocks_by_texture = (a, b) ->
