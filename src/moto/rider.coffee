@@ -196,21 +196,6 @@ class Rider
     angle    = part.GetAngle()
     texture  = if @ghost then part_constants.ghost_texture else part_constants.texture
 
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror * (-angle))
-
-    @level.ctx.drawImage(
-      @level.assets.get(texture),       # texture
-      -part_constants.texture_size.x/2, # x
-      -part_constants.texture_size.y/2, # y
-       part_constants.texture_size.x,   # size-x
-       part_constants.texture_size.y    # size-y
-    )
-
-    @level.ctx.restore()
-
     sprite = @["#{name}_sprite"]
 
     sprite.width    = part_constants.texture_size.x * @mirror

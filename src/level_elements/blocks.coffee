@@ -129,27 +129,6 @@ class Blocks
   display: (ctx) ->
     return false if Constants.debug
 
-    # draw back blocks before front blocks
-    for block in @back_list.concat(@front_list)
-      if visible_block(@level.buffer.visible, block)
-        ctx.beginPath()
-
-        for vertex, i in block.vertices
-          if i == 0
-            ctx.moveTo(vertex.absolute_x, vertex.absolute_y)
-          else
-            ctx.lineTo(vertex.absolute_x, vertex.absolute_y)
-
-        ctx.closePath()
-
-        ctx.save()
-        ctx.scale(1.0 / 40.0, -1.0 / 40.0)
-        ctx.fillStyle = ctx.createPattern(@assets.get(block.texture_name), 'repeat')
-        ctx.fill()
-        ctx.restore()
-
-    @edges.display(ctx)
-
 block_AABB = (block) ->
   first = true
   lower_bound = {}

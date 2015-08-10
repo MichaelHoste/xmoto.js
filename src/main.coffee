@@ -1,5 +1,17 @@
 $.xmoto = (level_filename, options = {}) ->
-  initialize = (options) ->
+  initialize = ->
+    options = load_options(options)
+
+    renderer = new PIXI.CanvasRenderer(options.width, options.height, {
+      antialias:       true,
+      backgroundColor: 0xFFFFFF
+    })
+
+    bind_render_to_dom(renderer, options)
+
+    create_main_loop(level_filename, renderer, options)
+
+  load_options = (options) ->
     defaults =
 
       # Selectors
@@ -7,52 +19,57 @@ $.xmoto = (level_filename, options = {}) ->
       loading: '#loading' # loading selector
       chrono:  '#chrono'  # chrono selector
 
+      # Size
+      width:  800
+      height: 600
+
       # Replays
       replays:  []   # [ { replay: , follow: , name: , picture: }, ... ]
       playable: true # if false, just watch replays
 
       # Zoom
-      zoom: Constants.default_scale.x   # Zoom of camera
+      zoom: Constants.default_scale.x # Zoom of camera
 
       # Paths
       levels_path:  '/data/Levels'  # Path where are the levels (ex. /data/Levels/l1.lvl)
       scores_path:  '/scores'       # Path where to POST a score
       replays_path: '/data/Replays' # Path where all the replay files are stored (ex. /data/Replays/1.replay)
 
-    return $.extend(defaults, options)
+    options = $.extend(defaults, options)
 
-  options = initialize(options)
-  Constants.default_scale =
-    x:  options.zoom
-    y: -options.zoom
+    Constants.default_scale =
+      x:  options.zoom
+      y: -options.zoom
 
-  $(options.loading).show()
+    return options
 
-  renderer = new PIXI.CanvasRenderer(1000, 600, {
-    antialias:       true,
-    backgroundColor: 0xFFFFFF
-  })
+  bind_render_to_dom = (renderer, options) ->
+    $(options.loading).show()
+    $('#xmoto').css('height', options.height)
+    $('#xmoto')[0].appendChild(renderer.view)
+    $('#xmoto').append('<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>')
+    $('#xmoto-debug').hide()
 
-  $('#xmoto-pixi')[0].appendChild(renderer.view)
+  create_main_loop = (level_filename, renderer, options) ->
+    level = new Level(renderer, options)
 
-  level = new Level(renderer, options)
-  level.load_from_file(level_filename)
+    level.load_from_file(level_filename, =>
+      level.init(renderer)
 
-  level.assets.load( =>
-    level.init(renderer)
+      window.cancelAnimationFrame(window.game_loop)
+      $(options.loading).hide()
 
-    window.cancelAnimationFrame(window.game_loop)
-    $(options.loading).hide()
+      update = =>
+        #console.log level.camera.container2.children.length
+        level.physics.update()
+        level.update()
+        window.game_loop = requestAnimationFrame(update)
+        renderer.render(level.stage)
 
-    update = =>
-      #console.log level.camera.container2.children.length
-      level.physics.update()
-      level.display()
-      window.game_loop = requestAnimationFrame(update)
-      renderer.render(level.stage)
+      update()
+    )
 
-    update()
-  )
+  initialize()
 
 #full_screen = ->
 #  window.onresize = ->

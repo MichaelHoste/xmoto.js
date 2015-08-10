@@ -11,13 +11,13 @@ b2RevoluteJointDef  = Box2D.Dynamics.Joints.b2RevoluteJointDef
 class Moto
 
   constructor: (level, ghost = false) ->
-    @level    = level
-    @assets   = level.assets
-    @world    = level.physics.world
-    @mirror   = 1                    # 1 = right-oriented, -1 = left-oriented
-    @dead     = false
-    @ghost    = ghost
-    @rider    = new Rider(level, this)
+    @level  = level
+    @assets = level.assets
+    @world  = level.physics.world
+    @mirror = 1                    # 1 = right-oriented, -1 = left-oriented
+    @dead   = false
+    @ghost  = ghost
+    @rider  = new Rider(level, this)
 
   destroy: ->
     @rider.destroy()
@@ -291,21 +291,6 @@ class Moto
     position = part.GetPosition()
     angle    = part.GetAngle()
 
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.rotate(angle)
-
-    texture = if @ghost then part_constants.ghost_texture else part_constants.texture
-    @level.ctx.drawImage(
-      @level.assets.get(texture), # texture
-      -part_constants.radius,     # x
-      -part_constants.radius,     # y
-       part_constants.radius*2,   # size-x
-       part_constants.radius*2    # size-y
-    )
-
-    @level.ctx.restore()
-
     if part_constants.position.x < 0
       wheel_sprite = @left_wheel_sprite
     else
@@ -323,23 +308,6 @@ class Moto
     position = if part.GetPosition then part.GetPosition() else part.position
     angle    = if part.GetAngle    then part.GetAngle()    else part.angle
 
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
-
-    texture = if @ghost then part_constants.ghost_texture else part_constants.texture
-    @level.ctx.drawImage(
-      @level.assets.get(texture),       # texture
-      -part_constants.texture_size.x/2, # x
-      -part_constants.texture_size.y/2, # y
-       part_constants.texture_size.x,   # size-x
-       part_constants.texture_size.y    # size-y
-    )
-
-    @level.ctx.restore()
-
-    #
     @body_sprite.width  = part_constants.texture_size.x * @mirror
     @body_sprite.height = part_constants.texture_size.y
     @body_sprite.anchor.x = 0.5
@@ -392,22 +360,6 @@ class Moto
 
     # Angle
     angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + @mirror * Math.PI/2
-
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(wheel_position.x, wheel_position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
-
-    @level.ctx.drawImage(
-      @level.assets.get(texture), # texture
-      0.0,                        # x
-      -axle_thickness/2,          # y
-      distance,                   # size-x
-      axle_thickness              # size-y
-    )
-
-    @level.ctx.restore()
 
     axle_sprite = @["#{side}_axle_sprite"]
 

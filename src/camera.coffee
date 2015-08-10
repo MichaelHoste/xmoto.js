@@ -1,7 +1,8 @@
 class Camera
 
   constructor: (level) ->
-    @level  = level
+    @level   = level
+    @options = level.options
 
     # level unities * scale = pixels
     @scale =
@@ -39,6 +40,32 @@ class Camera
 
       @offset.x = @offset.x * 0.97 + velocity.x/3.0 * 0.03
       @offset.y = @offset.y * 0.99 + velocity.y/3.0 * 0.01
+
+  display: ->
+    if Constants.debug
+      $('#xmoto canvas').hide()
+      $('#xmoto-debug').show()
+
+      ctx = @level.physics.debug_ctx
+
+      ctx.save()
+
+      ctx.translate(@options.width/2, @options.height/2) # Center of canvas
+      ctx.scale(@scale.x, @scale.y)                      # Scale (zoom)
+      ctx.translate(-@target().x, -@target().y - 0.25)   # Camera on moto
+
+      @level.physics.world.DrawDebugData()
+
+      ctx.restore()
+    else
+      @container.x = @options.width/2
+      @container.y = @options.height/2
+
+      @container.scale.x = @scale.x
+      @container.scale.y = -@scale.y
+
+      @container2.x = -@target().x
+      @container2.y = @target().y + 0.25
 
   # must be something with x and y values
   target: ->

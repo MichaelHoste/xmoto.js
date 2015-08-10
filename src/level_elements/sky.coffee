@@ -1,9 +1,10 @@
 class Sky
 
   constructor: (level) ->
-    @level  = level
-    @assets = level.assets
-    @theme  = @assets.theme
+    @level   = level
+    @assets  = level.assets
+    @theme   = @assets.theme
+    @options = level.options
 
   parse: (xml) ->
     xml_sky    = $(xml).find('level info sky')
@@ -28,31 +29,24 @@ class Sky
 
   init_sprites: ->
     texture = PIXI.Texture.fromImage(@assets.get_url(@file_name))
-    @sprite = new PIXI.extras.TilingSprite(texture, @level.canvas_width, @level.canvas_height)
+    @sprite = new PIXI.extras.TilingSprite(texture, @options.width, @options.height)
     @sprite.position.x = 0
     @sprite.position.y = 0
     @level.stage.addChildAt(@sprite, 0)
 
   display: ->
-    ctx = @level.ctx
-
-    ctx.beginPath()
-    ctx.moveTo(@level.canvas_width, @level.canvas_height)
-    ctx.lineTo(0,                   @level.canvas_height)
-    ctx.lineTo(0,                   0)
-    ctx.lineTo(@level.canvas_width, 0)
-    ctx.closePath()
+    ctx = @level.debug_ctx
 
     if Constants.debug
+      ctx.beginPath()
+      ctx.moveTo(@options.width, @options.height)
+      ctx.lineTo(0,                   @options.height)
+      ctx.lineTo(0,                   0)
+      ctx.lineTo(@options.width, 0)
+      ctx.closePath()
+
       ctx.fillStyle = "#222228"
       ctx.fill()
-    else
-      ctx.save()
-      ctx.scale(4.0, 4.0)
-      ctx.translate(-@level.camera.target().x*4, @level.camera.target().y*2)
-      ctx.fillStyle = ctx.createPattern(@assets.get(@file_name), "repeat")
-      ctx.fill()
-      ctx.restore()
 
     @sprite.tileScale.x = 4
     @sprite.tileScale.y = 4

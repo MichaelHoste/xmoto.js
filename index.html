@@ -47,10 +47,7 @@
         &#65513;
       </div>
 
-      <canvas id="xmoto" width="1000" height="600">
-      </canvas>
-
-      <div id="xmoto-pixi" style="margin-left: 100px">
+      <div id="xmoto">
       </div>
 
       <div id="next-level">
@@ -3327,7 +3324,7 @@
         })
 
         // initialize level
-        $.xmoto($("#levels option:selected").val())
+        $.xmoto($("#levels option:selected").val(), { width: 1000, height: 600 })
       })
     </script>
   </body>

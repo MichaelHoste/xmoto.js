@@ -149,48 +149,11 @@ class Entities
 
     body
 
-  display_sprites: (ctx) ->
+  display: (entity) ->
     return false if Constants.debug
 
     for entity in @list
-      if entity.type_id == 'Sprite'
-        if visible_entity(@level.buffer.visible, entity)
-          @display_entity(ctx, entity)
-        else
-          entity.sprite.position.x = -10000
-
-  display_items : ->
-    return false if Constants.debug
-
-    ctx = @level.ctx
-
-    for entity in @list
-      if entity.type_id == 'EndOfLevel' or entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
-        if visible_entity(@level.visible, entity)
-          @display_entity(ctx, entity)
-        else
-          entity.sprite.position.x = -10000
-
-  display_entity: (ctx, entity) ->
-    if entity.frames
-      num = @level.current_time % (entity.frames * entity.delay * 1000)
-      num = Math.floor(num / (entity.delay * 1000))
-      texture_name = frame_name(entity, num)
-    else
-      texture_name = entity.file
-
-    ctx.save()
-    ctx.translate(entity.position.x, entity.position.y)
-    ctx.scale(1, -1)
-    ctx.drawImage(@assets.get(texture_name),
-                  -entity.size.width  + entity.center.x,
-                  -entity.size.height + entity.center.y,
-                  entity.size.width,
-                  entity.size.height)
-    ctx.restore()
-
-    for entity in @list
-      if entity.frames > 0
+      if visible_entity(entity) && (entity.file || entity.frames > 0)
         entity.sprite.width    = entity.size.width
         entity.sprite.height   = entity.size.height
         entity.sprite.anchor.x = entity.center.x / entity.size.width
@@ -199,14 +162,8 @@ class Entities
         entity.sprite.y        = -entity.position.y
         entity.sprite.rotation = -entity.position.angle
       else
-        if entity.file
-          entity.sprite.width    = entity.size.width
-          entity.sprite.height   = entity.size.height
-          entity.sprite.anchor.x = entity.center.x / entity.size.width
-          entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height)
-          entity.sprite.x        =  entity.position.x
-          entity.sprite.y        = -entity.position.y
-          entity.sprite.rotation = -entity.position.angle
+        if entity.sprite
+          entity.sprite.x = -10000
 
   entity_texture_name: (entity) ->
     if entity.type_id == 'Sprite'
@@ -235,5 +192,5 @@ entity_AABB = (entity) ->
 
   return aabb
 
-visible_entity = (zone, entity) ->
-  entity.display and entity.aabb.TestOverlap(zone.aabb)
+visible_entity = (entity) ->
+  entity.display
