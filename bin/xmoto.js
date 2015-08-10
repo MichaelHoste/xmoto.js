@@ -540,17 +540,18 @@
     }
 
     Level.prototype.load_from_file = function(file_name, callback) {
-      this.callback = callback;
       return $.ajax({
         type: "GET",
         url: "" + this.options.levels_path + "/" + file_name,
         dataType: "xml",
-        success: this.load_level,
+        success: function(xml) {
+          return this.load_level(xml, callback);
+        },
         context: this
       });
     };
 
-    Level.prototype.load_level = function(xml) {
+    Level.prototype.load_level = function(xml, callback) {
       this.infos.parse(xml);
       this.sky.parse(xml);
       this.blocks.parse(xml);
@@ -564,16 +565,14 @@
       this.entities.load_assets();
       this.moto.load_assets();
       this.ghosts.load_assets();
-      return this.assets.load(this.callback);
+      return this.assets.load(callback);
     };
 
     Level.prototype.init = function() {
       this.sky.init();
       this.limits.init();
-      this.entities.init_sprites();
+      this.entities.init();
       this.blocks.init();
-      this.entities.init_physics_parts();
-      this.entities.init_items();
       this.moto.init();
       this.ghosts.init();
       this.physics.init();
@@ -794,6 +793,7 @@
       return options;
     };
     bind_render_to_dom = function(renderer, options) {
+      $("#xmoto canvas").remove();
       $(options.loading).show();
       $('#xmoto').css('height', options.height);
       $('#xmoto')[0].appendChild(renderer.view);
@@ -1528,6 +1528,11 @@
       return _results;
     };
 
+    Entities.prototype.init = function() {
+      this.init_physics_parts();
+      return this.init_sprites();
+    };
+
     Entities.prototype.init_physics_parts = function() {
       var entity, _i, _len, _ref, _results;
       _ref = this.list;
@@ -1561,26 +1566,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
-        if (entity.type_id === 'Sprite') {
-          _results.push(this.init_entity(entity));
-        } else {
-          _results.push(void 0);
-        }
-      }
-      return _results;
-    };
-
-    Entities.prototype.init_items = function() {
-      var entity, _i, _len, _ref, _results;
-      _ref = this.list;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        entity = _ref[_i];
-        if (entity.type_id === 'EndOfLevel' || entity.type_id === 'Strawberry' || entity.type_id === 'Wrecker') {
-          _results.push(this.init_entity(entity));
-        } else {
-          _results.push(void 0);
-        }
+        _results.push(this.init_entity(entity));
       }
       return _results;
     };
@@ -1595,12 +1581,19 @@
         entity.sprite = new PIXI.extras.MovieClip(textures);
         entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay;
         entity.sprite.play();
-        return this.level.camera.container2.addChild(entity.sprite);
-      } else {
-        if (entity.file) {
-          entity.sprite = new PIXI.Sprite.fromImage(this.assets.get_url(entity.file));
-          return this.level.camera.container2.addChild(entity.sprite);
-        }
+        this.level.camera.container2.addChild(entity.sprite);
+      } else if (entity.file) {
+        entity.sprite = new PIXI.Sprite.fromImage(this.assets.get_url(entity.file));
+        this.level.camera.container2.addChild(entity.sprite);
+      }
+      if (entity.sprite) {
+        entity.sprite.width = entity.size.width;
+        entity.sprite.height = entity.size.height;
+        entity.sprite.anchor.x = entity.center.x / entity.size.width;
+        entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height);
+        entity.sprite.x = entity.position.x;
+        entity.sprite.y = -entity.position.y;
+        return entity.sprite.rotation = -entity.position.angle;
       }
     };
 
@@ -1631,20 +1624,10 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         entity = _ref[_i];
-        if (visible_entity(entity) && (entity.file || entity.frames > 0)) {
-          entity.sprite.width = entity.size.width;
-          entity.sprite.height = entity.size.height;
-          entity.sprite.anchor.x = entity.center.x / entity.size.width;
-          entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height);
-          entity.sprite.x = entity.position.x;
-          entity.sprite.y = -entity.position.y;
-          _results.push(entity.sprite.rotation = -entity.position.angle);
+        if (entity.sprite) {
+          _results.push(entity.sprite.visible = visible_entity(entity));
         } else {
-          if (entity.sprite) {
-            _results.push(entity.sprite.x = -10000);
-          } else {
-            _results.push(void 0);
-          }
+          _results.push(void 0);
         }
       }
       return _results;
@@ -3511,7 +3494,6 @@
         url: "/data/Themes/" + file_name,
         dataType: "xml",
         success: this.load_theme,
-        async: false,
         context: this
       });
     }

@@ -77,6 +77,10 @@ class Entities
           for i in [0..entity.frames-1]
             @assets.anims.push(frame_name(entity, i))
 
+  init: ->
+    @init_physics_parts()
+    @init_sprites()
+
   init_physics_parts: ->
     for entity in @list
       # End of level
@@ -101,13 +105,7 @@ class Entities
 
   init_sprites: ->
     for entity in @list
-      if entity.type_id == 'Sprite'
-        @init_entity(entity)
-
-  init_items: ->
-    for entity in @list
-      if entity.type_id == 'EndOfLevel' or entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
-        @init_entity(entity)
+      @init_entity(entity)
 
   init_entity: (entity) ->
     if entity.frames > 0
@@ -119,10 +117,18 @@ class Entities
       entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay
       entity.sprite.play()
       @level.camera.container2.addChild(entity.sprite)
-    else
-      if entity.file
-        entity.sprite = new PIXI.Sprite.fromImage(@assets.get_url(entity.file))
-        @level.camera.container2.addChild(entity.sprite)
+    else if entity.file
+      entity.sprite = new PIXI.Sprite.fromImage(@assets.get_url(entity.file))
+      @level.camera.container2.addChild(entity.sprite)
+
+    if entity.sprite
+      entity.sprite.width    = entity.size.width
+      entity.sprite.height   = entity.size.height
+      entity.sprite.anchor.x = entity.center.x / entity.size.width
+      entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height)
+      entity.sprite.x        =  entity.position.x
+      entity.sprite.y        = -entity.position.y
+      entity.sprite.rotation = -entity.position.angle
 
   create_entity: (entity, name) ->
     # Create fixture
@@ -153,17 +159,8 @@ class Entities
     return false if Constants.debug
 
     for entity in @list
-      if visible_entity(entity) && (entity.file || entity.frames > 0)
-        entity.sprite.width    = entity.size.width
-        entity.sprite.height   = entity.size.height
-        entity.sprite.anchor.x = entity.center.x / entity.size.width
-        entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height)
-        entity.sprite.x        =  entity.position.x
-        entity.sprite.y        = -entity.position.y
-        entity.sprite.rotation = -entity.position.angle
-      else
-        if entity.sprite
-          entity.sprite.x = -10000
+      if entity.sprite
+        entity.sprite.visible = visible_entity(entity)
 
   entity_texture_name: (entity) ->
     if entity.type_id == 'Sprite'

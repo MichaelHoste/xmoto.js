@@ -44,6 +44,8 @@ $.xmoto = (level_filename, options = {}) ->
     return options
 
   bind_render_to_dom = (renderer, options) ->
+    $("#xmoto canvas").remove()
+
     $(options.loading).show()
     $('#xmoto').css('height', options.height)
     $('#xmoto')[0].appendChild(renderer.view)

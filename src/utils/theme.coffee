@@ -10,7 +10,6 @@ class Theme
       url:      "/data/Themes/#{file_name}",
       dataType: "xml",
       success:  @load_theme
-      async:    false
       context:  @
     })
 

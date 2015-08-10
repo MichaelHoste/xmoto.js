@@ -36,16 +36,15 @@ class Level
     @ghosts        = new Ghosts(this)
 
   load_from_file: (file_name, callback) ->
-    @callback = callback
     $.ajax({
       type:     "GET",
       url:      "#{@options.levels_path}/#{file_name}",
       dataType: "xml",
-      success:  @load_level
+      success:  (xml) -> @load_level(xml, callback)
       context:  @
     })
 
-  load_level: (xml) ->
+  load_level: (xml, callback) ->
     @infos        .parse(xml)
     @sky          .parse(xml)
     @blocks       .parse(xml)
@@ -61,15 +60,13 @@ class Level
     @moto    .load_assets()
     @ghosts  .load_assets()
 
-    @assets.load(@callback)
+    @assets.load(callback)
 
   init: ->
     @sky      .init()
     @limits   .init()
-    @entities .init_sprites()
+    @entities .init()
     @blocks   .init()
-    @entities .init_physics_parts()
-    @entities .init_items()
     @moto     .init()
     @ghosts   .init()
     @physics  .init()

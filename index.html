@@ -3302,8 +3302,10 @@
 
     <script type="text/javascript">
       $(document).ready(function(){
+        var options = { width: 1000, height: 600 }
+
         // Change on select
-        $("#levels").on('change', function(){ $.xmoto($(this).val()) })
+        $("#levels").on('change', function(){ $.xmoto($(this).val(), options) })
 
         // level in URL params
         level = $.url().param('level')
@@ -3314,17 +3316,17 @@
         // prev buttons
         $("#prev-level").on('click', function() {
           level_name = $("#levels option:selected").prev().prop('selected', true).val()
-          level_name ? $.xmoto(level_name) : alert('This is the first level')
+          level_name ? $.xmoto(level_name, options) : alert('This is the first level')
         })
 
         // next button
         $("#next-level").on('click', function() {
           level_name = $("#levels option:selected").next().prop('selected', true).val()
-          level_name ? $.xmoto(level_name) : alert('This is the last level')
+          level_name ? $.xmoto(level_name, options) : alert('This is the last level')
         })
 
         // initialize level
-        $.xmoto($("#levels option:selected").val(), { width: 1000, height: 600 })
+        $.xmoto($("#levels option:selected").val(), options)
       })
     </script>
   </body>
