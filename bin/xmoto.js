@@ -781,7 +781,7 @@
   })();
 
   $.xmoto = function(level_filename, options) {
-    var bind_render_to_dom, create_main_loop, initialize, load_options;
+    var bind_render_to_dom, initialize, load_options, main_loop;
     if (options == null) {
       options = {};
     }
@@ -792,8 +792,9 @@
         antialias: true,
         backgroundColor: 0xFFFFFF
       });
+      window.cancelAnimationFrame(window.game_loop);
       bind_render_to_dom(renderer, options);
-      return create_main_loop(level_filename, renderer, options);
+      return main_loop(level_filename, renderer, options);
     };
     load_options = function(options) {
       var defaults;
@@ -825,20 +826,19 @@
       $('#xmoto').append('<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>');
       return $('#xmoto-debug').hide();
     };
-    create_main_loop = function(level_filename, renderer, options) {
+    main_loop = function(level_filename, renderer, options) {
       var level,
         _this = this;
       level = new Level(renderer, options);
       return level.load_from_file(level_filename, function() {
         var update;
         level.init(renderer);
-        window.cancelAnimationFrame(window.game_loop);
         $(options.loading).hide();
         update = function() {
           level.physics.update();
           level.display();
-          window.game_loop = requestAnimationFrame(update);
-          return renderer.render(level.stage);
+          renderer.render(level.stage);
+          return window.game_loop = requestAnimationFrame(update);
         };
         return update();
       });

@@ -7,9 +7,10 @@ $.xmoto = (level_filename, options = {}) ->
       backgroundColor: 0xFFFFFF
     })
 
-    bind_render_to_dom(renderer, options)
+    window.cancelAnimationFrame(window.game_loop)
 
-    create_main_loop(level_filename, renderer, options)
+    bind_render_to_dom(renderer, options)
+    main_loop(level_filename, renderer, options)
 
   load_options = (options) ->
     defaults =
@@ -52,21 +53,18 @@ $.xmoto = (level_filename, options = {}) ->
     $('#xmoto').append('<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>')
     $('#xmoto-debug').hide()
 
-  create_main_loop = (level_filename, renderer, options) ->
+  main_loop = (level_filename, renderer, options) ->
     level = new Level(renderer, options)
 
     level.load_from_file(level_filename, =>
       level.init(renderer)
-
-      window.cancelAnimationFrame(window.game_loop)
       $(options.loading).hide()
 
       update = =>
-        #console.log level.camera.container2.children.length
         level.physics.update()
         level.display()
-        window.game_loop = requestAnimationFrame(update)
         renderer.render(level.stage)
+        window.game_loop = requestAnimationFrame(update)
 
       update()
     )

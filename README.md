@@ -60,6 +60,7 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 
 ## TODO
 
+* FIX INPUTS ! Get inputs in the physics loop, not in the main loop. Or it will break replays easily if framerate drops
 * Improve XML levels compatibility!
 * Improve and correct edge creation (really slow in webgl because of mask!)
 * PIXIJS
