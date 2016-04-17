@@ -130,7 +130,7 @@ class Constants
              new b2Vec2( 0.13,  0.15)
              new b2Vec2(-0.20,  0.22)
              new b2Vec2(-0.18, -0.55) ]
-    collisions: (true)
+    collisions: true
     texture:       'playertorso'
     ghost_texture: 'ghosttorso'
     texture_size:

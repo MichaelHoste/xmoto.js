@@ -48,13 +48,13 @@ Examples: [Tractor](http://js.xmoto.io/?level=1010&debug=false&left_wheel.radius
 ### Installation
 
  * ```brew install nodejs```: install NodeJS (on MacOS)
- * ```sudo npm install -g coffee-script```: install CoffeeScript
+ * ```npm install -g coffee-script```: install CoffeeScript
  * ```npm install express```: install Express
 
 ### Working environnement
 
  * ```coffee -j bin/xmoto.js -wc src/*.coffee src/*/*.coffee``` to compile to JavaScript in real-time.
- * ```node server.js``` to launch HTTP Server (http://localhost:3000).
+ * ```node server.js``` to launch HTTP Server (http://localhost:3001).
 
 Don't forget to restart the coffee command if you create new COFFEE files.
 

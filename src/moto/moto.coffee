@@ -189,6 +189,7 @@ class Moto
 
     bodyDef.userData =
       name: 'moto'
+      type: if @ghost then 'ghost' else 'player'
       moto: this
 
     bodyDef.type = b2Body.b2_dynamicBody
@@ -219,6 +220,7 @@ class Moto
 
     bodyDef.userData =
       name: 'moto'
+      type: if @ghost then 'ghost' else 'player'
       moto: this
 
     bodyDef.type = b2Body.b2_dynamicBody
@@ -251,6 +253,7 @@ class Moto
 
     bodyDef.userData =
       name: 'moto'
+      type: if @ghost then 'ghost' else 'player'
       moto: this
 
     bodyDef.type = b2Body.b2_dynamicBody

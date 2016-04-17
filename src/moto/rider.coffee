@@ -102,8 +102,9 @@ class Rider
 
     bodyDef.userData =
       name:  'rider'
+      type:  if @ghost then 'ghost' else 'player'
       part:  'head'
-      rider:  this
+      rider: this
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -138,8 +139,9 @@ class Rider
 
     bodyDef.userData =
       name:  'rider'
-      part:   name
-      rider:  this
+      type:  if @ghost then 'ghost' else 'player'
+      part:  name
+      rider: this
 
     bodyDef.type = b2Body.b2_dynamicBody
 

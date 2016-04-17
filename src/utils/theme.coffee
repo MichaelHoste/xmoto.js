@@ -40,7 +40,7 @@ class Theme
 
       else if $(xml_sprite).attr('type') == 'Texture'
         @textures[$(xml_sprite).attr('name').toLowerCase()] =
-          file:      $(xml_sprite).attr('file').toLowerCase() if $(xml_sprite).attr('file')
+          file:      if $(xml_sprite).attr('file') then $(xml_sprite).attr('file').toLowerCase() else ''
           file_base: $(xml_sprite).attr('fileBase')
           file_ext:  $(xml_sprite).attr('fileExtension')
           frames:    $(xml_sprite).find('frame').length
