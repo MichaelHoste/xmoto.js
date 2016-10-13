@@ -47,9 +47,9 @@ Examples: [Tractor](http://js.xmoto.io/?level=1010&debug=false&left_wheel.radius
 
 ### Installation
 
- * ```brew install nodejs```: install NodeJS (on MacOS)
- * ```npm install -g coffee-script```: install CoffeeScript
- * ```npm install express```: install Express
+ * ```brew install nodejs```: install NodeJS for NPM (on MacOS)
+ * ```npm install coffee-script```
+ * ```npm install express```
 
 ### Working environnement
 
@@ -60,7 +60,6 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 
 ## TODO
 
-* FIX INPUTS ! Get inputs in the physics loop, not in the main loop. Or it will break replays easily if framerate drops
 * Improve XML levels compatibility!
 * Improve and correct edge creation (really slow in webgl because of mask!)
 * PIXIJS
