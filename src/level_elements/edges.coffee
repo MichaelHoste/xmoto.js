@@ -64,7 +64,6 @@ class Edges
       edge.sprite.y = -edge.vertex1.absolute_y + y if edge.angle > 0
       edge.sprite.y = -edge.vertex1.absolute_y - y if edge.angle <= 0
 
-      #console.log 2*x/size_x
       edge.sprite.pivot.x     = 0.5
       edge.sprite.tileScale.x = 1.0 / 100.0
       edge.sprite.tileScale.y = 1.0 / 100.0

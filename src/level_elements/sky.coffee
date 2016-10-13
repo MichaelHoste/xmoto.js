@@ -40,8 +40,8 @@ class Sky
     if Constants.debug
       ctx.beginPath()
       ctx.moveTo(@options.width, @options.height)
-      ctx.lineTo(0,                   @options.height)
-      ctx.lineTo(0,                   0)
+      ctx.lineTo(0,              @options.height)
+      ctx.lineTo(0,              0)
       ctx.lineTo(@options.width, 0)
       ctx.closePath()
 
@@ -55,9 +55,9 @@ class Sky
     position_factor_y = 7
 
     # TODO: REMOVE THIS WHEN UPGRADING VERSION (https://github.com/pixijs/pixi.js/pull/2028)
-    if @level.renderer.type == PIXI.RENDERER_TYPE.CANVAS
-      position_factor_x /= @sprite.tileScale.x
-      position_factor_y /= @sprite.tileScale.y
+    # if @level.renderer.type == PIXI.RENDERER_TYPE.CANVAS
+    #   position_factor_x /= @sprite.tileScale.x
+    #   position_factor_y /= @sprite.tileScale.y
 
     @sprite.tilePosition.x = -@level.camera.target().x * position_factor_x
     @sprite.tilePosition.y =  @level.camera.target().y * position_factor_y

@@ -200,10 +200,11 @@ class Rider
 
     sprite = @["#{name}_sprite"]
 
-    sprite.width    = part_constants.texture_size.x * @mirror
+    sprite.width    = part_constants.texture_size.x
     sprite.height   = part_constants.texture_size.y
     sprite.anchor.x = 0.5
     sprite.anchor.y = 0.5
     sprite.x        =  position.x
     sprite.y        = -position.y
     sprite.rotation = -angle
+    sprite.scale.x  = @mirror * Math.abs(sprite.scale.x)

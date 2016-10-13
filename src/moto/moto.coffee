@@ -299,25 +299,27 @@ class Moto
     else
       wheel_sprite = @right_wheel_sprite
 
-    wheel_sprite.width  = 2 * part_constants.radius * @mirror
-    wheel_sprite.height = 2 * part_constants.radius
+    wheel_sprite.width    = 2 * part_constants.radius
+    wheel_sprite.height   = 2 * part_constants.radius
     wheel_sprite.anchor.x = 0.5
     wheel_sprite.anchor.y = 0.5
-    wheel_sprite.x = position.x
-    wheel_sprite.y = -position.y
+    wheel_sprite.x        = position.x
+    wheel_sprite.y        = -position.y
     wheel_sprite.rotation = -angle
+    wheel_sprite.scale.x  = @mirror * Math.abs(wheel_sprite.scale.x)
 
   display_body: (part, part_constants) ->
-    position = if part.GetPosition then part.GetPosition() else part.position
-    angle    = if part.GetAngle    then part.GetAngle()    else part.angle
+    position = part.GetPosition()
+    angle    = part.GetAngle()
 
-    @body_sprite.width  = part_constants.texture_size.x * @mirror
-    @body_sprite.height = part_constants.texture_size.y
+    @body_sprite.width    = part_constants.texture_size.x
+    @body_sprite.height   = part_constants.texture_size.y
     @body_sprite.anchor.x = 0.5
     @body_sprite.anchor.y = 0.5
-    @body_sprite.x = position.x
-    @body_sprite.y = -position.y
+    @body_sprite.x        = position.x
+    @body_sprite.y        = -position.y
     @body_sprite.rotation = -angle
+    @body_sprite.scale.x  = @mirror * Math.abs(@body_sprite.scale.x)
 
   display_left_axle: (part, part_constants) ->
     axle_thickness = 0.09
@@ -366,10 +368,12 @@ class Moto
 
     axle_sprite = @["#{side}_axle_sprite"]
 
-    axle_sprite.width    = distance * @mirror
+    axle_sprite.width    = distance
     axle_sprite.height   = axle_thickness
     axle_sprite.anchor.x = 0.0
     axle_sprite.anchor.y = 0.5
     axle_sprite.x        =  wheel_position.x
     axle_sprite.y        = -wheel_position.y
     axle_sprite.rotation = -angle
+    axle_sprite.scale.x  = @mirror * Math.abs(axle_sprite.scale.x)
+

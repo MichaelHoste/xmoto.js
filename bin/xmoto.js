@@ -961,10 +961,6 @@
       this.sprite.tileScale.y = 4;
       position_factor_x = 15;
       position_factor_y = 7;
-      if (this.level.renderer.type === PIXI.RENDERER_TYPE.CANVAS) {
-        position_factor_x /= this.sprite.tileScale.x;
-        position_factor_y /= this.sprite.tileScale.y;
-      }
       this.sprite.tilePosition.x = -this.level.camera.target().x * position_factor_x;
       return this.sprite.tilePosition.y = this.level.camera.target().y * position_factor_y;
     };
@@ -1455,26 +1451,28 @@
       } else {
         wheel_sprite = this.right_wheel_sprite;
       }
-      wheel_sprite.width = 2 * part_constants.radius * this.mirror;
+      wheel_sprite.width = 2 * part_constants.radius;
       wheel_sprite.height = 2 * part_constants.radius;
       wheel_sprite.anchor.x = 0.5;
       wheel_sprite.anchor.y = 0.5;
       wheel_sprite.x = position.x;
       wheel_sprite.y = -position.y;
-      return wheel_sprite.rotation = -angle;
+      wheel_sprite.rotation = -angle;
+      return wheel_sprite.scale.x = this.mirror * Math.abs(wheel_sprite.scale.x);
     };
 
     Moto.prototype.display_body = function(part, part_constants) {
       var angle, position;
-      position = part.GetPosition ? part.GetPosition() : part.position;
-      angle = part.GetAngle ? part.GetAngle() : part.angle;
-      this.body_sprite.width = part_constants.texture_size.x * this.mirror;
+      position = part.GetPosition();
+      angle = part.GetAngle();
+      this.body_sprite.width = part_constants.texture_size.x;
       this.body_sprite.height = part_constants.texture_size.y;
       this.body_sprite.anchor.x = 0.5;
       this.body_sprite.anchor.y = 0.5;
       this.body_sprite.x = position.x;
       this.body_sprite.y = -position.y;
-      return this.body_sprite.rotation = -angle;
+      this.body_sprite.rotation = -angle;
+      return this.body_sprite.scale.x = this.mirror * Math.abs(this.body_sprite.scale.x);
     };
 
     Moto.prototype.display_left_axle = function(part, part_constants) {
@@ -1517,13 +1515,14 @@
       distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position);
       angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + this.mirror * Math.PI / 2;
       axle_sprite = this[side + "_axle_sprite"];
-      axle_sprite.width = distance * this.mirror;
+      axle_sprite.width = distance;
       axle_sprite.height = axle_thickness;
       axle_sprite.anchor.x = 0.0;
       axle_sprite.anchor.y = 0.5;
       axle_sprite.x = wheel_position.x;
       axle_sprite.y = -wheel_position.y;
-      return axle_sprite.rotation = -angle;
+      axle_sprite.rotation = -angle;
+      return axle_sprite.scale.x = this.mirror * Math.abs(axle_sprite.scale.x);
     };
 
     return Moto;
@@ -1972,13 +1971,14 @@
       angle = part.GetAngle();
       texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
       sprite = this[name + "_sprite"];
-      sprite.width = part_constants.texture_size.x * this.mirror;
+      sprite.width = part_constants.texture_size.x;
       sprite.height = part_constants.texture_size.y;
       sprite.anchor.x = 0.5;
       sprite.anchor.y = 0.5;
       sprite.x = position.x;
       sprite.y = -position.y;
-      return sprite.rotation = -angle;
+      sprite.rotation = -angle;
+      return sprite.scale.x = this.mirror * Math.abs(sprite.scale.x);
     };
 
     return Rider;
