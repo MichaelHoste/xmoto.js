@@ -60,8 +60,8 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 
 ## TODO
 
+* Improve and correct edge creation (really slow in webgl/chrome because of mask! But very smooth unsing canvas in FF and Chrome)
 * Improve XML levels compatibility!
-* Improve and correct edge creation (really slow in webgl because of mask!)
 * PIXIJS
   * Anchor tilingtexture has no impact on Canvas
   * tilingsprite + mask is really slow in webgl. How can i correct that ?
