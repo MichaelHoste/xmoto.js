@@ -37,7 +37,7 @@ class Sky
   update: ->
     ctx = @level.debug_ctx
 
-    if Constants.debug
+    if Constants.debug_physics
       ctx.beginPath()
       ctx.moveTo(@options.width, @options.height)
       ctx.lineTo(0,              @options.height)

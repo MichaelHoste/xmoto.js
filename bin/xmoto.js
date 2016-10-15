@@ -24,11 +24,16 @@
       if (Constants.manual_scale) {
         this.init_scroll();
       }
-      if (Constants.debug) {
+      if (Constants.debug_physics) {
         $('#xmoto canvas').hide();
         $('#xmoto-debug').show();
       }
-      return this.aabb = this.compute_aabb();
+      if (Constants.debug_clipping) {
+        this.clipping = new PIXI.Graphics();
+        this.clipping.alpha = 0.2;
+        this.translate_container.addChild(this.clipping);
+      }
+      return this.compute_aabb();
     };
 
     Camera.prototype.active_object = function() {
@@ -48,13 +53,13 @@
         this.scale.y = this.scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed / 7.5)) * 0.005;
         this.translate.x = this.translate.x * 0.97 + velocity.x / 3.0 * 0.03;
         this.translate.y = this.translate.y * 0.99 + velocity.y / 3.0 * 0.01;
-        return this.aabb = this.compute_aabb();
+        return this.compute_aabb();
       }
     };
 
     Camera.prototype.update = function() {
-      var ctx;
-      if (Constants.debug) {
+      var ctx, size_x, size_y;
+      if (Constants.debug_physics) {
         ctx = this.level.physics.debug_ctx;
         ctx.save();
         ctx.translate(this.options.width / 2, this.options.height / 2);
@@ -68,7 +73,16 @@
         this.scale_container.scale.x = this.scale.x;
         this.scale_container.scale.y = -this.scale.y;
         this.translate_container.x = -this.target().x;
-        return this.translate_container.y = this.target().y;
+        this.translate_container.y = this.target().y;
+        if (Constants.debug_clipping) {
+          this.clipping.clear();
+          this.clipping.beginFill(0x333333);
+          size_x = (this.options.width / 100.0) * (60.0 / this.scale.x);
+          size_y = (this.options.height / 100.0) * (-60.0 / this.scale.y);
+          this.clipping.drawRect(-size_x / 2, -size_y / 2, size_x, size_y);
+          this.clipping.x = this.target().x;
+          return this.clipping.y = -this.target().y;
+        }
       }
     };
 
@@ -121,19 +135,27 @@
     };
 
     Camera.prototype.compute_aabb = function() {
+      if (Constants.debug_clipping) {
+        return this.aabb = this.aabb_for_clipping();
+      } else {
+        return this.aabb = this.aabb_for_canvas();
+      }
+    };
+
+    Camera.prototype.aabb_for_clipping = function() {
       var aabb, size_x, size_y;
-      size_x = this.options.width * 1.0 / this.scale.x;
-      size_y = -this.options.height * 1.0 / this.scale.y;
+      size_x = this.options.width * 0.6 / this.scale.x;
+      size_y = -this.options.height * 0.6 / this.scale.y;
       aabb = new b2AABB();
       aabb.lowerBound.Set(this.target().x - size_x / 2, this.target().y - size_y / 2);
       aabb.upperBound.Set(this.target().x + size_x / 2, this.target().y + size_y / 2);
       return aabb;
     };
 
-    Camera.prototype.compute_aabb_for_frame = function() {
+    Camera.prototype.aabb_for_canvas = function() {
       var aabb, size_x, size_y;
-      size_x = this.options.width * 0.6 / this.scale.x;
-      size_y = -this.options.height * 0.6 / this.scale.y;
+      size_x = this.options.width * 1.0 / this.scale.x;
+      size_y = -this.options.height * 1.0 / this.scale.y;
       aabb = new b2AABB();
       aabb.lowerBound.Set(this.target().x - size_x / 2, this.target().y - size_y / 2);
       aabb.upperBound.Set(this.target().x + size_x / 2, this.target().y + size_y / 2);
@@ -150,6 +172,10 @@
     function Constants() {}
 
     Constants.debug = false;
+
+    Constants.debug_physics = false;
+
+    Constants.debug_clipping = false;
 
     Constants.hooking = false;
 
@@ -854,10 +880,10 @@
     };
     main_loop = function(level_filename, renderer, options) {
       var level, stats_fps, stats_ms;
-      if ($('body.debug').length) {
+      if (Constants.debug) {
         stats_fps = bind_stats_fps();
       }
-      if ($('body.debug').length) {
+      if (Constants.debug) {
         stats_ms = bind_stats_ms();
       }
       level = new Level(renderer, options);
@@ -867,19 +893,19 @@
           level.init(renderer);
           $(options.loading).hide();
           update = function() {
-            if ($('body.debug').length) {
+            if (Constants.debug) {
               stats_fps.begin();
             }
-            if ($('body.debug').length) {
+            if (Constants.debug) {
               stats_ms.begin();
             }
             level.update();
             renderer.render(level.stage);
             window.game_loop = requestAnimationFrame(update);
-            if ($('body.debug').length) {
+            if (Constants.debug) {
               stats_fps.end();
             }
-            if ($('body.debug').length) {
+            if (Constants.debug) {
               return stats_ms.end();
             }
           };
@@ -1236,7 +1262,7 @@
 
     Blocks.prototype.update = function() {
       var block, j, len, ref;
-      if (!Constants.debug) {
+      if (!Constants.debug_physics) {
         ref = this.list;
         for (j = 0, len = ref.length; j < len; j++) {
           block = ref[j];
@@ -1420,7 +1446,7 @@
 
     Edges.prototype.update = function() {
       var edge, j, len, ref, results;
-      if (!Constants.debug) {
+      if (!Constants.debug_physics) {
         ref = this.list;
         results = [];
         for (j = 0, len = ref.length; j < len; j++) {
@@ -1678,7 +1704,7 @@
 
     Entities.prototype.update = function(entity) {
       var j, len, ref, results;
-      if (!Constants.debug) {
+      if (!Constants.debug_physics) {
         ref = this.list;
         results = [];
         for (j = 0, len = ref.length; j < len; j++) {
@@ -1976,7 +2002,7 @@
     };
 
     Limits.prototype.update = function() {
-      if (!Constants.debug) {
+      if (!Constants.debug_physics) {
         this.left_sprite.visible = this.visible(this.left_wall_aabb);
         this.right_sprite.visible = this.visible(this.right_wall_aabb);
         this.top_sprite.visible = this.visible(this.top_wall_aabb);
@@ -2058,7 +2084,7 @@
     Sky.prototype.update = function() {
       var ctx, position_factor_x, position_factor_y;
       ctx = this.level.debug_ctx;
-      if (Constants.debug) {
+      if (Constants.debug_physics) {
         ctx.beginPath();
         ctx.moveTo(this.options.width, this.options.height);
         ctx.lineTo(0, this.options.height);
@@ -2545,7 +2571,7 @@
     Moto.prototype.update = function() {
       var visible;
       this.aabb = this.compute_aabb();
-      if (!Constants.debug) {
+      if (!Constants.debug_physics) {
         visible = this.visible();
         this.update_wheel(this.left_wheel, Constants.left_wheel, visible);
         this.update_wheel(this.right_wheel, Constants.right_wheel, visible);
@@ -3098,7 +3124,7 @@
     };
 
     Rider.prototype.update = function(visible) {
-      if (!Constants.debug) {
+      if (!Constants.debug_physics) {
         this.update_part(this.torso, 'torso', visible);
         this.update_part(this.upper_leg, 'upper_leg', visible);
         this.update_part(this.lower_leg, 'lower_leg', visible);
@@ -3460,7 +3486,7 @@
 
   bind_debug_button = function() {
     $('#debug .debug-button').on('click', function() {
-      window.location = '?level=' + $("#levels option:selected").text() + '&debug=false';
+      window.location = '?level=' + $("#levels option:selected").text() + '&debug=true';
       return false;
     });
     return $('.normal-button').on('click', function() {
@@ -3545,7 +3571,7 @@
   $(function() {
     var params;
     params = $.url().param();
-    if ($('#debug').length && Object.keys(params).length > 1) {
+    if (Constants.debug || params.debug === 'true') {
       $('.debug').show();
       $('.debug-button').hide();
       $('body').addClass('debug');

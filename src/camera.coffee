@@ -24,17 +24,16 @@ class Camera
     if Constants.manual_scale
       @init_scroll()
 
-    if Constants.debug
+    if Constants.debug_physics
       $('#xmoto canvas').hide()
       $('#xmoto-debug').show()
 
-    #
-    # @frame = new PIXI.Graphics()
-    # @frame.alpha = 0.2
-    # @translate_container.addChild(@frame)
-    #
+    if Constants.debug_clipping
+      @clipping = new PIXI.Graphics()
+      @clipping.alpha = 0.2
+      @translate_container.addChild(@clipping)
 
-    @aabb = @compute_aabb()
+    @compute_aabb()
 
   active_object: ->
     if @level.options.playable
@@ -53,10 +52,10 @@ class Camera
       @translate.x = @translate.x * 0.97 + velocity.x/3.0 * 0.03
       @translate.y = @translate.y * 0.99 + velocity.y/3.0 * 0.01
 
-      @aabb = @compute_aabb()
+      @compute_aabb()
 
   update: ->
-    if Constants.debug
+    if Constants.debug_physics
       ctx = @level.physics.debug_ctx
 
       ctx.save()
@@ -78,17 +77,17 @@ class Camera
       @translate_container.x = -@target().x
       @translate_container.y = @target().y
 
-      # #
-      # @frame.clear()
-      # @frame.beginFill(0x333333)
+      # Opaque clipping to see where sprites are "filtered out"
+      if Constants.debug_clipping
+        @clipping.clear()
+        @clipping.beginFill(0x333333)
 
-      # size_x = (@options.width  / 100.0) * (60.0  / @scale.x)
-      # size_y = (@options.height / 100.0) * (-60.0 / @scale.y)
+        size_x = (@options.width  / 100.0) * (60.0  / @scale.x)
+        size_y = (@options.height / 100.0) * (-60.0 / @scale.y)
 
-      # @frame.drawRect(-size_x/2, -size_y/2, size_x, size_y)
-      # @frame.x = @target().x
-      # @frame.y = -@target().y
-      # #
+        @clipping.drawRect(-size_x/2, -size_y/2, size_x, size_y)
+        @clipping.x = @target().x
+        @clipping.y = -@target().y
 
   # must be something with x and y values
   target: ->
@@ -134,17 +133,23 @@ class Camera
     canvas.addEventListener('mousewheel',     scroll, false)
 
   compute_aabb: ->
-    size_x =   @options.width  * 1.0 / @scale.x
-    size_y = - @options.height * 1.0 / @scale.y
+    if Constants.debug_clipping
+      @aabb = @aabb_for_clipping()
+    else
+      @aabb = @aabb_for_canvas()
+
+  aabb_for_clipping: ->
+    size_x =   @options.width  * 0.6 / @scale.x
+    size_y = - @options.height * 0.6 / @scale.y
 
     aabb = new b2AABB()
     aabb.lowerBound.Set(@target().x - size_x/2, @target().y - size_y/2)
     aabb.upperBound.Set(@target().x + size_x/2, @target().y + size_y/2)
     return aabb
 
-  compute_aabb_for_frame: ->
-    size_x =   @options.width  * 0.6 / @scale.x
-    size_y = - @options.height * 0.6 / @scale.y
+  aabb_for_canvas: ->
+    size_x =   @options.width  * 1.0 / @scale.x
+    size_y = - @options.height * 1.0 / @scale.y
 
     aabb = new b2AABB()
     aabb.lowerBound.Set(@target().x - size_x/2, @target().y - size_y/2)

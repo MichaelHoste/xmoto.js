@@ -185,7 +185,7 @@ class Rider
     @world.CreateJoint(jointDef)
 
   update: (visible) ->
-    if !Constants.debug
+    if !Constants.debug_physics
       @update_part(@torso,     'torso',     visible)
       @update_part(@upper_leg, 'upper_leg', visible)
       @update_part(@lower_leg, 'lower_leg', visible)

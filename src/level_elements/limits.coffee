@@ -152,7 +152,7 @@ class Limits
     @level.camera.translate_container.addChild(@top_sprite)
 
   update: ->
-    if !Constants.debug
+    if !Constants.debug_physics
       @left_sprite.visible   = @visible(@left_wall_aabb)
       @right_sprite.visible  = @visible(@right_wall_aabb)
       @top_sprite.visible    = @visible(@top_wall_aabb)

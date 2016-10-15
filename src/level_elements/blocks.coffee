@@ -127,7 +127,7 @@ class Blocks
       @level.camera.translate_container.addChild(block.sprite)
 
   update: ->
-    if !Constants.debug
+    if !Constants.debug_physics
       for block in @list
         block.sprite.visible = @visible(block)
 

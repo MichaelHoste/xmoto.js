@@ -156,7 +156,7 @@ class Entities
     body
 
   update: (entity) ->
-    if !Constants.debug
+    if !Constants.debug_physics
       for entity in @list
         if entity.sprite
           entity.sprite.visible = @visible(entity)

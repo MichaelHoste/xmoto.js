@@ -68,8 +68,8 @@ $.xmoto = (level_filename, options = {}) ->
     stats
 
   main_loop = (level_filename, renderer, options) ->
-    stats_fps = bind_stats_fps() if $('body.debug').length
-    stats_ms  = bind_stats_ms()  if $('body.debug').length
+    stats_fps = bind_stats_fps() if Constants.debug
+    stats_ms  = bind_stats_ms()  if Constants.debug
 
     level = new Level(renderer, options)
 
@@ -78,15 +78,15 @@ $.xmoto = (level_filename, options = {}) ->
       $(options.loading).hide()
 
       update = =>
-        stats_fps.begin() if $('body.debug').length
-        stats_ms.begin()  if $('body.debug').length
+        stats_fps.begin() if Constants.debug
+        stats_ms.begin()  if Constants.debug
 
         level.update()
         renderer.render(level.stage)
         window.game_loop = requestAnimationFrame(update)
 
-        stats_fps.end() if $('body.debug').length
-        stats_ms.end()  if $('body.debug').length
+        stats_fps.end() if Constants.debug
+        stats_ms.end()  if Constants.debug
 
       update()
     )

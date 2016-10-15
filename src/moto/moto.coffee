@@ -285,7 +285,7 @@ class Moto
   update: ->
     @aabb = @compute_aabb()
 
-    if !Constants.debug
+    if !Constants.debug_physics
       visible = @visible()
 
       @update_wheel(     @left_wheel,  Constants.left_wheel,  visible)

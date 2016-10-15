@@ -2,7 +2,7 @@
 
 bind_debug_button = ->
   $('#debug .debug-button').on('click', ->
-    window.location = '?level=' + $("#levels option:selected").text() + '&debug=false'
+    window.location = '?level=' + $("#levels option:selected").text() + '&debug=true'
     false
   )
 
@@ -66,7 +66,7 @@ create_form_with_url_params = (params) ->
 $ ->
   params = $.url().param()
 
-  if $('#debug').length and Object.keys(params).length > 1 # level param is accepted with debug mode off
+  if Constants.debug || params.debug == 'true'
     $('.debug').show()
     $('.debug-button').hide()
     $('body').addClass('debug')

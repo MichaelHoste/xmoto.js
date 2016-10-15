@@ -74,7 +74,7 @@ class Edges
 
   # only display edges present on the screen zone
   update: ->
-    if !Constants.debug
+    if !Constants.debug_physics
       for edge in @list
         edge.sprite.visible = @visible(edge)
 
