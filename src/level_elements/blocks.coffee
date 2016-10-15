@@ -4,12 +4,15 @@ b2AABB = Box2D.Collision.b2AABB
 class Blocks
 
   constructor: (level) ->
-    @level  = level
-    @assets = level.assets
-    @theme  = @assets.theme
+    @level      = level
+    @assets     = level.assets
+    @theme      = @assets.theme
+
     @list       = [] # total list
     @back_list  = [] # background list
     @front_list = [] # front list (collisions)
+
+    @edges = new Edges(@level)
 
   parse: (xml) ->
     xml_blocks = $(xml).find('block')
@@ -52,15 +55,15 @@ class Blocks
       xml_vertices = $(xml_block).find('vertex')
       for xml_vertex in xml_vertices
         vertex =
-          x:    parseFloat($(xml_vertex).attr('x'))
-          y:    parseFloat($(xml_vertex).attr('y'))
+          x:          parseFloat($(xml_vertex).attr('x'))
+          y:          parseFloat($(xml_vertex).attr('y'))
           absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are here to
           absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # accelerate drawing of each frame
-          edge: $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
+          edge:       $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
 
-      block.aabb = block_AABB(block)
+      block.aabb = @compute_aabb(block)
 
       @list.push(block)
       if block.position.background
@@ -68,79 +71,98 @@ class Blocks
       else
         @front_list.push(block)
 
-    @list      .sort( sort_blocks_by_texture )
-    @back_list .sort( sort_blocks_by_texture )
-    @front_list.sort( sort_blocks_by_texture )
+    @list      .sort( @sort_blocks_by_texture )
+    @back_list .sort( @sort_blocks_by_texture )
+    @front_list.sort( @sort_blocks_by_texture )
+
+    @edges.parse(@list)
 
     return this
 
-  init: ->
-    # Assets
+  load_assets: ->
     for block in @list
-      texture_file = block.texture_name
-      @assets.textures.push(texture_file)
+      @assets.textures.push(block.texture_name)
 
-    # Collisions for blocks
+    @edges.load_assets()
+
+  init: ->
+    @init_physics_parts()
+    @init_sprites()
+
+    @edges.init()
+
+  init_physics_parts: ->
     ground = Constants.ground
     for block in @front_list
       @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
-    # Init edges
-    @edges = new Edges(@level, @list)
-
-  display: (ctx) ->
-    return false if Constants.debug
-
+  init_sprites: ->
     # draw back blocks before front blocks
     for block in @back_list.concat(@front_list)
-      if visible_block(@level.buffer.visible, block)
-        ctx.beginPath()
+      # Create mask
+      points = []
 
-        for vertex, i in block.vertices
-          if i == 0
-            ctx.moveTo(vertex.absolute_x, vertex.absolute_y)
-          else
-            ctx.lineTo(vertex.absolute_x, vertex.absolute_y)
+      for vertex in block.vertices
+        points.push(new PIXI.Point(vertex.x, -vertex.y))
 
-        ctx.closePath()
+      mask = new PIXI.Graphics()
+      mask.beginFill(0xffffff, 1.0)
+      mask.drawPolygon(points)
+      mask.x =  block.position.x
+      mask.y = -block.position.y
+      @level.camera.translate_container.addChild(mask)
 
-        ctx.save()
-        ctx.scale(1.0 / 40.0, -1.0 / 40.0)
-        ctx.fillStyle = ctx.createPattern(@assets.get(block.texture_name), 'repeat')
-        ctx.fill()
-        ctx.restore()
+      # Create tilingSprite
+      texture = PIXI.Texture.fromImage(@assets.get_url(block.texture_name))
+      size_x  = block.aabb.upperBound.x - block.aabb.lowerBound.x
+      size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
 
-    @edges.display(ctx)
+      block.sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
+      block.sprite.x =  block.aabb.lowerBound.x
+      block.sprite.y = -block.aabb.upperBound.y
+      block.sprite.tileScale.x = 1.0/40
+      block.sprite.tileScale.y = 1.0/40
+      block.sprite.mask = mask
 
-block_AABB = (block) ->
-  first = true
-  lower_bound = {}
-  upper_bound = {}
-  for vertex in block.vertices
-    if first
-      lower_bound =
-        x: vertex.absolute_x
-        y: vertex.absolute_y
-      upper_bound =
-        x: vertex.absolute_x
-        y: vertex.absolute_y
-      first = false
-    else
-      lower_bound.x = vertex.absolute_x if vertex.absolute_x < lower_bound.x
-      lower_bound.y = vertex.absolute_y if vertex.absolute_y < lower_bound.y
-      upper_bound.x = vertex.absolute_x if vertex.absolute_x > upper_bound.x
-      upper_bound.y = vertex.absolute_y if vertex.absolute_y > upper_bound.y
+      @level.camera.translate_container.addChild(block.sprite)
 
-  aabb = new b2AABB()
-  aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
-  aabb.upperBound.Set(upper_bound.x, upper_bound.y)
-  return aabb
+  update: ->
+    if !Constants.debug_physics
+      for block in @list
+        block.sprite.visible = @visible(block)
 
-visible_block = (zone, block) ->
-  block.aabb.TestOverlap(zone.aabb)
+      @edges.update()
 
-# http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
-sort_blocks_by_texture = (a, b) ->
-  return 1  if a.usetexture.id > b.usetexture.id
-  return -1 if a.usetexture.id <= b.usetexture.id
-  return 0
+  visible: (block) ->
+    block.aabb.TestOverlap(@level.camera.aabb)
+
+  compute_aabb: (block) ->
+    first = true
+    lower_bound = {}
+    upper_bound = {}
+
+    for vertex in block.vertices
+      if first
+        lower_bound =
+          x: vertex.absolute_x
+          y: vertex.absolute_y
+        upper_bound =
+          x: vertex.absolute_x
+          y: vertex.absolute_y
+        first = false
+      else
+        lower_bound.x = vertex.absolute_x if vertex.absolute_x < lower_bound.x
+        lower_bound.y = vertex.absolute_y if vertex.absolute_y < lower_bound.y
+        upper_bound.x = vertex.absolute_x if vertex.absolute_x > upper_bound.x
+        upper_bound.y = vertex.absolute_y if vertex.absolute_y > upper_bound.y
+
+    aabb = new b2AABB()
+    aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
+    aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+    return aabb
+
+  # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
+  sort_blocks_by_texture: (a, b) ->
+    return 1  if a.usetexture.id > b.usetexture.id
+    return -1 if a.usetexture.id <= b.usetexture.id
+    return 0

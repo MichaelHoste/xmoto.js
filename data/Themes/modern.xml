@@ -165,6 +165,7 @@
 <frame sum="b654b06b1d42451eb2a6534bf6dd36ae" />
 <frame sum="fdb5d66bc541b82dec4a0b3f82c8b6f7" />
 <frame sum="018dfe85e9eb0393a6193bfe0f5ca117" />
+<frame sum="00000000000000000000000000000000" />
 </sprite>
 <sprite type="Entity" name="Sun" file="Sun.png" width="3" height="3" centerX="1.5" centerY="0.2" sum="4beacc9276d81ec0a1ff7c62ff901c9d" />
 <sprite type="Entity" name="Teleport" fileBase="Teleport_" fileExtension="png" width="4.0" height="4.2" centerX="2.1" centerY="1.5">

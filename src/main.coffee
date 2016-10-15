@@ -1,5 +1,18 @@
 $.xmoto = (level_filename, options = {}) ->
-  initialize = (options) ->
+  initialize = ->
+    options = load_options(options)
+
+    renderer = new PIXI.CanvasRenderer(options.width, options.height, {
+      antialias:       true,
+      backgroundColor: 0xFFFFFF
+    })
+
+    window.cancelAnimationFrame(window.game_loop)
+
+    bind_render_to_dom(renderer, options)
+    main_loop(level_filename, renderer, options)
+
+  load_options = (options) ->
     defaults =
 
       # Selectors
@@ -7,44 +20,78 @@ $.xmoto = (level_filename, options = {}) ->
       loading: '#loading' # loading selector
       chrono:  '#chrono'  # chrono selector
 
+      # Size
+      width:  800
+      height: 600
+
       # Replays
       replays:  []   # [ { replay: , follow: , name: , picture: }, ... ]
       playable: true # if false, just watch replays
 
       # Zoom
-      zoom: Constants.default_scale.x   # Zoom of camera
+      zoom: Constants.default_scale.x # Zoom of camera
 
       # Paths
       levels_path:  '/data/Levels'  # Path where are the levels (ex. /data/Levels/l1.lvl)
       scores_path:  '/scores'       # Path where to POST a score
       replays_path: '/data/Replays' # Path where all the replay files are stored (ex. /data/Replays/1.replay)
 
-    return $.extend(defaults, options)
+    options = $.extend(defaults, options)
 
-  options = initialize(options)
-  Constants.default_scale =
-    x:  options.zoom
-    y: -options.zoom
+    Constants.default_scale =
+      x:  options.zoom
+      y: -options.zoom
 
-  $(options.loading).show()
+    return options
 
-  level = new Level(options)
-  level.load_from_file(level_filename)
-  level.assets.load( ->
-    update = ->
-      level.physics.update()
-      level.display()
-      window.game_loop = window.requestAnimationFrame(update)
+  bind_render_to_dom = (renderer, options) ->
+    $("#xmoto canvas").remove()
 
-    level.start_time   = new Date().getTime()
-    level.current_time = 0
-    level.physics.init()
+    $(options.loading).show()
+    $('#xmoto').css('height', options.height)
+    $('#xmoto')[0].appendChild(renderer.view)
+    $('#xmoto').append('<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>')
+    $('#xmoto-debug').hide()
 
-    window.cancelAnimationFrame(window.game_loop)
-    $(options.loading).hide()
+  bind_stats_fps = ->
+    stats = new Stats()
+    stats.showPanel(0) # 0: fps, 1: ms, 2: mb, 3+: custom
+    $('#xmoto')[0].appendChild(stats.dom)
+    $('#xmoto div:last').addClass('stats-fps')
+    stats
 
-    update()
-  )
+  bind_stats_ms = ->
+    stats = new Stats()
+    stats.showPanel(1) # 0: fps, 1: ms, 2: mb, 3+: custom
+    $('#xmoto')[0].appendChild(stats.dom)
+    $('#xmoto div:last').addClass('stats-ms')
+    stats
+
+  main_loop = (level_filename, renderer, options) ->
+    stats_fps = bind_stats_fps() if Constants.debug
+    stats_ms  = bind_stats_ms()  if Constants.debug
+
+    level = new Level(renderer, options)
+
+    level.load_from_file(level_filename, =>
+      level.init(renderer)
+      $(options.loading).hide()
+
+      update = =>
+        stats_fps.begin() if Constants.debug
+        stats_ms.begin()  if Constants.debug
+
+        level.update()
+        renderer.render(level.stage)
+        window.game_loop = requestAnimationFrame(update)
+
+        stats_fps.end() if Constants.debug
+        stats_ms.end()  if Constants.debug
+
+      update()
+    )
+
+  initialize()
 
 #full_screen = ->
 #  window.onresize = ->

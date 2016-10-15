@@ -40,12 +40,23 @@ body {
 }
 
 #xmoto {
+  position: relative;
   float: left;
-  box-shadow:0px 0px 30px #888;
+  box-shadow: 0px 0px 30px #888;
 }
 
-#buffer {
-  display: none;
+.stats-fps {
+  position: absolute !important;
+  right: 200px !important;
+  left: inherit !important;
+  top: -48px !important;
+}
+
+.stats-ms {
+  position: absolute !important;
+  left: inherit !important;
+  right: 120px !important;
+  top: -48px !important;
 }
 
 #prev-level, #next-level {

@@ -17,16 +17,19 @@ b2Settings      = Box2D.Common.b2Settings
 class Physics
 
   constructor: (level) ->
-    @level = level
-    @world = new b2World(new b2Vec2(0, -Constants.gravity), true) # gravity vector, and doSleep
+    @level     = level
+    @options   = level.options
+    @camera    = level.camera
+    @world     = new b2World(new b2Vec2(0, -Constants.gravity), true) # gravity vector, and doSleep
+    @debug_ctx = level.debug_ctx
 
     # Double default precision between wheel and ground
     b2Settings.b2_linearSlop = 0.0025
 
     # debug initialization
     debugDraw = new b2DebugDraw()
-    debugDraw.SetSprite(@level.ctx)                # context
-    @level.ctx.lineWidth = 0.05                    # thickness of line (debugDraw.SetLineThickness doesn't work)
+    debugDraw.SetSprite(@debug_ctx)                # context
+    @debug_ctx.lineWidth = 0.05                    # thickness of line (debugDraw.SetLineThickness doesn't work)
     debugDraw.SetFillAlpha(0.5)                    # transparency
     debugDraw.m_sprite.graphics.clear = -> return; # Don't allow box2D to (badly) clear the canvas
 
@@ -79,10 +82,6 @@ class Physics
       if @level.need_to_restart
         @restart()
         @level.need_to_restart = false
-
-  # for debugging
-  display: ->
-    @world.DrawDebugData()
 
   create_polygon: (vertices, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
     # Create fixture

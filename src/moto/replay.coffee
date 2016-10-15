@@ -70,10 +70,10 @@ class Replay
       key_step = @key_steps[@steps.toString()] = {}
 
       for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle']
-        key_step[part] = physics_values(moto[part])
+        key_step[part] = @physics_values(moto[part])
 
       for part in ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
-        key_step[part] = physics_values(rider[part])
+        key_step[part] = @physics_values(rider[part])
 
   # TODO dichotomic search
   last: (input) ->
@@ -116,12 +116,13 @@ class Replay
       replay: replay_string
     )
 
-physics_values = (object) ->
-  position:
-    x:              object.GetPosition().x
-    y:              object.GetPosition().y
-  angle:            object.GetAngle()
-  linear_velocity:
-    x:              object.GetLinearVelocity().x
-    y:              object.GetLinearVelocity().y
-  angular_velocity: object.GetAngularVelocity()
+  physics_values: (object) ->
+    position:
+      x:              object.GetPosition().x
+      y:              object.GetPosition().y
+    angle:            object.GetAngle()
+    linear_velocity:
+      x:              object.GetLinearVelocity().x
+      y:              object.GetLinearVelocity().y
+    angular_velocity: object.GetAngularVelocity()
+

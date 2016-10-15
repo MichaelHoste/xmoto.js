@@ -11,25 +11,32 @@ b2RevoluteJointDef  = Box2D.Dynamics.Joints.b2RevoluteJointDef
 class Moto
 
   constructor: (level, ghost = false) ->
-    @level    = level
-    @assets   = level.assets
-    @world    = level.physics.world
-    @mirror   = 1                    # 1 = right-oriented, -1 = left-oriented
-    @dead     = false
-    @ghost    = ghost
-    @rider    = new Rider(level, this)
+    @level  = level
+    @assets = level.assets
+    @world  = level.physics.world
+    @mirror = 1                    # 1 = right-oriented, -1 = left-oriented
+    @dead   = false
+    @ghost  = ghost
+    @rider  = new Rider(level, this)
 
   destroy: ->
     @rider.destroy()
 
+    # physics
     @world.DestroyBody(@body)
     @world.DestroyBody(@left_wheel)
     @world.DestroyBody(@right_wheel)
     @world.DestroyBody(@left_axle)
     @world.DestroyBody(@right_axle)
 
-  init: ->
-    # Assets
+    # graphics
+    @level.camera.translate_container.removeChild(@body_sprite)
+    @level.camera.translate_container.removeChild(@left_wheel_sprite)
+    @level.camera.translate_container.removeChild(@right_wheel_sprite)
+    @level.camera.translate_container.removeChild(@left_axle_sprite)
+    @level.camera.translate_container.removeChild(@right_axle_sprite)
+
+  load_assets: ->
     parts = [ Constants.body, Constants.left_wheel, Constants.right_wheel,
               Constants.left_axle, Constants.right_axle ]
     for part in parts
@@ -38,7 +45,13 @@ class Moto
       else
         @assets.moto.push(part.texture)
 
-    # Creation of moto parts
+    @rider.load_assets()
+
+  init: ->
+    @init_physics_parts()
+    @init_sprites()
+
+  init_physics_parts: ->
     @player_start = @level.entities.player_start
 
     @body         = @create_body()
@@ -53,7 +66,19 @@ class Moto
     @left_prismatic_joint  = @create_prismatic_joint(@left_axle,  Constants.left_suspension)
     @right_prismatic_joint = @create_prismatic_joint(@right_axle, Constants.right_suspension)
 
-    @rider.init()
+    @rider.init_physics_parts()
+
+  init_sprites: ->
+    for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle']
+      if @ghost
+        asset_name = Constants[part].ghost_texture
+      else
+        asset_name = Constants[part].texture
+
+      @["#{part}_sprite"] = new PIXI.Sprite.fromImage(@assets.get_url(asset_name))
+      @level.camera.translate_container.addChild(@["#{part}_sprite"])
+
+    @rider.init_sprites()
 
   move: (input = @level.input) ->
     moto_acceleration = Constants.moto_acceleration
@@ -166,6 +191,7 @@ class Moto
 
     bodyDef.userData =
       name: 'moto'
+      type: if @ghost then 'ghost' else 'player'
       moto: this
 
     bodyDef.type = b2Body.b2_dynamicBody
@@ -196,6 +222,7 @@ class Moto
 
     bodyDef.userData =
       name: 'moto'
+      type: if @ghost then 'ghost' else 'player'
       moto: this
 
     bodyDef.type = b2Body.b2_dynamicBody
@@ -228,6 +255,7 @@ class Moto
 
     bodyDef.userData =
       name: 'moto'
+      type: if @ghost then 'ghost' else 'player'
       moto: this
 
     bodyDef.type = b2Body.b2_dynamicBody
@@ -254,56 +282,58 @@ class Moto
     jointDef.collideConnected = false
     @world.CreateJoint(jointDef)
 
-  display: ->
-    return false if Constants.debug
+  update: ->
+    @aabb = @compute_aabb()
 
-    @display_wheel(     @left_wheel,  Constants.left_wheel)
-    @display_wheel(     @right_wheel, Constants.right_wheel)
-    @display_left_axle( @left_axle,   Constants.left_axle)
-    @display_right_axle(@right_axle,  Constants.right_axle)
-    @display_body(      @body,        Constants.body)
-    @rider.display()
+    if !Constants.debug_physics
+      visible = @visible()
 
-  display_wheel: (part, part_constants) ->
-    position = part.GetPosition()
-    angle    = part.GetAngle()
+      @update_wheel(     @left_wheel,  Constants.left_wheel,  visible)
+      @update_wheel(     @right_wheel, Constants.right_wheel, visible)
+      @update_left_axle( @left_axle,   Constants.left_axle,   visible)
+      @update_right_axle(@right_axle,  Constants.right_axle,  visible)
+      @update_body(      @body,        Constants.body,        visible)
 
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.rotate(angle)
+      @rider.update(visible)
 
-    texture = if @ghost then part_constants.ghost_texture else part_constants.texture
-    @level.ctx.drawImage(
-      @level.assets.get(texture), # texture
-      -part_constants.radius,     # x
-      -part_constants.radius,     # y
-       part_constants.radius*2,   # size-x
-       part_constants.radius*2    # size-y
-    )
+  update_wheel: (part, part_constants, visible) ->
+    if part_constants.position.x < 0
+      wheel_sprite = @left_wheel_sprite
+    else
+      wheel_sprite = @right_wheel_sprite
 
-    @level.ctx.restore()
+    wheel_sprite.visible = visible
 
-  display_body: (part, part_constants) ->
-    position = if part.GetPosition then part.GetPosition() else part.position
-    angle    = if part.GetAngle    then part.GetAngle()    else part.angle
+    if visible
+      position = part.GetPosition()
+      angle    = part.GetAngle()
 
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
+      wheel_sprite.width    = 2 * part_constants.radius
+      wheel_sprite.height   = 2 * part_constants.radius
+      wheel_sprite.anchor.x = 0.5
+      wheel_sprite.anchor.y = 0.5
+      wheel_sprite.x        = position.x
+      wheel_sprite.y        = -position.y
+      wheel_sprite.rotation = -angle
+      wheel_sprite.scale.x  = @mirror * Math.abs(wheel_sprite.scale.x)
 
-    texture = if @ghost then part_constants.ghost_texture else part_constants.texture
-    @level.ctx.drawImage(
-      @level.assets.get(texture),       # texture
-      -part_constants.texture_size.x/2, # x
-      -part_constants.texture_size.y/2, # y
-       part_constants.texture_size.x,   # size-x
-       part_constants.texture_size.y    # size-y
-    )
+  update_body: (part, part_constants, visible) ->
+    @body_sprite.visible = visible
 
-    @level.ctx.restore()
+    if visible
+      position = part.GetPosition()
+      angle    = part.GetAngle()
 
-  display_left_axle: (part, part_constants) ->
+      @body_sprite.width    = part_constants.texture_size.x
+      @body_sprite.height   = part_constants.texture_size.y
+      @body_sprite.anchor.x = 0.5
+      @body_sprite.anchor.y = 0.5
+      @body_sprite.x        = position.x
+      @body_sprite.y        = -position.y
+      @body_sprite.rotation = -angle
+      @body_sprite.scale.x  = @mirror * Math.abs(@body_sprite.scale.x)
+
+  update_left_axle: (part, part_constants, visible) ->
     axle_thickness = 0.09
 
     wheel_position = @left_wheel.GetPosition()
@@ -317,9 +347,9 @@ class Moto
       y: -0.30
 
     texture = if @ghost then part_constants.ghost_texture else part_constants.texture
-    @display_axle_common(wheel_position, axle_position, axle_thickness, texture)
+    @update_axle_common(wheel_position, axle_position, axle_thickness, texture, 'left', visible)
 
-  display_right_axle: (part, part_constants) ->
+  update_right_axle: (part, part_constants, visible) ->
     axle_thickness = 0.07
 
     wheel_position = @right_wheel.GetPosition()
@@ -333,34 +363,51 @@ class Moto
       y: 0.025
 
     texture = if @ghost then part_constants.ghost_texture else part_constants.texture
-    @display_axle_common(wheel_position, axle_position, axle_thickness, texture)
+    @update_axle_common(wheel_position, axle_position, axle_thickness, texture, 'right', visible)
 
+  update_axle_common: (wheel_position, axle_position, axle_thickness, texture, side, visible) ->
+    axle_sprite = @["#{side}_axle_sprite"]
+    axle_sprite.visible = visible
 
-  display_axle_common: (wheel_position, axle_position, axle_thickness, texture) ->
-    body_position = @body.GetPosition()
-    body_angle    = @body.GetAngle()
+    if visible
+      body_position = @body.GetPosition()
+      body_angle    = @body.GetAngle()
 
-    # Adjusted position depending of rotation of body
-    axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position)
+      # Adjusted position depending of rotation of body
+      axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position)
 
-    # Distance
-    distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position)
+      # Distance
+      distance = Math2D.distance_between_points(wheel_position, axle_adjusted_position)
 
-    # Angle
-    angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + @mirror * Math.PI/2
+      # Angle
+      angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + @mirror * Math.PI/2
 
-    # Draw texture
-    @level.ctx.save()
-    @level.ctx.translate(wheel_position.x, wheel_position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror*(-angle))
+      axle_sprite.width    = distance
+      axle_sprite.height   = axle_thickness
+      axle_sprite.anchor.x = 0.0
+      axle_sprite.anchor.y = 0.5
+      axle_sprite.x        =  wheel_position.x
+      axle_sprite.y        = -wheel_position.y
+      axle_sprite.rotation = -angle
+      axle_sprite.scale.x  = @mirror * Math.abs(axle_sprite.scale.x)
 
-    @level.ctx.drawImage(
-      @level.assets.get(texture), # texture
-      0.0,                        # x
-      -axle_thickness/2,          # y
-      distance,                   # size-x
-      axle_thickness              # size-y
-    )
+  # estimation of aabb of moto + rider (based on wheels and head)
+  compute_aabb: ->
+    # lower position of wheels or head (in case or looping)
+    lower1 = @left_wheel.GetFixtureList().GetAABB().lowerBound
+    lower2 = @right_wheel.GetFixtureList().GetAABB().lowerBound
+    lower3 = @rider.head.GetFixtureList().GetAABB().lowerBound
 
-    @level.ctx.restore()
+    # upper position of wheels or head (in case or looping)
+    upper1 = @left_wheel.GetFixtureList().GetAABB().upperBound
+    upper2 = @right_wheel.GetFixtureList().GetAABB().upperBound
+    upper3 = @rider.head.GetFixtureList().GetAABB().upperBound
+
+    aabb = new b2AABB()
+    aabb.lowerBound.Set(Math.min(lower1.x, lower2.x, lower3.x), Math.min(lower1.y, lower2.y, lower3.y))
+    aabb.upperBound.Set(Math.max(upper1.x, upper2.x, upper3.x), Math.max(upper1.y, upper2.y, upper3.y))
+
+    return aabb
+
+  visible: ->
+    @aabb.TestOverlap(@level.camera.aabb)

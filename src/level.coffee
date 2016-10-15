@@ -3,38 +3,21 @@ b2Vec2 = Box2D.Common.Math.b2Vec2
 
 class Level
 
-  constructor: (options) ->
-    @options = options
+  constructor: (renderer, options) ->
+    @renderer = renderer
+    @options  = options
 
     # Context
-    @canvas = $(@options.canvas).get(0)
-    @ctx    = @canvas.getContext('2d')
+    @debug_ctx = $('#xmoto-debug').get(0).getContext('2d')
+    @stage     = new PIXI.Container()
 
-    # Assets manager
+    # Level independant objects
     @assets        = new Assets()
-
-    # Box2D physics
-    @physics       = new Physics(this)
-
-    # Inputs
-    @input         = new Input(this)
-
-    # Camera
     @camera        = new Camera(this)
-
-    # Listeners
+    @physics       = new Physics(this)
+    @input         = new Input(this)
     @listeners     = new Listeners(this)
-
-    # Replay: actual run of the player (not saved yet)
-    @replay        = new Replay(this)
-
-    # Ghosts: previous saved run of various players (included himself)
-    @ghosts        = new Ghosts(this)
-
-    # Moto (level independant)
     @moto          = new Moto(this)
-
-    # Particles (level independant)
     @particles     = new Particles(this)
 
     # Level dependent objects
@@ -46,76 +29,73 @@ class Level
     @script        = new Script(this)
     @entities      = new Entities(this)
 
-    # Buffer
-    @buffer        = new Buffer(this)
+    # Replay: actual run of the player (not saved yet)
+    @replay        = new Replay(this)
 
-  load_from_file: (file_name) ->
+    # Ghosts: previous saved run of various players (included himself)
+    @ghosts        = new Ghosts(this)
+
+  load_from_file: (file_name, callback) ->
     $.ajax({
       type:     "GET",
       url:      "#{@options.levels_path}/#{file_name}",
       dataType: "xml",
-      success:  @load_level
-      async:    false
+      success:  (xml) -> @load_level(xml, callback)
       context:  @
     })
 
-  load_level: (xml) ->
-    # Level dependent objects
-    @infos        .parse(xml).init()
-    @sky          .parse(xml).init()
-    @blocks       .parse(xml).init()
-    @limits       .parse(xml).init()
-    @layer_offsets.parse(xml).init()
-    @script       .parse(xml).init()
-    @entities     .parse(xml).init()
+  load_level: (xml, callback) ->
+    @infos        .parse(xml)
+    @sky          .parse(xml)
+    @blocks       .parse(xml)
+    @limits       .parse(xml)
+    @layer_offsets.parse(xml)
+    @script       .parse(xml)
+    @entities     .parse(xml)
 
-    # Moto and ghosts (level independant)
-    @moto.init()
-    @ghosts.init()
+    @sky     .load_assets()
+    @blocks  .load_assets()
+    @limits  .load_assets()
+    @entities.load_assets()
+    @moto    .load_assets()
+    @ghosts  .load_assets()
 
-    @input.init()
-    @camera.init()
+    @assets.load(callback)
+
+  init: ->
+    @sky      .init()
+    @limits   .init()
+    @entities .init()
+    @blocks   .init()
+    @moto     .init()
+    @ghosts   .init()
+    @physics  .init()
+    @input    .init()
+    @camera   .init()
     @listeners.init()
 
-  init_canvas: ->
-    @canvas_width  = parseFloat(@canvas.width)
-    @canvas_height = parseFloat(@canvas.height)
+    @init_timer()
 
-  display: ->
-    @init_canvas()  if not @canvas_width
+  update: ->
+    @physics.update()
 
     dead_player = @options.playable  && !@moto.dead
     dead_replay = !@options.playable && !@ghosts.player.moto.dead
 
     @update_timer() if dead_player || dead_replay
 
-    # visible screen limits of the world (don't show anything outside of these limits)
-    @compute_visibility()
+    @sky      .update()
+    @limits   .update()
+    @entities .update()
+    @camera   .update()
+    @blocks   .update()
+    @moto     .update() if @options.playable
+    @ghosts   .update()
+    @particles.update()
 
-    @sky.display()
-
-    # Redraw buffer if needed (the buffer is bigger than the canvas)
-    # And display it (copy the right pixels from the buffer to the canvas)
-    @buffer.redraw() if @buffer.redraw_needed()
-    @buffer.display()
-
-    @ctx.save()
-
-    # initialize position of camera
-    @ctx.translate(@canvas_width/2, @canvas_height/2)               # Center of canvas
-    @ctx.scale(@camera.scale.x, @camera.scale.y)                    # Scale (zoom)
-    @ctx.translate(-@camera.target().x, -@camera.target().y - 0.25) # Camera on moto
-
-    # Display entities, moto and ghost (blocks etc. are already drawn from the buffer)
-    @entities.display_items()
-    @moto    .display() if @options.playable
-    @ghosts  .display()
-
-    @particles.display()
-
-    @physics.display() if Constants.debug
-
-    @ctx.restore()
+  init_timer: ->
+    @start_time   = new Date().getTime()
+    @current_time = 0
 
   update_timer: (update_now = false) ->
     new_time = new Date().getTime() - @start_time
@@ -130,21 +110,15 @@ class Level
 
     @current_time = new_time
 
-  compute_visibility: ->
-    @visible =
-      left:   @camera.target().x - (@canvas_width  / 2) / @camera.scale.x
-      right:  @camera.target().x + (@canvas_width  / 2) / @camera.scale.x
-      bottom: @camera.target().y + (@canvas_height / 2) / @camera.scale.y
-      top:    @camera.target().y - (@canvas_height / 2) / @camera.scale.y
-    @visible.aabb = new b2AABB()
-    @visible.aabb.lowerBound.Set(@visible.left,  @visible.bottom)
-    @visible.aabb.upperBound.Set(@visible.right, @visible.top)
-
   got_strawberries: ->
     for strawberry in @entities.strawberries
       if strawberry.display
         return false
     return true
+
+  respawn_strawberries: ->
+    for entity in @entities.strawberries
+      entity.display = true
 
   restart: ->
     @replay = new Replay(this)
@@ -155,9 +129,7 @@ class Level
     @moto = new Moto(this)
     @moto.init()
 
-    @start_time   = new Date().getTime()
-    @current_time = 0
-    @update_timer(true)
+    @respawn_strawberries()
 
-    for entity in @entities.strawberries
-      entity.display = true
+    @init_timer()
+    @update_timer(true)

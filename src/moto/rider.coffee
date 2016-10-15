@@ -26,8 +26,14 @@ class Rider
     @world.DestroyBody(@lower_arm)
     @world.DestroyBody(@upper_arm)
 
-  init: ->
-    # Assets
+    @level.camera.translate_container.removeChild(@head_sprite)
+    @level.camera.translate_container.removeChild(@torso_sprite)
+    @level.camera.translate_container.removeChild(@lower_leg_sprite)
+    @level.camera.translate_container.removeChild(@upper_leg_sprite)
+    @level.camera.translate_container.removeChild(@lower_arm_sprite)
+    @level.camera.translate_container.removeChild(@upper_arm_sprite)
+
+  load_assets: ->
     parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
               Constants.upper_arm, Constants.lower_arm ]
     for part in parts
@@ -36,7 +42,7 @@ class Rider
       else
         @assets.moto.push(part.texture)
 
-    # Creation of moto parts
+  init_physics_parts: ->
     @player_start = @level.entities.player_start
 
     @head      = @create_head()
@@ -53,6 +59,16 @@ class Rider
     @elbow_joint    = @create_joint(Constants.elbow,    @upper_arm, @lower_arm)
     @shoulder_joint = @create_joint(Constants.shoulder, @upper_arm, @torso, true)
     @hip_joint      = @create_joint(Constants.hip,      @upper_leg, @torso, true)
+
+  init_sprites: ->
+    for part in ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
+      if @ghost
+        asset_name = Constants[part].ghost_texture
+      else
+        asset_name = Constants[part].texture
+
+      @["#{part}_sprite"] = new PIXI.Sprite.fromImage(@assets.get_url(asset_name))
+      @level.camera.translate_container.addChild(@["#{part}_sprite"])
 
   position: ->
     @moto.body.GetPosition()
@@ -86,8 +102,9 @@ class Rider
 
     bodyDef.userData =
       name:  'rider'
+      type:  if @ghost then 'ghost' else 'player'
       part:  'head'
-      rider:  this
+      rider: this
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -122,8 +139,9 @@ class Rider
 
     bodyDef.userData =
       name:  'rider'
-      part:   name
-      rider:  this
+      type:  if @ghost then 'ghost' else 'player'
+      part:  name
+      rider: this
 
     bodyDef.type = b2Body.b2_dynamicBody
 
@@ -166,29 +184,30 @@ class Rider
     @set_joint_commons(jointDef)
     @world.CreateJoint(jointDef)
 
-  display: ->
-    @display_part(@torso,     Constants.torso)
-    @display_part(@upper_leg, Constants.upper_leg)
-    @display_part(@lower_leg, Constants.lower_leg)
-    @display_part(@upper_arm, Constants.upper_arm)
-    @display_part(@lower_arm, Constants.lower_arm)
+  update: (visible) ->
+    if !Constants.debug_physics
+      @update_part(@torso,     'torso',     visible)
+      @update_part(@upper_leg, 'upper_leg', visible)
+      @update_part(@lower_leg, 'lower_leg', visible)
+      @update_part(@upper_arm, 'upper_arm', visible)
+      @update_part(@lower_arm, 'lower_arm', visible)
 
-  display_part: (part, part_constants) ->
-    position = part.GetPosition()
-    angle    = part.GetAngle()
-    texture  = if @ghost then part_constants.ghost_texture else part_constants.texture
+  update_part: (part, name, visible) ->
+    sprite = @["#{name}_sprite"]
+    sprite.visible = visible
 
-    @level.ctx.save()
-    @level.ctx.translate(position.x, position.y)
-    @level.ctx.scale(@mirror, -1)
-    @level.ctx.rotate(@mirror * (-angle))
+    if visible
+      part_constants = Constants[name]
 
-    @level.ctx.drawImage(
-      @level.assets.get(texture),       # texture
-      -part_constants.texture_size.x/2, # x
-      -part_constants.texture_size.y/2, # y
-       part_constants.texture_size.x,   # size-x
-       part_constants.texture_size.y    # size-y
-    )
+      position = part.GetPosition()
+      angle    = part.GetAngle()
+      texture  = if @ghost then part_constants.ghost_texture else part_constants.texture
 
-    @level.ctx.restore()
+      sprite.width    = part_constants.texture_size.x
+      sprite.height   = part_constants.texture_size.y
+      sprite.anchor.x = 0.5
+      sprite.anchor.y = 0.5
+      sprite.x        =  position.x
+      sprite.y        = -position.y
+      sprite.rotation = -angle
+      sprite.scale.x  = @mirror * Math.abs(sprite.scale.x)

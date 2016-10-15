@@ -25,7 +25,7 @@ class Entities
         position:
           x:     parseFloat($(xml_entity).find('position').attr('x'))
           y:     parseFloat($(xml_entity).find('position').attr('y'))
-          angle: parseFloat($(xml_entity).find('position').attr('angle'))
+          angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0
         params: []
 
       # parse params xml
@@ -58,27 +58,31 @@ class Entities
         entity.center.x    = entity.size.r     if not entity.center.x
         entity.center.y    = entity.size.r     if not entity.center.y
 
+        entity.delay   = sprite.delay
+        entity.frames  = sprite.frames
+        entity.display = true # if an entity has a texture, it needs to be displayed
 
-        entity.delay    = sprite.delay
-        entity.frames   = sprite.frames
-        entity.display  = true # if an entity has a texture, it needs to be displayed
-
-        entity.aabb = entity_AABB(entity)
+        entity.aabb = @compute_aabb(entity)
 
       @list.push(entity)
 
     return this
 
-  init: ->
+  load_assets: ->
     for entity in @list
-
       if entity.display
         if entity.frames == 0
           @assets.anims.push(entity.file)
         else
           for i in [0..entity.frames-1]
-            @assets.anims.push(frame_name(entity, i))
+            @assets.anims.push(@frame_name(entity, i))
 
+  init: ->
+    @init_physics_parts()
+    @init_sprites()
+
+  init_physics_parts: ->
+    for entity in @list
       # End of level
       if entity.type_id == 'EndOfLevel'
         @create_entity(entity, 'end_of_level')
@@ -98,6 +102,33 @@ class Entities
         @player_start =
           x: entity.position.x
           y: entity.position.y
+
+  init_sprites: ->
+    for entity in @list
+      @init_entity(entity)
+
+  init_entity: (entity) ->
+    if entity.frames > 0
+      textures = []
+      for i in [0..entity.frames - 1]
+        textures.push(PIXI.Texture.fromImage(@assets.get_url(@frame_name(entity, i))))
+
+      entity.sprite = new PIXI.extras.MovieClip(textures)
+      entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay
+      entity.sprite.play()
+      @level.camera.translate_container.addChild(entity.sprite)
+    else if entity.file
+      entity.sprite = new PIXI.Sprite.fromImage(@assets.get_url(entity.file))
+      @level.camera.translate_container.addChild(entity.sprite)
+
+    if entity.sprite
+      entity.sprite.width    = entity.size.width
+      entity.sprite.height   = entity.size.height
+      entity.sprite.anchor.x = entity.center.x / entity.size.width
+      entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height)
+      entity.sprite.x        =  entity.position.x
+      entity.sprite.y        = -entity.position.y
+      entity.sprite.rotation = -entity.position.angle
 
   create_entity: (entity, name) ->
     # Create fixture
@@ -124,41 +155,11 @@ class Entities
 
     body
 
-  display_sprites: (ctx) ->
-    return false if Constants.debug
-
-    for entity in @list
-      if entity.type_id == 'Sprite'
-        if visible_entity(@level.buffer.visible, entity)
-          @display_entity(ctx, entity)
-
-  display_items : ->
-    return false if Constants.debug
-
-    ctx = @level.ctx
-
-    for entity in @list
-      if entity.type_id == 'EndOfLevel' or entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
-        if visible_entity(@level.visible, entity)
-          @display_entity(ctx, entity)
-
-  display_entity: (ctx, entity) ->
-    if entity.frames
-      num = @level.current_time % (entity.frames * entity.delay * 1000)
-      num = Math.floor(num / (entity.delay * 1000))
-      texture_name = frame_name(entity, num)
-    else
-      texture_name = entity.file
-
-    ctx.save()
-    ctx.translate(entity.position.x, entity.position.y)
-    ctx.scale(1, -1)
-    ctx.drawImage(@assets.get(texture_name),
-                  -entity.size.width  + entity.center.x,
-                  -entity.size.height + entity.center.y,
-                  entity.size.width,
-                  entity.size.height)
-    ctx.restore()
+  update: (entity) ->
+    if !Constants.debug_physics
+      for entity in @list
+        if entity.sprite
+          entity.sprite.visible = @visible(entity)
 
   entity_texture_name: (entity) ->
     if entity.type_id == 'Sprite'
@@ -170,22 +171,23 @@ class Entities
     else if entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
       return entity.type_id
 
-frame_name = (entity, frame_number) ->
-  "#{entity.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{entity.file_ext}"
+  compute_aabb: (entity) ->
+    lower_bound =
+      x: entity.position.x - entity.size.width + entity.center.x
+      y: entity.position.y - entity.center.y
 
-entity_AABB = (entity) ->
-  lower_bound = {}
-  upper_bound = {}
-  lower_bound.x = entity.position.x - entity.size.width + entity.center.x
-  lower_bound.y = entity.position.y - entity.center.y
-  upper_bound.x = lower_bound.x + entity.size.width
-  upper_bound.y = lower_bound.y + entity.size.height
+    upper_bound =
+      x: lower_bound.x + entity.size.width
+      y: lower_bound.y + entity.size.height
 
-  aabb = new b2AABB()
-  aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
-  aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+    aabb = new b2AABB()
+    aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
+    aabb.upperBound.Set(upper_bound.x, upper_bound.y)
 
-  return aabb
+    return aabb
 
-visible_entity = (zone, entity) ->
-  entity.display and entity.aabb.TestOverlap(zone.aabb)
+  visible: (entity) ->
+    entity.aabb.TestOverlap(@level.camera.aabb) && entity.display
+
+  frame_name: (entity, frame_number) ->
+    "#{entity.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{entity.file_ext}"

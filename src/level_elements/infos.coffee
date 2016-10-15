@@ -24,7 +24,3 @@ class Infos
     @music    = xml_music.attr('name')
 
     return this
-
-  init: ->
-
-  display: (ctx) ->

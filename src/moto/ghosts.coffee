@@ -10,6 +10,15 @@ class Ghosts
 
     @load_replays()
 
+  load_assets: ->
+    # Assets
+    parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
+              Constants.upper_arm, Constants.lower_arm,
+              Constants.body, Constants.left_wheel, Constants.right_wheel,
+              Constants.left_axle, Constants.right_axle ]
+    for part in parts
+      @assets.moto.push(part.ghost_texture)
+
   all_ghosts: ->
     ghosts = []
     ghosts = ghosts.concat(@others)
@@ -21,14 +30,6 @@ class Ghosts
       if ghost.replay
         ghost.init()
 
-    # Assets
-    parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
-              Constants.upper_arm, Constants.lower_arm,
-              Constants.body, Constants.left_wheel, Constants.right_wheel,
-              Constants.left_axle, Constants.right_axle ]
-    for part in parts
-      @assets.moto.push(part.ghost_texture)
-
   reload: ->
     for ghost in @all_ghosts()
       if ghost.replay
@@ -39,10 +40,10 @@ class Ghosts
       if ghost.replay
         ghost.move()
 
-  display: ->
+  update: ->
     for ghost in @all_ghosts()
       if ghost.replay
-        ghost.display()
+        ghost.update()
 
   load_replays: ->
     for option_replay in @options.replays

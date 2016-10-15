@@ -21,10 +21,11 @@ class Listeners
       a = contact.GetFixtureA().GetBody().GetUserData()
       b = contact.GetFixtureB().GetBody().GetUserData()
 
-      if not moto.dead
+      if !moto.dead
         # Strawberries
         if Listeners.does_contact_moto_rider(a, b, 'strawberry')
-          strawberry = if a == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
+          strawberry = if a.name == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
+
           entity = strawberry.GetBody().GetUserData().entity
           if entity.display
             entity.display = false
@@ -64,10 +65,13 @@ class Listeners
     @world.SetContactListener(listener)
 
   @does_contact_moto_rider: (a, b, obj) ->
-    Listeners.does_contact(a, b, obj, 'rider') or Listeners.does_contact(a, b, obj, 'moto')
+    collision = Listeners.does_contact(a, b, obj, 'rider') || Listeners.does_contact(a, b, obj, 'moto')
+    player    = a.type == 'player' || b.type == 'player'
+
+    return (collision && player)
 
   @does_contact: (a, b, obj1, obj2) ->
-    (a.name == obj1 and b.name == obj2) or (a.name == obj2 and b.name == obj1)
+    (a.name == obj1 && b.name == obj2) || (a.name == obj2 && b.name == obj1)
 
   trigger_restart: (moto) ->
     #createjs.Sound.play('EndOfLevel')
