@@ -7,14 +7,14 @@ class Sky
     @options = level.options
 
   parse: (xml) ->
-    xml_sky    = $(xml).find('level info sky')
-    @name      = xml_sky.text().toLowerCase()
-    @color_r   = parseInt(xml_sky.attr('color_r'))
-    @color_g   = parseInt(xml_sky.attr('color_g'))
-    @color_b   = parseInt(xml_sky.attr('color_b'))
-    @color_a   = parseInt(xml_sky.attr('color_a'))
-    @zoom      = parseFloat(xml_sky.attr('zoom'))
-    @offset    = parseFloat(xml_sky.attr('offset'))
+    xml_sky  = $(xml).find('level info sky')
+    @name    = xml_sky.text().toLowerCase()
+    @color_r = parseInt(xml_sky.attr('color_r'))
+    @color_g = parseInt(xml_sky.attr('color_g'))
+    @color_b = parseInt(xml_sky.attr('color_b'))
+    @color_a = parseInt(xml_sky.attr('color_a'))
+    @zoom    = parseFloat(xml_sky.attr('zoom'))
+    @offset  = parseFloat(xml_sky.attr('offset'))
 
     @name      = 'sky1' if @name == ''
     @file_name = @theme.texture_params(@name).file
@@ -34,7 +34,7 @@ class Sky
     @sprite.position.y = 0
     @level.stage.addChildAt(@sprite, 0)
 
-  display: ->
+  update: ->
     ctx = @level.debug_ctx
 
     if Constants.debug
@@ -47,17 +47,12 @@ class Sky
 
       ctx.fillStyle = "#222228"
       ctx.fill()
+    else
+      @sprite.tileScale.x = 4
+      @sprite.tileScale.y = 4
 
-    @sprite.tileScale.x = 4
-    @sprite.tileScale.y = 4
+      position_factor_x = 15
+      position_factor_y = 7
 
-    position_factor_x = 15
-    position_factor_y = 7
-
-    # TODO: REMOVE THIS WHEN UPGRADING VERSION (https://github.com/pixijs/pixi.js/pull/2028)
-    # if @level.renderer.type == PIXI.RENDERER_TYPE.CANVAS
-    #   position_factor_x /= @sprite.tileScale.x
-    #   position_factor_y /= @sprite.tileScale.y
-
-    @sprite.tilePosition.x = -@level.camera.target().x * position_factor_x
-    @sprite.tilePosition.y =  @level.camera.target().y * position_factor_y
+      @sprite.tilePosition.x = -@level.camera.target().x * position_factor_x
+      @sprite.tilePosition.y =  @level.camera.target().y * position_factor_y

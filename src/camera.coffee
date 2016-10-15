@@ -9,28 +9,32 @@ class Camera
       x: Constants.default_scale.x
       y: Constants.default_scale.y
 
-    # x and y offset on the target view
-    @offset =
+    # x and y translate on the target view
+    @translate =
       x: 0
       y: 0
 
-    @container  = new PIXI.Container()
-    @container2 = new PIXI.Container()
+    @scale_container     = new PIXI.Container()
+    @translate_container = new PIXI.Container()
 
-    @container.addChild(@container2)
-    @level.stage.addChild(@container)
+    @level.stage.addChild(@scale_container)
+    @scale_container.addChild(@translate_container)
 
   init: ->
     if Constants.manual_scale
       @init_scroll()
 
-    @frame = new PIXI.Graphics()
-    @frame.alpha = 0.2
-    @container2.addChild(@frame)
+    if Constants.debug
+      $('#xmoto canvas').hide()
+      $('#xmoto-debug').show()
+
+    #
+    # @frame = new PIXI.Graphics()
+    # @frame.alpha = 0.2
+    # @translate_container.addChild(@frame)
+    #
 
     @aabb = @compute_aabb()
-    console.log @aabb
-    console.log '-'
 
   active_object: ->
     if @level.options.playable
@@ -39,23 +43,20 @@ class Camera
       @level.ghosts.player.moto.body
 
   move: ->
-    velocity = @active_object().GetLinearVelocity()
-
     if Constants.automatic_scale
+      velocity = @active_object().GetLinearVelocity()
+
       speed = Math2D.distance_between_points(new b2Vec2(0, 0), velocity)
       @scale.x = @scale.x * 0.995 + (Constants.default_scale.x / (1.0 + speed/7.5)) * 0.005
       @scale.y = @scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed/7.5)) * 0.005
 
-      @offset.x = @offset.x * 0.97 + velocity.x/3.0 * 0.03
-      @offset.y = @offset.y * 0.99 + velocity.y/3.0 * 0.01
+      @translate.x = @translate.x * 0.97 + velocity.x/3.0 * 0.03
+      @translate.y = @translate.y * 0.99 + velocity.y/3.0 * 0.01
 
-    @aabb = @compute_aabb()
+      @aabb = @compute_aabb()
 
-  display: ->
+  update: ->
     if Constants.debug
-      $('#xmoto canvas').hide()
-      $('#xmoto-debug').show()
-
       ctx = @level.physics.debug_ctx
 
       ctx.save()
@@ -68,24 +69,26 @@ class Camera
 
       ctx.restore()
     else
-      @container.x = @options.width/2
-      @container.y = @options.height/2
+      @scale_container.x = @options.width/2
+      @scale_container.y = @options.height/2
 
-      @container.scale.x = @scale.x
-      @container.scale.y = -@scale.y
+      @scale_container.scale.x = @scale.x
+      @scale_container.scale.y = -@scale.y
 
-      @container2.x = -@target().x
-      @container2.y = @target().y
+      @translate_container.x = -@target().x
+      @translate_container.y = @target().y
 
-      @frame.clear()
-      @frame.beginFill(0x333333)
+      # #
+      # @frame.clear()
+      # @frame.beginFill(0x333333)
 
-      size_x = (@options.width  / 100.0) * (Constants.default_scale.x / @scale.x)
-      size_y = (@options.height / 100.0) * (Constants.default_scale.y / @scale.y)
+      # size_x = (@options.width  / 100.0) * (60.0  / @scale.x)
+      # size_y = (@options.height / 100.0) * (-60.0 / @scale.y)
 
-      @frame.drawRect(-size_x/2, -size_y/2, size_x, size_y, 0.1)
-      @frame.x = @target().x
-      @frame.y = -@target().y
+      # @frame.drawRect(-size_x/2, -size_y/2, size_x, size_y)
+      # @frame.x = @target().x
+      # @frame.y = -@target().y
+      # #
 
   # must be something with x and y values
   target: ->
@@ -93,8 +96,8 @@ class Camera
     position = @active_object().GetPosition()
 
     adjusted_position =
-      x: position.x + @offset.x
-      y: position.y + @offset.y + 0.25
+      x: position.x + @translate.x
+      y: position.y + @translate.y + 0.25
 
   # If there are some issues on other systems than MacOS,
   # check this to find a solution : http://stackoverflow.com/questions/5527601/normalizing-mousewheel-speed-across-browsers
@@ -131,8 +134,17 @@ class Camera
     canvas.addEventListener('mousewheel',     scroll, false)
 
   compute_aabb: ->
-    size_x = (@options.width  / 100.0) * (Constants.default_scale.x / @scale.x)
-    size_y = (@options.height / 100.0) * (Constants.default_scale.y / @scale.y)
+    size_x =   @options.width  * 1.0 / @scale.x
+    size_y = - @options.height * 1.0 / @scale.y
+
+    aabb = new b2AABB()
+    aabb.lowerBound.Set(@target().x - size_x/2, @target().y - size_y/2)
+    aabb.upperBound.Set(@target().x + size_x/2, @target().y + size_y/2)
+    return aabb
+
+  compute_aabb_for_frame: ->
+    size_x =   @options.width  * 0.6 / @scale.x
+    size_y = - @options.height * 0.6 / @scale.y
 
     aabb = new b2AABB()
     aabb.lowerBound.Set(@target().x - size_x/2, @target().y - size_y/2)

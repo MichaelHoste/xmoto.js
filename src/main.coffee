@@ -81,8 +81,7 @@ $.xmoto = (level_filename, options = {}) ->
         stats_fps.begin() if $('body.debug').length
         stats_ms.begin()  if $('body.debug').length
 
-        level.physics.update()
-        level.display()
+        level.update()
         renderer.render(level.stage)
         window.game_loop = requestAnimationFrame(update)
 

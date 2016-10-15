@@ -58,11 +58,11 @@ class Entities
         entity.center.x    = entity.size.r     if not entity.center.x
         entity.center.y    = entity.size.r     if not entity.center.y
 
-        entity.delay    = sprite.delay
-        entity.frames   = sprite.frames
-        entity.display  = true # if an entity has a texture, it needs to be displayed
+        entity.delay   = sprite.delay
+        entity.frames  = sprite.frames
+        entity.display = true # if an entity has a texture, it needs to be displayed
 
-        entity.aabb = entity_AABB(entity)
+        entity.aabb = @compute_aabb(entity)
 
       @list.push(entity)
 
@@ -75,7 +75,7 @@ class Entities
           @assets.anims.push(entity.file)
         else
           for i in [0..entity.frames-1]
-            @assets.anims.push(frame_name(entity, i))
+            @assets.anims.push(@frame_name(entity, i))
 
   init: ->
     @init_physics_parts()
@@ -111,15 +111,15 @@ class Entities
     if entity.frames > 0
       textures = []
       for i in [0..entity.frames - 1]
-        textures.push(PIXI.Texture.fromImage(@assets.get_url(frame_name(entity, i))))
+        textures.push(PIXI.Texture.fromImage(@assets.get_url(@frame_name(entity, i))))
 
       entity.sprite = new PIXI.extras.MovieClip(textures)
       entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay
       entity.sprite.play()
-      @level.camera.container2.addChild(entity.sprite)
+      @level.camera.translate_container.addChild(entity.sprite)
     else if entity.file
       entity.sprite = new PIXI.Sprite.fromImage(@assets.get_url(entity.file))
-      @level.camera.container2.addChild(entity.sprite)
+      @level.camera.translate_container.addChild(entity.sprite)
 
     if entity.sprite
       entity.sprite.width    = entity.size.width
@@ -155,12 +155,11 @@ class Entities
 
     body
 
-  display: (entity) ->
-    return false if Constants.debug
-
-    for entity in @list
-      if entity.sprite
-        entity.sprite.visible = visible_entity(entity)
+  update: (entity) ->
+    if !Constants.debug
+      for entity in @list
+        if entity.sprite
+          entity.sprite.visible = @visible(entity)
 
   entity_texture_name: (entity) ->
     if entity.type_id == 'Sprite'
@@ -172,22 +171,23 @@ class Entities
     else if entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
       return entity.type_id
 
-frame_name = (entity, frame_number) ->
-  "#{entity.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{entity.file_ext}"
+  compute_aabb: (entity) ->
+    lower_bound =
+      x: entity.position.x - entity.size.width + entity.center.x
+      y: entity.position.y - entity.center.y
 
-entity_AABB = (entity) ->
-  lower_bound = {}
-  upper_bound = {}
-  lower_bound.x = entity.position.x - entity.size.width + entity.center.x
-  lower_bound.y = entity.position.y - entity.center.y
-  upper_bound.x = lower_bound.x + entity.size.width
-  upper_bound.y = lower_bound.y + entity.size.height
+    upper_bound =
+      x: lower_bound.x + entity.size.width
+      y: lower_bound.y + entity.size.height
 
-  aabb = new b2AABB()
-  aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
-  aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+    aabb = new b2AABB()
+    aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
+    aabb.upperBound.Set(upper_bound.x, upper_bound.y)
 
-  return aabb
+    return aabb
 
-visible_entity = (entity) ->
-  entity.display
+  visible: (entity) ->
+    entity.aabb.TestOverlap(@level.camera.aabb) && entity.display
+
+  frame_name: (entity, frame_number) ->
+    "#{entity.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{entity.file_ext}"

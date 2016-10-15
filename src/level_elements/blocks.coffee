@@ -55,15 +55,14 @@ class Blocks
       xml_vertices = $(xml_block).find('vertex')
       for xml_vertex in xml_vertices
         vertex =
-          x:    parseFloat($(xml_vertex).attr('x'))
-          y:    parseFloat($(xml_vertex).attr('y'))
+          x:          parseFloat($(xml_vertex).attr('x'))
+          y:          parseFloat($(xml_vertex).attr('y'))
           absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are here to
           absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # accelerate drawing of each frame
-          edge: $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
+          edge:       $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
 
-      block.aabb = @compute_aabb(block)
       block.aabb = @compute_aabb(block)
 
       @list.push(block)
@@ -72,9 +71,9 @@ class Blocks
       else
         @front_list.push(block)
 
-    @list      .sort( sort_blocks_by_texture )
-    @back_list .sort( sort_blocks_by_texture )
-    @front_list.sort( sort_blocks_by_texture )
+    @list      .sort( @sort_blocks_by_texture )
+    @back_list .sort( @sort_blocks_by_texture )
+    @front_list.sort( @sort_blocks_by_texture )
 
     @edges.parse(@list)
 
@@ -111,7 +110,7 @@ class Blocks
       mask.drawPolygon(points)
       mask.x =  block.position.x
       mask.y = -block.position.y
-      @level.camera.container2.addChild(mask)
+      @level.camera.translate_container.addChild(mask)
 
       # Create tilingSprite
       texture = PIXI.Texture.fromImage(@assets.get_url(block.texture_name))
@@ -125,15 +124,14 @@ class Blocks
       block.sprite.tileScale.y = 1.0/40
       block.sprite.mask = mask
 
-      @level.camera.container2.addChild(block.sprite)
+      @level.camera.translate_container.addChild(block.sprite)
 
-  display: ->
-    return false if Constants.debug
+  update: ->
+    if !Constants.debug
+      for block in @list
+        block.sprite.visible = @visible(block)
 
-    for block in @list
-      block.sprite.visible = @visible(block)
-
-    @edges.display()
+      @edges.update()
 
   visible: (block) ->
     block.aabb.TestOverlap(@level.camera.aabb)
@@ -142,6 +140,7 @@ class Blocks
     first = true
     lower_bound = {}
     upper_bound = {}
+
     for vertex in block.vertices
       if first
         lower_bound =
@@ -162,8 +161,8 @@ class Blocks
     aabb.upperBound.Set(upper_bound.x, upper_bound.y)
     return aabb
 
-# http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
-sort_blocks_by_texture = (a, b) ->
-  return 1  if a.usetexture.id > b.usetexture.id
-  return -1 if a.usetexture.id <= b.usetexture.id
-  return 0
+  # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
+  sort_blocks_by_texture: (a, b) ->
+    return 1  if a.usetexture.id > b.usetexture.id
+    return -1 if a.usetexture.id <= b.usetexture.id
+    return 0

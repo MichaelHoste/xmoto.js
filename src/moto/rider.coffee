@@ -26,12 +26,12 @@ class Rider
     @world.DestroyBody(@lower_arm)
     @world.DestroyBody(@upper_arm)
 
-    @level.camera.container2.removeChild(@head_sprite)
-    @level.camera.container2.removeChild(@torso_sprite)
-    @level.camera.container2.removeChild(@lower_leg_sprite)
-    @level.camera.container2.removeChild(@upper_leg_sprite)
-    @level.camera.container2.removeChild(@lower_arm_sprite)
-    @level.camera.container2.removeChild(@upper_arm_sprite)
+    @level.camera.translate_container.removeChild(@head_sprite)
+    @level.camera.translate_container.removeChild(@torso_sprite)
+    @level.camera.translate_container.removeChild(@lower_leg_sprite)
+    @level.camera.translate_container.removeChild(@upper_leg_sprite)
+    @level.camera.translate_container.removeChild(@lower_arm_sprite)
+    @level.camera.translate_container.removeChild(@upper_arm_sprite)
 
   load_assets: ->
     parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
@@ -68,7 +68,7 @@ class Rider
         asset_name = Constants[part].texture
 
       @["#{part}_sprite"] = new PIXI.Sprite.fromImage(@assets.get_url(asset_name))
-      @level.camera.container2.addChild(@["#{part}_sprite"])
+      @level.camera.translate_container.addChild(@["#{part}_sprite"])
 
   position: ->
     @moto.body.GetPosition()
@@ -184,27 +184,30 @@ class Rider
     @set_joint_commons(jointDef)
     @world.CreateJoint(jointDef)
 
-  display: ->
-    @display_part(@torso,     'torso')
-    @display_part(@upper_leg, 'upper_leg')
-    @display_part(@lower_leg, 'lower_leg')
-    @display_part(@upper_arm, 'upper_arm')
-    @display_part(@lower_arm, 'lower_arm')
+  update: (visible) ->
+    if !Constants.debug
+      @update_part(@torso,     'torso',     visible)
+      @update_part(@upper_leg, 'upper_leg', visible)
+      @update_part(@lower_leg, 'lower_leg', visible)
+      @update_part(@upper_arm, 'upper_arm', visible)
+      @update_part(@lower_arm, 'lower_arm', visible)
 
-  display_part: (part, name) ->
-    part_constants = Constants[name]
-
-    position = part.GetPosition()
-    angle    = part.GetAngle()
-    texture  = if @ghost then part_constants.ghost_texture else part_constants.texture
-
+  update_part: (part, name, visible) ->
     sprite = @["#{name}_sprite"]
+    sprite.visible = visible
 
-    sprite.width    = part_constants.texture_size.x
-    sprite.height   = part_constants.texture_size.y
-    sprite.anchor.x = 0.5
-    sprite.anchor.y = 0.5
-    sprite.x        =  position.x
-    sprite.y        = -position.y
-    sprite.rotation = -angle
-    sprite.scale.x  = @mirror * Math.abs(sprite.scale.x)
+    if visible
+      part_constants = Constants[name]
+
+      position = part.GetPosition()
+      angle    = part.GetAngle()
+      texture  = if @ghost then part_constants.ghost_texture else part_constants.texture
+
+      sprite.width    = part_constants.texture_size.x
+      sprite.height   = part_constants.texture_size.y
+      sprite.anchor.x = 0.5
+      sprite.anchor.y = 0.5
+      sprite.x        =  position.x
+      sprite.y        = -position.y
+      sprite.rotation = -angle
+      sprite.scale.x  = @mirror * Math.abs(sprite.scale.x)

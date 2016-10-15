@@ -60,6 +60,7 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 
 ## TODO
 
+* Hide edges from blocks that are not visible
 * Improve and correct edge creation (really slow in webgl/chrome because of mask! But very smooth unsing canvas in FF and Chrome)
 * Improve XML levels compatibility!
 * PIXIJS

@@ -40,10 +40,10 @@ class Ghosts
       if ghost.replay
         ghost.move()
 
-  display: ->
+  update: ->
     for ghost in @all_ghosts()
       if ghost.replay
-        ghost.display()
+        ghost.update()
 
   load_replays: ->
     for option_replay in @options.replays

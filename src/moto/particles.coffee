@@ -37,7 +37,7 @@ class Particles
 
     @list.push(particle)
 
-  display: ->
+  update: ->
     ctx = @level.ctx
 
     for particle in @list

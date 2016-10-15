@@ -76,19 +76,22 @@ class Level
 
     @init_timer()
 
-  display: ->
+  update: ->
+    @physics.update()
+
     dead_player = @options.playable  && !@moto.dead
     dead_replay = !@options.playable && !@ghosts.player.moto.dead
 
     @update_timer() if dead_player || dead_replay
 
-    @sky      .display()
-    @entities .display()
-    @camera   .display()
-    @blocks   .display()
-    @moto     .display() if @options.playable
-    @ghosts   .display()
-    @particles.display()
+    @sky      .update()
+    @limits   .update()
+    @entities .update()
+    @camera   .update()
+    @blocks   .update()
+    @moto     .update() if @options.playable
+    @ghosts   .update()
+    @particles.update()
 
   init_timer: ->
     @start_time   = new Date().getTime()

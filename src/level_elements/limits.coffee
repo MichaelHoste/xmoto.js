@@ -30,6 +30,26 @@ class Limits
       x: @screen.right - @screen.left
       y: @screen.top   - @screen.bottom
 
+    # Left AABB
+    @left_wall_aabb = new b2AABB()
+    @left_wall_aabb.lowerBound.Set(@screen.left, @screen.bottom)
+    @left_wall_aabb.upperBound.Set(@player.left, @screen.top)
+
+    # Right  AABB
+    @right_wall_aabb = new b2AABB()
+    @right_wall_aabb.lowerBound.Set(@player.right, @screen.bottom)
+    @right_wall_aabb.upperBound.Set(@screen.right, @screen.top)
+
+    # Bottom  AABB
+    @bottom_wall_aabb = new b2AABB()
+    @bottom_wall_aabb.lowerBound.Set(@player.left,  @screen.bottom)
+    @bottom_wall_aabb.upperBound.Set(@player.right, @player.bottom)
+
+    # Top  AABB
+    @top_wall_aabb = new b2AABB()
+    @top_wall_aabb.lowerBound.Set(@player.left,  @player.top)
+    @top_wall_aabb.upperBound.Set(@player.right, @screen.top)
+
     @texture = 'dirt'
     @texture_name = @theme.texture_params('dirt').file
 
@@ -100,35 +120,43 @@ class Limits
 
     @left_sprite.x = @screen.left
     @left_sprite.y = -@screen.top
-    @left_sprite.anchor.x   = 0
-    @left_sprite.anchor.y   = 0
+    @left_sprite.anchor.x = 0
+    @left_sprite.anchor.y = 0
     @left_sprite.tileScale.x = 1.0/40
     @left_sprite.tileScale.y = 1.0/40
 
     @right_sprite.x = @player.right
     @right_sprite.y = -@screen.top
-    @right_sprite.anchor.x   = 0
-    @right_sprite.anchor.y   = 0
+    @right_sprite.anchor.x = 0
+    @right_sprite.anchor.y = 0
     @right_sprite.tileScale.x = 1.0/40
     @right_sprite.tileScale.y = 1.0/40
 
     @bottom_sprite.x =  @player.left
     @bottom_sprite.y = -@player.bottom
-    @bottom_sprite.anchor.x   = 0
-    @bottom_sprite.anchor.y   = 0
+    @bottom_sprite.anchor.x = 0
+    @bottom_sprite.anchor.y = 0
     @bottom_sprite.tileScale.x = 1.0/40
     @bottom_sprite.tileScale.y = 1.0/40
 
     @top_sprite.x =  @player.left
     @top_sprite.y = -@screen.top
-    @top_sprite.anchor.x   = 0
-    @top_sprite.anchor.y   = 0
+    @top_sprite.anchor.x = 0
+    @top_sprite.anchor.y = 0
     @top_sprite.tileScale.x = 1.0/40
     @top_sprite.tileScale.y = 1.0/40
 
-    @level.camera.container2.addChild(@left_sprite)
-    @level.camera.container2.addChild(@right_sprite)
-    @level.camera.container2.addChild(@bottom_sprite)
-    @level.camera.container2.addChild(@top_sprite)
+    @level.camera.translate_container.addChild(@left_sprite)
+    @level.camera.translate_container.addChild(@right_sprite)
+    @level.camera.translate_container.addChild(@bottom_sprite)
+    @level.camera.translate_container.addChild(@top_sprite)
 
+  update: ->
+    if !Constants.debug
+      @left_sprite.visible   = @visible(@left_wall_aabb)
+      @right_sprite.visible  = @visible(@right_wall_aabb)
+      @top_sprite.visible    = @visible(@top_wall_aabb)
+      @bottom_sprite.visible = @visible(@bottom_wall_aabb)
 
+  visible: (wall_aabb) ->
+    wall_aabb.TestOverlap(@level.camera.aabb)

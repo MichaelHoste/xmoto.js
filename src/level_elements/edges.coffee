@@ -1,5 +1,5 @@
-b2Vec2          = Box2D.Common.Math.b2Vec2
-b2AABB          = Box2D.Collision.b2AABB
+b2Vec2 = Box2D.Common.Math.b2Vec2
+b2AABB = Box2D.Collision.b2AABB
 
 class Edges
 
@@ -50,7 +50,7 @@ class Edges
       mask = new PIXI.Graphics()
       mask.beginFill(0xffffff, 1.0)
       mask.drawPolygon(points)
-      @level.camera.container2.addChild(mask)
+      @level.camera.translate_container.addChild(mask)
 
       x = Math.abs(Math.sin(edge.angle) * edge.theme.depth)
       y = Math.abs(Math.tan(edge.angle) * x)
@@ -70,12 +70,13 @@ class Edges
       edge.sprite.mask        = mask
       edge.sprite.rotation    = -edge.angle
 
-      @level.camera.container2.addChild(edge.sprite)
+      @level.camera.translate_container.addChild(edge.sprite)
 
   # only display edges present on the screen zone
-  display: ->
-    for edge in @list
-      edge.sprite.visible = @visible(edge)
+  update: ->
+    if !Constants.debug
+      for edge in @list
+        edge.sprite.visible = @visible(edge)
 
   compute_aabb: (edge) ->
     first = true
