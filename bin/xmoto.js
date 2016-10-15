@@ -824,10 +824,17 @@
     initialize = function() {
       var renderer;
       options = load_options(options);
-      renderer = new PIXI.CanvasRenderer(options.width, options.height, {
-        antialias: true,
-        backgroundColor: 0xFFFFFF
-      });
+      if (/chrome/.test(navigator.userAgent.toLowerCase())) {
+        renderer = new PIXI.CanvasRenderer(options.width, options.height, {
+          antialias: true,
+          backgroundColor: 0xFFFFFF
+        });
+      } else {
+        renderer = new PIXI.autoDetectRenderer(options.width, options.height, {
+          antialias: true,
+          backgroundColor: 0xFFFFFF
+        });
+      }
       window.cancelAnimationFrame(window.game_loop);
       bind_render_to_dom(renderer, options);
       return main_loop(level_filename, renderer, options);

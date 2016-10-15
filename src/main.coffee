@@ -2,10 +2,19 @@ $.xmoto = (level_filename, options = {}) ->
   initialize = ->
     options = load_options(options)
 
-    renderer = new PIXI.CanvasRenderer(options.width, options.height, {
-      antialias:       true,
-      backgroundColor: 0xFFFFFF
-    })
+    # WebGL => safari, firefox
+    # canvas => chrome
+
+    if /chrome/.test(navigator.userAgent.toLowerCase())
+      renderer = new PIXI.CanvasRenderer(options.width, options.height, {
+        antialias:       true,
+        backgroundColor: 0xFFFFFF
+      })
+    else
+      renderer = new PIXI.autoDetectRenderer(options.width, options.height, {
+        antialias:       true,
+        backgroundColor: 0xFFFFFF
+      })
 
     window.cancelAnimationFrame(window.game_loop)
 
