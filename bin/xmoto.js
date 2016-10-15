@@ -593,16 +593,20 @@
       this.ghosts = new Ghosts(this);
     }
 
-    Level.prototype.load_from_file = function(file_name, callback) {
-      return $.ajax({
-        type: "GET",
-        url: this.options.levels_path + "/" + file_name,
-        dataType: "xml",
-        success: function(xml) {
-          return this.load_level(xml, callback);
-        },
-        context: this
-      });
+    Level.prototype.load_from_file = function(filename, callback) {
+      return this.assets.parse_theme('modern.xml', (function(_this) {
+        return function() {
+          return $.ajax({
+            type: "GET",
+            url: _this.options.levels_path + "/" + filename,
+            dataType: "xml",
+            success: function(xml) {
+              return this.load_level(xml, callback);
+            },
+            context: _this
+          });
+        };
+      })(this));
     };
 
     Level.prototype.load_level = function(xml, callback) {
@@ -2067,12 +2071,12 @@
       if (this.name === '') {
         this.name = 'sky1';
       }
-      this.file_name = this.theme.texture_params(this.name).file;
+      this.filename = this.theme.texture_params(this.name).file;
       return this;
     };
 
     Sky.prototype.load_assets = function() {
-      return this.assets.textures.push(this.file_name);
+      return this.assets.textures.push(this.filename);
     };
 
     Sky.prototype.init = function() {
@@ -2081,7 +2085,7 @@
 
     Sky.prototype.init_sprites = function() {
       var texture;
-      texture = PIXI.Texture.fromImage(this.assets.get_url(this.file_name));
+      texture = PIXI.Texture.fromImage(this.assets.get_url(this.filename));
       this.sprite = new PIXI.extras.TilingSprite(texture, this.options.width, this.options.height);
       this.sprite.position.x = 0;
       this.sprite.position.y = 0;
@@ -3402,7 +3406,7 @@
 
   Assets = (function() {
     function Assets() {
-      this.theme = new Theme('modern.xml');
+      this.theme = {};
       this.textures = [];
       this.anims = [];
       this.effects = [];
@@ -3410,6 +3414,10 @@
       this.sounds = [];
       this.resources = {};
     }
+
+    Assets.prototype.parse_theme = function(filename, callback) {
+      return this.theme = $.extend(this.theme, new Theme('modern.xml', callback));
+    };
 
     Assets.prototype.load = function(callback) {
       var item, items, j, k, l, len, len1, len2, len3, len4, m, n, ref, ref1, ref2, ref3, ref4;
@@ -3646,13 +3654,15 @@
   })();
 
   Theme = (function() {
-    function Theme(file_name) {
+    function Theme(filename, callback) {
+      this.filename = filename;
+      this.callback = callback;
       this.sprites = [];
       this.edges = [];
       this.textures = [];
       $.ajax({
         type: "GET",
-        url: "/data/Themes/" + file_name,
+        url: "/data/Themes/" + filename,
         dataType: "xml",
         success: this.load_theme,
         context: this
@@ -3660,13 +3670,12 @@
     }
 
     Theme.prototype.load_theme = function(xml) {
-      var j, len, results, xml_sprite, xml_sprites;
+      var j, len, xml_sprite, xml_sprites;
       xml_sprites = $(xml).find('sprite');
-      results = [];
       for (j = 0, len = xml_sprites.length; j < len; j++) {
         xml_sprite = xml_sprites[j];
         if ($(xml_sprite).attr('type') === 'Entity') {
-          results.push(this.sprites[$(xml_sprite).attr('name')] = {
+          this.sprites[$(xml_sprite).attr('name')] = {
             file: $(xml_sprite).attr('file'),
             file_base: $(xml_sprite).attr('fileBase'),
             file_ext: $(xml_sprite).attr('fileExtension'),
@@ -3680,26 +3689,24 @@
             },
             frames: $(xml_sprite).find('frame').length,
             delay: parseFloat($(xml_sprite).attr('delay'))
-          });
+          };
         } else if ($(xml_sprite).attr('type') === 'EdgeEffect') {
-          results.push(this.edges[$(xml_sprite).attr('name').toLowerCase()] = {
+          this.edges[$(xml_sprite).attr('name').toLowerCase()] = {
             file: $(xml_sprite).attr('file').toLowerCase(),
             scale: parseFloat($(xml_sprite).attr('scale')),
             depth: parseFloat($(xml_sprite).attr('depth'))
-          });
+          };
         } else if ($(xml_sprite).attr('type') === 'Texture') {
-          results.push(this.textures[$(xml_sprite).attr('name').toLowerCase()] = {
+          this.textures[$(xml_sprite).attr('name').toLowerCase()] = {
             file: $(xml_sprite).attr('file') ? $(xml_sprite).attr('file').toLowerCase() : '',
             file_base: $(xml_sprite).attr('fileBase'),
             file_ext: $(xml_sprite).attr('fileExtension'),
             frames: $(xml_sprite).find('frame').length,
             delay: parseFloat($(xml_sprite).attr('delay'))
-          });
-        } else {
-          results.push(void 0);
+          };
         }
       }
-      return results;
+      return this.callback();
     };
 
     Theme.prototype.sprite_params = function(name) {

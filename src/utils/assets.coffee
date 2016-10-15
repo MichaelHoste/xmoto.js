@@ -1,7 +1,7 @@
 class Assets
 
   constructor: ->
-    @theme    = new Theme('modern.xml') # or "original.xml"
+    @theme    = {}
 
     @textures = [] # texture list
     @anims    = [] # anim list
@@ -10,6 +10,12 @@ class Assets
     @sounds   = [] # Sounds
 
     @resources = {}
+
+  parse_theme: (filename, callback) ->
+    # extend to keep the same pointer to @theme that is already in other objects
+    @theme = $.extend(@theme,
+      new Theme('modern.xml', callback)
+    )
 
   load: (callback) ->
     PIXI.loader.reset()

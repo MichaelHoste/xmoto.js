@@ -35,14 +35,16 @@ class Level
     # Ghosts: previous saved run of various players (included himself)
     @ghosts        = new Ghosts(this)
 
-  load_from_file: (file_name, callback) ->
-    $.ajax({
-      type:     "GET",
-      url:      "#{@options.levels_path}/#{file_name}",
-      dataType: "xml",
-      success:  (xml) -> @load_level(xml, callback)
-      context:  @
-    })
+  load_from_file: (filename, callback) ->
+    @assets.parse_theme('modern.xml', =>
+      $.ajax({
+        type:     "GET",
+        url:      "#{@options.levels_path}/#{filename}",
+        dataType: "xml",
+        success:  (xml) -> @load_level(xml, callback)
+        context:  @
+      })
+    )
 
   load_level: (xml, callback) ->
     @infos        .parse(xml)

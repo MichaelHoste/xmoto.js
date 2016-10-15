@@ -1,13 +1,16 @@
 class Theme
 
-  constructor: (file_name) ->
+  constructor: (filename, callback) ->
+    @filename = filename
+    @callback = callback
+
     @sprites  = []
     @edges    = []
     @textures = []
 
     $.ajax({
       type:     "GET",
-      url:      "/data/Themes/#{file_name}",
+      url:      "/data/Themes/#{filename}",
       dataType: "xml",
       success:  @load_theme
       context:  @
@@ -45,6 +48,8 @@ class Theme
           file_ext:  $(xml_sprite).attr('fileExtension')
           frames:    $(xml_sprite).find('frame').length
           delay:     parseFloat($(xml_sprite).attr('delay'))
+
+    @callback()
 
   sprite_params: (name) ->
     @sprites[name]

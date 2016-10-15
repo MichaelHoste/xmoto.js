@@ -16,19 +16,19 @@ class Sky
     @zoom    = parseFloat(xml_sky.attr('zoom'))
     @offset  = parseFloat(xml_sky.attr('offset'))
 
-    @name      = 'sky1' if @name == ''
-    @file_name = @theme.texture_params(@name).file
+    @name     = 'sky1' if @name == ''
+    @filename = @theme.texture_params(@name).file
 
     return this
 
   load_assets: ->
-    @assets.textures.push(@file_name)
+    @assets.textures.push(@filename)
 
   init: ->
     @init_sprites()
 
   init_sprites: ->
-    texture = PIXI.Texture.fromImage(@assets.get_url(@file_name))
+    texture = PIXI.Texture.fromImage(@assets.get_url(@filename))
     @sprite = new PIXI.extras.TilingSprite(texture, @options.width, @options.height)
     @sprite.position.x = 0
     @sprite.position.y = 0
