@@ -55,6 +55,8 @@ You can copy-paste the generated URL to keep the custom physics.
   canvas:  '#xmoto'   # canvas selector
   loading: '#loading' # loading selector
   chrono:  '#chrono'  # chrono selector
+  width:   800
+  height:  600
 }
 ```
 
@@ -78,7 +80,7 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 
 * Try to use same renderer in every browsers.
 * Hide edges from blocks that are not visible
-* Improve and correct edge creation (really slow in webgl/chrome because of
+* Improve and correct edge creation (slow in webgl/chrome because of
   lots of tilings but very smooth using canvas. In FF this is the opposite,
   very smooth in WebGL and not-so-smoot in Canvas (but still ok).
 * Improve XML levels compatibility!
