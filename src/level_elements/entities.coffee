@@ -87,12 +87,9 @@ class Entities
           for i in [0..entity.frames-1]
             @assets.anims.push(@frame_name(entity, i))
 
-  init_back: ->
+  init: ->
     @init_physics_parts()
-    @init_back_sprites()
-
-  init_front: ->
-    @init_front_sprites()
+    @init_sprites()
 
   init_physics_parts: ->
     for entity in @list
@@ -116,17 +113,16 @@ class Entities
           x: entity.position.x
           y: entity.position.y
 
-  init_back_sprites: ->
+  init_sprites: ->
     for entity in @list
       if entity.z < 0
-        @init_entity(entity)
+        @init_entity(entity, @level.camera.negative_z_container)
+      else if entity.z > 0
+        @init_entity(entity, @level.camera.positive_z_container)
+      else if entity.z == 0
+        @init_entity(entity, @level.camera.neutral_z_container)
 
-  init_front_sprites: ->
-    for entity in @list
-      if entity.z >= 0
-        @init_entity(entity)
-
-  init_entity: (entity) ->
+  init_entity: (entity, container) ->
     if entity.frames > 0
       textures = []
       for i in [0..entity.frames - 1]
@@ -135,10 +131,10 @@ class Entities
       entity.sprite = new PIXI.extras.MovieClip(textures)
       entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay
       entity.sprite.play()
-      @level.camera.translate_container.addChild(entity.sprite)
+      container.addChild(entity.sprite)
     else if entity.file
       entity.sprite = new PIXI.Sprite.fromImage(@assets.get_url(entity.file))
-      @level.camera.translate_container.addChild(entity.sprite)
+      container.addChild(entity.sprite)
 
     if entity.sprite
       entity.sprite.width    = entity.size.width

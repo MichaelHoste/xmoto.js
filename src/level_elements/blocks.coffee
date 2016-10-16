@@ -111,7 +111,8 @@ class Blocks
       mask.drawPolygon(points)
       mask.x =  block.position.x
       mask.y = -block.position.y
-      @level.camera.translate_container.addChild(mask)
+
+      @level.camera.neutral_z_container.addChild(mask)
 
       # Create tilingSprite
       texture = PIXI.Texture.fromImage(@assets.get_url(block.texture_name))
@@ -125,7 +126,7 @@ class Blocks
       block.sprite.tileScale.y = 1.0/40
       block.sprite.mask = mask
 
-      @level.camera.translate_container.addChild(block.sprite)
+      @level.camera.neutral_z_container.addChild(block.sprite)
 
   update: ->
     if !Constants.debug_physics

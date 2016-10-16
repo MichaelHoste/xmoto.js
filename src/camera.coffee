@@ -14,11 +14,17 @@ class Camera
       x: 0
       y: 0
 
-    @scale_container     = new PIXI.Container()
-    @translate_container = new PIXI.Container()
+    @scale_container      = new PIXI.Container()
+    @translate_container  = new PIXI.Container()
+    @negative_z_container = new PIXI.Container()
+    @neutral_z_container  = new PIXI.Container()
+    @positive_z_container = new PIXI.Container()
 
     @level.stage.addChild(@scale_container)
     @scale_container.addChild(@translate_container)
+    @translate_container.addChild(@negative_z_container)
+    @translate_container.addChild(@neutral_z_container)
+    @translate_container.addChild(@positive_z_container)
 
   init: ->
     if Constants.manual_scale

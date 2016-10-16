@@ -16,8 +16,14 @@
       };
       this.scale_container = new PIXI.Container();
       this.translate_container = new PIXI.Container();
+      this.negative_z_container = new PIXI.Container();
+      this.neutral_z_container = new PIXI.Container();
+      this.positive_z_container = new PIXI.Container();
       this.level.stage.addChild(this.scale_container);
       this.scale_container.addChild(this.translate_container);
+      this.translate_container.addChild(this.negative_z_container);
+      this.translate_container.addChild(this.neutral_z_container);
+      this.translate_container.addChild(this.positive_z_container);
     }
 
     Camera.prototype.init = function() {
@@ -628,10 +634,9 @@
 
     Level.prototype.init = function() {
       this.sky.init();
-      this.entities.init_back();
       this.blocks.init();
       this.limits.init();
-      this.entities.init_front();
+      this.entities.init();
       this.moto.init();
       this.ghosts.init();
       this.physics.init();
@@ -1267,7 +1272,7 @@
         mask.drawPolygon(points);
         mask.x = block.position.x;
         mask.y = -block.position.y;
-        this.level.camera.translate_container.addChild(mask);
+        this.level.camera.neutral_z_container.addChild(mask);
         texture = PIXI.Texture.fromImage(this.assets.get_url(block.texture_name));
         size_x = block.aabb.upperBound.x - block.aabb.lowerBound.x;
         size_y = block.aabb.upperBound.y - block.aabb.lowerBound.y;
@@ -1277,7 +1282,7 @@
         block.sprite.tileScale.x = 1.0 / 40;
         block.sprite.tileScale.y = 1.0 / 40;
         block.sprite.mask = mask;
-        results.push(this.level.camera.translate_container.addChild(block.sprite));
+        results.push(this.level.camera.neutral_z_container.addChild(block.sprite));
       }
       return results;
     };
@@ -1435,7 +1440,7 @@
         mask = new PIXI.Graphics();
         mask.beginFill(0xffffff, 1.0);
         mask.drawPolygon(points);
-        this.level.camera.translate_container.addChild(mask);
+        this.level.camera.neutral_z_container.addChild(mask);
         x = Math.abs(Math.sin(edge.angle) * edge.theme.depth);
         y = Math.abs(Math.tan(edge.angle) * x);
         texture = PIXI.Texture.fromImage(this.assets.get_url(edge.theme.file));
@@ -1454,7 +1459,7 @@
         edge.sprite.tileScale.y = 1.0 / 100.0;
         edge.sprite.mask = mask;
         edge.sprite.rotation = -edge.angle;
-        results.push(this.level.camera.translate_container.addChild(edge.sprite));
+        results.push(this.level.camera.neutral_z_container.addChild(edge.sprite));
       }
       return results;
     };
@@ -1640,13 +1645,9 @@
       return results;
     };
 
-    Entities.prototype.init_back = function() {
+    Entities.prototype.init = function() {
       this.init_physics_parts();
-      return this.init_back_sprites();
-    };
-
-    Entities.prototype.init_front = function() {
-      return this.init_front_sprites();
+      return this.init_sprites();
     };
 
     Entities.prototype.init_physics_parts = function() {
@@ -1676,14 +1677,18 @@
       return results;
     };
 
-    Entities.prototype.init_back_sprites = function() {
+    Entities.prototype.init_sprites = function() {
       var entity, j, len, ref, results;
       ref = this.list;
       results = [];
       for (j = 0, len = ref.length; j < len; j++) {
         entity = ref[j];
         if (entity.z < 0) {
-          results.push(this.init_entity(entity));
+          results.push(this.init_entity(entity, this.level.camera.negative_z_container));
+        } else if (entity.z > 0) {
+          results.push(this.init_entity(entity, this.level.camera.positive_z_container));
+        } else if (entity.z === 0) {
+          results.push(this.init_entity(entity, this.level.camera.neutral_z_container));
         } else {
           results.push(void 0);
         }
@@ -1691,22 +1696,7 @@
       return results;
     };
 
-    Entities.prototype.init_front_sprites = function() {
-      var entity, j, len, ref, results;
-      ref = this.list;
-      results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        entity = ref[j];
-        if (entity.z >= 0) {
-          results.push(this.init_entity(entity));
-        } else {
-          results.push(void 0);
-        }
-      }
-      return results;
-    };
-
-    Entities.prototype.init_entity = function(entity) {
+    Entities.prototype.init_entity = function(entity, container) {
       var i, j, ref, textures;
       if (entity.frames > 0) {
         textures = [];
@@ -1716,10 +1706,10 @@
         entity.sprite = new PIXI.extras.MovieClip(textures);
         entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay;
         entity.sprite.play();
-        this.level.camera.translate_container.addChild(entity.sprite);
+        container.addChild(entity.sprite);
       } else if (entity.file) {
         entity.sprite = new PIXI.Sprite.fromImage(this.assets.get_url(entity.file));
-        this.level.camera.translate_container.addChild(entity.sprite);
+        container.addChild(entity.sprite);
       }
       if (entity.sprite) {
         entity.sprite.width = entity.size.width;
@@ -2036,10 +2026,10 @@
       this.top_sprite.anchor.y = 0;
       this.top_sprite.tileScale.x = 1.0 / 40;
       this.top_sprite.tileScale.y = 1.0 / 40;
-      this.level.camera.translate_container.addChild(this.left_sprite);
-      this.level.camera.translate_container.addChild(this.right_sprite);
-      this.level.camera.translate_container.addChild(this.bottom_sprite);
-      return this.level.camera.translate_container.addChild(this.top_sprite);
+      this.level.camera.neutral_z_container.addChild(this.left_sprite);
+      this.level.camera.neutral_z_container.addChild(this.right_sprite);
+      this.level.camera.neutral_z_container.addChild(this.bottom_sprite);
+      return this.level.camera.neutral_z_container.addChild(this.top_sprite);
     };
 
     Limits.prototype.update = function() {
@@ -2375,11 +2365,11 @@
       this.world.DestroyBody(this.right_wheel);
       this.world.DestroyBody(this.left_axle);
       this.world.DestroyBody(this.right_axle);
-      this.level.camera.translate_container.removeChild(this.body_sprite);
-      this.level.camera.translate_container.removeChild(this.left_wheel_sprite);
-      this.level.camera.translate_container.removeChild(this.right_wheel_sprite);
-      this.level.camera.translate_container.removeChild(this.left_axle_sprite);
-      return this.level.camera.translate_container.removeChild(this.right_axle_sprite);
+      this.level.camera.neutral_z_container.removeChild(this.body_sprite);
+      this.level.camera.neutral_z_container.removeChild(this.left_wheel_sprite);
+      this.level.camera.neutral_z_container.removeChild(this.right_wheel_sprite);
+      this.level.camera.neutral_z_container.removeChild(this.left_axle_sprite);
+      return this.level.camera.neutral_z_container.removeChild(this.right_axle_sprite);
     };
 
     Moto.prototype.load_assets = function() {
@@ -2426,7 +2416,7 @@
           asset_name = Constants[part].texture;
         }
         this[part + "_sprite"] = new PIXI.Sprite.fromImage(this.assets.get_url(asset_name));
-        this.level.camera.translate_container.addChild(this[part + "_sprite"]);
+        this.level.camera.neutral_z_container.addChild(this[part + "_sprite"]);
       }
       return this.rider.init_sprites();
     };
@@ -2993,12 +2983,12 @@
       this.world.DestroyBody(this.upper_leg);
       this.world.DestroyBody(this.lower_arm);
       this.world.DestroyBody(this.upper_arm);
-      this.level.camera.translate_container.removeChild(this.head_sprite);
-      this.level.camera.translate_container.removeChild(this.torso_sprite);
-      this.level.camera.translate_container.removeChild(this.lower_leg_sprite);
-      this.level.camera.translate_container.removeChild(this.upper_leg_sprite);
-      this.level.camera.translate_container.removeChild(this.lower_arm_sprite);
-      return this.level.camera.translate_container.removeChild(this.upper_arm_sprite);
+      this.level.camera.neutral_z_container.removeChild(this.head_sprite);
+      this.level.camera.neutral_z_container.removeChild(this.torso_sprite);
+      this.level.camera.neutral_z_container.removeChild(this.lower_leg_sprite);
+      this.level.camera.neutral_z_container.removeChild(this.upper_leg_sprite);
+      this.level.camera.neutral_z_container.removeChild(this.lower_arm_sprite);
+      return this.level.camera.neutral_z_container.removeChild(this.upper_arm_sprite);
     };
 
     Rider.prototype.load_assets = function() {
@@ -3045,7 +3035,7 @@
           asset_name = Constants[part].texture;
         }
         this[part + "_sprite"] = new PIXI.Sprite.fromImage(this.assets.get_url(asset_name));
-        results.push(this.level.camera.translate_container.addChild(this[part + "_sprite"]));
+        results.push(this.level.camera.neutral_z_container.addChild(this[part + "_sprite"]));
       }
       return results;
     };

@@ -47,7 +47,7 @@ class Edges
       mask = new PIXI.Graphics()
       mask.beginFill(0xffffff, 1.0)
       mask.drawPolygon(points)
-      @level.camera.translate_container.addChild(mask)
+      @level.camera.neutral_z_container.addChild(mask)
 
       x = Math.abs(Math.sin(edge.angle) * edge.theme.depth)
       y = Math.abs(Math.tan(edge.angle) * x)
@@ -67,7 +67,7 @@ class Edges
       edge.sprite.mask        = mask
       edge.sprite.rotation    = -edge.angle
 
-      @level.camera.translate_container.addChild(edge.sprite)
+      @level.camera.neutral_z_container.addChild(edge.sprite)
 
   # only display edges present on the screen zone
   update: ->

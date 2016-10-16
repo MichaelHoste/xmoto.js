@@ -26,12 +26,12 @@ class Rider
     @world.DestroyBody(@lower_arm)
     @world.DestroyBody(@upper_arm)
 
-    @level.camera.translate_container.removeChild(@head_sprite)
-    @level.camera.translate_container.removeChild(@torso_sprite)
-    @level.camera.translate_container.removeChild(@lower_leg_sprite)
-    @level.camera.translate_container.removeChild(@upper_leg_sprite)
-    @level.camera.translate_container.removeChild(@lower_arm_sprite)
-    @level.camera.translate_container.removeChild(@upper_arm_sprite)
+    @level.camera.neutral_z_container.removeChild(@head_sprite)
+    @level.camera.neutral_z_container.removeChild(@torso_sprite)
+    @level.camera.neutral_z_container.removeChild(@lower_leg_sprite)
+    @level.camera.neutral_z_container.removeChild(@upper_leg_sprite)
+    @level.camera.neutral_z_container.removeChild(@lower_arm_sprite)
+    @level.camera.neutral_z_container.removeChild(@upper_arm_sprite)
 
   load_assets: ->
     parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
@@ -68,7 +68,7 @@ class Rider
         asset_name = Constants[part].texture
 
       @["#{part}_sprite"] = new PIXI.Sprite.fromImage(@assets.get_url(asset_name))
-      @level.camera.translate_container.addChild(@["#{part}_sprite"])
+      @level.camera.neutral_z_container.addChild(@["#{part}_sprite"])
 
   position: ->
     @moto.body.GetPosition()

@@ -30,11 +30,11 @@ class Moto
     @world.DestroyBody(@right_axle)
 
     # graphics
-    @level.camera.translate_container.removeChild(@body_sprite)
-    @level.camera.translate_container.removeChild(@left_wheel_sprite)
-    @level.camera.translate_container.removeChild(@right_wheel_sprite)
-    @level.camera.translate_container.removeChild(@left_axle_sprite)
-    @level.camera.translate_container.removeChild(@right_axle_sprite)
+    @level.camera.neutral_z_container.removeChild(@body_sprite)
+    @level.camera.neutral_z_container.removeChild(@left_wheel_sprite)
+    @level.camera.neutral_z_container.removeChild(@right_wheel_sprite)
+    @level.camera.neutral_z_container.removeChild(@left_axle_sprite)
+    @level.camera.neutral_z_container.removeChild(@right_axle_sprite)
 
   load_assets: ->
     parts = [ Constants.body, Constants.left_wheel, Constants.right_wheel,
@@ -76,7 +76,7 @@ class Moto
         asset_name = Constants[part].texture
 
       @["#{part}_sprite"] = new PIXI.Sprite.fromImage(@assets.get_url(asset_name))
-      @level.camera.translate_container.addChild(@["#{part}_sprite"])
+      @level.camera.neutral_z_container.addChild(@["#{part}_sprite"])
 
     @rider.init_sprites()
 
