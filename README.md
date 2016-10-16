@@ -78,10 +78,10 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 
 ## TODO
 
-* Try to use same renderer in every browsers.
+* Try to use same renderer in every browsers (wait for 4.0.4: http://www.html5gamedevs.com/topic/25785-visual-glitch-on-v4-webgl-tilingsprite/#comment-147559)
 * Improve and correct edge creation (slow in webgl/chrome because of
   lots of tilings but very smooth using canvas. In FF this is the opposite,
-  very smooth in WebGL and not-so-smoot in Canvas (but still ok).
+  very smooth in WebGL and not-so-smoot in Canvas (but still ok) => wait for 4.0.4.
 * Improve XML levels compatibility => layeroffsets (parallax)
 
 [and other stuffs](https://github.com/MichaelHoste/xmoto.js/issues)
