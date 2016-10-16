@@ -79,10 +79,9 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 ## TODO
 
 * Try to use same renderer in every browsers.
-* Hide edges from blocks that are not visible
 * Improve and correct edge creation (slow in webgl/chrome because of
   lots of tilings but very smooth using canvas. In FF this is the opposite,
   very smooth in WebGL and not-so-smoot in Canvas (but still ok).
-* Improve XML levels compatibility!
+* Improve XML levels compatibility => layeroffsets (parallax)
 
 [and other stuffs](https://github.com/MichaelHoste/xmoto.js/issues)
