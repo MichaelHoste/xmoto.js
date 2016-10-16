@@ -63,7 +63,10 @@ class Blocks
 
         block.vertices.push(vertex)
 
-      block.aabb = @compute_aabb(block)
+      block.edges_list = new Edges(@level, block)
+      block.edges_list.parse()
+
+      block.aabb       = @compute_aabb(block)
 
       @list.push(block)
       if block.position.background
@@ -75,21 +78,19 @@ class Blocks
     @back_list .sort( @sort_blocks_by_texture )
     @front_list.sort( @sort_blocks_by_texture )
 
-    @edges.parse(@list)
-
     return this
 
   load_assets: ->
     for block in @list
       @assets.textures.push(block.texture_name)
-
-    @edges.load_assets()
+      block.edges_list.load_assets()
 
   init: ->
     @init_physics_parts()
     @init_sprites()
 
-    @edges.init()
+    for block in @list
+      block.edges_list.init()
 
   init_physics_parts: ->
     ground = Constants.ground
@@ -130,8 +131,7 @@ class Blocks
     if !Constants.debug_physics
       for block in @list
         block.sprite.visible = @visible(block)
-
-      @edges.update()
+        block.edges_list.update()
 
   visible: (block) ->
     block.aabb.TestOverlap(@level.camera.aabb)

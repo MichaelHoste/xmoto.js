@@ -3,34 +3,31 @@ b2AABB = Box2D.Collision.b2AABB
 
 class Edges
 
-  constructor: (level) ->
+  constructor: (level, block) ->
     @level  = level
+    @block  = block
     @assets = @level.assets
     @theme  = @assets.theme
 
     @list   = [] # List of edges
 
-  parse: (blocks) ->
-    @blocks = blocks
+  parse: ->
+    for vertex, i in @block.vertices
+      if vertex.edge
+        edge =
+          vertex1: vertex
+          vertex2: if i == @block.vertices.length-1 then @block.vertices[0] else @block.vertices[i+1]
+          block:   @block
+          texture: vertex.edge
+          theme:   @theme.edge_params(vertex.edge)
+        edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI/2
+        edge.vertices = [ { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y - edge.theme.depth },
+                          { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y - edge.theme.depth },
+                          { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y },
+                          { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y } ]
+        edge.aabb = @compute_aabb(edge)
 
-    # Create edges
-    for block in @blocks
-      for vertex, i in block.vertices
-        if vertex.edge
-          edge =
-            vertex1: vertex
-            vertex2: if i == block.vertices.length-1 then block.vertices[0] else block.vertices[i+1]
-            block:   block
-            texture: vertex.edge
-            theme:   @theme.edge_params(vertex.edge)
-          edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI/2
-          edge.vertices = [ { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y - edge.theme.depth },
-                            { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y - edge.theme.depth },
-                            { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y },
-                            { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y } ]
-          edge.aabb = @compute_aabb(edge)
-
-          @list.push(edge)
+        @list.push(edge)
 
   load_assets: ->
     for edge in @list
@@ -75,8 +72,10 @@ class Edges
   # only display edges present on the screen zone
   update: ->
     if !Constants.debug_physics
+      block_visible = @block.sprite.visible
+
       for edge in @list
-        edge.sprite.visible = @visible(edge)
+        edge.sprite.visible = block_visible && @visible(edge) # don't test aabb if block not visible
 
   compute_aabb: (edge) ->
     first = true

@@ -2,3 +2,5 @@
 node_modules
 *~
 deploy.sh
+deploy_staging.sh
+nginx.conf

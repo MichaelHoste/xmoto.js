@@ -628,9 +628,9 @@
 
     Level.prototype.init = function() {
       this.sky.init();
-      this.limits.init();
       this.entities.init();
       this.blocks.init();
+      this.limits.init();
       this.moto.init();
       this.ghosts.init();
       this.physics.init();
@@ -1196,6 +1196,8 @@
           };
           block.vertices.push(vertex);
         }
+        block.edges_list = new Edges(this.level, block);
+        block.edges_list.parse();
         block.aabb = this.compute_aabb(block);
         this.list.push(block);
         if (block.position.background) {
@@ -1207,24 +1209,32 @@
       this.list.sort(this.sort_blocks_by_texture);
       this.back_list.sort(this.sort_blocks_by_texture);
       this.front_list.sort(this.sort_blocks_by_texture);
-      this.edges.parse(this.list);
       return this;
     };
 
     Blocks.prototype.load_assets = function() {
-      var block, j, len, ref;
+      var block, j, len, ref, results;
       ref = this.list;
+      results = [];
       for (j = 0, len = ref.length; j < len; j++) {
         block = ref[j];
         this.assets.textures.push(block.texture_name);
+        results.push(block.edges_list.load_assets());
       }
-      return this.edges.load_assets();
+      return results;
     };
 
     Blocks.prototype.init = function() {
+      var block, j, len, ref, results;
       this.init_physics_parts();
       this.init_sprites();
-      return this.edges.init();
+      ref = this.list;
+      results = [];
+      for (j = 0, len = ref.length; j < len; j++) {
+        block = ref[j];
+        results.push(block.edges_list.init());
+      }
+      return results;
     };
 
     Blocks.prototype.init_physics_parts = function() {
@@ -1272,14 +1282,16 @@
     };
 
     Blocks.prototype.update = function() {
-      var block, j, len, ref;
+      var block, j, len, ref, results;
       if (!Constants.debug_physics) {
         ref = this.list;
+        results = [];
         for (j = 0, len = ref.length; j < len; j++) {
           block = ref[j];
           block.sprite.visible = this.visible(block);
+          results.push(block.edges_list.update());
         }
-        return this.edges.update();
+        return results;
       }
     };
 
@@ -1345,58 +1357,49 @@
   b2AABB = Box2D.Collision.b2AABB;
 
   Edges = (function() {
-    function Edges(level) {
+    function Edges(level, block) {
       this.level = level;
+      this.block = block;
       this.assets = this.level.assets;
       this.theme = this.assets.theme;
       this.list = [];
     }
 
-    Edges.prototype.parse = function(blocks) {
-      var block, edge, i, j, len, ref, results, vertex;
-      this.blocks = blocks;
-      ref = this.blocks;
+    Edges.prototype.parse = function() {
+      var edge, i, j, len, ref, results, vertex;
+      ref = this.block.vertices;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        block = ref[j];
-        results.push((function() {
-          var k, len1, ref1, results1;
-          ref1 = block.vertices;
-          results1 = [];
-          for (i = k = 0, len1 = ref1.length; k < len1; i = ++k) {
-            vertex = ref1[i];
-            if (vertex.edge) {
-              edge = {
-                vertex1: vertex,
-                vertex2: i === block.vertices.length - 1 ? block.vertices[0] : block.vertices[i + 1],
-                block: block,
-                texture: vertex.edge,
-                theme: this.theme.edge_params(vertex.edge)
-              };
-              edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
-              edge.vertices = [
-                {
-                  x: edge.vertex1.absolute_x,
-                  y: edge.vertex1.absolute_y - edge.theme.depth
-                }, {
-                  x: edge.vertex2.absolute_x,
-                  y: edge.vertex2.absolute_y - edge.theme.depth
-                }, {
-                  x: edge.vertex2.absolute_x,
-                  y: edge.vertex2.absolute_y
-                }, {
-                  x: edge.vertex1.absolute_x,
-                  y: edge.vertex1.absolute_y
-                }
-              ];
-              edge.aabb = this.compute_aabb(edge);
-              results1.push(this.list.push(edge));
-            } else {
-              results1.push(void 0);
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        vertex = ref[i];
+        if (vertex.edge) {
+          edge = {
+            vertex1: vertex,
+            vertex2: i === this.block.vertices.length - 1 ? this.block.vertices[0] : this.block.vertices[i + 1],
+            block: this.block,
+            texture: vertex.edge,
+            theme: this.theme.edge_params(vertex.edge)
+          };
+          edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
+          edge.vertices = [
+            {
+              x: edge.vertex1.absolute_x,
+              y: edge.vertex1.absolute_y - edge.theme.depth
+            }, {
+              x: edge.vertex2.absolute_x,
+              y: edge.vertex2.absolute_y - edge.theme.depth
+            }, {
+              x: edge.vertex2.absolute_x,
+              y: edge.vertex2.absolute_y
+            }, {
+              x: edge.vertex1.absolute_x,
+              y: edge.vertex1.absolute_y
             }
-          }
-          return results1;
-        }).call(this));
+          ];
+          edge.aabb = this.compute_aabb(edge);
+          results.push(this.list.push(edge));
+        } else {
+          results.push(void 0);
+        }
       }
       return results;
     };
@@ -1456,13 +1459,14 @@
     };
 
     Edges.prototype.update = function() {
-      var edge, j, len, ref, results;
+      var block_visible, edge, j, len, ref, results;
       if (!Constants.debug_physics) {
+        block_visible = this.block.sprite.visible;
         ref = this.list;
         results = [];
         for (j = 0, len = ref.length; j < len; j++) {
           edge = ref[j];
-          results.push(edge.sprite.visible = this.visible(edge));
+          results.push(edge.sprite.visible = block_visible && this.visible(edge));
         }
         return results;
       }

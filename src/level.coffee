@@ -66,9 +66,9 @@ class Level
 
   init: ->
     @sky      .init()
-    @limits   .init()
     @entities .init()
     @blocks   .init()
+    @limits   .init()
     @moto     .init()
     @ghosts   .init()
     @physics  .init()
