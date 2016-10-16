@@ -82,6 +82,7 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 * Improve and correct edge creation (slow in webgl/chrome because of
   lots of tilings but very smooth using canvas. In FF this is the opposite,
   very smooth in WebGL and not-so-smoot in Canvas (but still ok) => wait for 4.0.4.
+* Add debug option for renderer type (wait for 4.0.4)
 * Improve XML levels compatibility => layeroffsets (parallax)
 
 [and other stuffs](https://github.com/MichaelHoste/xmoto.js/issues)
