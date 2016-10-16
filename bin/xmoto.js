@@ -628,9 +628,10 @@
 
     Level.prototype.init = function() {
       this.sky.init();
-      this.entities.init();
+      this.entities.init_back();
       this.blocks.init();
       this.limits.init();
+      this.entities.init_front();
       this.moto.init();
       this.ghosts.init();
       this.physics.init();
@@ -1532,7 +1533,7 @@
     }
 
     Entities.prototype.parse = function(xml) {
-      var entity, j, k, len, len1, param, sprite, texture_name, xml_entities, xml_entity, xml_param, xml_params;
+      var entity, j, k, len, len1, name, sprite, texture_name, value, xml_entities, xml_entity, xml_param, xml_params;
       xml_entities = $(xml).find('entity');
       for (j = 0, len = xml_entities.length; j < len; j++) {
         xml_entity = xml_entities[j];
@@ -1541,6 +1542,7 @@
           type_id: $(xml_entity).attr('typeid'),
           size: {
             r: parseFloat($(xml_entity).find('size').attr('r')),
+            z: parseInt($(xml_entity).find('size').attr('z')) || void 0,
             width: parseFloat($(xml_entity).find('size').attr('width')),
             height: parseFloat($(xml_entity).find('size').attr('height'))
           },
@@ -1549,17 +1551,16 @@
             y: parseFloat($(xml_entity).find('position').attr('y')),
             angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0
           },
-          params: []
+          params: {}
         };
         xml_params = $(xml_entity).find('param');
         for (k = 0, len1 = xml_params.length; k < len1; k++) {
           xml_param = xml_params[k];
-          param = {
-            name: $(xml_param).attr('name'),
-            value: $(xml_param).attr('value')
-          };
-          entity.params.push(param);
+          name = $(xml_param).attr('name');
+          value = $(xml_param).attr('value');
+          entity.params[name] = value;
         }
+        entity['z'] = entity.size.z || parseInt(entity.params.z) || 0;
         texture_name = this.entity_texture_name(entity);
         if (texture_name) {
           sprite = this.assets.theme.sprite_params(texture_name);
@@ -1601,6 +1602,15 @@
         }
         this.list.push(entity);
       }
+      this.list.sort(function(a, b) {
+        if (a.z > b.z) {
+          return 1;
+        }
+        if (a.z < b.z) {
+          return -1;
+        }
+        return 0;
+      });
       return this;
     };
 
@@ -1630,9 +1640,13 @@
       return results;
     };
 
-    Entities.prototype.init = function() {
+    Entities.prototype.init_back = function() {
       this.init_physics_parts();
-      return this.init_sprites();
+      return this.init_back_sprites();
+    };
+
+    Entities.prototype.init_front = function() {
+      return this.init_front_sprites();
     };
 
     Entities.prototype.init_physics_parts = function() {
@@ -1662,13 +1676,32 @@
       return results;
     };
 
-    Entities.prototype.init_sprites = function() {
+    Entities.prototype.init_back_sprites = function() {
       var entity, j, len, ref, results;
       ref = this.list;
       results = [];
       for (j = 0, len = ref.length; j < len; j++) {
         entity = ref[j];
-        results.push(this.init_entity(entity));
+        if (entity.z < 0) {
+          results.push(this.init_entity(entity));
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    };
+
+    Entities.prototype.init_front_sprites = function() {
+      var entity, j, len, ref, results;
+      ref = this.list;
+      results = [];
+      for (j = 0, len = ref.length; j < len; j++) {
+        entity = ref[j];
+        if (entity.z >= 0) {
+          results.push(this.init_entity(entity));
+        } else {
+          results.push(void 0);
+        }
       }
       return results;
     };
@@ -1735,15 +1768,8 @@
     };
 
     Entities.prototype.entity_texture_name = function(entity) {
-      var j, len, param, ref;
       if (entity.type_id === 'Sprite') {
-        ref = entity.params;
-        for (j = 0, len = ref.length; j < len; j++) {
-          param = ref[j];
-          if (param.name === 'name') {
-            return param.value;
-          }
-        }
+        return entity.params.name;
       } else if (entity.type_id === 'EndOfLevel') {
         return 'Flower';
       } else if (entity.type_id === 'Strawberry' || entity.type_id === 'Wrecker') {

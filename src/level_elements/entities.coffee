@@ -20,21 +20,24 @@ class Entities
         type_id: $(xml_entity).attr('typeid')
         size:
           r:      parseFloat($(xml_entity).find('size').attr('r'))
+          z:      parseInt($(xml_entity).find('size').attr('z')) || undefined
           width:  parseFloat($(xml_entity).find('size').attr('width'))
           height: parseFloat($(xml_entity).find('size').attr('height'))
         position:
           x:     parseFloat($(xml_entity).find('position').attr('x'))
           y:     parseFloat($(xml_entity).find('position').attr('y'))
           angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0
-        params: []
+        params: {}
 
       # parse params xml
       xml_params = $(xml_entity).find('param')
       for xml_param in xml_params
-        param =
-          name:  $(xml_param).attr('name')
-          value: $(xml_param).attr('value')
-        entity.params.push(param)
+        name  = $(xml_param).attr('name')
+        value = $(xml_param).attr('value')
+        entity.params[name] = value
+
+      # find correct z (z can be in <size z="?"> or in <param name="z" value="?">)
+      entity['z'] = entity.size.z || parseInt(entity.params.z) || 0
 
       # Get default values for sprite from theme
       texture_name = @entity_texture_name(entity)
@@ -66,6 +69,13 @@ class Entities
 
       @list.push(entity)
 
+    # order by z-index ASC
+    @list.sort((a, b) ->
+      return 1  if a.z > b.z
+      return -1 if a.z < b.z
+      return 0
+    )
+
     return this
 
   load_assets: ->
@@ -77,9 +87,12 @@ class Entities
           for i in [0..entity.frames-1]
             @assets.anims.push(@frame_name(entity, i))
 
-  init: ->
+  init_back: ->
     @init_physics_parts()
-    @init_sprites()
+    @init_back_sprites()
+
+  init_front: ->
+    @init_front_sprites()
 
   init_physics_parts: ->
     for entity in @list
@@ -103,9 +116,15 @@ class Entities
           x: entity.position.x
           y: entity.position.y
 
-  init_sprites: ->
+  init_back_sprites: ->
     for entity in @list
-      @init_entity(entity)
+      if entity.z < 0
+        @init_entity(entity)
+
+  init_front_sprites: ->
+    for entity in @list
+      if entity.z >= 0
+        @init_entity(entity)
 
   init_entity: (entity) ->
     if entity.frames > 0
@@ -163,9 +182,7 @@ class Entities
 
   entity_texture_name: (entity) ->
     if entity.type_id == 'Sprite'
-      for param in entity.params
-        if param.name == 'name'
-          return param.value
+      return entity.params.name
     else if entity.type_id == 'EndOfLevel'
       return 'Flower'
     else if entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
