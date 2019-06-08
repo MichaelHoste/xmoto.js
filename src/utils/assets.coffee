@@ -18,7 +18,7 @@ class Assets
     )
 
   load: (callback) ->
-    PIXI.loader.reset()
+    PIXI.Loader.shared.reset()
 
     items = []
     for item in @textures
@@ -43,9 +43,9 @@ class Assets
       )
 
     for item in @remove_duplicate_textures(items)
-      PIXI.loader.add(item.id, item.src)
+      PIXI.Loader.shared.add(item.id, item.src)
 
-    PIXI.loader.load((loader, resources) =>
+    PIXI.Loader.shared.load((loader, resources) =>
       @resources = resources
       callback()
     )

@@ -52,11 +52,11 @@ class Edges
       x = Math.abs(Math.sin(edge.angle) * edge.theme.depth)
       y = Math.abs(Math.tan(edge.angle) * x)
 
-      texture = PIXI.Texture.fromImage(@assets.get_url(edge.theme.file))
+      texture = PIXI.Texture.from(@assets.get_url(edge.theme.file))
       size_x  = edge.aabb.upperBound.x - edge.aabb.lowerBound.x + 2*x
       size_y  = edge.theme.depth# + 2*y
 
-      edge.sprite   = new PIXI.extras.TilingSprite(texture, 4*size_x, size_y)
+      edge.sprite   = new PIXI.TilingSprite(texture, 4*size_x, size_y)
       edge.sprite.x =  edge.vertex1.absolute_x - x
       edge.sprite.y = -edge.vertex1.absolute_y + y if edge.angle > 0
       edge.sprite.y = -edge.vertex1.absolute_y - y if edge.angle <= 0

@@ -19,9 +19,6 @@ This is the **first** part of a 2-parts project:
 XMoto.io will be built on top of XMoto.js, using Ruby on Rails, and both the
 projects will co-evolve and interact in some parts.
 
-<!-- XMoto.js will take some informations like replays from DOM and JS
-options, and it will call a route with replay when a player finished a level). -->
-
 More about the project development on http://xmoto.io
 (not up-to-date but good intro).
 
@@ -64,13 +61,12 @@ You can copy-paste the generated URL to keep the custom physics.
 
 ### Installation
 
- * ```brew install nodejs```: install NodeJS for NPM (on MacOS)
- * ```npm install coffee-script```
- * ```npm install express```
+ * ```brew install nodejs yarn``` to install NodeJS and YARN (on MacOS)
+ * ```yarn install``` to install development dependencies
 
 ### Working environnement
 
- * ```coffee -j bin/xmoto.js -wc src/*.coffee src/*/*.coffee``` to compile
+ * ```./node_modules/coffeescript/bin/coffee -j bin/xmoto.js -wc src/*.coffee src/*/*.coffee``` to compile
    to JavaScript in real-time.
  * ```node server.js``` to launch HTTP Server (http://localhost:3001).
 

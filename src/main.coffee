@@ -2,19 +2,23 @@ $.xmoto = (level_filename, options = {}) ->
   initialize = ->
     options = load_options(options)
 
-    # WebGL => safari, firefox
-    # canvas => chrome
+    # To make sprites of moto more "sharp" (less blurry)
+    # should be default value but doesn't seem to work for bike/biker?
+    PIXI.settings.MIPMAP_TEXTURES = PIXI.settings.MIPMAP_TEXTURES.POW2
 
-    if /chrome/.test(navigator.userAgent.toLowerCase())
-      renderer = new PIXI.CanvasRenderer(options.width, options.height, {
-        antialias:       true,
-        backgroundColor: 0xFFFFFF
-      })
-    else
-      renderer = new PIXI.autoDetectRenderer(options.width, options.height, {
-        antialias:       true,
-        backgroundColor: 0xFFFFFF
-      })
+    renderer = new PIXI.Renderer({
+      width:                  options.width,
+      height:                 options.height,
+      backgroundColor:        0xFFFFFF,
+
+      # should be faster (because we always render everything)
+      clearBeforeRender:      false
+      preserveDrawingBuffer:  true
+
+      #transparent:     true  # may be useful later (moto on website)
+      #antialias:       true, # antiliasing is false by default and we keep it that way because
+                              # of significative FPS drop and small visual changes
+    })
 
     window.cancelAnimationFrame(window.game_loop)
 

@@ -2,6 +2,7 @@ body {
   background: url('/background.png');
   margin: 0px;
   padding-bottom: 40px;
+  /* overflow: hidden; */
 }
 
 .back {

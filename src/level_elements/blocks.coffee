@@ -115,11 +115,11 @@ class Blocks
       @level.camera.neutral_z_container.addChild(mask)
 
       # Create tilingSprite
-      texture = PIXI.Texture.fromImage(@assets.get_url(block.texture_name))
+      texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
       size_x  = block.aabb.upperBound.x - block.aabb.lowerBound.x
       size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
 
-      block.sprite = new PIXI.extras.TilingSprite(texture, size_x, size_y)
+      block.sprite = new PIXI.TilingSprite(texture, size_x, size_y)
       block.sprite.x =  block.aabb.lowerBound.x
       block.sprite.y = -block.aabb.upperBound.y
       block.sprite.tileScale.x = 1.0/40

@@ -99,7 +99,7 @@ class Limits
     @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_sprites: ->
-    texture = PIXI.Texture.fromImage(@assets.get_url(@texture_name))
+    texture = PIXI.Texture.from(@assets.get_url(@texture_name))
 
     left_size_x = @player.left - @screen.left
     left_size_y = @screen.top  - @screen.bottom
@@ -113,10 +113,10 @@ class Limits
     top_size_x = @player.right - @player.left
     top_size_y = @screen.top   - @player.top
 
-    @left_sprite   = new PIXI.extras.TilingSprite(texture, left_size_x, left_size_y)
-    @right_sprite  = new PIXI.extras.TilingSprite(texture, right_size_x, right_size_y)
-    @bottom_sprite = new PIXI.extras.TilingSprite(texture, bottom_size_x, bottom_size_y)
-    @top_sprite    = new PIXI.extras.TilingSprite(texture, top_size_x, top_size_y)
+    @left_sprite   = new PIXI.TilingSprite(texture, left_size_x, left_size_y)
+    @right_sprite  = new PIXI.TilingSprite(texture, right_size_x, right_size_y)
+    @bottom_sprite = new PIXI.TilingSprite(texture, bottom_size_x, bottom_size_y)
+    @top_sprite    = new PIXI.TilingSprite(texture, top_size_x, top_size_y)
 
     @left_sprite.x = @screen.left
     @left_sprite.y = -@screen.top

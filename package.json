@@ -1,0 +1,8 @@
+{
+  "name": "XMoto.js",
+  "private": true,
+  "devDependencies": {
+    "coffeescript": "^1.12",
+    "express": "^4.17.1"
+  }
+}

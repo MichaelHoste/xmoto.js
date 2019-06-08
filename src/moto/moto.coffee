@@ -75,7 +75,7 @@ class Moto
       else
         asset_name = Constants[part].texture
 
-      @["#{part}_sprite"] = new PIXI.Sprite.fromImage(@assets.get_url(asset_name))
+      @["#{part}_sprite"] = new PIXI.Sprite.from(@assets.get_url(asset_name))
       @level.camera.neutral_z_container.addChild(@["#{part}_sprite"])
 
     @rider.init_sprites()

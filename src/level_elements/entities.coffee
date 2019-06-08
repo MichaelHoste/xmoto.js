@@ -126,14 +126,14 @@ class Entities
     if entity.frames > 0
       textures = []
       for i in [0..entity.frames - 1]
-        textures.push(PIXI.Texture.fromImage(@assets.get_url(@frame_name(entity, i))))
+        textures.push(PIXI.Texture.from(@assets.get_url(@frame_name(entity, i))))
 
-      entity.sprite = new PIXI.extras.MovieClip(textures)
+      entity.sprite = new PIXI.AnimatedSprite(textures)
       entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay
       entity.sprite.play()
       container.addChild(entity.sprite)
     else if entity.file
-      entity.sprite = new PIXI.Sprite.fromImage(@assets.get_url(entity.file))
+      entity.sprite = new PIXI.Sprite.from(@assets.get_url(entity.file))
       container.addChild(entity.sprite)
 
     if entity.sprite
