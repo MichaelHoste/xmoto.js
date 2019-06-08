@@ -75,5 +75,7 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 ## TODO
 
 * Improve XML levels compatibility => layeroffsets (parallax)
+* Convert to camelCase (use Humps? Find a way to fix Box2D .GetPosition() absurdity)
+* Create alternative box2D physics using DIV elements on screen.
 
 [and other stuffs](https://github.com/MichaelHoste/xmoto.js/issues)
