@@ -99,7 +99,7 @@ $.xmoto = (level_filename, options = {}) ->
         stats_ms.begin()  if Constants.debug
 
         level.update()
-        renderer.render(level.stage)
+        renderer.render(level.stage) if !Constants.debug_physics
         window.game_loop = requestAnimationFrame(update)
 
         stats_fps.end() if Constants.debug

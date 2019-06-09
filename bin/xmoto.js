@@ -914,7 +914,9 @@
               stats_ms.begin();
             }
             level.update();
-            renderer.render(level.stage);
+            if (!Constants.debug_physics) {
+              renderer.render(level.stage);
+            }
             window.game_loop = requestAnimationFrame(update);
             if (Constants.debug) {
               stats_fps.end();
