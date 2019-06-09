@@ -47,12 +47,12 @@ class Sky
 
       ctx.fillStyle = "#222228"
       ctx.fill()
-    else
-      @sprite.tileScale.x = 4
-      @sprite.tileScale.y = 4
+    # else
+    #   @sprite.tileScale.x = 4
+    #   @sprite.tileScale.y = 4
 
-      position_factor_x = 15
-      position_factor_y = 7
+    #   position_factor_x = 15
+    #   position_factor_y = 7
 
-      @sprite.tilePosition.x = -@level.camera.target().x * position_factor_x
-      @sprite.tilePosition.y =  @level.camera.target().y * position_factor_y
+    #   @sprite.tilePosition.x = -@level.camera.target().x * position_factor_x
+    #   @sprite.tilePosition.y =  @level.camera.target().y * position_factor_y

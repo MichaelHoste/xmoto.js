@@ -33,17 +33,19 @@ body {
 }
 
 #content {
-  position: relative;
-  width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 40px;
+
 }
 
 #xmoto {
   position: relative;
   float: left;
-  box-shadow: 0px 0px 30px #888;
+  width: 100vw;
+  height: 100vh;
+}
+
+#xmoto canvas {
+  width: 100vw;
+  height: 100vh;
 }
 
 .stats-fps {
@@ -150,9 +152,9 @@ body {
 }
 
 div#debug {
-  position:absolute;
-  top: -24px;
-  right: 100px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
   z-index: 2;
 }
 
@@ -246,12 +248,6 @@ div#debug {
 
 body.debug #prev-level, body.debug #next-level {
   display:none;
-}
-
-body.debug #content {
-  width: 1000px;
-  margin-left: 50px;
-  margin-right: 0px;
 }
 
 body.debug #chrono {

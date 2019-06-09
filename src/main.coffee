@@ -16,8 +16,8 @@ $.xmoto = (level_filename, options = {}) ->
       width:                 options.width,
       height:                options.height,
       backgroundColor:       0xFFFFFF,
-      clearBeforeRender:     false  # Should be faster (because we always render everything)
-      preserveDrawingBuffer: true   # Need to be true if clearBeforeRender is false
+      #clearBeforeRender:     false  # Should be faster (because we always render everything)
+      #preserveDrawingBuffer: true   # Need to be true if clearBeforeRender is false
 
       #transparent:     true  # May be useful later (moto on website)
       #antialias:       true, # antiliasing is false by default and we keep it that way because

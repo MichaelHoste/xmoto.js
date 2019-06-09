@@ -587,13 +587,9 @@
       this.input = new Input(this);
       this.listeners = new Listeners(this);
       this.moto = new Moto(this);
-      this.particles = new Particles(this);
-      this.infos = new Infos(this);
       this.sky = new Sky(this);
       this.blocks = new Blocks(this);
       this.limits = new Limits(this);
-      this.layer_offsets = new LayerOffsets(this);
-      this.script = new Script(this);
       this.entities = new Entities(this);
       this.replay = new Replay(this);
       this.ghosts = new Ghosts(this);
@@ -616,14 +612,9 @@
     };
 
     Level.prototype.load_level = function(xml, callback) {
-      this.infos.parse(xml);
-      this.sky.parse(xml);
       this.blocks.parse(xml);
       this.limits.parse(xml);
-      this.layer_offsets.parse(xml);
-      this.script.parse(xml);
       this.entities.parse(xml);
-      this.sky.load_assets();
       this.blocks.load_assets();
       this.limits.load_assets();
       this.entities.load_assets();
@@ -633,7 +624,6 @@
     };
 
     Level.prototype.init = function() {
-      this.sky.init();
       this.blocks.init();
       this.limits.init();
       this.entities.init();
@@ -656,14 +646,12 @@
       }
       this.sky.update();
       this.limits.update();
-      this.entities.update();
       this.camera.update();
       this.blocks.update();
       if (this.options.playable) {
         this.moto.update();
       }
-      this.ghosts.update();
-      return this.particles.update();
+      return this.ghosts.update();
     };
 
     Level.prototype.init_timer = function() {
@@ -838,9 +826,7 @@
       renderer = new PIXI.Renderer({
         width: options.width,
         height: options.height,
-        backgroundColor: 0xFFFFFF,
-        clearBeforeRender: false,
-        preserveDrawingBuffer: true
+        backgroundColor: 0xFFFFFF
       });
       window.cancelAnimationFrame(window.game_loop);
       bind_render_to_dom(renderer, options);
@@ -2110,7 +2096,7 @@
     };
 
     Sky.prototype.update = function() {
-      var ctx, position_factor_x, position_factor_y;
+      var ctx;
       ctx = this.level.debug_ctx;
       if (Constants.debug_physics) {
         ctx.beginPath();
@@ -2121,13 +2107,6 @@
         ctx.closePath();
         ctx.fillStyle = "#222228";
         return ctx.fill();
-      } else {
-        this.sprite.tileScale.x = 4;
-        this.sprite.tileScale.y = 4;
-        position_factor_x = 15;
-        position_factor_y = 7;
-        this.sprite.tilePosition.x = -this.level.camera.target().x * position_factor_x;
-        return this.sprite.tilePosition.y = this.level.camera.target().y * position_factor_y;
       }
     };
 

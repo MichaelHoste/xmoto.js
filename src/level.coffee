@@ -18,15 +18,15 @@ class Level
     @input         = new Input(this)
     @listeners     = new Listeners(this)
     @moto          = new Moto(this)
-    @particles     = new Particles(this)
+    #@particles     = new Particles(this)
 
     # Level dependent objects
-    @infos         = new Infos(this)
+    #@infos         = new Infos(this)
     @sky           = new Sky(this)
     @blocks        = new Blocks(this)
     @limits        = new Limits(this)
-    @layer_offsets = new LayerOffsets(this)
-    @script        = new Script(this)
+    #@layer_offsets = new LayerOffsets(this)
+    #@script        = new Script(this)
     @entities      = new Entities(this)
 
     # Replay: actual run of the player (not saved yet)
@@ -47,15 +47,15 @@ class Level
     )
 
   load_level: (xml, callback) ->
-    @infos        .parse(xml)
-    @sky          .parse(xml)
+    #@infos        .parse(xml)
+    #@sky          .parse(xml)
     @blocks       .parse(xml)
     @limits       .parse(xml)
-    @layer_offsets.parse(xml)
-    @script       .parse(xml)
+    #@layer_offsets.parse(xml)
+    #@script       .parse(xml)
     @entities     .parse(xml)
 
-    @sky     .load_assets()
+    #@sky     .load_assets()
     @blocks  .load_assets()
     @limits  .load_assets()
     @entities.load_assets()
@@ -65,7 +65,7 @@ class Level
     @assets.load(callback)
 
   init: ->
-    @sky      .init()
+    #@sky      .init()
     @blocks   .init()
     @limits   .init()
     @entities .init()
@@ -88,12 +88,12 @@ class Level
 
     @sky      .update()
     @limits   .update()
-    @entities .update()
+    #@entities .update()
     @camera   .update()
     @blocks   .update()
     @moto     .update() if @options.playable
     @ghosts   .update()
-    @particles.update()
+    #@particles.update()
 
   init_timer: ->
     @start_time   = new Date().getTime()
