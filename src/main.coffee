@@ -2,20 +2,24 @@ $.xmoto = (level_filename, options = {}) ->
   initialize = ->
     options = load_options(options)
 
-    # To make sprites of moto more "sharp" (less blurry)
-    # should be default value but doesn't seem to work for bike/biker?
-    PIXI.settings.MIPMAP_TEXTURES = PIXI.settings.MIPMAP_TEXTURES.POW2
+    # To make sprites of moto more "sharp" (less blurry),
+    # we disable midmapping. It may impact rendering speed
+    # because midmap generate lower images to speed up
+    # rendering  (only for pow2 sizes)
+    PIXI.settings.MIPMAP_TEXTURES = PIXI.MIPMAP_MODES.OFF
+
+    # If midmapping is enabled, sharper rendering is done using
+    # this line (maybe blurrier is better? Need to test on bike)
+    # PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
 
     renderer = new PIXI.Renderer({
-      width:                  options.width,
-      height:                 options.height,
-      backgroundColor:        0xFFFFFF,
+      width:                 options.width,
+      height:                options.height,
+      backgroundColor:       0xFFFFFF,
+      clearBeforeRender:     false  # Should be faster (because we always render everything)
+      preserveDrawingBuffer: true   # Need to be true if clearBeforeRender is false
 
-      # should be faster (because we always render everything)
-      clearBeforeRender:      false
-      preserveDrawingBuffer:  true
-
-      #transparent:     true  # may be useful later (moto on website)
+      #transparent:     true  # May be useful later (moto on website)
       #antialias:       true, # antiliasing is false by default and we keep it that way because
                               # of significative FPS drop and small visual changes
     })

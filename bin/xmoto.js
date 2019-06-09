@@ -834,7 +834,7 @@
     initialize = function() {
       var renderer;
       options = load_options(options);
-      PIXI.settings.MIPMAP_TEXTURES = PIXI.settings.MIPMAP_TEXTURES.POW2;
+      PIXI.settings.MIPMAP_TEXTURES = PIXI.MIPMAP_MODES.OFF;
       renderer = new PIXI.Renderer({
         width: options.width,
         height: options.height,
