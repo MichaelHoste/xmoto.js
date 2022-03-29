@@ -83,6 +83,8 @@ years of the COVID virus.
   <img src="http://xmoto.io/img/xmoto-covid.png" width="700" title="COVID-XMoto" />
 </a>
 
+<br/>
+
 The COVID-19 confirmed cases timeseries has become a mountain of flags 
 which you must climb with your motorcycle! Can you win the race for the cure?
 
@@ -90,8 +92,9 @@ which you must climb with your motorcycle! Can you win the race for the cure?
 * [The COVID-XMoto fork](https://github.com/JamesFator/COVID-XMoto)
 
 Thanks again to James Fator for this nice project! I'm always happy to see that 
-open-sourcing side projects can lead to unexpected things. Please visit his 
-personal website for other cool projects: https://jamesfator.com/
+open-sourcing side projects can lead to unexpected things. 
+
+Please visit his personal website for other cool projects: https://jamesfator.com/
 
 ## TODO
 
