@@ -59,8 +59,8 @@
         this.scale.y = this.scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed / 7.5)) * 0.005;
         this.translate.x = this.translate.x * 0.97 + velocity.x / 3.0 * 0.03;
         this.translate.y = this.translate.y * 0.99 + velocity.y / 3.0 * 0.01;
-        return this.compute_aabb();
       }
+      return this.compute_aabb();
     };
 
     Camera.prototype.update = function() {
@@ -78,8 +78,8 @@
         this.scale_container.y = this.options.height / 2;
         this.scale_container.scale.x = this.scale.x;
         this.scale_container.scale.y = -this.scale.y;
-        this.translate_container.x = -this.target().x;
-        this.translate_container.y = this.target().y;
+        this.translate_container.x = -$(window).width() / 2 / Constants.default_scale.x;
+        this.translate_container.y = $(window).height() / 2 / Constants.default_scale.y;
         if (Constants.debug_clipping) {
           this.clipping.clear();
           this.clipping.beginFill(0x333333);
@@ -201,13 +201,13 @@
 
     Constants.replay_key_step_precision = 4;
 
-    Constants.automatic_scale = true;
+    Constants.automatic_scale = false;
 
-    Constants.manual_scale = true;
+    Constants.manual_scale = false;
 
     Constants.default_scale = {
-      x: 70.0,
-      y: -70.0
+      x: 30.0,
+      y: -30.0
     };
 
     Constants.body = {
@@ -625,7 +625,6 @@
 
     Level.prototype.init = function() {
       this.blocks.init();
-      this.limits.init();
       this.entities.init();
       this.moto.init();
       this.ghosts.init();
@@ -645,7 +644,6 @@
         this.update_timer();
       }
       this.sky.update();
-      this.limits.update();
       this.camera.update();
       this.blocks.update();
       if (this.options.playable) {
@@ -900,7 +898,9 @@
               stats_ms.begin();
             }
             level.update();
-            renderer.render(level.stage);
+            if (!Constants.debug_physics) {
+              renderer.render(level.stage);
+            }
             window.game_loop = requestAnimationFrame(update);
             if (Constants.debug) {
               stats_fps.end();
@@ -1129,64 +1129,52 @@
     }
 
     Blocks.prototype.parse = function(xml) {
-      var block, j, k, l, len, len1, len2, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
-      xml_blocks = $(xml).find('block');
+      var block, j, k, len, len1, scale_x, scale_y, vertex, xml_block, xml_blocks, xml_vertex, xml_vertices;
+      scale_x = Constants.default_scale.x;
+      scale_y = Constants.default_scale.y;
+      xml_blocks = $('#level div');
       for (j = 0, len = xml_blocks.length; j < len; j++) {
         xml_block = xml_blocks[j];
         block = {
           id: $(xml_block).attr('id'),
           position: {
-            x: parseFloat($(xml_block).find('position').attr('x')),
-            y: parseFloat($(xml_block).find('position').attr('y')),
-            dynamic: $(xml_block).find('position').attr('dynamic') === 'true',
-            background: $(xml_block).find('position').attr('background') === 'true'
+            x: parseFloat($(xml_block).position().left / scale_x),
+            y: parseFloat($(xml_block).position().top / scale_y),
+            dynamic: false,
+            background: false
           },
           usetexture: {
-            id: $(xml_block).find('usetexture').attr('id').toLowerCase(),
-            scale: parseFloat($(xml_block).find('usetexture').attr('scale'))
-          },
-          physics: {
-            grip: parseFloat($(xml_block).find('physics').attr('grip'))
-          },
-          edges: {
-            angle: parseFloat($(xml_block).find('edges').attr('angle')),
-            materials: []
+            id: 'dirt'
           },
           vertices: []
         };
-        if (block.usetexture.id === 'default') {
-          block.usetexture.id = 'dirt';
-        }
         block.texture_name = this.theme.texture_params(block.usetexture.id).file;
-        xml_materials = $(xml_block).find('edges material');
-        for (k = 0, len1 = xml_materials.length; k < len1; k++) {
-          xml_material = xml_materials[k];
-          material = {
-            name: $(xml_material).attr('name'),
-            edge: $(xml_material).attr('edge'),
-            color_r: parseInt($(xml_material).attr('color_r')),
-            color_g: parseInt($(xml_material).attr('color_g')),
-            color_b: parseInt($(xml_material).attr('color_b')),
-            color_a: parseInt($(xml_material).attr('color_a')),
-            scale: parseFloat($(xml_material).attr('scale')),
-            depth: parseFloat($(xml_material).attr('depth'))
-          };
-          block.edges.materials.push(material);
-        }
-        xml_vertices = $(xml_block).find('vertex');
-        for (l = 0, len2 = xml_vertices.length; l < len2; l++) {
-          xml_vertex = xml_vertices[l];
+        xml_vertices = [
+          {
+            x: $(xml_block).outerWidth() / scale_x,
+            y: $(xml_block).outerHeight() / scale_y
+          }, {
+            x: $(xml_block).outerWidth() / scale_x,
+            y: 0
+          }, {
+            x: 0,
+            y: 0
+          }, {
+            x: 0,
+            y: $(xml_block).outerHeight() / scale_y
+          }
+        ];
+        for (k = 0, len1 = xml_vertices.length; k < len1; k++) {
+          xml_vertex = xml_vertices[k];
           vertex = {
-            x: parseFloat($(xml_vertex).attr('x')),
-            y: parseFloat($(xml_vertex).attr('y')),
-            absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x,
-            absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y,
-            edge: $(xml_vertex).attr('edge') ? $(xml_vertex).attr('edge').toLowerCase() : void 0
+            x: parseFloat(xml_vertex.x),
+            y: parseFloat(xml_vertex.y),
+            absolute_x: parseFloat(xml_vertex.x + block.position.x),
+            absolute_y: parseFloat(xml_vertex.y + block.position.y)
           };
           block.vertices.push(vertex);
         }
-        block.edges_list = new Edges(this.level, block);
-        block.edges_list.parse();
+        console.log(block.vertices);
         block.aabb = this.compute_aabb(block);
         this.list.push(block);
         if (block.position.background) {
@@ -1208,7 +1196,11 @@
       for (j = 0, len = ref.length; j < len; j++) {
         block = ref[j];
         this.assets.textures.push(block.texture_name);
-        results.push(block.edges_list.load_assets());
+        if (block.edges_list) {
+          results.push(block.edges_list.load_assets());
+        } else {
+          results.push(void 0);
+        }
       }
       return results;
     };
@@ -1221,7 +1213,11 @@
       results = [];
       for (j = 0, len = ref.length; j < len; j++) {
         block = ref[j];
-        results.push(block.edges_list.init());
+        if (block.edges_list) {
+          results.push(block.edges_list.init());
+        } else {
+          results.push(void 0);
+        }
       }
       return results;
     };
@@ -1238,51 +1234,9 @@
       return results;
     };
 
-    Blocks.prototype.init_sprites = function() {
-      var block, j, k, len, len1, mask, points, ref, ref1, results, size_x, size_y, texture, vertex;
-      ref = this.back_list.concat(this.front_list);
-      results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        block = ref[j];
-        points = [];
-        ref1 = block.vertices;
-        for (k = 0, len1 = ref1.length; k < len1; k++) {
-          vertex = ref1[k];
-          points.push(new PIXI.Point(vertex.x, -vertex.y));
-        }
-        mask = new PIXI.Graphics();
-        mask.beginFill(0xffffff, 1.0);
-        mask.drawPolygon(points);
-        mask.x = block.position.x;
-        mask.y = -block.position.y;
-        this.level.camera.neutral_z_container.addChild(mask);
-        texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
-        size_x = block.aabb.upperBound.x - block.aabb.lowerBound.x;
-        size_y = block.aabb.upperBound.y - block.aabb.lowerBound.y;
-        block.sprite = new PIXI.TilingSprite(texture, size_x, size_y);
-        block.sprite.x = block.aabb.lowerBound.x;
-        block.sprite.y = -block.aabb.upperBound.y;
-        block.sprite.tileScale.x = 1.0 / 40;
-        block.sprite.tileScale.y = 1.0 / 40;
-        block.sprite.mask = mask;
-        results.push(this.level.camera.neutral_z_container.addChild(block.sprite));
-      }
-      return results;
-    };
+    Blocks.prototype.init_sprites = function() {};
 
-    Blocks.prototype.update = function() {
-      var block, j, len, ref, results;
-      if (!Constants.debug_physics) {
-        ref = this.list;
-        results = [];
-        for (j = 0, len = ref.length; j < len; j++) {
-          block = ref[j];
-          block.sprite.visible = this.visible(block);
-          results.push(block.edges_list.update());
-        }
-        return results;
-      }
-    };
+    Blocks.prototype.update = function() {};
 
     Blocks.prototype.visible = function(block) {
       return block.aabb.TestOverlap(this.level.camera.aabb);
@@ -1650,8 +1604,8 @@
           results.push(this.wreckers.push(entity));
         } else if (entity.type_id === 'PlayerStart') {
           results.push(this.player_start = {
-            x: entity.position.x,
-            y: entity.position.y
+            x: 2,
+            y: -3
           });
         } else {
           results.push(void 0);

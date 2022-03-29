@@ -1,7 +1,7 @@
 body {
   background: url('/background.png');
   margin: 0px;
-  padding-bottom: 40px;
+  padding-bottom: 0px;
   /* overflow: hidden; */
 }
 

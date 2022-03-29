@@ -58,9 +58,11 @@ class Camera
       @translate.x = @translate.x * 0.97 + velocity.x/3.0 * 0.03
       @translate.y = @translate.y * 0.99 + velocity.y/3.0 * 0.01
 
-      @compute_aabb()
+    @compute_aabb()
 
   update: ->
+    #console.log(@target().x, @target().y)
+
     if Constants.debug_physics
       ctx = @level.physics.debug_ctx
 
@@ -80,8 +82,8 @@ class Camera
       @scale_container.scale.x = @scale.x
       @scale_container.scale.y = -@scale.y
 
-      @translate_container.x = -@target().x
-      @translate_container.y = @target().y
+      @translate_container.x = -$(window).width()/2/Constants.default_scale.x # 0 #-@target().x
+      @translate_container.y = $(window).height()/2/Constants.default_scale.y # 0 #@target().y
 
       # Opaque clipping to see where sprites are "filtered out"
       if Constants.debug_clipping

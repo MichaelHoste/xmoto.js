@@ -67,7 +67,7 @@ class Level
   init: ->
     #@sky      .init()
     @blocks   .init()
-    @limits   .init()
+    #@limits   .init()
     @entities .init()
     @moto     .init()
     @ghosts   .init()
@@ -87,7 +87,7 @@ class Level
     @update_timer() if dead_player || dead_replay
 
     @sky      .update()
-    @limits   .update()
+    #@limits   .update()
     #@entities .update()
     @camera   .update()
     @blocks   .update()

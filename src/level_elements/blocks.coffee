@@ -15,58 +15,111 @@ class Blocks
     @edges = new Edges(@level)
 
   parse: (xml) ->
-    xml_blocks = $(xml).find('block')
+    # xml_blocks = $(xml).find('block')
+
+    # for xml_block in xml_blocks
+    #   block =
+    #     id: $(xml_block).attr('id')
+    #     position:
+    #       x:          parseFloat($(xml_block).find('position').attr('x'))
+    #       y:          parseFloat($(xml_block).find('position').attr('y'))
+    #       dynamic:    $(xml_block).find('position').attr('dynamic')    == 'true'
+    #       background: $(xml_block).find('position').attr('background') == 'true'
+    #     usetexture:
+    #       id:         $(xml_block).find('usetexture').attr('id').toLowerCase()
+    #       scale:      parseFloat($(xml_block).find('usetexture').attr('scale'))
+    #     physics:
+    #       grip:       parseFloat($(xml_block).find('physics').attr('grip'))
+    #     edges:
+    #       angle:      parseFloat($(xml_block).find('edges').attr('angle'))
+    #       materials:  []
+    #     vertices:     []
+
+    #   block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
+    #   block.texture_name = @theme.texture_params(block.usetexture.id).file
+
+    #   xml_materials = $(xml_block).find('edges material')
+    #   for xml_material in xml_materials
+    #     material =
+    #       name:    $(xml_material).attr('name')
+    #       edge:    $(xml_material).attr('edge')
+    #       color_r: parseInt($(xml_material).attr('color_r'))
+    #       color_g: parseInt($(xml_material).attr('color_g'))
+    #       color_b: parseInt($(xml_material).attr('color_b'))
+    #       color_a: parseInt($(xml_material).attr('color_a'))
+    #       scale:   parseFloat($(xml_material).attr('scale'))
+    #       depth:   parseFloat($(xml_material).attr('depth'))
+
+    #     block.edges.materials.push(material)
+
+    #   xml_vertices = $(xml_block).find('vertex')
+    #   for xml_vertex in xml_vertices
+    #     vertex =
+    #       x:          parseFloat($(xml_vertex).attr('x'))
+    #       y:          parseFloat($(xml_vertex).attr('y'))
+    #       absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are here to
+    #       absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # accelerate drawing of each frame
+    #       edge:       $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
+
+    #     block.vertices.push(vertex)
+
+    #   # block.edges_list = new Edges(@level, block)
+    #   # block.edges_list.parse()
+
+    #   block.aabb = @compute_aabb(block)
+
+    #   @list.push(block)
+    #   if block.position.background
+    #     @back_list.push(block)
+    #   else
+    #     @front_list.push(block)
+
+
+
+    #############################
+
+
+
+
+
+    scale_x = Constants.default_scale.x
+    scale_y = Constants.default_scale.y
+
+    xml_blocks = $('#level div')
 
     for xml_block in xml_blocks
       block =
         id: $(xml_block).attr('id')
         position:
-          x:          parseFloat($(xml_block).find('position').attr('x'))
-          y:          parseFloat($(xml_block).find('position').attr('y'))
-          dynamic:    $(xml_block).find('position').attr('dynamic')    == 'true'
-          background: $(xml_block).find('position').attr('background') == 'true'
+          x:          parseFloat($(xml_block).position().left / scale_x)
+          y:          parseFloat($(xml_block).position().top  / scale_y)
+          dynamic:    false
+          background: false
         usetexture:
-          id:         $(xml_block).find('usetexture').attr('id').toLowerCase()
-          scale:      parseFloat($(xml_block).find('usetexture').attr('scale'))
-        physics:
-          grip:       parseFloat($(xml_block).find('physics').attr('grip'))
-        edges:
-          angle:      parseFloat($(xml_block).find('edges').attr('angle'))
-          materials:  []
+          id:         'dirt'
         vertices:     []
 
-      block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
       block.texture_name = @theme.texture_params(block.usetexture.id).file
 
-      xml_materials = $(xml_block).find('edges material')
-      for xml_material in xml_materials
-        material =
-          name:    $(xml_material).attr('name')
-          edge:    $(xml_material).attr('edge')
-          color_r: parseInt($(xml_material).attr('color_r'))
-          color_g: parseInt($(xml_material).attr('color_g'))
-          color_b: parseInt($(xml_material).attr('color_b'))
-          color_a: parseInt($(xml_material).attr('color_a'))
-          scale:   parseFloat($(xml_material).attr('scale'))
-          depth:   parseFloat($(xml_material).attr('depth'))
+      xml_vertices = [
+        { x: $(xml_block).outerWidth()/scale_x, y: $(xml_block).outerHeight()/scale_y },
+        { x: $(xml_block).outerWidth()/scale_x, y: 0 },
+        { x: 0,                                 y: 0 },
+        { x: 0,                                 y: $(xml_block).outerHeight()/scale_y }
+      ]
 
-        block.edges.materials.push(material)
-
-      xml_vertices = $(xml_block).find('vertex')
       for xml_vertex in xml_vertices
         vertex =
-          x:          parseFloat($(xml_vertex).attr('x'))
-          y:          parseFloat($(xml_vertex).attr('y'))
-          absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are here to
-          absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # accelerate drawing of each frame
-          edge:       $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
+          x:          parseFloat(xml_vertex.x)
+          y:          parseFloat(xml_vertex.y)
+          absolute_x: parseFloat(xml_vertex.x + block.position.x) #+ block.position.x/35 # absolutes positions are here to
+          absolute_y: parseFloat(xml_vertex.y + block.position.y) #- block.position.y/35 # accelerate drawing of each frame
 
         block.vertices.push(vertex)
 
-      block.edges_list = new Edges(@level, block)
-      block.edges_list.parse()
+      console.log(block.vertices)
 
-      block.aabb       = @compute_aabb(block)
+      block.aabb = @compute_aabb(block)
 
       @list.push(block)
       if block.position.background
@@ -74,23 +127,37 @@ class Blocks
       else
         @front_list.push(block)
 
+
+
+
+
+
+
+
+
+
+
+
     @list      .sort( @sort_blocks_by_texture )
     @back_list .sort( @sort_blocks_by_texture )
     @front_list.sort( @sort_blocks_by_texture )
+
+
+
 
     return this
 
   load_assets: ->
     for block in @list
       @assets.textures.push(block.texture_name)
-      block.edges_list.load_assets()
+      block.edges_list.load_assets() if block.edges_list
 
   init: ->
     @init_physics_parts()
     @init_sprites()
 
     for block in @list
-      block.edges_list.init()
+      block.edges_list.init() if block.edges_list
 
   init_physics_parts: ->
     ground = Constants.ground
@@ -98,41 +165,41 @@ class Blocks
       @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_sprites: ->
-    # draw back blocks before front blocks
-    for block in @back_list.concat(@front_list)
-      # Create mask
-      points = []
+    # # draw back blocks before front blocks
+    # for block in @back_list.concat(@front_list)
+    #   # Create mask
+    #   points = []
 
-      for vertex in block.vertices
-        points.push(new PIXI.Point(vertex.x, -vertex.y))
+    #   for vertex in block.vertices
+    #     points.push(new PIXI.Point(vertex.x, -vertex.y))
 
-      mask = new PIXI.Graphics()
-      mask.beginFill(0xffffff, 1.0)
-      mask.drawPolygon(points)
-      mask.x =  block.position.x
-      mask.y = -block.position.y
+    #   mask = new PIXI.Graphics()
+    #   mask.beginFill(0xffffff, 1.0)
+    #   mask.drawPolygon(points)
+    #   mask.x =  block.position.x
+    #   mask.y = -block.position.y
 
-      @level.camera.neutral_z_container.addChild(mask)
+    #   @level.camera.neutral_z_container.addChild(mask)
 
-      # Create tilingSprite
-      texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
-      size_x  = block.aabb.upperBound.x - block.aabb.lowerBound.x
-      size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
+    #   # Create tilingSprite
+    #   texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
+    #   size_x  = block.aabb.upperBound.x - block.aabb.lowerBound.x
+    #   size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
 
-      block.sprite = new PIXI.TilingSprite(texture, size_x, size_y)
-      block.sprite.x =  block.aabb.lowerBound.x
-      block.sprite.y = -block.aabb.upperBound.y
-      block.sprite.tileScale.x = 1.0/40
-      block.sprite.tileScale.y = 1.0/40
-      block.sprite.mask = mask
+    #   block.sprite = new PIXI.TilingSprite(texture, size_x, size_y)
+    #   block.sprite.x =  block.aabb.lowerBound.x
+    #   block.sprite.y = -block.aabb.upperBound.y
+    #   block.sprite.tileScale.x = 1.0/40
+    #   block.sprite.tileScale.y = 1.0/40
+    #   block.sprite.mask = mask
 
-      @level.camera.neutral_z_container.addChild(block.sprite)
+    #   @level.camera.neutral_z_container.addChild(block.sprite)
 
   update: ->
-    if !Constants.debug_physics
-      for block in @list
-        block.sprite.visible = @visible(block)
-        block.edges_list.update()
+    # if !Constants.debug_physics
+    #   for block in @list
+    #     block.sprite.visible = @visible(block)
+    #     block.edges_list.update() if block.edges_list
 
   visible: (block) ->
     block.aabb.TestOverlap(@level.camera.aabb)

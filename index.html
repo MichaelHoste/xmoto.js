@@ -38,8 +38,12 @@
       <div id="xmoto">
       </div>
 
-      <div id="levels_block">
-        <select id="levels" style="display: none">
+      <div id="level">
+        <div style="position: absolute; border: 2px solid black; width: 500px; height: 50px; top: 200px;left:20px;"></div>
+      </div>
+
+      <div id="levels_block" style="display:none">
+        <select id="levels">
           <!-- SOME TEST LEVELS -->
           <option value="l1010.lvl">l1010.lvl</option>
           <option value="l1043.lvl">l1043.lvl</option>
@@ -112,7 +116,7 @@
     <script type="text/javascript">
       $(document).ready(function(){
         var params = $.url().param()
-        var options = { width: 1000, height: 600, debug: params.debug == 'true' }
+        var options = { width: $(window).width(), height: $(window).height(), debug: params.debug == 'true' }
 
         // Change on select
         $("#levels").on('change', function(){ $.xmoto($(this).val(), options) })

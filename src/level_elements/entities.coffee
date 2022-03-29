@@ -110,8 +110,8 @@ class Entities
       # Player start
       else if entity.type_id == 'PlayerStart'
         @player_start =
-          x: entity.position.x
-          y: entity.position.y
+          x: 2#entity.position.x
+          y: -3#entity.position.y
 
   init_sprites: ->
     for entity in @list
