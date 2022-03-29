@@ -99,7 +99,9 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 ## TODO
 
 * Improve XML levels compatibility => layeroffsets (parallax)
+* Parse maps from https://github.com/bjorn/tiled
 * Convert to camelCase (use Humps? Find a way to fix Box2D .GetPosition() absurdity)
 * Create alternative box2D physics using DIV elements on screen.
+* use color on image to create mesh of collisions: https://github.com/Tamersoul/magic-wand-js
 
 [and other stuffs](https://github.com/MichaelHoste/xmoto.js/issues)
