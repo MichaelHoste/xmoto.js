@@ -72,6 +72,27 @@ You can copy-paste the generated URL to keep the custom physics.
 
 Don't forget to restart the coffee command if you create new COFFEE files.
 
+## COVID-XMoto
+
+Many years after this project was shelved, and out of nowhere, 
+[James Fator](https://jamesfator.com/) decided to fork this project to make 
+a heavily modified version of XMoto.js, dedicated to the somewhat strange 
+years of the COVID virus.
+
+<a href="http://covid.xmoto.io">
+  <img src="http://xmoto.io/img/xmoto-covid.png" width="700" title="COVID-XMoto" />
+</a>
+
+The COVID-19 confirmed cases timeseries has become a mountain of flags 
+which you must climb with your motorcycle! Can you win the race for the cure?
+
+* [Play COVID-XMoto](http://covid.xmoto.io)
+* [The COVID-XMoto fork](https://github.com/JamesFator/COVID-XMoto)
+
+Thanks again to James Fator for this nice project! I'm always happy to see that 
+open-sourcing side projects can lead to unexpected things. Please visit his 
+personal website for other cool projects: https://jamesfator.com/
+
 ## TODO
 
 * Improve XML levels compatibility => layeroffsets (parallax)
