@@ -14,6 +14,7 @@
         x: 0,
         y: 0
       };
+      this.aabb = new b2AABB();
       this.scale_container = new PIXI.Container();
       this.translate_container = new PIXI.Container();
       this.negative_z_container = new PIXI.Container();
@@ -141,31 +142,15 @@
     };
 
     Camera.prototype.compute_aabb = function() {
-      if (Constants.debug_clipping) {
-        return this.aabb = this.aabb_for_clipping();
-      } else {
-        return this.aabb = this.aabb_for_canvas();
-      }
-    };
-
-    Camera.prototype.aabb_for_clipping = function() {
-      var aabb, size_x, size_y;
-      size_x = this.options.width * 0.6 / this.scale.x;
-      size_y = -this.options.height * 0.6 / this.scale.y;
-      aabb = new b2AABB();
-      aabb.lowerBound.Set(this.target().x - size_x / 2, this.target().y - size_y / 2);
-      aabb.upperBound.Set(this.target().x + size_x / 2, this.target().y + size_y / 2);
-      return aabb;
-    };
-
-    Camera.prototype.aabb_for_canvas = function() {
-      var aabb, size_x, size_y;
-      size_x = this.options.width * 1.0 / this.scale.x;
-      size_y = -this.options.height * 1.0 / this.scale.y;
-      aabb = new b2AABB();
-      aabb.lowerBound.Set(this.target().x - size_x / 2, this.target().y - size_y / 2);
-      aabb.upperBound.Set(this.target().x + size_x / 2, this.target().y + size_y / 2);
-      return aabb;
+      var factor, half_h, half_w, size_x, size_y, t;
+      factor = Constants.debug_clipping ? 0.6 : 1.0;
+      size_x = this.options.width * factor / this.scale.x;
+      size_y = -this.options.height * factor / this.scale.y;
+      t = this.target();
+      half_w = size_x / 2;
+      half_h = size_y / 2;
+      this.aabb.lowerBound.Set(t.x - half_w, t.y - half_h);
+      return this.aabb.upperBound.Set(t.x + half_w, t.y + half_h);
     };
 
     return Camera;
@@ -2405,7 +2390,7 @@
     };
 
     Moto.prototype.init_sprites = function() {
-      var asset_name, j, len, part, ref;
+      var asset_name, axle_name, j, k, l, len, len1, len2, part, ref, ref1, ref2, wheel_name;
       ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
       for (j = 0, len = ref.length; j < len; j++) {
         part = ref[j];
@@ -2416,6 +2401,24 @@
         }
         this[part + "_sprite"] = new PIXI.Sprite.from(this.assets.get_url(asset_name));
         this.level.camera.neutral_z_container.addChild(this[part + "_sprite"]);
+      }
+      this.body_sprite.width = Constants.body.texture_size.x;
+      this.body_sprite.height = Constants.body.texture_size.y;
+      this.body_sprite.anchor.x = 0.5;
+      this.body_sprite.anchor.y = 0.5;
+      ref1 = ['left_wheel', 'right_wheel'];
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        wheel_name = ref1[k];
+        this[wheel_name + "_sprite"].width = 2 * Constants[wheel_name].radius;
+        this[wheel_name + "_sprite"].height = 2 * Constants[wheel_name].radius;
+        this[wheel_name + "_sprite"].anchor.x = 0.5;
+        this[wheel_name + "_sprite"].anchor.y = 0.5;
+      }
+      ref2 = ['left_axle', 'right_axle'];
+      for (l = 0, len2 = ref2.length; l < len2; l++) {
+        axle_name = ref2[l];
+        this[axle_name + "_sprite"].anchor.x = 0.0;
+        this[axle_name + "_sprite"].anchor.y = 0.5;
       }
       return this.rider.init_sprites();
     };
@@ -2614,19 +2617,11 @@
 
     Moto.prototype.update_wheel = function(part, part_constants, visible) {
       var angle, position, wheel_sprite;
-      if (part_constants.position.x < 0) {
-        wheel_sprite = this.left_wheel_sprite;
-      } else {
-        wheel_sprite = this.right_wheel_sprite;
-      }
+      wheel_sprite = part_constants.position.x < 0 ? this.left_wheel_sprite : this.right_wheel_sprite;
       wheel_sprite.visible = visible;
       if (visible) {
         position = part.GetPosition();
         angle = part.GetAngle();
-        wheel_sprite.width = 2 * part_constants.radius;
-        wheel_sprite.height = 2 * part_constants.radius;
-        wheel_sprite.anchor.x = 0.5;
-        wheel_sprite.anchor.y = 0.5;
         wheel_sprite.x = position.x;
         wheel_sprite.y = -position.y;
         wheel_sprite.rotation = -angle;
@@ -2640,10 +2635,6 @@
       if (visible) {
         position = part.GetPosition();
         angle = part.GetAngle();
-        this.body_sprite.width = part_constants.texture_size.x;
-        this.body_sprite.height = part_constants.texture_size.y;
-        this.body_sprite.anchor.x = 0.5;
-        this.body_sprite.anchor.y = 0.5;
         this.body_sprite.x = position.x;
         this.body_sprite.y = -position.y;
         this.body_sprite.rotation = -angle;
@@ -2695,8 +2686,6 @@
         angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + this.mirror * Math.PI / 2;
         axle_sprite.width = distance;
         axle_sprite.height = axle_thickness;
-        axle_sprite.anchor.x = 0.0;
-        axle_sprite.anchor.y = 0.5;
         axle_sprite.x = wheel_position.x;
         axle_sprite.y = -wheel_position.y;
         axle_sprite.rotation = -angle;
@@ -3034,6 +3023,10 @@
           asset_name = Constants[part].texture;
         }
         this[part + "_sprite"] = new PIXI.Sprite.from(this.assets.get_url(asset_name));
+        this[part + "_sprite"].width = Constants[part].texture_size.x;
+        this[part + "_sprite"].height = Constants[part].texture_size.y;
+        this[part + "_sprite"].anchor.x = 0.5;
+        this[part + "_sprite"].anchor.y = 0.5;
         results.push(this.level.camera.neutral_z_container.addChild(this[part + "_sprite"]));
       }
       return results;
@@ -3164,18 +3157,12 @@
     };
 
     Rider.prototype.update_part = function(part, name, visible) {
-      var angle, part_constants, position, sprite, texture;
+      var angle, position, sprite;
       sprite = this[name + "_sprite"];
       sprite.visible = visible;
       if (visible) {
-        part_constants = Constants[name];
         position = part.GetPosition();
         angle = part.GetAngle();
-        texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
-        sprite.width = part_constants.texture_size.x;
-        sprite.height = part_constants.texture_size.y;
-        sprite.anchor.x = 0.5;
-        sprite.anchor.y = 0.5;
         sprite.x = position.x;
         sprite.y = -position.y;
         sprite.rotation = -angle;
