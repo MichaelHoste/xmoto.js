@@ -100,38 +100,36 @@ class Blocks
   init_sprites: ->
     # draw back blocks before front blocks
     for block in @back_list.concat(@front_list)
-      # Create mask
-      points = []
+      # Build polygon in world PIXI coordinates (y inverted)
+      points = block.vertices.map((v) ->
+        new PIXI.Point(v.absolute_x, -v.absolute_y)
+      )
 
-      for vertex in block.vertices
-        points.push(new PIXI.Point(vertex.x, -vertex.y))
-
-      mask = new PIXI.Graphics()
-      mask.beginFill(0xffffff, 1.0)
-      mask.drawPolygon(points)
-      mask.x =  block.position.x
-      mask.y = -block.position.y
-
-      @level.camera.neutral_z_container.addChild(mask)
-
-      # Create tilingSprite
+      # Load block texture
       texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
-      size_x  = block.aabb.upperBound.x - block.aabb.lowerBound.x
-      size_y  = block.aabb.upperBound.y - block.aabb.lowerBound.y
 
-      block.sprite = new PIXI.TilingSprite(texture, size_x, size_y)
-      block.sprite.x =  block.aabb.lowerBound.x
-      block.sprite.y = -block.aabb.upperBound.y
-      block.sprite.tileScale.x = 1.0/40.0
-      block.sprite.tileScale.y = 1.0/40.0
-      block.sprite.mask = mask
+      # Matrix maps world coords
+      matrix = new PIXI.Matrix()
+      matrix.scale(1.0 / 40.0, 1.0 / 40.0)
+      matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
 
-      @level.camera.neutral_z_container.addChild(block.sprite)
+      # Create graphics with texture and matrix
+      block.graphics = new PIXI.Graphics()
+      block.graphics.beginTextureFill({
+        texture: texture,
+        matrix:  matrix,
+        color:   0xffffff,
+        alpha:   1.0
+      })
+      block.graphics.drawPolygon(points)
+      block.graphics.endFill()
+
+      @level.camera.neutral_z_container.addChild(block.graphics)
 
   update: ->
     if !Constants.debug_physics
       for block in @list
-        block.sprite.visible = @visible(block)
+        block.graphics.visible = @visible(block)
         block.edges_list.update()
 
   visible: (block) ->

@@ -66,7 +66,7 @@ class Edges
   # only display edges present on the screen zone
   update: ->
     if !Constants.debug_physics
-      block_visible = @block.sprite.visible
+      block_visible = @block.graphics.visible
 
       for edge in @list
         edge.graphics.visible = block_visible && @visible(edge) # don't test aabb if block not visible

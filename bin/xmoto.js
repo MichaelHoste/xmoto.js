@@ -1246,33 +1246,28 @@
     };
 
     Blocks.prototype.init_sprites = function() {
-      var block, j, k, len, len1, mask, points, ref, ref1, results, size_x, size_y, texture, vertex;
+      var block, j, len, matrix, points, ref, results, texture;
       ref = this.back_list.concat(this.front_list);
       results = [];
       for (j = 0, len = ref.length; j < len; j++) {
         block = ref[j];
-        points = [];
-        ref1 = block.vertices;
-        for (k = 0, len1 = ref1.length; k < len1; k++) {
-          vertex = ref1[k];
-          points.push(new PIXI.Point(vertex.x, -vertex.y));
-        }
-        mask = new PIXI.Graphics();
-        mask.beginFill(0xffffff, 1.0);
-        mask.drawPolygon(points);
-        mask.x = block.position.x;
-        mask.y = -block.position.y;
-        this.level.camera.neutral_z_container.addChild(mask);
+        points = block.vertices.map(function(v) {
+          return new PIXI.Point(v.absolute_x, -v.absolute_y);
+        });
         texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
-        size_x = block.aabb.upperBound.x - block.aabb.lowerBound.x;
-        size_y = block.aabb.upperBound.y - block.aabb.lowerBound.y;
-        block.sprite = new PIXI.TilingSprite(texture, size_x, size_y);
-        block.sprite.x = block.aabb.lowerBound.x;
-        block.sprite.y = -block.aabb.upperBound.y;
-        block.sprite.tileScale.x = 1.0 / 40.0;
-        block.sprite.tileScale.y = 1.0 / 40.0;
-        block.sprite.mask = mask;
-        results.push(this.level.camera.neutral_z_container.addChild(block.sprite));
+        matrix = new PIXI.Matrix();
+        matrix.scale(1.0 / 40.0, 1.0 / 40.0);
+        matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y);
+        block.graphics = new PIXI.Graphics();
+        block.graphics.beginTextureFill({
+          texture: texture,
+          matrix: matrix,
+          color: 0xffffff,
+          alpha: 1.0
+        });
+        block.graphics.drawPolygon(points);
+        block.graphics.endFill();
+        results.push(this.level.camera.neutral_z_container.addChild(block.graphics));
       }
       return results;
     };
@@ -1284,7 +1279,7 @@
         results = [];
         for (j = 0, len = ref.length; j < len; j++) {
           block = ref[j];
-          block.sprite.visible = this.visible(block);
+          block.graphics.visible = this.visible(block);
           results.push(block.edges_list.update());
         }
         return results;
@@ -1417,7 +1412,7 @@
     Edges.prototype.update = function() {
       var block_visible, edge, j, len, ref, results;
       if (!Constants.debug_physics) {
-        block_visible = this.block.sprite.visible;
+        block_visible = this.block.graphics.visible;
         ref = this.list;
         results = [];
         for (j = 0, len = ref.length; j < len; j++) {
