@@ -13,9 +13,13 @@ class Assets
 
   parse_theme: (filename, callback) ->
     # extend to keep the same pointer to @theme that is already in other objects
-    @theme = $.extend(@theme,
-      new Theme('modern.xml', callback)
-    )
+    theme = new Theme('modern.xml', callback)
+    $.extend(@theme, theme)
+    # CS2: native class methods are on the prototype, not own props.
+    # Copy them explicitly so $.extend recipients can call them.
+    @theme.texture_params = theme.texture_params.bind(@theme)
+    @theme.sprite_params  = theme.sprite_params.bind(@theme)
+    @theme.edge_params    = theme.edge_params.bind(@theme)
 
   load: (callback) ->
     items = []

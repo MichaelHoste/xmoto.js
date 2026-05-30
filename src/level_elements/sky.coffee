@@ -29,7 +29,7 @@ class Sky
 
   init_sprites: ->
     texture = PIXI.Texture.from(@assets.get_url(@filename))
-    @sprite = new PIXI.TilingSprite(texture, @options.width, @options.height)
+    @sprite = new PIXI.TilingSprite({texture, width: @options.width, height: @options.height})
     @sprite.position.x = 0
     @sprite.position.y = 0
     @level.stage.addChildAt(@sprite, 0)

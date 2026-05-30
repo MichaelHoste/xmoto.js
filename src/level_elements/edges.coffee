@@ -52,14 +52,14 @@ class Edges
 
       # Create graphics with texture and matrix
       edge.graphics = new PIXI.Graphics()
-      edge.graphics.beginTextureFill({
+      edge.graphics.poly(points)
+      edge.graphics.fill({
         texture: texture,
         matrix:  matrix,
         color:   0xffffff,
-        alpha:   1.0
+        alpha:   1.0,
+        textureSpace: 'global'
       })
-      edge.graphics.drawPolygon(points)
-      edge.graphics.endFill()
 
       @level.camera.neutral_z_container.addChild(edge.graphics)
 

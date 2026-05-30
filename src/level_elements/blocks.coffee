@@ -115,14 +115,14 @@ class Blocks
 
       # Create graphics with texture and matrix
       block.graphics = new PIXI.Graphics()
-      block.graphics.beginTextureFill({
+      block.graphics.poly(points)
+      block.graphics.fill({
         texture: texture,
         matrix:  matrix,
         color:   0xffffff,
-        alpha:   1.0
+        alpha:   1.0,
+        textureSpace: 'global'
       })
-      block.graphics.drawPolygon(points)
-      block.graphics.endFill()
 
       @level.camera.neutral_z_container.addChild(block.graphics)
 

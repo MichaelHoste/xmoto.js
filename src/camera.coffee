@@ -88,12 +88,12 @@ class Camera
       # Opaque clipping to see where sprites are "filtered out"
       if Constants.debug_clipping
         @clipping.clear()
-        @clipping.beginFill(0x333333)
 
         size_x = (@options.width  / 100.0) * (60.0  / @scale.x)
         size_y = (@options.height / 100.0) * (-60.0 / @scale.y)
 
-        @clipping.drawRect(-size_x/2, -size_y/2, size_x, size_y)
+        @clipping.rect(-size_x/2, -size_y/2, size_x, size_y)
+        @clipping.fill(0x333333)
         @clipping.x = @target().x
         @clipping.y = -@target().y
 

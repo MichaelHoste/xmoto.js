@@ -113,10 +113,10 @@ class Limits
     top_size_x = @player.right - @player.left
     top_size_y = @screen.top   - @player.top
 
-    @left_sprite   = new PIXI.TilingSprite(texture, left_size_x, left_size_y)
-    @right_sprite  = new PIXI.TilingSprite(texture, right_size_x, right_size_y)
-    @bottom_sprite = new PIXI.TilingSprite(texture, bottom_size_x, bottom_size_y)
-    @top_sprite    = new PIXI.TilingSprite(texture, top_size_x, top_size_y)
+    @left_sprite   = new PIXI.TilingSprite({texture, width: left_size_x, height: left_size_y})
+    @right_sprite  = new PIXI.TilingSprite({texture, width: right_size_x, height: right_size_y})
+    @bottom_sprite = new PIXI.TilingSprite({texture, width: bottom_size_x, height: bottom_size_y})
+    @top_sprite    = new PIXI.TilingSprite({texture, width: top_size_x, height: top_size_y})
 
     @left_sprite.x = @screen.left
     @left_sprite.y = -@screen.top

@@ -2,17 +2,15 @@ $.xmoto = (level_filename, options = {}) ->
   initialize = ->
     options = load_options(options)
 
-    # To make sprites of moto more "sharp" (less blurry),
-    # we disable midmapping. It may impact rendering speed
-    # because midmap generate lower images to speed up
-    # rendering  (only for pow2 sizes)
-    PIXI.settings.MIPMAP_TEXTURES = PIXI.MIPMAP_MODES.OFF
+    # v8: PIXI.settings removed. Mipmaps are per-texture via
+    # TextureSourceOptions.autoGenerateMipmaps (defaults to false).
 
-    # If midmapping is enabled, sharper rendering is done using
+    # If mipmapping is needed later, sharper rendering is done using
     # this line (maybe blurrier is better? Need to test on bike)
-    # PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+    # texture.source.style.scaleMode = 'nearest'
 
-    renderer = new PIXI.Renderer({
+    renderer = new PIXI.WebGLRenderer()
+    renderer.init({
       width:                 options.width,
       height:                options.height,
       background:            0xFFFFFF,
@@ -21,13 +19,12 @@ $.xmoto = (level_filename, options = {}) ->
       #transparent:     true  # May be useful later (moto on website)
       #antialias:       true, # antiliasing is false by default and we keep it that way because
                               # of significative FPS drop and small visual changes
-    })
+    }).then(=>
+      window.cancelAnimationFrame(window.game_loop)
 
-    window.cancelAnimationFrame(window.game_loop)
-
-    bind_render_to_dom(renderer, options)
-    main_loop(level_filename, renderer, options)
-
+      bind_render_to_dom(renderer, options)
+      main_loop(level_filename, renderer, options)
+    )
   load_options = (options) ->
     defaults =
 
@@ -65,7 +62,7 @@ $.xmoto = (level_filename, options = {}) ->
 
     $(options.loading).show()
     $('#xmoto').css('height', options.height)
-    $('#xmoto')[0].appendChild(renderer.view)
+    $('#xmoto')[0].appendChild(renderer.canvas)
     $('#xmoto').append('<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>')
     $('#xmoto-debug').hide()
 
