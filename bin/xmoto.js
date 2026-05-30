@@ -979,7 +979,7 @@
       player_ghost = this.level.ghosts.player;
       if (replay.success) {
         time = (replay.steps / 60.0).toFixed(2).replace('.', ':');
-        if ((!player_ghost.replay) || player_ghost.replay.steps > replay.steps) {
+        if (!player_ghost || player_ghost.replay.steps > replay.steps) {
           this.save_replay_and_init_ghosts(replay);
           console.log("WIN : you improved your personal score : " + time + " (" + replay.steps + " steps)");
         } else {
@@ -993,8 +993,13 @@
     Physics.prototype.save_replay_and_init_ghosts = function(replay) {
       replay.add_step();
       replay.save();
-      this.level.ghosts.player = new Ghost(this.level, replay.clone());
-      return this.level.ghosts.init();
+      if (this.level.ghosts.player) {
+        this.level.ghosts.player.replay = replay.clone();
+        return this.level.ghosts.player.reload();
+      } else {
+        this.level.ghosts.player = new Ghost(this.level, replay.clone());
+        return this.level.ghosts.player.init();
+      }
     };
 
     Physics.prototype.update = function() {
@@ -2206,7 +2211,7 @@
       this.level = level;
       this.assets = level.assets;
       this.options = level.options;
-      this.player = {};
+      this.player = void 0;
       this.others = [];
       this.load_replays();
     }
@@ -2226,7 +2231,9 @@
       var ghosts;
       ghosts = [];
       ghosts = ghosts.concat(this.others);
-      ghosts.push(this.player);
+      if (this.player) {
+        ghosts.push(this.player);
+      }
       return ghosts;
     };
 
