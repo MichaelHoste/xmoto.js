@@ -36,7 +36,7 @@ class Level
     @ghosts        = new Ghosts(this)
 
   load_from_file: (filename, callback) ->
-    @assets.parse_theme('modern.xml', =>
+    @assets.parse_theme( =>
       $.ajax({
         type:     "GET",
         url:      "#{@options.levels_path}/#{filename}",

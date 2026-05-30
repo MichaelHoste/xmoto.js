@@ -89,8 +89,8 @@ class Camera
       if Constants.debug_clipping
         @clipping.clear()
 
-        size_x = (@options.width  / 100.0) * (60.0  / @scale.x)
-        size_y = (@options.height / 100.0) * (-60.0 / @scale.y)
+        size_x = @options.width  /  @scale.x * 0.6
+        size_y = @options.height / -@scale.y * 0.6
 
         @clipping.rect(-size_x/2, -size_y/2, size_x, size_y)
         @clipping.fill(0x333333)

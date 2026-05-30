@@ -86,8 +86,8 @@
         // Opaque clipping to see where sprites are "filtered out"
         if (Constants.debug_clipping) {
           this.clipping.clear();
-          size_x = (this.options.width / 100.0) * (60.0 / this.scale.x);
-          size_y = (this.options.height / 100.0) * (-60.0 / this.scale.y);
+          size_x = this.options.width / this.scale.x * 0.6;
+          size_y = this.options.height / -this.scale.y * 0.6;
           this.clipping.rect(-size_x / 2, -size_y / 2, size_x, size_y);
           this.clipping.fill(0x333333);
           this.clipping.x = this.target().x;
@@ -607,7 +607,7 @@
     }
 
     load_from_file(filename, callback) {
-      return this.assets.parse_theme('modern.xml', () => {
+      return this.assets.parse_theme(() => {
         return $.ajax({
           type: "GET",
           url: `${this.options.levels_path}/${filename}`,
@@ -843,30 +843,22 @@
 
   $.xmoto = function(level_filename, options = {}) {
     var bind_render_to_dom, bind_stats_fps, bind_stats_ms, initialize, load_options, main_loop;
-    initialize = function() {
+    initialize = async function() {
       var renderer;
       options = load_options(options);
-      // v8: PIXI.settings removed. Mipmaps are per-texture via
-      // TextureSourceOptions.autoGenerateMipmaps (defaults to false).
-
-      // If mipmapping is needed later, sharper rendering is done using
-      // this line (maybe blurrier is better? Need to test on bike)
-      // texture.source.style.scaleMode = 'nearest'
-      renderer = new PIXI.WebGLRenderer();
-      return renderer.init({
+      renderer = (await PIXI.autoDetectRenderer({
+        preference: 'webgl',
         width: options.width,
         height: options.height,
         background: 0xFFFFFF,
-        preserveDrawingBuffer: true // Need to be true when rendering without clear
-      
-      //transparent:     true  # May be useful later (moto on website)
-      //antialias:       true, # antiliasing is false by default and we keep it that way because
-      // of significative FPS drop and small visual changes
-      }).then(() => {
-        window.cancelAnimationFrame(window.game_loop);
-        bind_render_to_dom(renderer, options);
-        return main_loop(level_filename, renderer, options);
-      });
+        clearBeforeRender: false, // No need to clear, we paint the entire canvas
+        antialias: true // Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
+      }));
+      //preserveDrawingBuffer: true  # Need to be true when capturing with "toDataUrl" (may have low performance impact)
+      //transparent: true            # May be useful later (moto on website)
+      window.cancelAnimationFrame(window.game_loop);
+      bind_render_to_dom(renderer, options);
+      return main_loop(level_filename, renderer, options);
     };
     load_options = function(options) {
       var defaults;
@@ -1164,7 +1156,6 @@
     constructor(level) {
       this.level = level;
       this.assets = level.assets;
-      this.theme = this.assets.theme;
       this.list = []; // total list
       this.back_list = []; // background list
       this.front_list = []; // front list (collisions)
@@ -1200,7 +1191,7 @@
         if (block.usetexture.id === 'default') {
           block.usetexture.id = 'dirt';
         }
-        block.texture_name = this.theme.texture_params(block.usetexture.id).file;
+        block.texture_name = this.assets.theme.texture_params(block.usetexture.id).file;
         xml_materials = $(xml_block).find('edges material');
         for (k = 0, len1 = xml_materials.length; k < len1; k++) {
           xml_material = xml_materials[k];
@@ -1363,7 +1354,6 @@
       this.level = level;
       this.block = block;
       this.assets = this.level.assets;
-      this.theme = this.assets.theme;
       this.list = []; // List of edges
     }
 
@@ -1379,7 +1369,7 @@
             vertex2: i === this.block.vertices.length - 1 ? this.block.vertices[0] : this.block.vertices[i + 1],
             block: this.block,
             texture: vertex.edge,
-            theme: this.theme.edge_params(vertex.edge)
+            theme: this.assets.theme.edge_params(vertex.edge)
           };
           edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
           edge.vertices = [
@@ -1835,7 +1825,6 @@
     constructor(level) {
       this.level = level;
       this.assets = level.assets;
-      this.theme = this.assets.theme;
     }
 
     parse(xml) {
@@ -1876,7 +1865,7 @@
       this.top_wall_aabb.lowerBound.Set(this.player.left, this.player.top);
       this.top_wall_aabb.upperBound.Set(this.player.right, this.screen.top);
       this.texture = 'dirt';
-      this.texture_name = this.theme.texture_params('dirt').file;
+      this.texture_name = this.assets.theme.texture_params('dirt').file;
       return this;
     }
 
@@ -1982,22 +1971,22 @@
       top_size_x = this.player.right - this.player.left;
       top_size_y = this.screen.top - this.player.top;
       this.left_sprite = new PIXI.TilingSprite({
-        texture,
+        texture: texture,
         width: left_size_x,
         height: left_size_y
       });
       this.right_sprite = new PIXI.TilingSprite({
-        texture,
+        texture: texture,
         width: right_size_x,
         height: right_size_y
       });
       this.bottom_sprite = new PIXI.TilingSprite({
-        texture,
+        texture: texture,
         width: bottom_size_x,
         height: bottom_size_y
       });
       this.top_sprite = new PIXI.TilingSprite({
-        texture,
+        texture: texture,
         width: top_size_x,
         height: top_size_y
       });
@@ -2069,7 +2058,6 @@
     constructor(level) {
       this.level = level;
       this.assets = level.assets;
-      this.theme = this.assets.theme;
       this.options = level.options;
     }
 
@@ -2086,7 +2074,7 @@
       if (this.name === '') {
         this.name = 'sky1';
       }
-      this.filename = this.theme.texture_params(this.name).file;
+      this.filename = this.assets.theme.texture_params(this.name).file;
       return this;
     }
 
@@ -2102,7 +2090,7 @@
       var texture;
       texture = PIXI.Texture.from(this.assets.get_url(this.filename));
       this.sprite = new PIXI.TilingSprite({
-        texture,
+        texture: texture,
         width: this.options.width,
         height: this.options.height
       });
@@ -3477,7 +3465,7 @@
 
   Assets = class Assets {
     constructor() {
-      this.theme = {};
+      this.theme = void 0;
       this.textures = []; // texture list
       this.anims = []; // anim list
       this.effects = []; // effect list (edge etc.)
@@ -3486,16 +3474,8 @@
       this.resources = {};
     }
 
-    parse_theme(filename, callback) {
-      var theme;
-      // extend to keep the same pointer to @theme that is already in other objects
-      theme = new Theme('modern.xml', callback);
-      $.extend(this.theme, theme);
-      // CS2: native class methods are on the prototype, not own props.
-      // Copy them explicitly so $.extend recipients can call them.
-      this.theme.texture_params = theme.texture_params.bind(this.theme);
-      this.theme.sprite_params = theme.sprite_params.bind(this.theme);
-      return this.theme.edge_params = theme.edge_params.bind(this.theme);
+    parse_theme(callback) {
+      return this.theme = new Theme("modern.xml", callback);
     }
 
     load(callback) {

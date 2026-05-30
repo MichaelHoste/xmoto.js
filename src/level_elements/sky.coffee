@@ -3,7 +3,6 @@ class Sky
   constructor: (level) ->
     @level   = level
     @assets  = level.assets
-    @theme   = @assets.theme
     @options = level.options
 
   parse: (xml) ->
@@ -17,7 +16,7 @@ class Sky
     @offset  = parseFloat(xml_sky.attr('offset'))
 
     @name     = 'sky1' if @name == ''
-    @filename = @theme.texture_params(@name).file
+    @filename = @assets.theme.texture_params(@name).file
 
     return this
 
@@ -29,7 +28,7 @@ class Sky
 
   init_sprites: ->
     texture = PIXI.Texture.from(@assets.get_url(@filename))
-    @sprite = new PIXI.TilingSprite({texture, width: @options.width, height: @options.height})
+    @sprite = new PIXI.TilingSprite({ texture: texture, width: @options.width, height: @options.height })
     @sprite.position.x = 0
     @sprite.position.y = 0
     @level.stage.addChildAt(@sprite, 0)

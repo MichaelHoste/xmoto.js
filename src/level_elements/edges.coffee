@@ -4,9 +4,8 @@ class Edges
     @level  = level
     @block  = block
     @assets = @level.assets
-    @theme  = @assets.theme
 
-    @list   = [] # List of edges
+    @list = [] # List of edges
 
   parse: ->
     for vertex, i in @block.vertices
@@ -16,7 +15,7 @@ class Edges
           vertex2: if i == @block.vertices.length-1 then @block.vertices[0] else @block.vertices[i+1]
           block:   @block
           texture: vertex.edge
-          theme:   @theme.edge_params(vertex.edge)
+          theme:   @assets.theme.edge_params(vertex.edge)
 
         edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI/2
         edge.vertices = [ { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y - edge.theme.depth },
@@ -54,10 +53,10 @@ class Edges
       edge.graphics = new PIXI.Graphics()
       edge.graphics.poly(points)
       edge.graphics.fill({
-        texture: texture,
-        matrix:  matrix,
-        color:   0xffffff,
-        alpha:   1.0,
+        texture:      texture,
+        matrix:       matrix,
+        color:        0xffffff,
+        alpha:        1.0,
         textureSpace: 'global'
       })
 

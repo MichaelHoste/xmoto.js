@@ -4,9 +4,8 @@ b2AABB = Box2D.Collision.b2AABB
 class Blocks
 
   constructor: (level) ->
-    @level      = level
-    @assets     = level.assets
-    @theme      = @assets.theme
+    @level  = level
+    @assets = level.assets
 
     @list       = [] # total list
     @back_list  = [] # background list
@@ -36,7 +35,7 @@ class Blocks
         vertices:     []
 
       block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
-      block.texture_name = @theme.texture_params(block.usetexture.id).file
+      block.texture_name = @assets.theme.texture_params(block.usetexture.id).file
 
       xml_materials = $(xml_block).find('edges material')
       for xml_material in xml_materials
@@ -117,10 +116,10 @@ class Blocks
       block.graphics = new PIXI.Graphics()
       block.graphics.poly(points)
       block.graphics.fill({
-        texture: texture,
-        matrix:  matrix,
-        color:   0xffffff,
-        alpha:   1.0,
+        texture:      texture,
+        matrix:       matrix,
+        color:        0xffffff,
+        alpha:        1.0,
         textureSpace: 'global'
       })
 

@@ -6,7 +6,6 @@ class Limits
   constructor: (level) ->
     @level  = level
     @assets = level.assets
-    @theme  = @assets.theme
 
   parse: (xml) ->
     xml_limits = $(xml).find('limits')
@@ -51,7 +50,7 @@ class Limits
     @top_wall_aabb.upperBound.Set(@player.right, @screen.top)
 
     @texture = 'dirt'
-    @texture_name = @theme.texture_params('dirt').file
+    @texture_name = @assets.theme.texture_params('dirt').file
 
     return this
 
@@ -113,10 +112,10 @@ class Limits
     top_size_x = @player.right - @player.left
     top_size_y = @screen.top   - @player.top
 
-    @left_sprite   = new PIXI.TilingSprite({texture, width: left_size_x, height: left_size_y})
-    @right_sprite  = new PIXI.TilingSprite({texture, width: right_size_x, height: right_size_y})
-    @bottom_sprite = new PIXI.TilingSprite({texture, width: bottom_size_x, height: bottom_size_y})
-    @top_sprite    = new PIXI.TilingSprite({texture, width: top_size_x, height: top_size_y})
+    @left_sprite   = new PIXI.TilingSprite({ texture: texture, width: left_size_x,   height: left_size_y   })
+    @right_sprite  = new PIXI.TilingSprite({ texture: texture, width: right_size_x,  height: right_size_y  })
+    @bottom_sprite = new PIXI.TilingSprite({ texture: texture, width: bottom_size_x, height: bottom_size_y })
+    @top_sprite    = new PIXI.TilingSprite({ texture: texture, width: top_size_x,    height: top_size_y    })
 
     @left_sprite.x = @screen.left
     @left_sprite.y = -@screen.top
