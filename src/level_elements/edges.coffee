@@ -1,6 +1,3 @@
-b2Vec2 = Box2D.Common.Math.b2Vec2
-b2AABB = Box2D.Collision.b2AABB
-
 class Edges
 
   constructor: (level, block) ->
@@ -38,36 +35,32 @@ class Edges
 
   init_sprites: ->
     for edge in @list
-      # Create mask
-      points = []
+      # Build polygon in PIXI coordinates (y inverted)
+      points = edge.vertices.map((vertex) ->
+        new PIXI.Point(vertex.x, -vertex.y)
+      )
 
-      for vertex in edge.vertices
-        points.push(new PIXI.Point(vertex.x, -vertex.y))
-
-      mask = new PIXI.Graphics()
-      mask.beginFill(0xffffff, 1.0)
-      mask.drawPolygon(points)
-      @level.camera.neutral_z_container.addChild(mask)
-
-      x = Math.abs(Math.sin(edge.angle) * edge.theme.depth)
-      y = Math.abs(Math.tan(edge.angle) * x)
-
+      # Load edge texture
       texture = PIXI.Texture.from(@assets.get_url(edge.theme.file))
-      size_x  = edge.aabb.upperBound.x - edge.aabb.lowerBound.x + 2*x
-      size_y  = edge.theme.depth# + 2*y
 
-      edge.sprite   = new PIXI.TilingSprite(texture, 4*size_x, size_y)
-      edge.sprite.x =  edge.vertex1.absolute_x - x
-      edge.sprite.y = -edge.vertex1.absolute_y + y if edge.angle > 0
-      edge.sprite.y = -edge.vertex1.absolute_y - y if edge.angle <= 0
+      # Matrix maps world coords → texture UV, pivoting around top-left corner.
+      matrix = new PIXI.Matrix()
+      matrix.scale(1.0 / 100.0, 1.0 / 100.0)
+      matrix.rotate(-edge.angle)
+      matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y)
 
-      edge.sprite.pivot.x     = 0.5
-      edge.sprite.tileScale.x = 1.0 / 100.0
-      edge.sprite.tileScale.y = 1.0 / 100.0
-      edge.sprite.mask        = mask
-      edge.sprite.rotation    = -edge.angle
+      # Create graphics with texture and matrix
+      edge.graphics = new PIXI.Graphics()
+      edge.graphics.beginTextureFill({
+        texture: texture,
+        matrix:  matrix,
+        color:   0xffffff,
+        alpha:   1.0
+      })
+      edge.graphics.drawPolygon(points)
+      edge.graphics.endFill()
 
-      @level.camera.neutral_z_container.addChild(edge.sprite)
+      @level.camera.neutral_z_container.addChild(edge.graphics)
 
   # only display edges present on the screen zone
   update: ->
@@ -75,7 +68,7 @@ class Edges
       block_visible = @block.sprite.visible
 
       for edge in @list
-        edge.sprite.visible = block_visible && @visible(edge) # don't test aabb if block not visible
+        edge.graphics.visible = block_visible && @visible(edge) # don't test aabb if block not visible
 
   compute_aabb: (edge) ->
     first = true
@@ -96,7 +89,7 @@ class Edges
         upper_bound.x = vertex.x if vertex.x > upper_bound.x
         upper_bound.y = vertex.y if vertex.y > upper_bound.y
 
-    aabb = new b2AABB()
+    aabb = new Box2D.Collision.b2AABB()
     aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
     aabb.upperBound.Set(upper_bound.x, upper_bound.y)
     return aabb

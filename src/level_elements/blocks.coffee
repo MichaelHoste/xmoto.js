@@ -122,8 +122,8 @@ class Blocks
       block.sprite = new PIXI.TilingSprite(texture, size_x, size_y)
       block.sprite.x =  block.aabb.lowerBound.x
       block.sprite.y = -block.aabb.upperBound.y
-      block.sprite.tileScale.x = 1.0/40
-      block.sprite.tileScale.y = 1.0/40
+      block.sprite.tileScale.x = 1.0/40.0
+      block.sprite.tileScale.y = 1.0/40.0
       block.sprite.mask = mask
 
       @level.camera.neutral_z_container.addChild(block.sprite)
