@@ -316,7 +316,11 @@ class Moto
       @rider.update(visible)
 
   update_wheel: (part, part_constants, visible) ->
-    wheel_sprite = if part_constants.position.x < 0 then @left_wheel_sprite else @right_wheel_sprite
+    if part_constants.position.x < 0
+      wheel_sprite = @left_wheel_sprite
+    else
+      wheel_sprite = @right_wheel_sprite
+
     wheel_sprite.visible = visible
 
     if visible

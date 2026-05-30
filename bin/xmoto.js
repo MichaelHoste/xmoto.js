@@ -2560,7 +2560,11 @@
 
     Moto.prototype.update_wheel = function(part, part_constants, visible) {
       var angle, position, wheel_sprite;
-      wheel_sprite = part_constants.position.x < 0 ? this.left_wheel_sprite : this.right_wheel_sprite;
+      if (part_constants.position.x < 0) {
+        wheel_sprite = this.left_wheel_sprite;
+      } else {
+        wheel_sprite = this.right_wheel_sprite;
+      }
       wheel_sprite.visible = visible;
       if (visible) {
         position = part.GetPosition();
