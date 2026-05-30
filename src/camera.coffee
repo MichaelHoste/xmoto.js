@@ -14,6 +14,8 @@ class Camera
       x: 0
       y: 0
 
+    @aabb = new b2AABB()
+
     @scale_container      = new PIXI.Container()
     @translate_container  = new PIXI.Container()
     @negative_z_container = new PIXI.Container()
@@ -139,25 +141,15 @@ class Camera
     canvas.addEventListener('mousewheel',     scroll, false)
 
   compute_aabb: ->
-    if Constants.debug_clipping
-      @aabb = @aabb_for_clipping()
-    else
-      @aabb = @aabb_for_canvas()
+    factor = if Constants.debug_clipping then 0.6 else 1.0
 
-  aabb_for_clipping: ->
-    size_x =   @options.width  * 0.6 / @scale.x
-    size_y = - @options.height * 0.6 / @scale.y
+    size_x =   @options.width  * factor / @scale.x
+    size_y = - @options.height * factor / @scale.y
 
-    aabb = new b2AABB()
-    aabb.lowerBound.Set(@target().x - size_x/2, @target().y - size_y/2)
-    aabb.upperBound.Set(@target().x + size_x/2, @target().y + size_y/2)
-    return aabb
+    t = @target()
 
-  aabb_for_canvas: ->
-    size_x =   @options.width  * 1.0 / @scale.x
-    size_y = - @options.height * 1.0 / @scale.y
+    half_w = size_x / 2
+    half_h = size_y / 2
 
-    aabb = new b2AABB()
-    aabb.lowerBound.Set(@target().x - size_x/2, @target().y - size_y/2)
-    aabb.upperBound.Set(@target().x + size_x/2, @target().y + size_y/2)
-    return aabb
+    @aabb.lowerBound.Set(t.x - half_w, t.y - half_h)
+    @aabb.upperBound.Set(t.x + half_w, t.y + half_h)

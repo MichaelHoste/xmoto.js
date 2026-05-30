@@ -5,7 +5,7 @@ class Ghosts
     @assets  = level.assets
     @options = level.options
 
-    @player = {}
+    @player = undefined
     @others = []
 
     @load_replays()
@@ -22,7 +22,7 @@ class Ghosts
   all_ghosts: ->
     ghosts = []
     ghosts = ghosts.concat(@others)
-    ghosts.push(@player)
+    ghosts.push(@player) if @player
     ghosts
 
   init: ->

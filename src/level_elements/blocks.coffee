@@ -122,8 +122,8 @@ class Blocks
       block.sprite = new PIXI.TilingSprite(texture, size_x, size_y)
       block.sprite.x =  block.aabb.lowerBound.x
       block.sprite.y = -block.aabb.upperBound.y
-      block.sprite.tileScale.x = 1.0/40
-      block.sprite.tileScale.y = 1.0/40
+      block.sprite.tileScale.x = 1.0/40.0
+      block.sprite.tileScale.y = 1.0/40.0
       block.sprite.mask = mask
 
       @level.camera.neutral_z_container.addChild(block.sprite)
@@ -138,28 +138,13 @@ class Blocks
     block.aabb.TestOverlap(@level.camera.aabb)
 
   compute_aabb: (block) ->
-    first = true
-    lower_bound = {}
-    upper_bound = {}
+    x_positions = block.vertices.map((v) -> v.absolute_x)
+    y_positions = block.vertices.map((v) -> v.absolute_y)
 
-    for vertex in block.vertices
-      if first
-        lower_bound =
-          x: vertex.absolute_x
-          y: vertex.absolute_y
-        upper_bound =
-          x: vertex.absolute_x
-          y: vertex.absolute_y
-        first = false
-      else
-        lower_bound.x = vertex.absolute_x if vertex.absolute_x < lower_bound.x
-        lower_bound.y = vertex.absolute_y if vertex.absolute_y < lower_bound.y
-        upper_bound.x = vertex.absolute_x if vertex.absolute_x > upper_bound.x
-        upper_bound.y = vertex.absolute_y if vertex.absolute_y > upper_bound.y
+    aabb = new Box2D.Collision.b2AABB()
+    aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
+    aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
 
-    aabb = new b2AABB()
-    aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
-    aabb.upperBound.Set(upper_bound.x, upper_bound.y)
     return aabb
 
   # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers

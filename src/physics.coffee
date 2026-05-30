@@ -51,7 +51,7 @@ class Physics
     # save replay if better (local + server)
     if replay.success
       time = (replay.steps / 60.0).toFixed(2).replace('.', ':')
-      if (not player_ghost.replay) || player_ghost.replay.steps > replay.steps
+      if !player_ghost || player_ghost.replay.steps > replay.steps
         @save_replay_and_init_ghosts(replay)
         console.log("WIN : you improved your personal score : #{time} (#{replay.steps} steps)")
       else
@@ -63,8 +63,14 @@ class Physics
   save_replay_and_init_ghosts: (replay) ->
     replay.add_step() # add last step
     replay.save()
-    @level.ghosts.player = new Ghost(@level, replay.clone())
-    @level.ghosts.init()
+
+    # Update replay of player ghost, or create new one
+    if @level.ghosts.player
+      @level.ghosts.player.replay = replay.clone()
+      @level.ghosts.player.reload()
+    else
+      @level.ghosts.player = new Ghost(@level, replay.clone())
+      @level.ghosts.player.init()
 
   update: ->
     while (new Date()).getTime() - @last_step > @step

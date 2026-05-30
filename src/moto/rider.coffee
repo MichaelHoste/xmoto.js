@@ -68,6 +68,11 @@ class Rider
         asset_name = Constants[part].texture
 
       @["#{part}_sprite"] = new PIXI.Sprite.from(@assets.get_url(asset_name))
+      @["#{part}_sprite"].width    = Constants[part].texture_size.x
+      @["#{part}_sprite"].height   = Constants[part].texture_size.y
+      @["#{part}_sprite"].anchor.x = 0.5
+      @["#{part}_sprite"].anchor.y = 0.5
+
       @level.camera.neutral_z_container.addChild(@["#{part}_sprite"])
 
   position: ->
@@ -197,16 +202,9 @@ class Rider
     sprite.visible = visible
 
     if visible
-      part_constants = Constants[name]
-
       position = part.GetPosition()
       angle    = part.GetAngle()
-      texture  = if @ghost then part_constants.ghost_texture else part_constants.texture
 
-      sprite.width    = part_constants.texture_size.x
-      sprite.height   = part_constants.texture_size.y
-      sprite.anchor.x = 0.5
-      sprite.anchor.y = 0.5
       sprite.x        =  position.x
       sprite.y        = -position.y
       sprite.rotation = -angle

@@ -14,6 +14,7 @@
         x: 0,
         y: 0
       };
+      this.aabb = new b2AABB();
       this.scale_container = new PIXI.Container();
       this.translate_container = new PIXI.Container();
       this.negative_z_container = new PIXI.Container();
@@ -141,31 +142,15 @@
     };
 
     Camera.prototype.compute_aabb = function() {
-      if (Constants.debug_clipping) {
-        return this.aabb = this.aabb_for_clipping();
-      } else {
-        return this.aabb = this.aabb_for_canvas();
-      }
-    };
-
-    Camera.prototype.aabb_for_clipping = function() {
-      var aabb, size_x, size_y;
-      size_x = this.options.width * 0.6 / this.scale.x;
-      size_y = -this.options.height * 0.6 / this.scale.y;
-      aabb = new b2AABB();
-      aabb.lowerBound.Set(this.target().x - size_x / 2, this.target().y - size_y / 2);
-      aabb.upperBound.Set(this.target().x + size_x / 2, this.target().y + size_y / 2);
-      return aabb;
-    };
-
-    Camera.prototype.aabb_for_canvas = function() {
-      var aabb, size_x, size_y;
-      size_x = this.options.width * 1.0 / this.scale.x;
-      size_y = -this.options.height * 1.0 / this.scale.y;
-      aabb = new b2AABB();
-      aabb.lowerBound.Set(this.target().x - size_x / 2, this.target().y - size_y / 2);
-      aabb.upperBound.Set(this.target().x + size_x / 2, this.target().y + size_y / 2);
-      return aabb;
+      var factor, half_h, half_w, size_x, size_y, t;
+      factor = Constants.debug_clipping ? 0.6 : 1.0;
+      size_x = this.options.width * factor / this.scale.x;
+      size_y = -this.options.height * factor / this.scale.y;
+      t = this.target();
+      half_w = size_x / 2;
+      half_h = size_y / 2;
+      this.aabb.lowerBound.Set(t.x - half_w, t.y - half_h);
+      return this.aabb.upperBound.Set(t.x + half_w, t.y + half_h);
     };
 
     return Camera;
@@ -839,7 +824,6 @@
         width: options.width,
         height: options.height,
         backgroundColor: 0xFFFFFF,
-        clearBeforeRender: false,
         preserveDrawingBuffer: true
       });
       window.cancelAnimationFrame(window.game_loop);
@@ -915,7 +899,9 @@
             }
             level.update();
             if (!Constants.debug_physics) {
-              renderer.render(level.stage);
+              renderer.render(level.stage, {
+                clear: false
+              });
             }
             window.game_loop = requestAnimationFrame(update);
             if (Constants.debug) {
@@ -993,7 +979,7 @@
       player_ghost = this.level.ghosts.player;
       if (replay.success) {
         time = (replay.steps / 60.0).toFixed(2).replace('.', ':');
-        if ((!player_ghost.replay) || player_ghost.replay.steps > replay.steps) {
+        if (!player_ghost || player_ghost.replay.steps > replay.steps) {
           this.save_replay_and_init_ghosts(replay);
           console.log("WIN : you improved your personal score : " + time + " (" + replay.steps + " steps)");
         } else {
@@ -1007,8 +993,13 @@
     Physics.prototype.save_replay_and_init_ghosts = function(replay) {
       replay.add_step();
       replay.save();
-      this.level.ghosts.player = new Ghost(this.level, replay.clone());
-      return this.level.ghosts.init();
+      if (this.level.ghosts.player) {
+        this.level.ghosts.player.replay = replay.clone();
+        return this.level.ghosts.player.reload();
+      } else {
+        this.level.ghosts.player = new Ghost(this.level, replay.clone());
+        return this.level.ghosts.player.init();
+      }
     };
 
     Physics.prototype.update = function() {
@@ -1278,8 +1269,8 @@
         block.sprite = new PIXI.TilingSprite(texture, size_x, size_y);
         block.sprite.x = block.aabb.lowerBound.x;
         block.sprite.y = -block.aabb.upperBound.y;
-        block.sprite.tileScale.x = 1.0 / 40;
-        block.sprite.tileScale.y = 1.0 / 40;
+        block.sprite.tileScale.x = 1.0 / 40.0;
+        block.sprite.tileScale.y = 1.0 / 40.0;
         block.sprite.mask = mask;
         results.push(this.level.camera.neutral_z_container.addChild(block.sprite));
       }
@@ -1305,41 +1296,16 @@
     };
 
     Blocks.prototype.compute_aabb = function(block) {
-      var aabb, first, j, len, lower_bound, ref, upper_bound, vertex;
-      first = true;
-      lower_bound = {};
-      upper_bound = {};
-      ref = block.vertices;
-      for (j = 0, len = ref.length; j < len; j++) {
-        vertex = ref[j];
-        if (first) {
-          lower_bound = {
-            x: vertex.absolute_x,
-            y: vertex.absolute_y
-          };
-          upper_bound = {
-            x: vertex.absolute_x,
-            y: vertex.absolute_y
-          };
-          first = false;
-        } else {
-          if (vertex.absolute_x < lower_bound.x) {
-            lower_bound.x = vertex.absolute_x;
-          }
-          if (vertex.absolute_y < lower_bound.y) {
-            lower_bound.y = vertex.absolute_y;
-          }
-          if (vertex.absolute_x > upper_bound.x) {
-            upper_bound.x = vertex.absolute_x;
-          }
-          if (vertex.absolute_y > upper_bound.y) {
-            upper_bound.y = vertex.absolute_y;
-          }
-        }
-      }
-      aabb = new b2AABB();
-      aabb.lowerBound.Set(lower_bound.x, lower_bound.y);
-      aabb.upperBound.Set(upper_bound.x, upper_bound.y);
+      var aabb, x_positions, y_positions;
+      x_positions = block.vertices.map(function(v) {
+        return v.absolute_x;
+      });
+      y_positions = block.vertices.map(function(v) {
+        return v.absolute_y;
+      });
+      aabb = new Box2D.Collision.b2AABB();
+      aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions));
+      aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions));
       return aabb;
     };
 
@@ -1356,10 +1322,6 @@
     return Blocks;
 
   })();
-
-  b2Vec2 = Box2D.Common.Math.b2Vec2;
-
-  b2AABB = Box2D.Collision.b2AABB;
 
   Edges = (function() {
     function Edges(level, block) {
@@ -1425,40 +1387,29 @@
     };
 
     Edges.prototype.init_sprites = function() {
-      var edge, j, k, len, len1, mask, points, ref, ref1, results, size_x, size_y, texture, vertex, x, y;
+      var edge, j, len, matrix, points, ref, results, texture;
       ref = this.list;
       results = [];
       for (j = 0, len = ref.length; j < len; j++) {
         edge = ref[j];
-        points = [];
-        ref1 = edge.vertices;
-        for (k = 0, len1 = ref1.length; k < len1; k++) {
-          vertex = ref1[k];
-          points.push(new PIXI.Point(vertex.x, -vertex.y));
-        }
-        mask = new PIXI.Graphics();
-        mask.beginFill(0xffffff, 1.0);
-        mask.drawPolygon(points);
-        this.level.camera.neutral_z_container.addChild(mask);
-        x = Math.abs(Math.sin(edge.angle) * edge.theme.depth);
-        y = Math.abs(Math.tan(edge.angle) * x);
+        points = edge.vertices.map(function(vertex) {
+          return new PIXI.Point(vertex.x, -vertex.y);
+        });
         texture = PIXI.Texture.from(this.assets.get_url(edge.theme.file));
-        size_x = edge.aabb.upperBound.x - edge.aabb.lowerBound.x + 2 * x;
-        size_y = edge.theme.depth;
-        edge.sprite = new PIXI.TilingSprite(texture, 4 * size_x, size_y);
-        edge.sprite.x = edge.vertex1.absolute_x - x;
-        if (edge.angle > 0) {
-          edge.sprite.y = -edge.vertex1.absolute_y + y;
-        }
-        if (edge.angle <= 0) {
-          edge.sprite.y = -edge.vertex1.absolute_y - y;
-        }
-        edge.sprite.pivot.x = 0.5;
-        edge.sprite.tileScale.x = 1.0 / 100.0;
-        edge.sprite.tileScale.y = 1.0 / 100.0;
-        edge.sprite.mask = mask;
-        edge.sprite.rotation = -edge.angle;
-        results.push(this.level.camera.neutral_z_container.addChild(edge.sprite));
+        matrix = new PIXI.Matrix();
+        matrix.scale(1.0 / 100.0, 1.0 / 100.0);
+        matrix.rotate(-edge.angle);
+        matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y);
+        edge.graphics = new PIXI.Graphics();
+        edge.graphics.beginTextureFill({
+          texture: texture,
+          matrix: matrix,
+          color: 0xffffff,
+          alpha: 1.0
+        });
+        edge.graphics.drawPolygon(points);
+        edge.graphics.endFill();
+        results.push(this.level.camera.neutral_z_container.addChild(edge.graphics));
       }
       return results;
     };
@@ -1471,48 +1422,23 @@
         results = [];
         for (j = 0, len = ref.length; j < len; j++) {
           edge = ref[j];
-          results.push(edge.sprite.visible = block_visible && this.visible(edge));
+          results.push(edge.graphics.visible = block_visible && this.visible(edge));
         }
         return results;
       }
     };
 
     Edges.prototype.compute_aabb = function(edge) {
-      var aabb, first, j, len, lower_bound, ref, upper_bound, vertex;
-      first = true;
-      lower_bound = {};
-      upper_bound = {};
-      ref = edge.vertices;
-      for (j = 0, len = ref.length; j < len; j++) {
-        vertex = ref[j];
-        if (first) {
-          lower_bound = {
-            x: vertex.x,
-            y: vertex.y
-          };
-          upper_bound = {
-            x: vertex.x,
-            y: vertex.y
-          };
-          first = false;
-        } else {
-          if (vertex.x < lower_bound.x) {
-            lower_bound.x = vertex.x;
-          }
-          if (vertex.y < lower_bound.y) {
-            lower_bound.y = vertex.y;
-          }
-          if (vertex.x > upper_bound.x) {
-            upper_bound.x = vertex.x;
-          }
-          if (vertex.y > upper_bound.y) {
-            upper_bound.y = vertex.y;
-          }
-        }
-      }
-      aabb = new b2AABB();
-      aabb.lowerBound.Set(lower_bound.x, lower_bound.y);
-      aabb.upperBound.Set(upper_bound.x, upper_bound.y);
+      var aabb, x_positions, y_positions;
+      x_positions = edge.vertices.map(function(v) {
+        return v.x;
+      });
+      y_positions = edge.vertices.map(function(v) {
+        return v.y;
+      });
+      aabb = new Box2D.Collision.b2AABB();
+      aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions));
+      aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions));
       return aabb;
     };
 
@@ -2220,7 +2146,7 @@
       this.level = level;
       this.assets = level.assets;
       this.options = level.options;
-      this.player = {};
+      this.player = void 0;
       this.others = [];
       this.load_replays();
     }
@@ -2240,7 +2166,9 @@
       var ghosts;
       ghosts = [];
       ghosts = ghosts.concat(this.others);
-      ghosts.push(this.player);
+      if (this.player) {
+        ghosts.push(this.player);
+      }
       return ghosts;
     };
 
@@ -2405,7 +2333,7 @@
     };
 
     Moto.prototype.init_sprites = function() {
-      var asset_name, j, len, part, ref;
+      var asset_name, axle_name, j, k, l, len, len1, len2, part, ref, ref1, ref2, wheel_name;
       ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
       for (j = 0, len = ref.length; j < len; j++) {
         part = ref[j];
@@ -2416,6 +2344,24 @@
         }
         this[part + "_sprite"] = new PIXI.Sprite.from(this.assets.get_url(asset_name));
         this.level.camera.neutral_z_container.addChild(this[part + "_sprite"]);
+      }
+      this.body_sprite.width = Constants.body.texture_size.x;
+      this.body_sprite.height = Constants.body.texture_size.y;
+      this.body_sprite.anchor.x = 0.5;
+      this.body_sprite.anchor.y = 0.5;
+      ref1 = ['left_wheel', 'right_wheel'];
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        wheel_name = ref1[k];
+        this[wheel_name + "_sprite"].width = 2 * Constants[wheel_name].radius;
+        this[wheel_name + "_sprite"].height = 2 * Constants[wheel_name].radius;
+        this[wheel_name + "_sprite"].anchor.x = 0.5;
+        this[wheel_name + "_sprite"].anchor.y = 0.5;
+      }
+      ref2 = ['left_axle', 'right_axle'];
+      for (l = 0, len2 = ref2.length; l < len2; l++) {
+        axle_name = ref2[l];
+        this[axle_name + "_sprite"].anchor.x = 0.0;
+        this[axle_name + "_sprite"].anchor.y = 0.5;
       }
       return this.rider.init_sprites();
     };
@@ -2623,10 +2569,6 @@
       if (visible) {
         position = part.GetPosition();
         angle = part.GetAngle();
-        wheel_sprite.width = 2 * part_constants.radius;
-        wheel_sprite.height = 2 * part_constants.radius;
-        wheel_sprite.anchor.x = 0.5;
-        wheel_sprite.anchor.y = 0.5;
         wheel_sprite.x = position.x;
         wheel_sprite.y = -position.y;
         wheel_sprite.rotation = -angle;
@@ -2640,10 +2582,6 @@
       if (visible) {
         position = part.GetPosition();
         angle = part.GetAngle();
-        this.body_sprite.width = part_constants.texture_size.x;
-        this.body_sprite.height = part_constants.texture_size.y;
-        this.body_sprite.anchor.x = 0.5;
-        this.body_sprite.anchor.y = 0.5;
         this.body_sprite.x = position.x;
         this.body_sprite.y = -position.y;
         this.body_sprite.rotation = -angle;
@@ -2695,8 +2633,6 @@
         angle = Math2D.angle_between_points(axle_adjusted_position, wheel_position) + this.mirror * Math.PI / 2;
         axle_sprite.width = distance;
         axle_sprite.height = axle_thickness;
-        axle_sprite.anchor.x = 0.0;
-        axle_sprite.anchor.y = 0.5;
         axle_sprite.x = wheel_position.x;
         axle_sprite.y = -wheel_position.y;
         axle_sprite.rotation = -angle;
@@ -3034,6 +2970,10 @@
           asset_name = Constants[part].texture;
         }
         this[part + "_sprite"] = new PIXI.Sprite.from(this.assets.get_url(asset_name));
+        this[part + "_sprite"].width = Constants[part].texture_size.x;
+        this[part + "_sprite"].height = Constants[part].texture_size.y;
+        this[part + "_sprite"].anchor.x = 0.5;
+        this[part + "_sprite"].anchor.y = 0.5;
         results.push(this.level.camera.neutral_z_container.addChild(this[part + "_sprite"]));
       }
       return results;
@@ -3164,18 +3104,12 @@
     };
 
     Rider.prototype.update_part = function(part, name, visible) {
-      var angle, part_constants, position, sprite, texture;
+      var angle, position, sprite;
       sprite = this[name + "_sprite"];
       sprite.visible = visible;
       if (visible) {
-        part_constants = Constants[name];
         position = part.GetPosition();
         angle = part.GetAngle();
-        texture = this.ghost ? part_constants.ghost_texture : part_constants.texture;
-        sprite.width = part_constants.texture_size.x;
-        sprite.height = part_constants.texture_size.y;
-        sprite.anchor.x = 0.5;
-        sprite.anchor.y = 0.5;
         sprite.x = position.x;
         sprite.y = -position.y;
         sprite.rotation = -angle;

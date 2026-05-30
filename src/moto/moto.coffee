@@ -69,6 +69,7 @@ class Moto
     @rider.init_physics_parts()
 
   init_sprites: ->
+    # Create and add sprites to the scene
     for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle']
       if @ghost
         asset_name = Constants[part].ghost_texture
@@ -77,6 +78,24 @@ class Moto
 
       @["#{part}_sprite"] = new PIXI.Sprite.from(@assets.get_url(asset_name))
       @level.camera.neutral_z_container.addChild(@["#{part}_sprite"])
+
+    # Define body values
+    @body_sprite.width    = Constants.body.texture_size.x
+    @body_sprite.height   = Constants.body.texture_size.y
+    @body_sprite.anchor.x = 0.5
+    @body_sprite.anchor.y = 0.5
+
+    # Define wheels values
+    for wheel_name in ['left_wheel', 'right_wheel']
+      @["#{wheel_name}_sprite"].width    = 2 * Constants[wheel_name].radius
+      @["#{wheel_name}_sprite"].height   = 2 * Constants[wheel_name].radius
+      @["#{wheel_name}_sprite"].anchor.x = 0.5
+      @["#{wheel_name}_sprite"].anchor.y = 0.5
+
+    # Define axles values
+    for axle_name in ['left_axle', 'right_axle']
+      @["#{axle_name}_sprite"].anchor.x = 0.0
+      @["#{axle_name}_sprite"].anchor.y = 0.5
 
     @rider.init_sprites()
 
@@ -308,10 +327,6 @@ class Moto
       position = part.GetPosition()
       angle    = part.GetAngle()
 
-      wheel_sprite.width    = 2 * part_constants.radius
-      wheel_sprite.height   = 2 * part_constants.radius
-      wheel_sprite.anchor.x = 0.5
-      wheel_sprite.anchor.y = 0.5
       wheel_sprite.x        = position.x
       wheel_sprite.y        = -position.y
       wheel_sprite.rotation = -angle
@@ -324,10 +339,6 @@ class Moto
       position = part.GetPosition()
       angle    = part.GetAngle()
 
-      @body_sprite.width    = part_constants.texture_size.x
-      @body_sprite.height   = part_constants.texture_size.y
-      @body_sprite.anchor.x = 0.5
-      @body_sprite.anchor.y = 0.5
       @body_sprite.x        = position.x
       @body_sprite.y        = -position.y
       @body_sprite.rotation = -angle
@@ -384,8 +395,6 @@ class Moto
 
       axle_sprite.width    = distance
       axle_sprite.height   = axle_thickness
-      axle_sprite.anchor.x = 0.0
-      axle_sprite.anchor.y = 0.5
       axle_sprite.x        =  wheel_position.x
       axle_sprite.y        = -wheel_position.y
       axle_sprite.rotation = -angle
