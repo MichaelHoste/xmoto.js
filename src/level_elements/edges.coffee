@@ -17,6 +17,7 @@ class Edges
           block:   @block
           texture: vertex.edge
           theme:   @theme.edge_params(vertex.edge)
+
         edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI/2
         edge.vertices = [ { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y - edge.theme.depth },
                           { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y - edge.theme.depth },
@@ -71,27 +72,13 @@ class Edges
         edge.graphics.visible = block_visible && @visible(edge) # don't test aabb if block not visible
 
   compute_aabb: (edge) ->
-    first = true
-    lower_bound = {}
-    upper_bound = {}
-    for vertex in edge.vertices
-      if first
-        lower_bound =
-          x: vertex.x
-          y: vertex.y
-        upper_bound =
-          x: vertex.x
-          y: vertex.y
-        first = false
-      else
-        lower_bound.x = vertex.x if vertex.x < lower_bound.x
-        lower_bound.y = vertex.y if vertex.y < lower_bound.y
-        upper_bound.x = vertex.x if vertex.x > upper_bound.x
-        upper_bound.y = vertex.y if vertex.y > upper_bound.y
+    x_positions = edge.vertices.map((v) -> v.x)
+    y_positions = edge.vertices.map((v) -> v.y)
 
     aabb = new Box2D.Collision.b2AABB()
-    aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
-    aabb.upperBound.Set(upper_bound.x, upper_bound.y)
+    aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
+    aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
+
     return aabb
 
   visible: (edge) ->

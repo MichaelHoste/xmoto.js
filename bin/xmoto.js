@@ -1269,8 +1269,8 @@
         block.sprite = new PIXI.TilingSprite(texture, size_x, size_y);
         block.sprite.x = block.aabb.lowerBound.x;
         block.sprite.y = -block.aabb.upperBound.y;
-        block.sprite.tileScale.x = 1.0 / 40;
-        block.sprite.tileScale.y = 1.0 / 40;
+        block.sprite.tileScale.x = 1.0 / 40.0;
+        block.sprite.tileScale.y = 1.0 / 40.0;
         block.sprite.mask = mask;
         results.push(this.level.camera.neutral_z_container.addChild(block.sprite));
       }
@@ -1296,41 +1296,16 @@
     };
 
     Blocks.prototype.compute_aabb = function(block) {
-      var aabb, first, j, len, lower_bound, ref, upper_bound, vertex;
-      first = true;
-      lower_bound = {};
-      upper_bound = {};
-      ref = block.vertices;
-      for (j = 0, len = ref.length; j < len; j++) {
-        vertex = ref[j];
-        if (first) {
-          lower_bound = {
-            x: vertex.absolute_x,
-            y: vertex.absolute_y
-          };
-          upper_bound = {
-            x: vertex.absolute_x,
-            y: vertex.absolute_y
-          };
-          first = false;
-        } else {
-          if (vertex.absolute_x < lower_bound.x) {
-            lower_bound.x = vertex.absolute_x;
-          }
-          if (vertex.absolute_y < lower_bound.y) {
-            lower_bound.y = vertex.absolute_y;
-          }
-          if (vertex.absolute_x > upper_bound.x) {
-            upper_bound.x = vertex.absolute_x;
-          }
-          if (vertex.absolute_y > upper_bound.y) {
-            upper_bound.y = vertex.absolute_y;
-          }
-        }
-      }
-      aabb = new b2AABB();
-      aabb.lowerBound.Set(lower_bound.x, lower_bound.y);
-      aabb.upperBound.Set(upper_bound.x, upper_bound.y);
+      var aabb, x_positions, y_positions;
+      x_positions = block.vertices.map(function(v) {
+        return v.absolute_x;
+      });
+      y_positions = block.vertices.map(function(v) {
+        return v.absolute_y;
+      });
+      aabb = new Box2D.Collision.b2AABB();
+      aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions));
+      aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions));
       return aabb;
     };
 
@@ -1347,10 +1322,6 @@
     return Blocks;
 
   })();
-
-  b2Vec2 = Box2D.Common.Math.b2Vec2;
-
-  b2AABB = Box2D.Collision.b2AABB;
 
   Edges = (function() {
     function Edges(level, block) {
@@ -1416,40 +1387,29 @@
     };
 
     Edges.prototype.init_sprites = function() {
-      var edge, j, k, len, len1, mask, points, ref, ref1, results, size_x, size_y, texture, vertex, x, y;
+      var edge, j, len, matrix, points, ref, results, texture;
       ref = this.list;
       results = [];
       for (j = 0, len = ref.length; j < len; j++) {
         edge = ref[j];
-        points = [];
-        ref1 = edge.vertices;
-        for (k = 0, len1 = ref1.length; k < len1; k++) {
-          vertex = ref1[k];
-          points.push(new PIXI.Point(vertex.x, -vertex.y));
-        }
-        mask = new PIXI.Graphics();
-        mask.beginFill(0xffffff, 1.0);
-        mask.drawPolygon(points);
-        this.level.camera.neutral_z_container.addChild(mask);
-        x = Math.abs(Math.sin(edge.angle) * edge.theme.depth);
-        y = Math.abs(Math.tan(edge.angle) * x);
+        points = edge.vertices.map(function(vertex) {
+          return new PIXI.Point(vertex.x, -vertex.y);
+        });
         texture = PIXI.Texture.from(this.assets.get_url(edge.theme.file));
-        size_x = edge.aabb.upperBound.x - edge.aabb.lowerBound.x + 2 * x;
-        size_y = edge.theme.depth;
-        edge.sprite = new PIXI.TilingSprite(texture, 4 * size_x, size_y);
-        edge.sprite.x = edge.vertex1.absolute_x - x;
-        if (edge.angle > 0) {
-          edge.sprite.y = -edge.vertex1.absolute_y + y;
-        }
-        if (edge.angle <= 0) {
-          edge.sprite.y = -edge.vertex1.absolute_y - y;
-        }
-        edge.sprite.pivot.x = 0.5;
-        edge.sprite.tileScale.x = 1.0 / 100.0;
-        edge.sprite.tileScale.y = 1.0 / 100.0;
-        edge.sprite.mask = mask;
-        edge.sprite.rotation = -edge.angle;
-        results.push(this.level.camera.neutral_z_container.addChild(edge.sprite));
+        matrix = new PIXI.Matrix();
+        matrix.scale(1.0 / 100.0, 1.0 / 100.0);
+        matrix.rotate(-edge.angle);
+        matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y);
+        edge.graphics = new PIXI.Graphics();
+        edge.graphics.beginTextureFill({
+          texture: texture,
+          matrix: matrix,
+          color: 0xffffff,
+          alpha: 1.0
+        });
+        edge.graphics.drawPolygon(points);
+        edge.graphics.endFill();
+        results.push(this.level.camera.neutral_z_container.addChild(edge.graphics));
       }
       return results;
     };
@@ -1462,48 +1422,23 @@
         results = [];
         for (j = 0, len = ref.length; j < len; j++) {
           edge = ref[j];
-          results.push(edge.sprite.visible = block_visible && this.visible(edge));
+          results.push(edge.graphics.visible = block_visible && this.visible(edge));
         }
         return results;
       }
     };
 
     Edges.prototype.compute_aabb = function(edge) {
-      var aabb, first, j, len, lower_bound, ref, upper_bound, vertex;
-      first = true;
-      lower_bound = {};
-      upper_bound = {};
-      ref = edge.vertices;
-      for (j = 0, len = ref.length; j < len; j++) {
-        vertex = ref[j];
-        if (first) {
-          lower_bound = {
-            x: vertex.x,
-            y: vertex.y
-          };
-          upper_bound = {
-            x: vertex.x,
-            y: vertex.y
-          };
-          first = false;
-        } else {
-          if (vertex.x < lower_bound.x) {
-            lower_bound.x = vertex.x;
-          }
-          if (vertex.y < lower_bound.y) {
-            lower_bound.y = vertex.y;
-          }
-          if (vertex.x > upper_bound.x) {
-            upper_bound.x = vertex.x;
-          }
-          if (vertex.y > upper_bound.y) {
-            upper_bound.y = vertex.y;
-          }
-        }
-      }
-      aabb = new b2AABB();
-      aabb.lowerBound.Set(lower_bound.x, lower_bound.y);
-      aabb.upperBound.Set(upper_bound.x, upper_bound.y);
+      var aabb, x_positions, y_positions;
+      x_positions = edge.vertices.map(function(v) {
+        return v.x;
+      });
+      y_positions = edge.vertices.map(function(v) {
+        return v.y;
+      });
+      aabb = new Box2D.Collision.b2AABB();
+      aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions));
+      aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions));
       return aabb;
     };
 
