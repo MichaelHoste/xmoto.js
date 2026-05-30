@@ -205,8 +205,8 @@
       },
       shape: [new b2Vec2(0.4, -0.3), new b2Vec2(0.50, 0.40), new b2Vec2(-0.75, 0.16), new b2Vec2(-0.35, -0.3)],
       collisions: true,
-      texture: 'playerbikerbody',
-      ghost_texture: 'ghostbikerbody',
+      texture: 'playerbikerbody.png',
+      ghost_texture: 'ghostbikerbody.png',
       texture_size: {
         x: 2.0,
         y: 1.0
@@ -223,8 +223,8 @@
         y: 0.48
       },
       collisions: true,
-      texture: 'playerbikerwheel',
-      ghost_texture: 'ghostbikerwheel'
+      texture: 'playerbikerwheel.png',
+      ghost_texture: 'ghostbikerwheel.png'
     };
 
     Constants.right_wheel = {
@@ -237,8 +237,8 @@
         y: 0.48
       },
       collisions: true,
-      texture: 'playerbikerwheel',
-      ghost_texture: 'ghostbikerwheel'
+      texture: 'playerbikerwheel.png',
+      ghost_texture: 'ghostbikerwheel.png'
     };
 
     Constants.left_axle = {
@@ -251,8 +251,8 @@
       },
       shape: [new b2Vec2(-0.10, -0.30), new b2Vec2(-0.25, -0.30), new b2Vec2(-0.80, -0.58), new b2Vec2(-0.65, -0.58)],
       collisions: true,
-      texture: 'rear1',
-      ghost_texture: 'rear_ghost'
+      texture: 'rear1.png',
+      ghost_texture: 'rear_ghost.png'
     };
 
     Constants.right_axle = {
@@ -265,8 +265,8 @@
       },
       shape: [new b2Vec2(0.58, -0.02), new b2Vec2(0.48, -0.02), new b2Vec2(0.66, -0.58), new b2Vec2(0.76, -0.58)],
       collisions: true,
-      texture: 'front1',
-      ghost_texture: 'front_ghost'
+      texture: 'front1.png',
+      ghost_texture: 'front_ghost.png'
     };
 
     Constants.head = {
@@ -292,8 +292,8 @@
       angle: -Math.PI / 30.0,
       shape: [new b2Vec2(0.10, -0.55), new b2Vec2(0.13, 0.15), new b2Vec2(-0.20, 0.22), new b2Vec2(-0.18, -0.55)],
       collisions: true,
-      texture: 'playertorso',
-      ghost_texture: 'ghosttorso',
+      texture: 'playertorso.png',
+      ghost_texture: 'ghosttorso.png',
       texture_size: {
         x: 0.50,
         y: 1.20
@@ -311,8 +311,8 @@
       angle: -Math.PI / 6.0,
       shape: [new b2Vec2(0.2, -0.33), new b2Vec2(0.2, -0.27), new b2Vec2(0.00, -0.2), new b2Vec2(0.02, 0.33), new b2Vec2(-0.17, 0.33), new b2Vec2(-0.14, -0.33)],
       collisions: true,
-      texture: 'playerlowerleg',
-      ghost_texture: 'ghostlowerleg',
+      texture: 'playerlowerleg.png',
+      ghost_texture: 'ghostlowerleg.png',
       texture_size: {
         x: 0.40,
         y: 0.66
@@ -330,8 +330,8 @@
       angle: -Math.PI / 11.0,
       shape: [new b2Vec2(0.4, -0.14), new b2Vec2(0.4, 0.07), new b2Vec2(-0.4, 0.14), new b2Vec2(-0.4, -0.08)],
       collisions: true,
-      texture: 'playerupperleg',
-      ghost_texture: 'ghostupperleg',
+      texture: 'playerupperleg.png',
+      ghost_texture: 'ghostupperleg.png',
       texture_size: {
         x: 0.78,
         y: 0.28
@@ -349,8 +349,8 @@
       angle: -Math.PI / 10.0,
       shape: [new b2Vec2(0.28, -0.07), new b2Vec2(0.28, 0.04), new b2Vec2(-0.30, 0.07), new b2Vec2(-0.30, -0.06)],
       collisions: true,
-      texture: 'playerlowerarm',
-      ghost_texture: 'ghostlowerarm',
+      texture: 'playerlowerarm.png',
+      ghost_texture: 'ghostlowerarm.png',
       texture_size: {
         x: 0.53,
         y: 0.20
@@ -368,8 +368,8 @@
       angle: Math.PI / 10.0,
       shape: [new b2Vec2(0.09, -0.29), new b2Vec2(0.09, 0.22), new b2Vec2(-0.11, 0.26), new b2Vec2(-0.10, -0.29)],
       collisions: true,
-      texture: 'playerupperarm',
-      ghost_texture: 'ghostupperarm',
+      texture: 'playerupperarm.png',
+      ghost_texture: 'ghostupperarm.png',
       texture_size: {
         x: 0.24,
         y: 0.56
@@ -823,7 +823,7 @@
       renderer = new PIXI.Renderer({
         width: options.width,
         height: options.height,
-        backgroundColor: 0xFFFFFF,
+        background: 0xFFFFFF,
         preserveDrawingBuffer: true
       });
       window.cancelAnimationFrame(window.game_loop);
@@ -1628,7 +1628,7 @@
         entity.sprite.play();
         container.addChild(entity.sprite);
       } else if (entity.file) {
-        entity.sprite = new PIXI.Sprite.from(this.assets.get_url(entity.file));
+        entity.sprite = PIXI.Sprite.from(this.assets.get_url(entity.file));
         container.addChild(entity.sprite);
       }
       if (entity.sprite) {
@@ -2337,7 +2337,7 @@
         } else {
           asset_name = Constants[part].texture;
         }
-        this[part + "_sprite"] = new PIXI.Sprite.from(this.assets.get_url(asset_name));
+        this[part + "_sprite"] = PIXI.Sprite.from(this.assets.get_url(asset_name));
         this.level.camera.neutral_z_container.addChild(this[part + "_sprite"]);
       }
       this.body_sprite.width = Constants.body.texture_size.x;
@@ -2964,7 +2964,7 @@
         } else {
           asset_name = Constants[part].texture;
         }
-        this[part + "_sprite"] = new PIXI.Sprite.from(this.assets.get_url(asset_name));
+        this[part + "_sprite"] = PIXI.Sprite.from(this.assets.get_url(asset_name));
         this[part + "_sprite"].width = Constants[part].texture_size.x;
         this[part + "_sprite"].height = Constants[part].texture_size.y;
         this[part + "_sprite"].anchor.x = 0.5;
@@ -3368,8 +3368,7 @@
     };
 
     Assets.prototype.load = function(callback) {
-      var item, items, j, k, l, len, len1, len2, len3, len4, m, n, ref, ref1, ref2, ref3, ref4;
-      PIXI.Loader.shared.reset();
+      var item, items, j, k, l, len, len1, len2, len3, m, ref, ref1, ref2, ref3, urls;
       items = [];
       ref = this.textures;
       for (j = 0, len = ref.length; j < len; j++) {
@@ -3400,17 +3399,22 @@
         item = ref3[m];
         items.push({
           id: item,
-          src: "/data/Textures/Riders/" + (item.toLowerCase()) + ".png"
+          src: "/data/Textures/Riders/" + (item.toLowerCase())
         });
       }
-      ref4 = this.remove_duplicate_textures(items);
-      for (n = 0, len4 = ref4.length; n < len4; n++) {
-        item = ref4[n];
-        PIXI.Loader.shared.add(item.id, item.src);
-      }
-      return PIXI.Loader.shared.load((function(_this) {
-        return function(loader, resources) {
-          _this.resources = resources;
+      items = _.uniqBy(items, 'id');
+      urls = _.map(items, function(item) {
+        return item.src;
+      });
+      return PIXI.Assets.load(urls).then((function(_this) {
+        return function() {
+          var len4, n;
+          for (n = 0, len4 = items.length; n < len4; n++) {
+            item = items[n];
+            _this.resources[item.id] = {
+              url: item.src
+            };
+          }
           return callback();
         };
       })(this));
@@ -3422,25 +3426,6 @@
 
     Assets.prototype.get_url = function(name) {
       return this.resources[name].url;
-    };
-
-    Assets.prototype.remove_duplicate_textures = function(array) {
-      var found, image, j, k, len, len1, unique, unique_image;
-      unique = [];
-      for (j = 0, len = array.length; j < len; j++) {
-        image = array[j];
-        found = false;
-        for (k = 0, len1 = unique.length; k < len1; k++) {
-          unique_image = unique[k];
-          if (image.id === unique_image.id) {
-            found = true;
-          }
-        }
-        if (!found) {
-          unique.push(image);
-        }
-      }
-      return unique;
     };
 
     return Assets;

@@ -15,7 +15,7 @@ $.xmoto = (level_filename, options = {}) ->
     renderer = new PIXI.Renderer({
       width:                 options.width,
       height:                options.height,
-      backgroundColor:       0xFFFFFF,
+      background:            0xFFFFFF,
       preserveDrawingBuffer: true   # Need to be true when rendering without clear
 
       #transparent:     true  # May be useful later (moto on website)

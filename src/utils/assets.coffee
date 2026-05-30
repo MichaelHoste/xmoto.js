@@ -18,8 +18,6 @@ class Assets
     )
 
   load: (callback) ->
-    PIXI.Loader.shared.reset()
-
     items = []
     for item in @textures
       items.push(
@@ -39,14 +37,16 @@ class Assets
     for item in @moto
       items.push(
         id:  item
-        src: "/data/Textures/Riders/#{item.toLowerCase()}.png"
+        src: "/data/Textures/Riders/#{item.toLowerCase()}"
       )
 
-    for item in @remove_duplicate_textures(items)
-      PIXI.Loader.shared.add(item.id, item.src)
+    items = _.uniqBy(items, 'id');
+    urls  = _.map(items, (item) -> item.src)
 
-    PIXI.Loader.shared.load((loader, resources) =>
-      @resources = resources
+    PIXI.Assets.load(urls).then( =>
+      for item in items
+        @resources[item.id] = { url: item.src }
+
       callback()
     )
 
@@ -56,12 +56,3 @@ class Assets
 
   get_url: (name) ->
     @resources[name].url
-
-  remove_duplicate_textures: (array) ->
-    unique = []
-    for image in array
-      found = false
-      for unique_image in unique
-        found = true if image.id == unique_image.id
-      unique.push(image) if not found
-    unique

@@ -133,7 +133,7 @@ class Entities
       entity.sprite.play()
       container.addChild(entity.sprite)
     else if entity.file
-      entity.sprite = new PIXI.Sprite.from(@assets.get_url(entity.file))
+      entity.sprite = PIXI.Sprite.from(@assets.get_url(entity.file))
       container.addChild(entity.sprite)
 
     if entity.sprite

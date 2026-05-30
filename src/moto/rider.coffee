@@ -67,7 +67,7 @@ class Rider
       else
         asset_name = Constants[part].texture
 
-      @["#{part}_sprite"] = new PIXI.Sprite.from(@assets.get_url(asset_name))
+      @["#{part}_sprite"] = PIXI.Sprite.from(@assets.get_url(asset_name))
       @["#{part}_sprite"].width    = Constants[part].texture_size.x
       @["#{part}_sprite"].height   = Constants[part].texture_size.y
       @["#{part}_sprite"].anchor.x = 0.5

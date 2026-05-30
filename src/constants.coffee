@@ -48,8 +48,8 @@ class Constants
              new b2Vec2(-0.75,  0.16)
              new b2Vec2(-0.35, -0.3) ]
     collisions: true
-    texture:       'playerbikerbody'
-    ghost_texture: 'ghostbikerbody'
+    texture:       'playerbikerbody.png'
+    ghost_texture: 'ghostbikerbody.png'
     texture_size:
       x: 2.0
       y: 1.0
@@ -63,8 +63,8 @@ class Constants
       x: -0.70
       y:  0.48
     collisions: true
-    texture:       'playerbikerwheel'
-    ghost_texture: 'ghostbikerwheel'
+    texture:       'playerbikerwheel.png'
+    ghost_texture: 'ghostbikerwheel.png'
 
   @right_wheel =
     radius:      0.35
@@ -75,8 +75,8 @@ class Constants
       x: 0.70
       y: 0.48
     collisions: true
-    texture:       'playerbikerwheel'
-    ghost_texture: 'ghostbikerwheel'
+    texture:       'playerbikerwheel.png'
+    ghost_texture: 'ghostbikerwheel.png'
 
   @left_axle =
     density:     1.0
@@ -90,8 +90,8 @@ class Constants
              new b2Vec2(-0.80, -0.58)
              new b2Vec2(-0.65, -0.58) ]
     collisions: true
-    texture:       'rear1'
-    ghost_texture: 'rear_ghost'
+    texture:       'rear1.png'
+    ghost_texture: 'rear_ghost.png'
 
   @right_axle =
     density:     1.5
@@ -105,8 +105,8 @@ class Constants
              new b2Vec2(0.66, -0.58)
              new b2Vec2(0.76, -0.58) ]
     collisions: true
-    texture:       'front1'
-    ghost_texture: 'front_ghost'
+    texture:       'front1.png'
+    ghost_texture: 'front_ghost.png'
 
   # RIDER PARTS
 
@@ -133,8 +133,8 @@ class Constants
              new b2Vec2(-0.20,  0.22)
              new b2Vec2(-0.18, -0.55) ]
     collisions: true
-    texture:       'playertorso'
-    ghost_texture: 'ghosttorso'
+    texture:       'playertorso.png'
+    ghost_texture: 'ghosttorso.png'
     texture_size:
       x: 0.50
       y: 1.20
@@ -154,8 +154,8 @@ class Constants
              new b2Vec2(-0.17,  0.33)
              new b2Vec2(-0.14, -0.33) ]
     collisions: true
-    texture:       'playerlowerleg'
-    ghost_texture: 'ghostlowerleg'
+    texture:       'playerlowerleg.png'
+    ghost_texture: 'ghostlowerleg.png'
     texture_size:
       x: 0.40
       y: 0.66
@@ -173,8 +173,8 @@ class Constants
              new b2Vec2(-0.4,  0.14)
              new b2Vec2(-0.4, -0.08) ]
     collisions: true
-    texture:       'playerupperleg'
-    ghost_texture: 'ghostupperleg'
+    texture:       'playerupperleg.png'
+    ghost_texture: 'ghostupperleg.png'
     texture_size:
       x: 0.78
       y: 0.28
@@ -192,8 +192,8 @@ class Constants
              new b2Vec2(-0.30,  0.07)
              new b2Vec2(-0.30, -0.06) ]
     collisions: true
-    texture:       'playerlowerarm'
-    ghost_texture: 'ghostlowerarm'
+    texture:       'playerlowerarm.png'
+    ghost_texture: 'ghostlowerarm.png'
     texture_size:
       x: 0.53
       y: 0.20
@@ -211,8 +211,8 @@ class Constants
              new b2Vec2(-0.11,  0.26)
              new b2Vec2(-0.10, -0.29) ]
     collisions: true
-    texture:       'playerupperarm'
-    ghost_texture: 'ghostupperarm'
+    texture:       'playerupperarm.png'
+    ghost_texture: 'ghostupperarm.png'
     texture_size:
       x: 0.24
       y: 0.56
