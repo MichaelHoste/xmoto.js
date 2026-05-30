@@ -2,29 +2,22 @@ $.xmoto = (level_filename, options = {}) ->
   initialize = ->
     options = load_options(options)
 
-    # v8: PIXI.settings removed. Mipmaps are per-texture via
-    # TextureSourceOptions.autoGenerateMipmaps (defaults to false).
-
-    # If mipmapping is needed later, sharper rendering is done using
-    # this line (maybe blurrier is better? Need to test on bike)
-    # texture.source.style.scaleMode = 'nearest'
-
-    renderer = new PIXI.WebGLRenderer()
-    renderer.init({
+    renderer = await PIXI.autoDetectRenderer({
+      preference:            'webgl',
       width:                 options.width,
       height:                options.height,
       background:            0xFFFFFF,
-      preserveDrawingBuffer: true   # Need to be true when rendering without clear
+      clearBeforeRender:     false  # No need to clear, we paint the entire canvas
+      antialias:             true   # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
+      #preserveDrawingBuffer: true  # Need to be true when capturing with "toDataUrl" (may have low performance impact)
+      #transparent: true            # May be useful later (moto on website)
+    })
 
-      #transparent:     true  # May be useful later (moto on website)
-      #antialias:       true, # antiliasing is false by default and we keep it that way because
-                              # of significative FPS drop and small visual changes
-    }).then(=>
-      window.cancelAnimationFrame(window.game_loop)
+    window.cancelAnimationFrame(window.game_loop)
 
-      bind_render_to_dom(renderer, options)
-      main_loop(level_filename, renderer, options)
-    )
+    bind_render_to_dom(renderer, options)
+    main_loop(level_filename, renderer, options)
+
   load_options = (options) ->
     defaults =
 

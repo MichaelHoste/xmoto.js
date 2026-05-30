@@ -72,6 +72,10 @@ You can copy-paste the generated URL to keep the custom physics.
 
 Don't forget to restart the coffee command if you create new COFFEE files.
 
+### Technical informations
+
+ * Implementation of replays is described [here](https://github.com/MichaelHoste/xmoto.js/issues/8)
+
 ## COVID-XMoto
 
 Many years after this project was shelved, and out of nowhere, 
