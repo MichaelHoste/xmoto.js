@@ -16,8 +16,7 @@ $.xmoto = (level_filename, options = {}) ->
       width:                 options.width,
       height:                options.height,
       backgroundColor:       0xFFFFFF,
-      clearBeforeRender:     false  # Should be faster (because we always render everything)
-      preserveDrawingBuffer: true   # Need to be true if clearBeforeRender is false
+      preserveDrawingBuffer: true   # Need to be true when rendering without clear
 
       #transparent:     true  # May be useful later (moto on website)
       #antialias:       true, # antiliasing is false by default and we keep it that way because
@@ -99,7 +98,7 @@ $.xmoto = (level_filename, options = {}) ->
         stats_ms.begin()  if Constants.debug
 
         level.update()
-        renderer.render(level.stage) if !Constants.debug_physics
+        renderer.render(level.stage, { clear: false }) if !Constants.debug_physics
         window.game_loop = requestAnimationFrame(update)
 
         stats_fps.end() if Constants.debug

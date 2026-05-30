@@ -824,7 +824,6 @@
         width: options.width,
         height: options.height,
         backgroundColor: 0xFFFFFF,
-        clearBeforeRender: false,
         preserveDrawingBuffer: true
       });
       window.cancelAnimationFrame(window.game_loop);
@@ -900,7 +899,9 @@
             }
             level.update();
             if (!Constants.debug_physics) {
-              renderer.render(level.stage);
+              renderer.render(level.stage, {
+                clear: false
+              });
             }
             window.game_loop = requestAnimationFrame(update);
             if (Constants.debug) {
