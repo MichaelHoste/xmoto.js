@@ -1163,7 +1163,7 @@
     }
 
     parse(xml) {
-      var block, j, k, l, len, len1, len2, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
+      var block, is_background, j, k, l, len, len1, len2, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
       xml_blocks = $(xml).find('block');
       for (j = 0, len = xml_blocks.length; j < len; j++) {
         xml_block = xml_blocks[j];
@@ -1173,7 +1173,9 @@
             x: parseFloat($(xml_block).find('position').attr('x')),
             y: parseFloat($(xml_block).find('position').attr('y')),
             dynamic: $(xml_block).find('position').attr('dynamic') === 'true',
-            background: $(xml_block).find('position').attr('background') === 'true'
+            background: $(xml_block).find('position').attr('background') === 'true', // collisions and layer=0 but at the back
+            islayer: $(xml_block).find('position').attr('islayer') === 'true', // if true, then no collisions
+            layerid: parseInt($(xml_block).find('position').attr('layerid')) || 0
           },
           usetexture: {
             id: $(xml_block).find('usetexture').attr('id').toLowerCase(),
@@ -1223,7 +1225,9 @@
         block.edges_list.parse();
         block.aabb = this.compute_aabb(block);
         this.list.push(block);
-        if (block.position.background) {
+        is_background = block.position.background; // old syntax
+        is_background || (is_background = block.position.islayer && block.position.layerid > 0); // new syntax
+        if (is_background) {
           this.back_list.push(block);
         } else {
           this.front_list.push(block);
@@ -1428,7 +1432,7 @@
         texture = PIXI.Texture.from(this.assets.get_url(edge.theme.file));
         // Matrix maps world coords → texture UV, pivoting around top-left corner.
         matrix = new PIXI.Matrix();
-        matrix.scale(1.0 / 100.0, 1.0 / 100.0);
+        matrix.scale(1.0 / 110.0, 1.0 / 110.0 * edge.theme.scale * edge.theme.depth); // reverse engineering to get nice visual values
         matrix.rotate(-edge.angle);
         matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y);
         // Create graphics with texture and matrix
@@ -1529,42 +1533,46 @@
         texture_name = this.entity_texture_name(entity);
         if (texture_name) {
           sprite = this.assets.theme.sprite_params(texture_name);
-          entity.file = sprite.file;
-          entity.file_base = sprite.file_base;
-          entity.file_ext = sprite.file_ext;
-          if (!entity.size.width) {
-            entity.size.width = sprite.size.width;
+          if (sprite) {
+            entity.file = sprite.file;
+            entity.file_base = sprite.file_base;
+            entity.file_ext = sprite.file_ext;
+            if (!entity.size.width) {
+              entity.size.width = sprite.size.width;
+            }
+            if (!entity.size.height) {
+              entity.size.height = sprite.size.height;
+            }
+            entity.center = {
+              x: sprite.center.x,
+              y: sprite.center.y
+            };
+            if (!entity.center.x) {
+              entity.center.x = entity.size.width / 2;
+            }
+            if (!entity.center.y) {
+              entity.center.y = entity.size.height / 2;
+            }
+            if (!entity.size.width) {
+              // no size informations into the theme or into the level
+              entity.size.width = 2 * entity.size.r;
+            }
+            if (!entity.size.height) {
+              entity.size.height = 2 * entity.size.r;
+            }
+            if (!entity.center.x) {
+              entity.center.x = entity.size.r;
+            }
+            if (!entity.center.y) {
+              entity.center.y = entity.size.r;
+            }
+            entity.delay = sprite.delay;
+            entity.frames = sprite.frames;
+            entity.display = true; // if an entity has a texture, it needs to be displayed
+            entity.aabb = this.compute_aabb(entity);
+          } else {
+            console.error(`XMoto warning: texture file \"${texture_name}\" was not found in the theme and is ignored.`);
           }
-          if (!entity.size.height) {
-            entity.size.height = sprite.size.height;
-          }
-          entity.center = {
-            x: sprite.center.x,
-            y: sprite.center.y
-          };
-          if (!entity.center.x) {
-            entity.center.x = entity.size.width / 2;
-          }
-          if (!entity.center.y) {
-            entity.center.y = entity.size.height / 2;
-          }
-          if (!entity.size.width) {
-            // no size informations into the theme or into the level
-            entity.size.width = 2 * entity.size.r;
-          }
-          if (!entity.size.height) {
-            entity.size.height = 2 * entity.size.r;
-          }
-          if (!entity.center.x) {
-            entity.center.x = entity.size.r;
-          }
-          if (!entity.center.y) {
-            entity.center.y = entity.size.r;
-          }
-          entity.delay = sprite.delay;
-          entity.frames = sprite.frames;
-          entity.display = true; // if an entity has a texture, it needs to be displayed
-          entity.aabb = this.compute_aabb(entity);
         }
         this.list.push(entity);
       }

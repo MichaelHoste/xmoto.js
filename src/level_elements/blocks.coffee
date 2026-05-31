@@ -23,7 +23,9 @@ class Blocks
           x:          parseFloat($(xml_block).find('position').attr('x'))
           y:          parseFloat($(xml_block).find('position').attr('y'))
           dynamic:    $(xml_block).find('position').attr('dynamic')    == 'true'
-          background: $(xml_block).find('position').attr('background') == 'true'
+          background: $(xml_block).find('position').attr('background') == 'true'   # collisions and layer=0 but at the back
+          islayer:    $(xml_block).find('position').attr('islayer') == 'true'      # if true, then no collisions
+          layerid:    parseInt($(xml_block).find('position').attr('layerid')) || 0
         usetexture:
           id:         $(xml_block).find('usetexture').attr('id').toLowerCase()
           scale:      parseFloat($(xml_block).find('usetexture').attr('scale'))
@@ -65,17 +67,21 @@ class Blocks
       block.edges_list = new Edges(@level, block)
       block.edges_list.parse()
 
-      block.aabb       = @compute_aabb(block)
+      block.aabb = @compute_aabb(block)
 
       @list.push(block)
-      if block.position.background
+
+      is_background =   block.position.background                            # old syntax
+      is_background ||= block.position.islayer && block.position.layerid > 0 # new syntax
+
+      if is_background
         @back_list.push(block)
       else
         @front_list.push(block)
 
-    @list      .sort( @sort_blocks_by_texture )
-    @back_list .sort( @sort_blocks_by_texture )
-    @front_list.sort( @sort_blocks_by_texture )
+    @list      .sort(@sort_blocks_by_texture)
+    @back_list .sort(@sort_blocks_by_texture)
+    @front_list.sort(@sort_blocks_by_texture)
 
     return this
 
@@ -93,6 +99,7 @@ class Blocks
 
   init_physics_parts: ->
     ground = Constants.ground
+
     for block in @front_list
       @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
