@@ -45,7 +45,7 @@ class Edges
 
       # Matrix maps world coords → texture UV, pivoting around top-left corner.
       matrix = new PIXI.Matrix()
-      matrix.scale(1.0 / 100.0, 1.0 / 100.0)
+      matrix.scale(1.0 / 110.0, 1.0 / 110.0 * edge.theme.scale * edge.theme.depth) # reverse engineering to get nice visual values
       matrix.rotate(-edge.angle)
       matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y)
 
