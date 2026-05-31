@@ -44,28 +44,31 @@ class Entities
       if texture_name
         sprite = @assets.theme.sprite_params(texture_name)
 
-        entity.file        = sprite.file
-        entity.file_base   = sprite.file_base
-        entity.file_ext    = sprite.file_ext
-        entity.size.width  = sprite.size.width  if not entity.size.width
-        entity.size.height = sprite.size.height if not entity.size.height
-        entity.center =
-          x: sprite.center.x
-          y: sprite.center.y
-        entity.center.x = entity.size.width/2  if not entity.center.x
-        entity.center.y = entity.size.height/2 if not entity.center.y
+        if sprite
+          entity.file        = sprite.file
+          entity.file_base   = sprite.file_base
+          entity.file_ext    = sprite.file_ext
+          entity.size.width  = sprite.size.width  if not entity.size.width
+          entity.size.height = sprite.size.height if not entity.size.height
+          entity.center =
+            x: sprite.center.x
+            y: sprite.center.y
+          entity.center.x = entity.size.width/2  if not entity.center.x
+          entity.center.y = entity.size.height/2 if not entity.center.y
 
-        # no size informations into the theme or into the level
-        entity.size.width  = 2*entity.size.r   if not entity.size.width
-        entity.size.height = 2*entity.size.r   if not entity.size.height
-        entity.center.x    = entity.size.r     if not entity.center.x
-        entity.center.y    = entity.size.r     if not entity.center.y
+          # no size informations into the theme or into the level
+          entity.size.width  = 2*entity.size.r   if not entity.size.width
+          entity.size.height = 2*entity.size.r   if not entity.size.height
+          entity.center.x    = entity.size.r     if not entity.center.x
+          entity.center.y    = entity.size.r     if not entity.center.y
 
-        entity.delay   = sprite.delay
-        entity.frames  = sprite.frames
-        entity.display = true # if an entity has a texture, it needs to be displayed
+          entity.delay   = sprite.delay
+          entity.frames  = sprite.frames
+          entity.display = true # if an entity has a texture, it needs to be displayed
 
-        entity.aabb = @compute_aabb(entity)
+          entity.aabb = @compute_aabb(entity)
+        else
+          console.error("XMoto warning: texture file \"#{texture_name}\" was not found in the theme and is ignored.")
 
       @list.push(entity)
 
