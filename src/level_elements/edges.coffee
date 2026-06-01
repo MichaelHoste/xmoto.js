@@ -5,74 +5,133 @@ class Edges
     @block  = block
     @assets = @level.assets
 
-    @list = [] # List of edges
+    @list = [] # List of edge chains (each chain = contiguous vertices sharing the same edge texture)
 
   parse: ->
-    for vertex, i in @block.vertices
-      if vertex.edge
-        edge =
-          vertex1: vertex
-          vertex2: if i == @block.vertices.length-1 then @block.vertices[0] else @block.vertices[i+1]
-          block:   @block
-          texture: vertex.edge
-          theme:   @assets.theme.edge_params(vertex.edge)
+    vertices = @block.vertices
+    n = vertices.length
 
-        edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI/2
-        edge.vertices = [ { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y - edge.theme.depth },
-                          { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y - edge.theme.depth },
-                          { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y },
-                          { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y } ]
-        edge.aabb = @compute_aabb(edge)
+    # Collect runs of consecutive vertices with the same edge texture
+    runs = []
+    i = 0
+    while i < n
+      if vertices[i].edge
+        texture = vertices[i].edge
+        j = i + 1
+        while j < n && vertices[j].edge == texture
+          j++
+        runs.push({ start: i, end: j - 1, texture: texture })
+        i = j
+      else
+        i++
 
-        @list.push(edge)
+    # Handle wrapping: if first and last runs share the same texture, merge them
+    if runs.length > 1 && runs[0].texture == runs[runs.length - 1].texture
+      runs[0].start = runs[runs.length - 1].start
+      runs.pop()
+
+    # Build one chain per run
+    for run in runs
+      start_idx          = run.start
+      closing_idx        = (run.end + 1) % n  # first vertex after the run (may wrap)
+      theme              = @assets.theme.edge_params(run.texture)
+      chain              = @build_chain(vertices, start_idx, closing_idx, run.texture, theme)
+      chain.aabb         = @compute_aabb(chain)
+      @list.push(chain)
+
+  build_chain: (vertices, start_idx, closing_idx, texture, theme) ->
+    n = vertices.length
+
+    # Collect surface vertices from start_idx to closing_idx (inclusive, may wrap)
+    surface = []
+    i = start_idx
+    loop
+      surface.push({ x: vertices[i].absolute_x, y: vertices[i].absolute_y })
+      break if i == closing_idx
+      i = (i + 1) % n
+
+    N = surface.length  # number of surface vertices (K+1 where K = chain segment count)
+
+    # Compute cumulative arc lengths along the surface for U coordinates
+    total_length = 0
+    lengths = [0]
+    for s in [1...N]
+      dx = surface[s].x - surface[s-1].x
+      dy = surface[s].y - surface[s-1].y
+      total_length += Math.sqrt(dx * dx + dy * dy)
+      lengths.push(total_length)
+
+    # UV: U along the edge (tiles via repeat), V across the depth (0→1).
+    polygon = []
+    uvs     = []
+    depth   = theme.depth
+    scale   = theme.scale
+
+    for s in [0...N]
+      v = surface[s]
+      polygon.push({ x: v.x, y: v.y })
+      uvs.push(lengths[s] * scale, 0.0)
+
+    for s in [0...N]
+      v = surface[N - 1 - s]
+      polygon.push({ x: v.x, y: v.y - depth })
+      uvs.push(lengths[N - 1 - s] * scale, 0.99)
+
+    # Build triangle indices for the strip
+    indices = []
+    for s in [0...N - 1]
+      o_i   = 2 * N - 1 - s
+      o_ip1 = 2 * N - 2 - s
+      indices.push(s, s + 1, o_i)
+      indices.push(s + 1, o_ip1, o_i)
+
+    return {
+      texture:  texture
+      theme:    theme
+      vertices: polygon
+      uvs:      new Float32Array(uvs)
+      indices:  new Uint32Array(indices)
+    }
 
   load_assets: ->
-    for edge in @list
-      @assets.effects.push(edge.theme.file)
+    for chain in @list
+      @assets.effects.push(chain.theme.file)
 
   init: ->
     @init_sprites()
 
   init_sprites: ->
-    for edge in @list
-      # Build polygon in PIXI coordinates (y inverted)
-      points = edge.vertices.map((vertex) ->
-        new PIXI.Point(vertex.x, -vertex.y)
-      )
+    for chain in @list
+      # Convert world coords (Y-up) to PIXI coords (Y-down)
+      count = chain.vertices.length
+      positions = new Float32Array(count * 2)
+      for v, i in chain.vertices
+        positions[i * 2]     = v.x
+        positions[i * 2 + 1] = -v.y
 
-      # Load edge texture
-      texture = PIXI.Texture.from(@assets.get_url(edge.theme.file))
-
-      # Matrix maps world coords → texture UV, pivoting around top-left corner.
-      matrix = new PIXI.Matrix()
-      matrix.scale(1.0 / 110.0, 1.0 / 110.0 * edge.theme.scale * edge.theme.depth) # reverse engineering to get nice visual values
-      matrix.rotate(-edge.angle)
-      matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y)
-
-      # Create graphics with texture and matrix
-      edge.graphics = new PIXI.Graphics()
-      edge.graphics.poly(points)
-      edge.graphics.fill({
-        texture:      texture,
-        matrix:       matrix,
-        color:        0xffffff,
-        alpha:        1.0,
-        textureSpace: 'global'
+      geometry = new PIXI.MeshGeometry({
+        positions: positions
+        uvs:       chain.uvs
+        indices:   chain.indices
       })
 
-      @level.camera.neutral_z_container.addChild(edge.graphics)
+      texture = PIXI.Texture.from(@assets.get_url(chain.theme.file))
+      texture.source.addressMode = 'repeat'
+
+      chain.mesh = new PIXI.Mesh({ geometry: geometry, texture: texture })
+      @level.camera.neutral_z_container.addChild(chain.mesh)
 
   # only display edges present on the screen zone
   update: ->
     if !Constants.debug_physics
       block_visible = @block.graphics.visible
 
-      for edge in @list
-        edge.graphics.visible = block_visible && @visible(edge) # don't test aabb if block not visible
+      for chain in @list
+        chain.mesh.visible = block_visible && @visible(chain)
 
-  compute_aabb: (edge) ->
-    x_positions = edge.vertices.map((v) -> v.x)
-    y_positions = edge.vertices.map((v) -> v.y)
+  compute_aabb: (chain) ->
+    x_positions = chain.vertices.map((v) -> v.x)
+    y_positions = chain.vertices.map((v) -> v.y)
 
     aabb = new Box2D.Collision.b2AABB()
     aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
@@ -80,5 +139,5 @@ class Edges
 
     return aabb
 
-  visible: (edge) ->
-    edge.aabb.TestOverlap(@level.camera.aabb)
+  visible: (chain) ->
+    chain.aabb.TestOverlap(@level.camera.aabb)
