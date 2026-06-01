@@ -12,28 +12,28 @@ class Level
     @stage     = new PIXI.Container()
 
     # Level independant objects
-    @assets        = new Assets()
-    @camera        = new Camera(this)
-    @physics       = new Physics(this)
-    @input         = new Input(this)
-    @listeners     = new Listeners(this)
-    @moto          = new Moto(this)
-    @particles     = new Particles(this)
+    @assets    = new Assets()
+    @camera    = new Camera(this)
+    @physics   = new Physics(this)
+    @input     = new Input(this)
+    @listeners = new Listeners(this)
+    @moto      = new Moto(this)
+    @particles = new Particles(this)
 
     # Level dependent objects
-    @infos         = new Infos(this)
-    @sky           = new Sky(this)
-    @blocks        = new Blocks(this)
-    @limits        = new Limits(this)
-    @layer_offsets = new LayerOffsets(this)
-    @script        = new Script(this)
-    @entities      = new Entities(this)
+    @infos    = new Infos(this)
+    @sky      = new Sky(this)
+    @layers   = new Layers(this)
+    @blocks   = new Blocks(this)
+    @limits   = new Limits(this)
+    @script   = new Script(this)
+    @entities = new Entities(this)
 
     # Replay: actual run of the player (not saved yet)
-    @replay        = new Replay(this)
+    @replay = new Replay(this)
 
     # Ghosts: previous saved run of various players (included himself)
-    @ghosts        = new Ghosts(this)
+    @ghosts = new Ghosts(this)
 
   load_from_file: (filename, callback) ->
     @assets.parse_theme( =>
@@ -47,13 +47,13 @@ class Level
     )
 
   load_level: (xml, callback) ->
-    @infos        .parse(xml)
-    @sky          .parse(xml)
-    @blocks       .parse(xml)
-    @limits       .parse(xml)
-    @layer_offsets.parse(xml)
-    @script       .parse(xml)
-    @entities     .parse(xml)
+    @infos   .parse(xml)
+    @sky     .parse(xml)
+    @layers  .parse(xml)
+    @blocks  .parse(xml)
+    @limits  .parse(xml)
+    @script  .parse(xml)
+    @entities.parse(xml)
 
     @sky     .load_assets()
     @blocks  .load_assets()
