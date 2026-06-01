@@ -179,11 +179,17 @@ class Entities
 
   entity_texture_name: (entity) ->
     if entity.type_id == 'Sprite'
-      return entity.params.name
-    else if entity.type_id == 'EndOfLevel'
-      return 'Flower'
-    else if entity.type_id == 'Strawberry' or entity.type_id == 'Wrecker'
-      return entity.type_id
+      name = entity.params.name
+    else if entity.type_id == 'EndOfLevel' # hard-coded entity
+      name = 'Flower'
+    else if entity.type_id in ['Strawberry', 'Wrecker'] # hard-coded entities
+      name = entity.type_id
+
+    # theme_replacements in XML
+    if @level.replacements.sprites[name]
+      name = @level.replacements.sprites[name]
+
+    name
 
   compute_aabb: (entity) ->
     lower_bound =

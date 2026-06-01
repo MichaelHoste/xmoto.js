@@ -18,13 +18,14 @@ class Level
     @particles = new Particles(this)
 
     # Level dependent objects
-    @infos    = new Infos(this)
-    @sky      = new Sky(this)
-    @layers   = new Layers(this)
-    @blocks   = new Blocks(this)
-    @limits   = new Limits(this)
-    @script   = new Script(this)
-    @entities = new Entities(this)
+    @infos        = new Infos(this)
+    @replacements = new Replacements(this)
+    @sky          = new Sky(this)
+    @layers       = new Layers(this)
+    @blocks       = new Blocks(this)
+    @limits       = new Limits(this)
+    @script       = new Script(this)
+    @entities     = new Entities(this)
 
     # Replay: actual run of the player (not saved yet)
     @replay = new Replay(this)
@@ -44,13 +45,14 @@ class Level
     )
 
   load_level: (xml, callback) ->
-    @infos   .parse(xml)
-    @sky     .parse(xml)
-    @layers  .parse(xml)
-    @blocks  .parse(xml)
-    @limits  .parse(xml)
-    @script  .parse(xml)
-    @entities.parse(xml)
+    @infos       .parse(xml)
+    @replacements.parse(xml)
+    @sky         .parse(xml)
+    @layers      .parse(xml)
+    @blocks      .parse(xml)
+    @limits      .parse(xml)
+    @script      .parse(xml)
+    @entities    .parse(xml)
 
     @sky     .load_assets()
     @blocks  .load_assets()
