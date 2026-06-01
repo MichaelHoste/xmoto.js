@@ -1,5 +1,3 @@
-b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-
 class Entities
 
   constructor: (level) ->
@@ -150,7 +148,7 @@ class Entities
 
   create_entity: (entity, name) ->
     # Create fixture
-    fixDef = new b2FixtureDef()
+    fixDef = new Box2D.Dynamics.b2FixtureDef()
     fixDef.shape = new b2CircleShape(entity.size.r)
     fixDef.isSensor = true
 
@@ -196,7 +194,7 @@ class Entities
       x: lower_bound.x + entity.size.width
       y: lower_bound.y + entity.size.height
 
-    aabb = new b2AABB()
+    aabb = new Box2D.Collision.b2AABB()
     aabb.lowerBound.Set(lower_bound.x, lower_bound.y)
     aabb.upperBound.Set(upper_bound.x, upper_bound.y)
 

@@ -14,7 +14,7 @@ class Camera
       x: 0
       y: 0
 
-    @aabb = new b2AABB()
+    @aabb = new Box2D.Collision.b2AABB()
 
     @scale_container      = new PIXI.Container()
     @translate_container  = new PIXI.Container()

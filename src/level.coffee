@@ -1,6 +1,3 @@
-b2AABB = Box2D.Collision.b2AABB
-b2Vec2 = Box2D.Common.Math.b2Vec2
-
 class Level
 
   constructor: (renderer, options) ->
@@ -66,6 +63,7 @@ class Level
 
   init: ->
     @sky      .init()
+    @layers   .init()
     @blocks   .init()
     @limits   .init()
     @entities .init()
@@ -87,6 +85,7 @@ class Level
     @update_timer() if dead_player || dead_replay
 
     @sky      .update()
+    @layers   .update()
     @limits   .update()
     @entities .update()
     @camera   .update()

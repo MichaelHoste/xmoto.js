@@ -412,7 +412,7 @@ class Moto
     upper2 = @right_wheel.GetFixtureList().GetAABB().upperBound
     upper3 = @rider.head.GetFixtureList().GetAABB().upperBound
 
-    aabb = new b2AABB()
+    aabb = new Box2D.Collision.b2AABB()
     aabb.lowerBound.Set(Math.min(lower1.x, lower2.x, lower3.x), Math.min(lower1.y, lower2.y, lower3.y))
     aabb.upperBound.Set(Math.max(upper1.x, upper2.x, upper3.x), Math.max(upper1.y, upper2.y, upper3.y))
 

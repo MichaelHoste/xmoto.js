@@ -16,7 +16,7 @@
         x: 0,
         y: 0
       };
-      this.aabb = new b2AABB();
+      this.aabb = new Box2D.Collision.b2AABB();
       this.scale_container = new PIXI.Container();
       this.translate_container = new PIXI.Container();
       this.negative_z_container = new PIXI.Container();
@@ -573,10 +573,6 @@
 
   };
 
-  b2AABB = Box2D.Collision.b2AABB;
-
-  b2Vec2 = Box2D.Common.Math.b2Vec2;
-
   Level = class Level {
     constructor(renderer, options) {
       this.renderer = renderer;
@@ -639,6 +635,7 @@
 
     init() {
       this.sky.init();
+      this.layers.init();
       this.blocks.init();
       this.limits.init();
       this.entities.init();
@@ -660,6 +657,7 @@
         this.update_timer();
       }
       this.sky.update();
+      this.layers.update();
       this.limits.update();
       this.entities.update();
       this.camera.update();
@@ -1148,10 +1146,6 @@
 
   };
 
-  b2Vec2 = Box2D.Common.Math.b2Vec2;
-
-  b2AABB = Box2D.Collision.b2AABB;
-
   Blocks = class Blocks {
     constructor(level) {
       this.level = level;
@@ -1485,8 +1479,6 @@
 
   };
 
-  b2FixtureDef = Box2D.Dynamics.b2FixtureDef;
-
   Entities = class Entities {
     constructor(level) {
       this.level = level;
@@ -1698,7 +1690,7 @@
     create_entity(entity, name) {
       var body, bodyDef, fixDef;
       // Create fixture
-      fixDef = new b2FixtureDef();
+      fixDef = new Box2D.Dynamics.b2FixtureDef();
       fixDef.shape = new b2CircleShape(entity.size.r);
       fixDef.isSensor = true;
       // Create body
@@ -1754,7 +1746,7 @@
         x: lower_bound.x + entity.size.width,
         y: lower_bound.y + entity.size.height
       };
-      aabb = new b2AABB();
+      aabb = new Box2D.Collision.b2AABB();
       aabb.lowerBound.Set(lower_bound.x, lower_bound.y);
       aabb.upperBound.Set(upper_bound.x, upper_bound.y);
       return aabb;
@@ -1822,13 +1814,9 @@
 
     init() {}
 
-    display(ctx) {}
+    update() {}
 
   };
-
-  b2Vec2 = Box2D.Common.Math.b2Vec2;
-
-  b2AABB = Box2D.Collision.b2AABB;
 
   Limits = class Limits {
     constructor(level) {
@@ -1858,19 +1846,19 @@
         y: this.screen.top - this.screen.bottom
       };
       // Left AABB
-      this.left_wall_aabb = new b2AABB();
+      this.left_wall_aabb = new Box2D.Collision.b2AABB();
       this.left_wall_aabb.lowerBound.Set(this.screen.left, this.screen.bottom);
       this.left_wall_aabb.upperBound.Set(this.player.left, this.screen.top);
       // Right  AABB
-      this.right_wall_aabb = new b2AABB();
+      this.right_wall_aabb = new Box2D.Collision.b2AABB();
       this.right_wall_aabb.lowerBound.Set(this.player.right, this.screen.bottom);
       this.right_wall_aabb.upperBound.Set(this.screen.right, this.screen.top);
       // Bottom  AABB
-      this.bottom_wall_aabb = new b2AABB();
+      this.bottom_wall_aabb = new Box2D.Collision.b2AABB();
       this.bottom_wall_aabb.lowerBound.Set(this.player.left, this.screen.bottom);
       this.bottom_wall_aabb.upperBound.Set(this.player.right, this.player.bottom);
       // Top  AABB
-      this.top_wall_aabb = new b2AABB();
+      this.top_wall_aabb = new Box2D.Collision.b2AABB();
       this.top_wall_aabb.lowerBound.Set(this.player.left, this.player.top);
       this.top_wall_aabb.upperBound.Set(this.player.right, this.screen.top);
       this.texture = 'dirt';
@@ -2747,7 +2735,7 @@
       upper1 = this.left_wheel.GetFixtureList().GetAABB().upperBound;
       upper2 = this.right_wheel.GetFixtureList().GetAABB().upperBound;
       upper3 = this.rider.head.GetFixtureList().GetAABB().upperBound;
-      aabb = new b2AABB();
+      aabb = new Box2D.Collision.b2AABB();
       aabb.lowerBound.Set(Math.min(lower1.x, lower2.x, lower3.x), Math.min(lower1.y, lower2.y, lower3.y));
       aabb.upperBound.Set(Math.max(upper1.x, upper2.x, upper3.x), Math.max(upper1.y, upper2.y, upper3.y));
       return aabb;

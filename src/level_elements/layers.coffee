@@ -21,4 +21,4 @@ class Layers
 
   init: ->
 
-  display: (ctx) ->
+  update: ->
