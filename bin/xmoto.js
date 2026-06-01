@@ -167,13 +167,13 @@
     class Constants {
       // CHAIN REACTION OF SOME ATTRIBUTES
       static chain_reaction() {
-        var element, j, len, ref, results;
+        var element, k, len, ref, results;
         // If hooking == true, no collisions !
         if (this.hooking === true) {
           ref = ['body', 'left_axle', 'right_axle', 'torso', 'lower_leg', 'upper_leg', 'lower_arm', 'upper_arm'];
           results = [];
-          for (j = 0, len = ref.length; j < len; j++) {
-            element = ref[j];
+          for (k = 0, len = ref.length; k < len; k++) {
+            element = ref[k];
             results.push(Constants[element].collisions = false);
           }
           return results;
@@ -510,9 +510,9 @@
         }
       };
       keydown = function(e) {
-        var i, j, len;
-        for (j = 0, len = keys.length; j < len; j++) {
-          i = keys[j];
+        var i, k, len;
+        for (k = 0, len = keys.length; k < len; k++) {
+          i = keys[k];
           if (e.keyCode === i) {
             preventDefault(e);
             return;
@@ -695,10 +695,10 @@
     }
 
     got_strawberries() {
-      var j, len, ref, strawberry;
+      var k, len, ref, strawberry;
       ref = this.entities.strawberries;
-      for (j = 0, len = ref.length; j < len; j++) {
-        strawberry = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        strawberry = ref[k];
         if (strawberry.display) {
           return false;
         }
@@ -707,11 +707,11 @@
     }
 
     respawn_strawberries() {
-      var entity, j, len, ref, results;
+      var entity, k, len, ref, results;
       ref = this.entities.strawberries;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        entity = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        entity = ref[k];
         results.push(entity.display = true);
       }
       return results;
@@ -1095,7 +1095,7 @@
     }
 
     create_lines(block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) {
-      var body, bodyDef, fixDef, i, j, len, ref, results, vertex, vertex1, vertex2;
+      var body, bodyDef, fixDef, i, k, len, ref, results, vertex, vertex1, vertex2;
       // Create body
       bodyDef = new b2BodyDef();
       // Assign body position
@@ -1110,7 +1110,7 @@
       ref = block.vertices;
       // assign each couple of vertices to a line
       results = [];
-      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+      for (i = k = 0, len = ref.length; k < len; i = ++k) {
         vertex = ref[i];
         // Create fixture
         fixDef = new b2FixtureDef();
@@ -1130,16 +1130,16 @@
     }
 
     static create_shape(fix_def, shape, mirror = false) {
-      var b2vertices, j, k, len, len1, vertex;
+      var b2vertices, k, l, len, len1, vertex;
       b2vertices = [];
       if (mirror === false) {
-        for (j = 0, len = shape.length; j < len; j++) {
-          vertex = shape[j];
+        for (k = 0, len = shape.length; k < len; k++) {
+          vertex = shape[k];
           b2vertices.push(new b2Vec2(vertex.x, vertex.y));
         }
       } else {
-        for (k = 0, len1 = shape.length; k < len1; k++) {
-          vertex = shape[k];
+        for (l = 0, len1 = shape.length; l < len1; l++) {
+          vertex = shape[l];
           b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y));
         }
       }
@@ -1159,10 +1159,10 @@
     }
 
     parse(xml) {
-      var block, is_background, j, k, l, len, len1, len2, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
+      var block, is_background, k, l, len, len1, len2, m, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
       xml_blocks = $(xml).find('block');
-      for (j = 0, len = xml_blocks.length; j < len; j++) {
-        xml_block = xml_blocks[j];
+      for (k = 0, len = xml_blocks.length; k < len; k++) {
+        xml_block = xml_blocks[k];
         block = {
           id: $(xml_block).attr('id'),
           position: {
@@ -1191,8 +1191,8 @@
         }
         block.texture_name = this.assets.theme.texture_params(block.usetexture.id).file;
         xml_materials = $(xml_block).find('edges material');
-        for (k = 0, len1 = xml_materials.length; k < len1; k++) {
-          xml_material = xml_materials[k];
+        for (l = 0, len1 = xml_materials.length; l < len1; l++) {
+          xml_material = xml_materials[l];
           material = {
             name: $(xml_material).attr('name'),
             edge: $(xml_material).attr('edge'),
@@ -1206,8 +1206,8 @@
           block.edges.materials.push(material);
         }
         xml_vertices = $(xml_block).find('vertex');
-        for (l = 0, len2 = xml_vertices.length; l < len2; l++) {
-          xml_vertex = xml_vertices[l];
+        for (m = 0, len2 = xml_vertices.length; m < len2; m++) {
+          xml_vertex = xml_vertices[m];
           vertex = {
             x: parseFloat($(xml_vertex).attr('x')),
             y: parseFloat($(xml_vertex).attr('y')),
@@ -1236,11 +1236,11 @@
     }
 
     load_assets() {
-      var block, j, len, ref, results;
+      var block, k, len, ref, results;
       ref = this.list;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        block = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        block = ref[k];
         this.assets.textures.push(block.texture_name);
         results.push(block.edges_list.load_assets());
       }
@@ -1248,37 +1248,37 @@
     }
 
     init() {
-      var block, j, len, ref, results;
+      var block, k, len, ref, results;
       this.init_physics_parts();
       this.init_sprites();
       ref = this.list;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        block = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        block = ref[k];
         results.push(block.edges_list.init());
       }
       return results;
     }
 
     init_physics_parts() {
-      var block, ground, j, len, ref, results;
+      var block, ground, k, len, ref, results;
       ground = Constants.ground;
       ref = this.front_list;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        block = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        block = ref[k];
         results.push(this.level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction));
       }
       return results;
     }
 
     init_sprites() {
-      var block, j, len, matrix, points, ref, results, texture;
+      var block, k, len, matrix, points, ref, results, texture;
       ref = this.back_list.concat(this.front_list);
       // draw back blocks before front blocks
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        block = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        block = ref[k];
         // Build polygon in world PIXI coordinates (y inverted)
         points = block.vertices.map(function(v) {
           return new PIXI.Point(v.absolute_x, -v.absolute_y);
@@ -1287,7 +1287,7 @@
         texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
         // Matrix maps world coords
         matrix = new PIXI.Matrix();
-        matrix.scale(1.0 / 40.0, 1.0 / 40.0);
+        matrix.scale(1.0 / 50.0, 1.0 / 50.0);
         matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y);
         // Create graphics with texture and matrix
         block.graphics = new PIXI.Graphics();
@@ -1305,12 +1305,12 @@
     }
 
     update() {
-      var block, j, len, ref, results;
+      var block, k, len, ref, results;
       if (!Constants.debug_physics) {
         ref = this.list;
         results = [];
-        for (j = 0, len = ref.length; j < len; j++) {
-          block = ref[j];
+        for (k = 0, len = ref.length; k < len; k++) {
+          block = ref[k];
           block.graphics.visible = this.visible(block);
           results.push(block.edges_list.update());
         }
@@ -1354,58 +1354,124 @@
       this.level = level;
       this.block = block;
       this.assets = this.level.assets;
-      this.list = []; // List of edges
+      this.list = []; // List of edge chains (each chain = contiguous vertices sharing the same edge texture)
     }
 
     parse() {
-      var edge, i, j, len, ref, results, vertex;
-      ref = this.block.vertices;
-      results = [];
-      for (i = j = 0, len = ref.length; j < len; i = ++j) {
-        vertex = ref[i];
-        if (vertex.edge) {
-          edge = {
-            vertex1: vertex,
-            vertex2: i === this.block.vertices.length - 1 ? this.block.vertices[0] : this.block.vertices[i + 1],
-            block: this.block,
-            texture: vertex.edge,
-            theme: this.assets.theme.edge_params(vertex.edge)
-          };
-          edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
-          edge.vertices = [
-            {
-              x: edge.vertex1.absolute_x,
-              y: edge.vertex1.absolute_y - edge.theme.depth
-            },
-            {
-              x: edge.vertex2.absolute_x,
-              y: edge.vertex2.absolute_y - edge.theme.depth
-            },
-            {
-              x: edge.vertex2.absolute_x,
-              y: edge.vertex2.absolute_y
-            },
-            {
-              x: edge.vertex1.absolute_x,
-              y: edge.vertex1.absolute_y
-            }
-          ];
-          edge.aabb = this.compute_aabb(edge);
-          results.push(this.list.push(edge));
+      var chain, closing_idx, i, j, k, len, n, results, run, runs, start_idx, texture, theme, vertices;
+      vertices = this.block.vertices;
+      n = vertices.length;
+      // Collect runs of consecutive vertices with the same edge texture
+      runs = [];
+      i = 0;
+      while (i < n) {
+        if (vertices[i].edge) {
+          texture = vertices[i].edge;
+          j = i + 1;
+          while (j < n && vertices[j].edge === texture) {
+            j++;
+          }
+          runs.push({
+            start: i,
+            end: j - 1,
+            texture: texture
+          });
+          i = j;
         } else {
-          results.push(void 0);
+          i++;
         }
+      }
+      // Handle wrapping: if first and last runs share the same texture, merge them
+      if (runs.length > 1 && runs[0].texture === runs[runs.length - 1].texture) {
+        runs[0].start = runs[runs.length - 1].start;
+        runs.pop();
+      }
+// Build one chain per run
+      results = [];
+      for (k = 0, len = runs.length; k < len; k++) {
+        run = runs[k];
+        start_idx = run.start;
+        closing_idx = (run.end + 1) % n; // first vertex after the run (may wrap)
+        theme = this.assets.theme.edge_params(run.texture);
+        chain = this.build_chain(vertices, start_idx, closing_idx, run.texture, theme);
+        chain.aabb = this.compute_aabb(chain);
+        results.push(this.list.push(chain));
       }
       return results;
     }
 
+    build_chain(vertices, start_idx, closing_idx, texture, theme) {
+      var N, depth, dx, dy, i, indices, k, l, lengths, m, n, o, o_i, o_ip1, polygon, ref, ref1, ref2, ref3, s, scale, surface, total_length, uvs, v;
+      n = vertices.length;
+      // Collect surface vertices from start_idx to closing_idx (inclusive, may wrap)
+      surface = [];
+      i = start_idx;
+      while (true) {
+        surface.push({
+          x: vertices[i].absolute_x,
+          y: vertices[i].absolute_y
+        });
+        if (i === closing_idx) {
+          break;
+        }
+        i = (i + 1) % n;
+      }
+      N = surface.length; // number of surface vertices (K+1 where K = chain segment count)
+      
+      // Compute cumulative arc lengths along the surface for U coordinates
+      total_length = 0;
+      lengths = [0];
+      for (s = k = 1, ref = N; (1 <= ref ? k < ref : k > ref); s = 1 <= ref ? ++k : --k) {
+        dx = surface[s].x - surface[s - 1].x;
+        dy = surface[s].y - surface[s - 1].y;
+        total_length += Math.sqrt(dx * dx + dy * dy);
+        lengths.push(total_length);
+      }
+      // UV: U along the edge (tiles via repeat), V across the depth (0→1).
+      polygon = [];
+      uvs = [];
+      depth = theme.depth;
+      scale = theme.scale;
+      for (s = l = 0, ref1 = N; (0 <= ref1 ? l < ref1 : l > ref1); s = 0 <= ref1 ? ++l : --l) {
+        v = surface[s];
+        polygon.push({
+          x: v.x,
+          y: v.y
+        });
+        uvs.push(lengths[s] * scale, 0.0);
+      }
+      for (s = m = 0, ref2 = N; (0 <= ref2 ? m < ref2 : m > ref2); s = 0 <= ref2 ? ++m : --m) {
+        v = surface[N - 1 - s];
+        polygon.push({
+          x: v.x,
+          y: v.y - depth
+        });
+        uvs.push(lengths[N - 1 - s] * scale, 0.99);
+      }
+      // Build triangle indices for the strip
+      indices = [];
+      for (s = o = 0, ref3 = N - 1; (0 <= ref3 ? o < ref3 : o > ref3); s = 0 <= ref3 ? ++o : --o) {
+        o_i = 2 * N - 1 - s;
+        o_ip1 = 2 * N - 2 - s;
+        indices.push(s, s + 1, o_i);
+        indices.push(s + 1, o_ip1, o_i);
+      }
+      return {
+        texture: texture,
+        theme: theme,
+        vertices: polygon,
+        uvs: new Float32Array(uvs),
+        indices: new Uint32Array(indices)
+      };
+    }
+
     load_assets() {
-      var edge, j, len, ref, results;
+      var chain, k, len, ref, results;
       ref = this.list;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        edge = ref[j];
-        results.push(this.assets.effects.push(edge.theme.file));
+      for (k = 0, len = ref.length; k < len; k++) {
+        chain = ref[k];
+        results.push(this.assets.effects.push(chain.theme.file));
       }
       return results;
     }
@@ -1415,58 +1481,57 @@
     }
 
     init_sprites() {
-      var edge, j, len, matrix, points, ref, results, texture;
+      var chain, count, geometry, i, k, l, len, len1, positions, ref, ref1, results, texture, v;
       ref = this.list;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        edge = ref[j];
-        // Build polygon in PIXI coordinates (y inverted)
-        points = edge.vertices.map(function(vertex) {
-          return new PIXI.Point(vertex.x, -vertex.y);
+      for (k = 0, len = ref.length; k < len; k++) {
+        chain = ref[k];
+        // Convert world coords (Y-up) to PIXI coords (Y-down)
+        count = chain.vertices.length;
+        positions = new Float32Array(count * 2);
+        ref1 = chain.vertices;
+        for (i = l = 0, len1 = ref1.length; l < len1; i = ++l) {
+          v = ref1[i];
+          positions[i * 2] = v.x;
+          positions[i * 2 + 1] = -v.y;
+        }
+        geometry = new PIXI.MeshGeometry({
+          positions: positions,
+          uvs: chain.uvs,
+          indices: chain.indices
         });
-        // Load edge texture
-        texture = PIXI.Texture.from(this.assets.get_url(edge.theme.file));
-        // Matrix maps world coords → texture UV, pivoting around top-left corner.
-        matrix = new PIXI.Matrix();
-        matrix.scale(1.0 / 110.0, 1.0 / 110.0 * edge.theme.scale * edge.theme.depth); // reverse engineering to get nice visual values
-        matrix.rotate(-edge.angle);
-        matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y);
-        // Create graphics with texture and matrix
-        edge.graphics = new PIXI.Graphics();
-        edge.graphics.poly(points);
-        edge.graphics.fill({
-          texture: texture,
-          matrix: matrix,
-          color: 0xffffff,
-          alpha: 1.0,
-          textureSpace: 'global'
+        texture = PIXI.Texture.from(this.assets.get_url(chain.theme.file));
+        texture.source.addressMode = 'repeat';
+        chain.mesh = new PIXI.Mesh({
+          geometry: geometry,
+          texture: texture
         });
-        results.push(this.level.camera.neutral_z_container.addChild(edge.graphics));
+        results.push(this.level.camera.neutral_z_container.addChild(chain.mesh));
       }
       return results;
     }
 
     // only display edges present on the screen zone
     update() {
-      var block_visible, edge, j, len, ref, results;
+      var block_visible, chain, k, len, ref, results;
       if (!Constants.debug_physics) {
         block_visible = this.block.graphics.visible;
         ref = this.list;
         results = [];
-        for (j = 0, len = ref.length; j < len; j++) {
-          edge = ref[j];
-          results.push(edge.graphics.visible = block_visible && this.visible(edge)); // don't test aabb if block not visible
+        for (k = 0, len = ref.length; k < len; k++) {
+          chain = ref[k];
+          results.push(chain.mesh.visible = block_visible && this.visible(chain));
         }
         return results;
       }
     }
 
-    compute_aabb(edge) {
+    compute_aabb(chain) {
       var aabb, x_positions, y_positions;
-      x_positions = edge.vertices.map(function(v) {
+      x_positions = chain.vertices.map(function(v) {
         return v.x;
       });
-      y_positions = edge.vertices.map(function(v) {
+      y_positions = chain.vertices.map(function(v) {
         return v.y;
       });
       aabb = new Box2D.Collision.b2AABB();
@@ -1475,8 +1540,8 @@
       return aabb;
     }
 
-    visible(edge) {
-      return edge.aabb.TestOverlap(this.level.camera.aabb);
+    visible(chain) {
+      return chain.aabb.TestOverlap(this.level.camera.aabb);
     }
 
   };
@@ -1492,11 +1557,11 @@
     }
 
     parse(xml) {
-      var entity, j, k, len, len1, name, sprite, texture_name, value, xml_entities, xml_entity, xml_param, xml_params;
+      var entity, k, l, len, len1, name, sprite, texture_name, value, xml_entities, xml_entity, xml_param, xml_params;
       xml_entities = $(xml).find('entity');
 // parse entity xml
-      for (j = 0, len = xml_entities.length; j < len; j++) {
-        xml_entity = xml_entities[j];
+      for (k = 0, len = xml_entities.length; k < len; k++) {
+        xml_entity = xml_entities[k];
         entity = {
           id: $(xml_entity).attr('id'),
           type_id: $(xml_entity).attr('typeid'),
@@ -1515,8 +1580,8 @@
         };
         // parse params xml
         xml_params = $(xml_entity).find('param');
-        for (k = 0, len1 = xml_params.length; k < len1; k++) {
-          xml_param = xml_params[k];
+        for (l = 0, len1 = xml_params.length; l < len1; l++) {
+          xml_param = xml_params[l];
           name = $(xml_param).attr('name');
           value = $(xml_param).attr('value');
           entity.params[name] = value;
@@ -1584,19 +1649,19 @@
     }
 
     load_assets() {
-      var entity, i, j, len, ref, results;
+      var entity, i, k, len, ref, results;
       ref = this.list;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        entity = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        entity = ref[k];
         if (entity.display) {
           if (entity.frames === 0) {
             results.push(this.assets.anims.push(entity.file));
           } else {
             results.push((function() {
-              var k, ref1, results1;
+              var l, ref1, results1;
               results1 = [];
-              for (i = k = 0, ref1 = entity.frames - 1; (0 <= ref1 ? k <= ref1 : k >= ref1); i = 0 <= ref1 ? ++k : --k) {
+              for (i = l = 0, ref1 = entity.frames - 1; (0 <= ref1 ? l <= ref1 : l >= ref1); i = 0 <= ref1 ? ++l : --l) {
                 results1.push(this.assets.anims.push(this.frame_name(entity, i)));
               }
               return results1;
@@ -1615,11 +1680,11 @@
     }
 
     init_physics_parts() {
-      var entity, j, len, ref, results;
+      var entity, k, len, ref, results;
       ref = this.list;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        entity = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        entity = ref[k];
         // End of level
         if (entity.type_id === 'EndOfLevel') {
           this.create_entity(entity, 'end_of_level');
@@ -1645,11 +1710,11 @@
     }
 
     init_sprites() {
-      var entity, j, len, ref, results;
+      var entity, k, len, ref, results;
       ref = this.list;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        entity = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        entity = ref[k];
         if (entity.z < 0) {
           results.push(this.init_entity(entity, this.level.camera.negative_z_container));
         } else if (entity.z > 0) {
@@ -1664,10 +1729,10 @@
     }
 
     init_entity(entity, container) {
-      var i, j, ref, textures;
+      var i, k, ref, textures;
       if (entity.frames > 0) {
         textures = [];
-        for (i = j = 0, ref = entity.frames - 1; (0 <= ref ? j <= ref : j >= ref); i = 0 <= ref ? ++j : --j) {
+        for (i = k = 0, ref = entity.frames - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
           textures.push(PIXI.Texture.from(this.assets.get_url(this.frame_name(entity, i))));
         }
         entity.sprite = new PIXI.AnimatedSprite(textures);
@@ -1712,12 +1777,12 @@
     }
 
     update(entity) {
-      var j, len, ref, results;
+      var k, len, ref, results;
       if (!Constants.debug_physics) {
         ref = this.list;
         results = [];
-        for (j = 0, len = ref.length; j < len; j++) {
-          entity = ref[j];
+        for (k = 0, len = ref.length; k < len; k++) {
+          entity = ref[k];
           if (entity.sprite) {
             results.push(entity.sprite.visible = this.visible(entity));
           } else {
@@ -1805,10 +1870,10 @@
     }
 
     parse(xml) {
-      var j, layer, len, xml_layer, xml_layers;
+      var k, layer, len, xml_layer, xml_layers;
       xml_layers = $(xml).find('layeroffsets layeroffset');
-      for (j = 0, len = xml_layers.length; j < len; j++) {
-        xml_layer = xml_layers[j];
+      for (k = 0, len = xml_layers.length; k < len; k++) {
+        xml_layer = xml_layers[k];
         layer = {
           x: parseFloat($(xml_layer).attr('x')),
           y: parseFloat($(xml_layer).attr('y')),
@@ -1999,26 +2064,26 @@
       this.left_sprite.y = -this.screen.top;
       this.left_sprite.anchor.x = 0;
       this.left_sprite.anchor.y = 0;
-      this.left_sprite.tileScale.x = 1.0 / 40;
-      this.left_sprite.tileScale.y = 1.0 / 40;
+      this.left_sprite.tileScale.x = 1.0 / 50.0;
+      this.left_sprite.tileScale.y = 1.0 / 50.0;
       this.right_sprite.x = this.player.right;
       this.right_sprite.y = -this.screen.top;
       this.right_sprite.anchor.x = 0;
       this.right_sprite.anchor.y = 0;
-      this.right_sprite.tileScale.x = 1.0 / 40;
-      this.right_sprite.tileScale.y = 1.0 / 40;
+      this.right_sprite.tileScale.x = 1.0 / 50.0;
+      this.right_sprite.tileScale.y = 1.0 / 50.0;
       this.bottom_sprite.x = this.player.left;
       this.bottom_sprite.y = -this.player.bottom;
       this.bottom_sprite.anchor.x = 0;
       this.bottom_sprite.anchor.y = 0;
-      this.bottom_sprite.tileScale.x = 1.0 / 40;
-      this.bottom_sprite.tileScale.y = 1.0 / 40;
+      this.bottom_sprite.tileScale.x = 1.0 / 50.0;
+      this.bottom_sprite.tileScale.y = 1.0 / 50.0;
       this.top_sprite.x = this.player.left;
       this.top_sprite.y = -this.screen.top;
       this.top_sprite.anchor.x = 0;
       this.top_sprite.anchor.y = 0;
-      this.top_sprite.tileScale.x = 1.0 / 40;
-      this.top_sprite.tileScale.y = 1.0 / 40;
+      this.top_sprite.tileScale.x = 1.0 / 50.0;
+      this.top_sprite.tileScale.y = 1.0 / 50.0;
       this.level.camera.neutral_z_container.addChild(this.left_sprite);
       this.level.camera.neutral_z_container.addChild(this.right_sprite);
       this.level.camera.neutral_z_container.addChild(this.bottom_sprite);
@@ -2049,19 +2114,19 @@
     }
 
     parse(xml) {
-      var j, k, len, len1, new_name, old_name, ref, ref1, results, sound_replacement, sprite_replacement, xml_replacements;
+      var k, l, len, len1, new_name, old_name, ref, ref1, results, sound_replacement, sprite_replacement, xml_replacements;
       xml_replacements = $(xml).find('theme_replacements');
       ref = xml_replacements.find('sprite_replacement');
-      for (j = 0, len = ref.length; j < len; j++) {
-        sprite_replacement = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        sprite_replacement = ref[k];
         old_name = $(sprite_replacement).attr('old_name');
         new_name = $(sprite_replacement).attr('new_name');
         this.sprites[old_name] = new_name;
       }
       ref1 = xml_replacements.find('sound_replacement');
       results = [];
-      for (k = 0, len1 = ref1.length; k < len1; k++) {
-        sound_replacement = ref1[k];
+      for (l = 0, len1 = ref1.length; l < len1; l++) {
+        sound_replacement = ref1[l];
         old_name = $(sound_replacement).attr('old_name');
         new_name = $(sound_replacement).attr('new_name');
         results.push(this.sounds[old_name] = new_name);
@@ -2195,18 +2260,18 @@
     }
 
     move_with_key_step() {
-      var j, k, key_step, len, len1, part, ref, ref1, results;
+      var k, key_step, l, len, len1, part, ref, ref1, results;
       key_step = this.replay.key_steps[this.level.physics.steps];
       if (key_step) {
         ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
-        for (j = 0, len = ref.length; j < len; j++) {
-          part = ref[j];
+        for (k = 0, len = ref.length; k < len; k++) {
+          part = ref[k];
           this.set_part_position(this.moto, part, key_step);
         }
         ref1 = ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
         results = [];
-        for (k = 0, len1 = ref1.length; k < len1; k++) {
-          part = ref1[k];
+        for (l = 0, len1 = ref1.length; l < len1; l++) {
+          part = ref1[l];
           results.push(this.set_part_position(this.moto.rider, part, key_step));
         }
         return results;
@@ -2243,12 +2308,12 @@
     }
 
     load_assets() {
-      var j, len, part, parts, results;
+      var k, len, part, parts, results;
       // Assets
       parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
       results = [];
-      for (j = 0, len = parts.length; j < len; j++) {
-        part = parts[j];
+      for (k = 0, len = parts.length; k < len; k++) {
+        part = parts[k];
         results.push(this.assets.moto.push(part.ghost_texture));
       }
       return results;
@@ -2265,11 +2330,11 @@
     }
 
     init() {
-      var ghost, j, len, ref, results;
+      var ghost, k, len, ref, results;
       ref = this.all_ghosts();
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        ghost = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        ghost = ref[k];
         if (ghost.replay) {
           results.push(ghost.init());
         } else {
@@ -2280,11 +2345,11 @@
     }
 
     reload() {
-      var ghost, j, len, ref, results;
+      var ghost, k, len, ref, results;
       ref = this.all_ghosts();
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        ghost = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        ghost = ref[k];
         if (ghost.replay) {
           results.push(ghost.reload());
         } else {
@@ -2295,11 +2360,11 @@
     }
 
     move() {
-      var ghost, j, len, ref, results;
+      var ghost, k, len, ref, results;
       ref = this.all_ghosts();
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        ghost = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        ghost = ref[k];
         if (ghost.replay) {
           results.push(ghost.move());
         } else {
@@ -2310,11 +2375,11 @@
     }
 
     update() {
-      var ghost, j, len, ref, results;
+      var ghost, k, len, ref, results;
       ref = this.all_ghosts();
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        ghost = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        ghost = ref[k];
         if (ghost.replay) {
           results.push(ghost.update());
         } else {
@@ -2325,11 +2390,11 @@
     }
 
     load_replays() {
-      var j, len, option_replay, ref, replay, results;
+      var k, len, option_replay, ref, replay, results;
       ref = this.options.replays;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        option_replay = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        option_replay = ref[k];
         replay = new Replay(this.level);
         replay.load(option_replay.replay);
         if (!this.options.playable && option_replay.follow) {
@@ -2389,10 +2454,10 @@
     }
 
     load_assets() {
-      var j, len, part, parts;
+      var k, len, part, parts;
       parts = [Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
-      for (j = 0, len = parts.length; j < len; j++) {
-        part = parts[j];
+      for (k = 0, len = parts.length; k < len; k++) {
+        part = parts[k];
         if (this.ghost) {
           this.assets.moto.push(part.ghost_texture);
         } else {
@@ -2422,11 +2487,11 @@
     }
 
     init_sprites() {
-      var asset_name, axle_name, j, k, l, len, len1, len2, part, ref, ref1, ref2, wheel_name;
+      var asset_name, axle_name, k, l, len, len1, len2, m, part, ref, ref1, ref2, wheel_name;
       ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
       // Create and add sprites to the scene
-      for (j = 0, len = ref.length; j < len; j++) {
-        part = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        part = ref[k];
         if (this.ghost) {
           asset_name = Constants[part].ghost_texture;
         } else {
@@ -2442,8 +2507,8 @@
       this.body_sprite.anchor.y = 0.5;
       ref1 = ['left_wheel', 'right_wheel'];
       // Define wheels values
-      for (k = 0, len1 = ref1.length; k < len1; k++) {
-        wheel_name = ref1[k];
+      for (l = 0, len1 = ref1.length; l < len1; l++) {
+        wheel_name = ref1[l];
         this[`${wheel_name}_sprite`].width = 2 * Constants[wheel_name].radius;
         this[`${wheel_name}_sprite`].height = 2 * Constants[wheel_name].radius;
         this[`${wheel_name}_sprite`].anchor.x = 0.5;
@@ -2451,8 +2516,8 @@
       }
       ref2 = ['left_axle', 'right_axle'];
       // Define axles values
-      for (l = 0, len2 = ref2.length; l < len2; l++) {
-        axle_name = ref2[l];
+      for (m = 0, len2 = ref2.length; m < len2; m++) {
+        axle_name = ref2[m];
         this[`${axle_name}_sprite`].anchor.x = 0.0;
         this[`${axle_name}_sprite`].anchor.y = 0.5;
       }
@@ -2824,12 +2889,12 @@
     }
 
     update() {
-      var ctx, j, len, particle, position, ref, results;
+      var ctx, k, len, particle, position, ref, results;
       ctx = this.level.ctx;
       ref = this.list;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        particle = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        particle = ref[k];
         position = particle.GetPosition();
         ctx.save();
         ctx.translate(position.x, position.y);
@@ -2865,14 +2930,14 @@
     }
 
     clone() {
-      var j, k, key, len, len1, new_replay, part, ref, ref1, ref2, value;
+      var k, key, l, len, len1, new_replay, part, ref, ref1, ref2, value;
       new_replay = new Replay(this.level);
       new_replay.success = this.success;
       new_replay.steps = this.steps;
       ref = ['up_down', 'up_up', 'down_down', 'down_up', 'left_down', 'left_up', 'right_down', 'right_up', 'space_pressed'];
       // Copy inputs
-      for (j = 0, len = ref.length; j < len; j++) {
-        key = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        key = ref[k];
         new_replay.inputs[key] = this.inputs[key].slice(); // copy array
       }
       ref1 = this.key_steps;
@@ -2882,8 +2947,8 @@
         value = ref1[key];
         new_replay.key_steps[key] = {};
         ref2 = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
-        for (k = 0, len1 = ref2.length; k < len1; k++) {
-          part = ref2[k];
+        for (l = 0, len1 = ref2.length; l < len1; l++) {
+          part = ref2[l];
           new_replay.key_steps[key][part] = {
             position: {
               x: value[part].position.x,
@@ -2908,11 +2973,11 @@
     }
 
     add_inputs() {
-      var input, j, key, len, ref;
+      var input, k, key, len, ref;
       input = this.level.input;
       ref = ['up', 'down', 'left', 'right'];
-      for (j = 0, len = ref.length; j < len; j++) {
-        key = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        key = ref[k];
         if (input[key] && this.is_up(key)) {
           this.inputs[`${key}_down`].push(this.steps);
         } else if (!input[key] && this.is_down(key)) {
@@ -2925,20 +2990,20 @@
     }
 
     add_key_steps() {
-      var j, k, key_step, len, len1, moto, part, ref, ref1, results, rider;
+      var k, key_step, l, len, len1, moto, part, ref, ref1, results, rider;
       moto = this.level.moto;
       rider = moto.rider;
       if (this.steps % Constants.replay_key_step === 0) {
         key_step = this.key_steps[this.steps.toString()] = {};
         ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
-        for (j = 0, len = ref.length; j < len; j++) {
-          part = ref[j];
+        for (k = 0, len = ref.length; k < len; k++) {
+          part = ref[k];
           key_step[part] = this.physics_values(moto[part]);
         }
         ref1 = ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
         results = [];
-        for (k = 0, len1 = ref1.length; k < len1; k++) {
-          part = ref1[k];
+        for (l = 0, len1 = ref1.length; l < len1; l++) {
+          part = ref1[l];
           results.push(key_step[part] = this.physics_values(rider[part]));
         }
         return results;
@@ -2947,12 +3012,12 @@
 
     // TODO dichotomic search
     last(input) {
-      var element, i, input_length, j, last_element, len, ref, steps;
+      var element, i, input_length, k, last_element, len, ref, steps;
       last_element = null;
       input_length = this.inputs[input].length;
       steps = this.level.physics.steps;
       ref = this.inputs[input];
-      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+      for (i = k = 0, len = ref.length; k < len; i = ++k) {
         element = ref[i];
         if (element <= steps && (i + 1 > input_length - 1 || this.inputs[input][i + 1] > steps)) {
           last_element = element;
@@ -3057,11 +3122,11 @@
     }
 
     load_assets() {
-      var j, len, part, parts, results;
+      var k, len, part, parts, results;
       parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm];
       results = [];
-      for (j = 0, len = parts.length; j < len; j++) {
-        part = parts[j];
+      for (k = 0, len = parts.length; k < len; k++) {
+        part = parts[k];
         if (this.ghost) {
           results.push(this.assets.moto.push(part.ghost_texture));
         } else {
@@ -3089,11 +3154,11 @@
     }
 
     init_sprites() {
-      var asset_name, j, len, part, ref, results;
+      var asset_name, k, len, part, ref, results;
       ref = ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        part = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        part = ref[k];
         if (this.ghost) {
           asset_name = Constants[part].ghost_texture;
         } else {
@@ -3389,15 +3454,15 @@
   ReplayConversionService = class ReplayConversionService {
     // String is like : "keyA:199,240,569|keyB:29,40,55..."
     static inputs_to_string(inputs) {
-      var j, k, key, len, len1, ref, ref1, step, string;
+      var k, key, l, len, len1, ref, ref1, step, string;
       string = '';
       ref = ['up_down', 'up_up', 'down_down', 'down_up', 'left_down', 'left_up', 'right_down', 'right_up', 'space_pressed'];
-      for (j = 0, len = ref.length; j < len; j++) {
-        key = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        key = ref[k];
         string += `${key}:`;
         ref1 = inputs[key];
-        for (k = 0, len1 = ref1.length; k < len1; k++) {
-          step = ref1[k];
+        for (l = 0, len1 = ref1.length; l < len1; l++) {
+          step = ref1[l];
           string += `${step},`;
         }
         if (string[string.length - 1] === ',') { // remove last ',' if any
@@ -3410,18 +3475,18 @@
     }
 
     static string_to_inputs(string) {
-      var i, inputs, j, k, key, keys, len, len1, name, splitted, step, values;
+      var i, inputs, k, key, keys, l, len, len1, name, splitted, step, values;
       inputs = {};
       string = LZString.decompressFromBase64(string);
       keys = string.split('|');
-      for (j = 0, len = keys.length; j < len; j++) {
-        key = keys[j];
+      for (k = 0, len = keys.length; k < len; k++) {
+        key = keys[k];
         splitted = key.split(':');
         name = splitted[0];
         values = splitted[1].split(',');
         inputs[name] = [];
         if (values[0] !== '') {
-          for (i = k = 0, len1 = values.length; k < len1; i = ++k) {
+          for (i = l = 0, len1 = values.length; l < len1; i = ++l) {
             step = values[i];
             inputs[name][i] = parseInt(step);
           }
@@ -3434,13 +3499,13 @@
     // step1 is like : "part1_positions|part2_positions|...|part10_positions"
     // part1_positions is like : "11.1234,22.1234,33.1234,44.1234,55.1234,66.1234" (each position and angle values)
     static key_steps_to_string(key_steps) {
-      var a, b, c, d, e, f, j, key, key_step, len, ref, step, string;
+      var a, b, c, d, e, f, k, key, key_step, len, ref, step, string;
       string = `${Constants.replay_key_step}@`;
       for (step in key_steps) {
         key_step = key_steps[step];
         ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
-        for (j = 0, len = ref.length; j < len; j++) {
-          key = ref[j];
+        for (k = 0, len = ref.length; k < len; k++) {
+          key = ref[k];
           a = key_step[key].position.x.toFixed(Constants.replay_key_step_precision);
           b = key_step[key].position.y.toFixed(Constants.replay_key_step_precision);
           c = key_step[key].angle.toFixed(Constants.replay_key_step_precision);
@@ -3459,7 +3524,7 @@
     }
 
     static string_to_key_steps(string) {
-      var current_interval, element, i, j, k, key_step, key_step_string, key_steps, key_steps_string, len, len1, part_string, ref, ref1, step_interval, value_string;
+      var current_interval, element, i, k, key_step, key_step_string, key_steps, key_steps_string, l, len, len1, part_string, ref, ref1, step_interval, value_string;
       key_steps = {};
       string = LZString.decompressFromBase64(string);
       key_steps_string = string.split('@')[1];
@@ -3470,12 +3535,12 @@
         return key_steps;
       }
       ref = key_steps_string.split('=');
-      for (j = 0, len = ref.length; j < len; j++) {
-        key_step_string = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        key_step_string = ref[k];
         key_step = {};
         part_string = key_step_string.split('|');
         ref1 = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
-        for (i = k = 0, len1 = ref1.length; k < len1; i = ++k) {
+        for (i = l = 0, len1 = ref1.length; l < len1; i = ++l) {
           element = ref1[i];
           value_string = part_string[i].split(',');
           key_step[element] = {
@@ -3515,35 +3580,35 @@
     }
 
     load(callback) {
-      var item, items, j, k, l, len, len1, len2, len3, m, ref, ref1, ref2, ref3, urls;
+      var item, items, k, l, len, len1, len2, len3, m, o, ref, ref1, ref2, ref3, urls;
       items = [];
       ref = this.textures;
-      for (j = 0, len = ref.length; j < len; j++) {
-        item = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        item = ref[k];
         items.push({
           id: item,
           src: `/data/Textures/Textures/${item.toLowerCase()}`
         });
       }
       ref1 = this.anims;
-      for (k = 0, len1 = ref1.length; k < len1; k++) {
-        item = ref1[k];
+      for (l = 0, len1 = ref1.length; l < len1; l++) {
+        item = ref1[l];
         items.push({
           id: item,
           src: `/data/Textures/Anims/${item.toLowerCase()}`
         });
       }
       ref2 = this.effects;
-      for (l = 0, len2 = ref2.length; l < len2; l++) {
-        item = ref2[l];
+      for (m = 0, len2 = ref2.length; m < len2; m++) {
+        item = ref2[m];
         items.push({
           id: item,
           src: `/data/Textures/Effects/${item.toLowerCase()}`
         });
       }
       ref3 = this.moto;
-      for (m = 0, len3 = ref3.length; m < len3; m++) {
-        item = ref3[m];
+      for (o = 0, len3 = ref3.length; o < len3; o++) {
+        item = ref3[o];
         items.push({
           id: item,
           src: `/data/Textures/Riders/${item.toLowerCase()}`
@@ -3554,9 +3619,9 @@
         return item.src;
       });
       return PIXI.Assets.load(urls).then(() => {
-        var len4, n;
-        for (n = 0, len4 = items.length; n < len4; n++) {
-          item = items[n];
+        var len4, p;
+        for (p = 0, len4 = items.length; p < len4; p++) {
+          item = items[p];
           this.resources[item.id] = {
             url: item.src
           };
@@ -3596,12 +3661,12 @@
   };
 
   override_constants_by_url_params = function(params) {
-    var array, array_key, array_keys, i, j, key, len, value;
+    var array, array_key, array_keys, i, k, key, len, value;
     for (key in params) {
       value = params[key];
       array_keys = key.split('.');
       array = Constants;
-      for (i = j = 0, len = array_keys.length; j < len; i = ++j) {
+      for (i = k = 0, len = array_keys.length; k < len; i = ++k) {
         array_key = array_keys[i];
         if (i === array_keys.length - 1) {
           if (value === '') {
@@ -3622,12 +3687,12 @@
   };
 
   display_constants = function() {
-    var html, j, key, len, ref, ref1, sub_key, sub_value, value;
+    var html, k, key, len, ref, ref1, sub_key, sub_value, value;
     // display all the keys with direct link
     html = '<ul>';
     ref = Object.keys(Constants);
-    for (j = 0, len = ref.length; j < len; j++) {
-      key = ref[j];
+    for (k = 0, len = ref.length; k < len; k++) {
+      key = ref[k];
       value = Constants[key];
       if (typeof value !== 'object' && typeof value !== 'function') {
         html += `<li><a href=\"${document.URL}&${key}=${value}\">${key}</a> (${value})</li>`;
@@ -3713,9 +3778,9 @@
 
     // If shape has 3 collinear vertices, move them around to avoid that
     static not_collinear_vertices(vertices) {
-      var i, j, len, size, vertex;
+      var i, k, len, size, vertex;
       size = vertices.length;
-      for (i = j = 0, len = vertices.length; j < len; i = ++j) {
+      for (i = k = 0, len = vertices.length; k < len; i = ++k) {
         vertex = vertices[i];
         if (vertex.x === vertices[(i + 1) % size].x && vertices[(i + 2) % size].x) {
           vertex.x = vertex.x + 0.001;
@@ -3748,10 +3813,10 @@
     }
 
     load_theme(xml) {
-      var j, len, xml_sprite, xml_sprites;
+      var k, len, xml_sprite, xml_sprites;
       xml_sprites = $(xml).find('sprite');
-      for (j = 0, len = xml_sprites.length; j < len; j++) {
-        xml_sprite = xml_sprites[j];
+      for (k = 0, len = xml_sprites.length; k < len; k++) {
+        xml_sprite = xml_sprites[k];
         if ($(xml_sprite).attr('type') === 'Entity') {
           this.sprites[$(xml_sprite).attr('name')] = {
             file: $(xml_sprite).attr('file'),

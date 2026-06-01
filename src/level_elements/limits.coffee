@@ -118,29 +118,29 @@ class Limits
     @left_sprite.y = -@screen.top
     @left_sprite.anchor.x = 0
     @left_sprite.anchor.y = 0
-    @left_sprite.tileScale.x = 1.0/40
-    @left_sprite.tileScale.y = 1.0/40
+    @left_sprite.tileScale.x = 1.0/50.0
+    @left_sprite.tileScale.y = 1.0/50.0
 
     @right_sprite.x = @player.right
     @right_sprite.y = -@screen.top
     @right_sprite.anchor.x = 0
     @right_sprite.anchor.y = 0
-    @right_sprite.tileScale.x = 1.0/40
-    @right_sprite.tileScale.y = 1.0/40
+    @right_sprite.tileScale.x = 1.0/50.0
+    @right_sprite.tileScale.y = 1.0/50.0
 
     @bottom_sprite.x =  @player.left
     @bottom_sprite.y = -@player.bottom
     @bottom_sprite.anchor.x = 0
     @bottom_sprite.anchor.y = 0
-    @bottom_sprite.tileScale.x = 1.0/40
-    @bottom_sprite.tileScale.y = 1.0/40
+    @bottom_sprite.tileScale.x = 1.0/50.0
+    @bottom_sprite.tileScale.y = 1.0/50.0
 
     @top_sprite.x =  @player.left
     @top_sprite.y = -@screen.top
     @top_sprite.anchor.x = 0
     @top_sprite.anchor.y = 0
-    @top_sprite.tileScale.x = 1.0/40
-    @top_sprite.tileScale.y = 1.0/40
+    @top_sprite.tileScale.x = 1.0/50.0
+    @top_sprite.tileScale.y = 1.0/50.0
 
     @level.camera.neutral_z_container.addChild(@left_sprite)
     @level.camera.neutral_z_container.addChild(@right_sprite)

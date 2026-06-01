@@ -113,7 +113,7 @@ class Blocks
 
       # Matrix maps world coords
       matrix = new PIXI.Matrix()
-      matrix.scale(1.0 / 40.0, 1.0 / 40.0)
+      matrix.scale(1.0 / 50.0, 1.0 / 50.0)
       matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
 
       # Create graphics with texture and matrix
