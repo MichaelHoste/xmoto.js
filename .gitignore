@@ -5,3 +5,6 @@ deploy.sh
 deploy_staging.sh
 nginx.conf
 AGENTS.md
+skills-lock.json
+.agents/skills/pixijs/SKILL.md
+.agents/skills/pixijs/references/index.md
