@@ -81,10 +81,10 @@ class Level
   update: ->
     @physics.update()
 
-    dead_player = @options.playable  && !@moto.dead
-    dead_replay = !@options.playable && !@ghosts.player.moto.dead
+    live_player = @options.playable  && !@moto.dead
+    live_replay = !@options.playable && !@ghosts.player.moto.dead
 
-    @update_timer() if dead_player || dead_replay
+    @update_timer() if live_player || live_replay
 
     @sky      .update()
     @layers   .update()
@@ -97,21 +97,22 @@ class Level
     @particles.update()
 
   init_timer: ->
-    @start_time   = new Date().getTime()
-    @current_time = 0
+    @start_time = new Date().getTime() # in ms
 
-  update_timer: (update_now = false) ->
+  update_timer: ->
     new_time = new Date().getTime() - @start_time
+    elapsed  = Math.floor(new_time / 10)
+    minutes  = Math.floor(elapsed / 6000)
+    seconds  = Math.floor(elapsed / 100) % 60
+    cents    = elapsed % 100
 
-    if update_now or Math.floor(new_time/10) > Math.floor(@current_time/10)
-      minutes = Math.floor(new_time / 1000 / 60)
-      seconds = Math.floor(new_time / 1000) % 60
-      seconds = "0#{seconds}" if seconds < 10
-      cents   = Math.floor(new_time / 10) % 100
-      cents   = "0#{cents}" if cents < 10
-      $(@options.chrono).text("#{minutes}:#{seconds}:#{cents}")
+    text = "#{@pad(seconds)}:#{@pad(cents)}"
+    text = "#{minutes}:#{text}" if minutes > 0 # show minutes only if needed
 
-    @current_time = new_time
+    $(@options.chrono).text(text)
+
+  pad: (n) ->
+    String(n).padStart(2, '0')
 
   got_strawberries: ->
     for strawberry in @entities.strawberries
@@ -135,4 +136,4 @@ class Level
     @respawn_strawberries()
 
     @init_timer()
-    @update_timer(true)
+    @update_timer()
