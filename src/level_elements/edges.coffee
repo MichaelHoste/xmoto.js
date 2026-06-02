@@ -5,41 +5,44 @@ class Edges
     @block  = block
     @assets = @level.assets
 
-    @list = [] # List of edge chains (each chain = contiguous vertices sharing the same edge texture)
+    @list = [] # List of edges (contiguous vertices sharing the same edge texture)
 
   parse: ->
     vertices = @block.vertices
-    n = vertices.length
+    n        = vertices.length
 
     # Collect runs of consecutive vertices with the same edge texture
     runs = []
-    i = 0
+    i    = 0
+
     while i < n
       if vertices[i].edge
         texture = vertices[i].edge
-        j = i + 1
-        while j < n && vertices[j].edge == texture
-          j++
+
+        j =  i + 1
+        j += 1 while j < n && vertices[j].edge == texture
+
         runs.push({ start: i, end: j - 1, texture: texture })
+
         i = j
       else
-        i++
+        i += 1
 
     # Handle wrapping: if first and last runs share the same texture, merge them
     if runs.length > 1 && runs[0].texture == runs[runs.length - 1].texture
       runs[0].start = runs[runs.length - 1].start
       runs.pop()
 
-    # Build one chain per run
+    # Build one polygon per run
     for run in runs
       start_idx          = run.start
-      closing_idx        = (run.end + 1) % n  # first vertex after the run (may wrap)
+      closing_idx        = (run.end + 1) % vertices.length  # first vertex after the run (may wrap)
       theme              = @assets.theme.edge_params(run.texture)
-      chain              = @build_chain(vertices, start_idx, closing_idx, run.texture, theme)
-      chain.aabb         = @compute_aabb(chain)
-      @list.push(chain)
+      polygon            = @build_polygon(vertices, start_idx, closing_idx, run.texture, theme)
+      polygon.aabb       = @compute_aabb(polygon)
+      @list.push(polygon)
 
-  build_chain: (vertices, start_idx, closing_idx, texture, theme) ->
+  build_polygon: (vertices, start_idx, closing_idx, texture, theme) ->
     n = vertices.length
 
     # Collect surface vertices from start_idx to closing_idx (inclusive, may wrap)
@@ -50,7 +53,7 @@ class Edges
       break if i == closing_idx
       i = (i + 1) % n
 
-    N = surface.length  # number of surface vertices (K+1 where K = chain segment count)
+    N = surface.length  # number of surface vertices (K+1 where K = polygon segment count)
 
     # Compute cumulative arc lengths along the surface for U coordinates
     total_length = 0
@@ -62,19 +65,19 @@ class Edges
       lengths.push(total_length)
 
     # UV: U along the edge (tiles via repeat), V across the depth (0→1).
-    polygon = []
-    uvs     = []
-    depth   = theme.depth
-    scale   = theme.scale
+    vertices = []
+    uvs      = []
+    depth    = theme.depth
+    scale    = theme.scale
 
     for s in [0...N]
       v = surface[s]
-      polygon.push({ x: v.x, y: v.y })
+      vertices.push({ x: v.x, y: v.y })
       uvs.push(lengths[s] * scale, 0.0)
 
     for s in [0...N]
       v = surface[N - 1 - s]
-      polygon.push({ x: v.x, y: v.y - depth })
+      vertices.push({ x: v.x, y: v.y - depth })
       uvs.push(lengths[N - 1 - s] * scale, 0.99)
 
     # Build triangle indices for the strip
@@ -88,38 +91,39 @@ class Edges
     return {
       texture:  texture
       theme:    theme
-      vertices: polygon
+      vertices: vertices
       uvs:      new Float32Array(uvs)
       indices:  new Uint32Array(indices)
     }
 
   load_assets: ->
-    for chain in @list
-      @assets.effects.push(chain.theme.file)
+    for polygon in @list
+      @assets.effects.push(polygon.theme.file)
 
   init: ->
     @init_sprites()
 
   init_sprites: ->
-    for chain in @list
+    for polygon in @list
       # Convert world coords (Y-up) to PIXI coords (Y-down)
-      count = chain.vertices.length
+      count = polygon.vertices.length
       positions = new Float32Array(count * 2)
-      for v, i in chain.vertices
+
+      for v, i in polygon.vertices
         positions[i * 2]     = v.x
         positions[i * 2 + 1] = -v.y
 
       geometry = new PIXI.MeshGeometry({
         positions: positions
-        uvs:       chain.uvs
-        indices:   chain.indices
+        uvs:       polygon.uvs
+        indices:   polygon.indices
       })
 
-      texture = PIXI.Texture.from(@assets.get_url(chain.theme.file))
+      texture = PIXI.Texture.from(@assets.get_url(polygon.theme.file))
       texture.source.addressMode = 'repeat'
 
-      chain.mesh = new PIXI.Mesh({ geometry: geometry, texture: texture })
-      @level.camera.neutral_z_container.addChild(chain.mesh)
+      polygon.mesh = new PIXI.Mesh({ geometry: geometry, texture: texture })
+      @level.camera.neutral_z_container.addChild(polygon.mesh)
 
   # only display edges present on the screen zone
   update: ->

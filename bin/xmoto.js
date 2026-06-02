@@ -651,11 +651,11 @@
     }
 
     update() {
-      var dead_player, dead_replay;
+      var live_player, live_replay;
       this.physics.update();
-      dead_player = this.options.playable && !this.moto.dead;
-      dead_replay = !this.options.playable && !this.ghosts.player.moto.dead;
-      if (dead_player || dead_replay) {
+      live_player = this.options.playable && !this.moto.dead;
+      live_replay = !this.options.playable && !this.ghosts.player.moto.dead;
+      if (live_player || live_replay) {
         this.update_timer();
       }
       this.sky.update();
@@ -672,26 +672,25 @@
     }
 
     init_timer() {
-      this.start_time = new Date().getTime();
-      return this.current_time = 0;
+      return this.start_time = new Date().getTime(); // in ms
     }
 
-    update_timer(update_now = false) {
-      var cents, minutes, new_time, seconds;
+    update_timer() {
+      var cents, elapsed, minutes, new_time, seconds, text;
       new_time = new Date().getTime() - this.start_time;
-      if (update_now || Math.floor(new_time / 10) > Math.floor(this.current_time / 10)) {
-        minutes = Math.floor(new_time / 1000 / 60);
-        seconds = Math.floor(new_time / 1000) % 60;
-        if (seconds < 10) {
-          seconds = `0${seconds}`;
-        }
-        cents = Math.floor(new_time / 10) % 100;
-        if (cents < 10) {
-          cents = `0${cents}`;
-        }
-        $(this.options.chrono).text(`${minutes}:${seconds}:${cents}`);
+      elapsed = Math.floor(new_time / 10);
+      minutes = Math.floor(elapsed / 6000);
+      seconds = Math.floor(elapsed / 100) % 60;
+      cents = elapsed % 100;
+      text = `${this.pad(seconds)}:${this.pad(cents)}`;
+      if (minutes > 0) { // show minutes only if needed
+        text = `${minutes}:${text}`;
       }
-      return this.current_time = new_time;
+      return $(this.options.chrono).text(text);
+    }
+
+    pad(n) {
+      return String(n).padStart(2, '0');
     }
 
     got_strawberries() {
@@ -725,7 +724,7 @@
       this.moto.init();
       this.respawn_strawberries();
       this.init_timer();
-      return this.update_timer(true);
+      return this.update_timer();
     }
 
   };
@@ -1349,16 +1348,100 @@
 
   };
 
+  // class Edges
+
+    //   constructor: (level, block) ->
+  //     @level  = level
+  //     @block  = block
+  //     @assets = @level.assets
+
+    //     @list = [] # List of edges
+
+    //   parse: ->
+  //     for vertex, i in @block.vertices
+  //       if vertex.edge
+  //         edge =
+  //           vertex1: vertex
+  //           vertex2: if i == @block.vertices.length-1 then @block.vertices[0] else @block.vertices[i+1]
+  //           block:   @block
+  //           texture: vertex.edge
+  //           theme:   @assets.theme.edge_params(vertex.edge)
+
+    //         edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI/2
+  //         edge.vertices = [ { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y - edge.theme.depth },
+  //                           { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y - edge.theme.depth },
+  //                           { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y },
+  //                           { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y } ]
+  //         edge.aabb = @compute_aabb(edge)
+
+    //         @list.push(edge)
+
+    //   load_assets: ->
+  //     for edge in @list
+  //       @assets.effects.push(edge.theme.file)
+
+    //   init: ->
+  //     @init_sprites()
+
+    //   init_sprites: ->
+  //     for edge in @list
+  //       # Build polygon in PIXI coordinates (y inverted)
+  //       points = edge.vertices.map((vertex) ->
+  //         new PIXI.Point(vertex.x, -vertex.y)
+  //       )
+
+    //       # Load edge texture
+  //       texture = PIXI.Texture.from(@assets.get_url(edge.theme.file))
+
+    //       # Matrix maps world coords → texture UV, pivoting around top-left corner.
+  //       matrix = new PIXI.Matrix()
+  //       matrix.scale(1.0 / 110.0, 1.0 / 110.0 * edge.theme.scale * edge.theme.depth) # reverse engineering to get nice visual values
+  //       matrix.rotate(-edge.angle)
+  //       matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y)
+
+    //       # Create graphics with texture and matrix
+  //       edge.graphics = new PIXI.Graphics()
+  //       edge.graphics.poly(points)
+  //       edge.graphics.fill({
+  //         texture:      texture,
+  //         matrix:       matrix,
+  //         color:        0xffffff,
+  //         alpha:        1.0,
+  //         textureSpace: 'global'
+  //       })
+
+    //       @level.camera.neutral_z_container.addChild(edge.graphics)
+
+    //   # only display edges present on the screen zone
+  //   update: ->
+  //     if !Constants.debug_physics
+  //       block_visible = @block.graphics.visible
+
+    //       for edge in @list
+  //         edge.graphics.visible = block_visible && @visible(edge) # don't test aabb if block not visible
+
+    //   compute_aabb: (edge) ->
+  //     x_positions = edge.vertices.map((v) -> v.x)
+  //     y_positions = edge.vertices.map((v) -> v.y)
+
+    //     aabb = new Box2D.Collision.b2AABB()
+  //     aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
+  //     aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
+
+    //     return aabb
+
+    //   visible: (edge) ->
+  //     edge.aabb.TestOverlap(@level.camera.aabb)
   Edges = class Edges {
     constructor(level, block) {
       this.level = level;
       this.block = block;
       this.assets = this.level.assets;
-      this.list = []; // List of edge chains (each chain = contiguous vertices sharing the same edge texture)
+      this.list = []; // List of edges (contiguous vertices sharing the same edge texture)
     }
 
     parse() {
-      var chain, closing_idx, i, j, k, len, n, results, run, runs, start_idx, texture, theme, vertices;
+      var closing_idx, i, j, k, len, n, polygon, results, run, runs, start_idx, texture, theme, vertices;
       vertices = this.block.vertices;
       n = vertices.length;
       // Collect runs of consecutive vertices with the same edge texture
@@ -1369,7 +1452,7 @@
           texture = vertices[i].edge;
           j = i + 1;
           while (j < n && vertices[j].edge === texture) {
-            j++;
+            j += 1;
           }
           runs.push({
             start: i,
@@ -1378,7 +1461,7 @@
           });
           i = j;
         } else {
-          i++;
+          i += 1;
         }
       }
       // Handle wrapping: if first and last runs share the same texture, merge them
@@ -1386,22 +1469,22 @@
         runs[0].start = runs[runs.length - 1].start;
         runs.pop();
       }
-// Build one chain per run
+// Build one polygon per run
       results = [];
       for (k = 0, len = runs.length; k < len; k++) {
         run = runs[k];
         start_idx = run.start;
-        closing_idx = (run.end + 1) % n; // first vertex after the run (may wrap)
+        closing_idx = (run.end + 1) % vertices.length; // first vertex after the run (may wrap)
         theme = this.assets.theme.edge_params(run.texture);
-        chain = this.build_chain(vertices, start_idx, closing_idx, run.texture, theme);
-        chain.aabb = this.compute_aabb(chain);
-        results.push(this.list.push(chain));
+        polygon = this.build_polygon(vertices, start_idx, closing_idx, run.texture, theme);
+        polygon.aabb = this.compute_aabb(polygon);
+        results.push(this.list.push(polygon));
       }
       return results;
     }
 
-    build_chain(vertices, start_idx, closing_idx, texture, theme) {
-      var N, depth, dx, dy, i, indices, k, l, lengths, m, n, o, o_i, o_ip1, polygon, ref, ref1, ref2, ref3, s, scale, surface, total_length, uvs, v;
+    build_polygon(vertices, start_idx, closing_idx, texture, theme) {
+      var N, depth, dx, dy, i, indices, k, l, lengths, m, n, o, o_i, o_ip1, ref, ref1, ref2, ref3, s, scale, surface, total_length, uvs, v;
       n = vertices.length;
       // Collect surface vertices from start_idx to closing_idx (inclusive, may wrap)
       surface = [];
@@ -1416,7 +1499,7 @@
         }
         i = (i + 1) % n;
       }
-      N = surface.length; // number of surface vertices (K+1 where K = chain segment count)
+      N = surface.length; // number of surface vertices (K+1 where K = polygon segment count)
       
       // Compute cumulative arc lengths along the surface for U coordinates
       total_length = 0;
@@ -1428,13 +1511,13 @@
         lengths.push(total_length);
       }
       // UV: U along the edge (tiles via repeat), V across the depth (0→1).
-      polygon = [];
+      vertices = [];
       uvs = [];
       depth = theme.depth;
       scale = theme.scale;
       for (s = l = 0, ref1 = N; (0 <= ref1 ? l < ref1 : l > ref1); s = 0 <= ref1 ? ++l : --l) {
         v = surface[s];
-        polygon.push({
+        vertices.push({
           x: v.x,
           y: v.y
         });
@@ -1442,7 +1525,7 @@
       }
       for (s = m = 0, ref2 = N; (0 <= ref2 ? m < ref2 : m > ref2); s = 0 <= ref2 ? ++m : --m) {
         v = surface[N - 1 - s];
-        polygon.push({
+        vertices.push({
           x: v.x,
           y: v.y - depth
         });
@@ -1459,19 +1542,19 @@
       return {
         texture: texture,
         theme: theme,
-        vertices: polygon,
+        vertices: vertices,
         uvs: new Float32Array(uvs),
         indices: new Uint32Array(indices)
       };
     }
 
     load_assets() {
-      var chain, k, len, ref, results;
+      var k, len, polygon, ref, results;
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
-        chain = ref[k];
-        results.push(this.assets.effects.push(chain.theme.file));
+        polygon = ref[k];
+        results.push(this.assets.effects.push(polygon.theme.file));
       }
       return results;
     }
@@ -1481,15 +1564,15 @@
     }
 
     init_sprites() {
-      var chain, count, geometry, i, k, l, len, len1, positions, ref, ref1, results, texture, v;
+      var count, geometry, i, k, l, len, len1, polygon, positions, ref, ref1, results, texture, v;
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
-        chain = ref[k];
+        polygon = ref[k];
         // Convert world coords (Y-up) to PIXI coords (Y-down)
-        count = chain.vertices.length;
+        count = polygon.vertices.length;
         positions = new Float32Array(count * 2);
-        ref1 = chain.vertices;
+        ref1 = polygon.vertices;
         for (i = l = 0, len1 = ref1.length; l < len1; i = ++l) {
           v = ref1[i];
           positions[i * 2] = v.x;
@@ -1497,16 +1580,16 @@
         }
         geometry = new PIXI.MeshGeometry({
           positions: positions,
-          uvs: chain.uvs,
-          indices: chain.indices
+          uvs: polygon.uvs,
+          indices: polygon.indices
         });
-        texture = PIXI.Texture.from(this.assets.get_url(chain.theme.file));
+        texture = PIXI.Texture.from(this.assets.get_url(polygon.theme.file));
         texture.source.addressMode = 'repeat';
-        chain.mesh = new PIXI.Mesh({
+        polygon.mesh = new PIXI.Mesh({
           geometry: geometry,
           texture: texture
         });
-        results.push(this.level.camera.neutral_z_container.addChild(chain.mesh));
+        results.push(this.level.camera.neutral_z_container.addChild(polygon.mesh));
       }
       return results;
     }
