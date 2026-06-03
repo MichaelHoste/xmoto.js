@@ -31,7 +31,7 @@ class Edges
     while i < n
       if vertices[i].edge
         texture = vertices[i].edge
-        j =  i + 1
+        j = i + 1
         j += 1 while j < n && vertices[j].edge == texture
         runs.push({ start: i, end: j - 1, texture: texture })
         i = j
@@ -93,7 +93,6 @@ class Edges
       indices.push(s + 1, bot_next, bot_curr)
 
     return {
-      texture:  run.texture
       theme:    theme
       vertices: poly_vertices
       uvs:      new Float32Array(uvs)
