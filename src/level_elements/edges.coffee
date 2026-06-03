@@ -1,3 +1,8 @@
+# New Edges implementation:
+# -> 1 polygon for the continuous vertices with texture
+# -> MeshGeometry with uvs for texture position
+# -> 1 GPU call for full edge
+
 class Edges
 
   constructor: (level, block) ->
@@ -5,7 +10,7 @@ class Edges
     @block  = block
     @assets = @level.assets
 
-    @list = [] # List of edges (contiguous vertices sharing the same edge texture)
+    @polygons = [] # Each polygon is an edge that was created using the contiguous vertices sharing the same edge texture
 
   parse: ->
     vertices = @block.vertices
@@ -38,11 +43,11 @@ class Edges
       start_idx          = run.start
       closing_idx        = (run.end + 1) % vertices.length  # first vertex after the run (may wrap)
       theme              = @assets.theme.edge_params(run.texture)
-      polygon            = @build_polygon(vertices, start_idx, closing_idx, run.texture, theme)
+      polygon            = @create_polygon(vertices, start_idx, closing_idx, run.texture, theme)
       polygon.aabb       = @compute_aabb(polygon)
-      @list.push(polygon)
+      @polygons.push(polygon)
 
-  build_polygon: (vertices, start_idx, closing_idx, texture, theme) ->
+  create_polygon: (vertices, start_idx, closing_idx, texture, theme) ->
     n = vertices.length
 
     # Collect surface vertices from start_idx to closing_idx (inclusive, may wrap)
@@ -97,14 +102,14 @@ class Edges
     }
 
   load_assets: ->
-    for polygon in @list
+    for polygon in @polygons
       @assets.effects.push(polygon.theme.file)
 
   init: ->
     @init_sprites()
 
   init_sprites: ->
-    for polygon in @list
+    for polygon in @polygons
       # Convert world coords (Y-up) to PIXI coords (Y-down)
       count = polygon.vertices.length
       positions = new Float32Array(count * 2)
@@ -130,12 +135,12 @@ class Edges
     if !Constants.debug_physics
       block_visible = @block.graphics.visible
 
-      for chain in @list
-        chain.mesh.visible = block_visible && @visible(chain)
+      for polygon in @polygons
+        polygon.mesh.visible = block_visible && @visible(polygon)
 
-  compute_aabb: (chain) ->
-    x_positions = chain.vertices.map((v) -> v.x)
-    y_positions = chain.vertices.map((v) -> v.y)
+  compute_aabb: (polygon) ->
+    x_positions = polygon.vertices.map((v) -> v.x)
+    y_positions = polygon.vertices.map((v) -> v.y)
 
     aabb = new Box2D.Collision.b2AABB()
     aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
@@ -143,5 +148,5 @@ class Edges
 
     return aabb
 
-  visible: (chain) ->
-    chain.aabb.TestOverlap(@level.camera.aabb)
+  visible: (polygon) ->
+    polygon.aabb.TestOverlap(@level.camera.aabb)

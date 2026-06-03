@@ -1348,96 +1348,16 @@
 
   };
 
-  // class Edges
-
-    //   constructor: (level, block) ->
-  //     @level  = level
-  //     @block  = block
-  //     @assets = @level.assets
-
-    //     @list = [] # List of edges
-
-    //   parse: ->
-  //     for vertex, i in @block.vertices
-  //       if vertex.edge
-  //         edge =
-  //           vertex1: vertex
-  //           vertex2: if i == @block.vertices.length-1 then @block.vertices[0] else @block.vertices[i+1]
-  //           block:   @block
-  //           texture: vertex.edge
-  //           theme:   @assets.theme.edge_params(vertex.edge)
-
-    //         edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI/2
-  //         edge.vertices = [ { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y - edge.theme.depth },
-  //                           { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y - edge.theme.depth },
-  //                           { x: edge.vertex2.absolute_x, y: edge.vertex2.absolute_y },
-  //                           { x: edge.vertex1.absolute_x, y: edge.vertex1.absolute_y } ]
-  //         edge.aabb = @compute_aabb(edge)
-
-    //         @list.push(edge)
-
-    //   load_assets: ->
-  //     for edge in @list
-  //       @assets.effects.push(edge.theme.file)
-
-    //   init: ->
-  //     @init_sprites()
-
-    //   init_sprites: ->
-  //     for edge in @list
-  //       # Build polygon in PIXI coordinates (y inverted)
-  //       points = edge.vertices.map((vertex) ->
-  //         new PIXI.Point(vertex.x, -vertex.y)
-  //       )
-
-    //       # Load edge texture
-  //       texture = PIXI.Texture.from(@assets.get_url(edge.theme.file))
-
-    //       # Matrix maps world coords → texture UV, pivoting around top-left corner.
-  //       matrix = new PIXI.Matrix()
-  //       matrix.scale(1.0 / 110.0, 1.0 / 110.0 * edge.theme.scale * edge.theme.depth) # reverse engineering to get nice visual values
-  //       matrix.rotate(-edge.angle)
-  //       matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y)
-
-    //       # Create graphics with texture and matrix
-  //       edge.graphics = new PIXI.Graphics()
-  //       edge.graphics.poly(points)
-  //       edge.graphics.fill({
-  //         texture:      texture,
-  //         matrix:       matrix,
-  //         color:        0xffffff,
-  //         alpha:        1.0,
-  //         textureSpace: 'global'
-  //       })
-
-    //       @level.camera.neutral_z_container.addChild(edge.graphics)
-
-    //   # only display edges present on the screen zone
-  //   update: ->
-  //     if !Constants.debug_physics
-  //       block_visible = @block.graphics.visible
-
-    //       for edge in @list
-  //         edge.graphics.visible = block_visible && @visible(edge) # don't test aabb if block not visible
-
-    //   compute_aabb: (edge) ->
-  //     x_positions = edge.vertices.map((v) -> v.x)
-  //     y_positions = edge.vertices.map((v) -> v.y)
-
-    //     aabb = new Box2D.Collision.b2AABB()
-  //     aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
-  //     aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
-
-    //     return aabb
-
-    //   visible: (edge) ->
-  //     edge.aabb.TestOverlap(@level.camera.aabb)
+  // New Edges implementation:
+  // -> 1 polygon for the continuous vertices with texture
+  // -> MeshGeometry with uvs for texture position
+  // -> 1 GPU call for full edge
   Edges = class Edges {
     constructor(level, block) {
       this.level = level;
       this.block = block;
       this.assets = this.level.assets;
-      this.list = []; // List of edges (contiguous vertices sharing the same edge texture)
+      this.polygons = []; // Each polygon is an edge that was created using the contiguous vertices sharing the same edge texture
     }
 
     parse() {
@@ -1476,14 +1396,14 @@
         start_idx = run.start;
         closing_idx = (run.end + 1) % vertices.length; // first vertex after the run (may wrap)
         theme = this.assets.theme.edge_params(run.texture);
-        polygon = this.build_polygon(vertices, start_idx, closing_idx, run.texture, theme);
+        polygon = this.create_polygon(vertices, start_idx, closing_idx, run.texture, theme);
         polygon.aabb = this.compute_aabb(polygon);
-        results.push(this.list.push(polygon));
+        results.push(this.polygons.push(polygon));
       }
       return results;
     }
 
-    build_polygon(vertices, start_idx, closing_idx, texture, theme) {
+    create_polygon(vertices, start_idx, closing_idx, texture, theme) {
       var N, depth, dx, dy, i, indices, k, l, lengths, m, n, o, o_i, o_ip1, ref, ref1, ref2, ref3, s, scale, surface, total_length, uvs, v;
       n = vertices.length;
       // Collect surface vertices from start_idx to closing_idx (inclusive, may wrap)
@@ -1550,7 +1470,7 @@
 
     load_assets() {
       var k, len, polygon, ref, results;
-      ref = this.list;
+      ref = this.polygons;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         polygon = ref[k];
@@ -1565,7 +1485,7 @@
 
     init_sprites() {
       var count, geometry, i, k, l, len, len1, polygon, positions, ref, ref1, results, texture, v;
-      ref = this.list;
+      ref = this.polygons;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         polygon = ref[k];
@@ -1596,25 +1516,25 @@
 
     // only display edges present on the screen zone
     update() {
-      var block_visible, chain, k, len, ref, results;
+      var block_visible, k, len, polygon, ref, results;
       if (!Constants.debug_physics) {
         block_visible = this.block.graphics.visible;
-        ref = this.list;
+        ref = this.polygons;
         results = [];
         for (k = 0, len = ref.length; k < len; k++) {
-          chain = ref[k];
-          results.push(chain.mesh.visible = block_visible && this.visible(chain));
+          polygon = ref[k];
+          results.push(polygon.mesh.visible = block_visible && this.visible(polygon));
         }
         return results;
       }
     }
 
-    compute_aabb(chain) {
+    compute_aabb(polygon) {
       var aabb, x_positions, y_positions;
-      x_positions = chain.vertices.map(function(v) {
+      x_positions = polygon.vertices.map(function(v) {
         return v.x;
       });
-      y_positions = chain.vertices.map(function(v) {
+      y_positions = polygon.vertices.map(function(v) {
         return v.y;
       });
       aabb = new Box2D.Collision.b2AABB();
@@ -1623,8 +1543,8 @@
       return aabb;
     }
 
-    visible(chain) {
-      return chain.aabb.TestOverlap(this.level.camera.aabb);
+    visible(polygon) {
+      return polygon.aabb.TestOverlap(this.level.camera.aabb);
     }
 
   };
