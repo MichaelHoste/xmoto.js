@@ -1361,10 +1361,24 @@
     }
 
     parse() {
-      var closing_idx, i, j, k, len, n, polygon, results, run, runs, start_idx, texture, theme, vertices;
-      vertices = this.block.vertices;
+      var k, len, polygon, results, run, runs, theme;
+      runs = this.extract_runs(this.block.vertices);
+      results = [];
+      for (k = 0, len = runs.length; k < len; k++) {
+        run = runs[k];
+        theme = this.assets.theme.edge_params(run.texture);
+        polygon = this.build_edge_polygon(this.block.vertices, run, theme);
+        polygon.aabb = this.compute_aabb(polygon);
+        results.push(this.polygons.push(polygon));
+      }
+      return results;
+    }
+
+    // Find maximal runs of consecutive vertices sharing the same edge texture.
+    // Wrapping runs (first and last with same texture) are merged.
+    extract_runs(vertices) {
+      var i, j, n, runs, texture;
       n = vertices.length;
-      // Collect runs of consecutive vertices with the same edge texture
       runs = [];
       i = 0;
       while (i < n) {
@@ -1384,85 +1398,76 @@
           i += 1;
         }
       }
-      // Handle wrapping: if first and last runs share the same texture, merge them
       if (runs.length > 1 && runs[0].texture === runs[runs.length - 1].texture) {
         runs[0].start = runs[runs.length - 1].start;
         runs.pop();
       }
-// Build one polygon per run
-      results = [];
-      for (k = 0, len = runs.length; k < len; k++) {
-        run = runs[k];
-        start_idx = run.start;
-        closing_idx = (run.end + 1) % vertices.length; // first vertex after the run (may wrap)
-        theme = this.assets.theme.edge_params(run.texture);
-        polygon = this.create_polygon(vertices, start_idx, closing_idx, run.texture, theme);
-        polygon.aabb = this.compute_aabb(polygon);
-        results.push(this.polygons.push(polygon));
-      }
-      return results;
+      return runs;
     }
 
-    create_polygon(vertices, start_idx, closing_idx, texture, theme) {
-      var N, depth, dx, dy, i, indices, k, l, lengths, m, n, o, o_i, o_ip1, ref, ref1, ref2, ref3, s, scale, surface, total_length, uvs, v;
+    // Build the geometry for a single edge polygon run.
+    // Collects the surface vertices from run.start through (run.end + 1),
+    // then builds a triangle strip projecting downward by theme.depth.
+    build_edge_polygon(vertices, run, theme) {
+      var bot_curr, bot_next, closing_idx, depth, dx, dy, i, indices, k, l, lengths, m, n, o, poly_vertices, ref, ref1, ref2, ref3, s, scale, surface, surface_count, uvs, v;
       n = vertices.length;
-      // Collect surface vertices from start_idx to closing_idx (inclusive, may wrap)
+      depth = theme.depth;
+      scale = theme.scale;
+      // Collect surface vertices along this edge segment (may wrap)
       surface = [];
-      i = start_idx;
+      closing_idx = (run.end + 1) % n;
+      i = run.start;
       while (true) {
+        v = vertices[i];
         surface.push({
-          x: vertices[i].absolute_x,
-          y: vertices[i].absolute_y
+          x: v.absolute_x,
+          y: v.absolute_y
         });
         if (i === closing_idx) {
           break;
         }
         i = (i + 1) % n;
       }
-      N = surface.length; // number of surface vertices (K+1 where K = polygon segment count)
-      
-      // Compute cumulative arc lengths along the surface for U coordinates
-      total_length = 0;
+      surface_count = surface.length;
+      // Cumulative arc length along the surface → U texture coordinate
       lengths = [0];
-      for (s = k = 1, ref = N; (1 <= ref ? k < ref : k > ref); s = 1 <= ref ? ++k : --k) {
+      for (s = k = 1, ref = surface_count; (1 <= ref ? k < ref : k > ref); s = 1 <= ref ? ++k : --k) {
         dx = surface[s].x - surface[s - 1].x;
         dy = surface[s].y - surface[s - 1].y;
-        total_length += Math.sqrt(dx * dx + dy * dy);
-        lengths.push(total_length);
+        lengths.push(lengths[s - 1] + Math.sqrt(dx * dx + dy * dy));
       }
-      // UV: U along the edge (tiles via repeat), V across the depth (0→1).
-      vertices = [];
+      // Build vertex pairs: top row (surface vertices in order),
+      // then bottom row (same vertices reversed, offset by -depth)
+      poly_vertices = [];
       uvs = [];
-      depth = theme.depth;
-      scale = theme.scale;
-      for (s = l = 0, ref1 = N; (0 <= ref1 ? l < ref1 : l > ref1); s = 0 <= ref1 ? ++l : --l) {
+      for (s = l = 0, ref1 = surface_count; (0 <= ref1 ? l < ref1 : l > ref1); s = 0 <= ref1 ? ++l : --l) {
         v = surface[s];
-        vertices.push({
+        poly_vertices.push({
           x: v.x,
           y: v.y
         });
         uvs.push(lengths[s] * scale, 0.0);
       }
-      for (s = m = 0, ref2 = N; (0 <= ref2 ? m < ref2 : m > ref2); s = 0 <= ref2 ? ++m : --m) {
-        v = surface[N - 1 - s];
-        vertices.push({
+      for (s = m = 0, ref2 = surface_count; (0 <= ref2 ? m < ref2 : m > ref2); s = 0 <= ref2 ? ++m : --m) {
+        v = surface[surface_count - 1 - s];
+        poly_vertices.push({
           x: v.x,
           y: v.y - depth
         });
-        uvs.push(lengths[N - 1 - s] * scale, 0.99);
+        uvs.push(lengths[surface_count - 1 - s] * scale, 0.99);
       }
-      // Build triangle indices for the strip
+      // Triangle strip indices (2 triangles per segment)
       indices = [];
-      for (s = o = 0, ref3 = N - 1; (0 <= ref3 ? o < ref3 : o > ref3); s = 0 <= ref3 ? ++o : --o) {
-        o_i = 2 * N - 1 - s;
-        o_ip1 = 2 * N - 2 - s;
-        indices.push(s, s + 1, o_i);
-        indices.push(s + 1, o_ip1, o_i);
+      for (s = o = 0, ref3 = surface_count - 1; (0 <= ref3 ? o < ref3 : o > ref3); s = 0 <= ref3 ? ++o : --o) {
+        bot_curr = 2 * surface_count - 1 - s;
+        bot_next = 2 * surface_count - 2 - s;
+        indices.push(s, s + 1, bot_curr);
+        indices.push(s + 1, bot_next, bot_curr);
       }
       return {
-        texture: texture,
+        texture: run.texture,
         theme: theme,
-        vertices: vertices,
+        vertices: poly_vertices,
         uvs: new Float32Array(uvs),
         indices: new Uint32Array(indices)
       };

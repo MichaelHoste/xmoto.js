@@ -13,90 +13,89 @@ class Edges
     @polygons = [] # Each polygon is an edge that was created using the contiguous vertices sharing the same edge texture
 
   parse: ->
-    vertices = @block.vertices
-    n        = vertices.length
+    runs = @extract_runs(@block.vertices)
 
-    # Collect runs of consecutive vertices with the same edge texture
+    for run in runs
+      theme        = @assets.theme.edge_params(run.texture)
+      polygon      = @build_edge_polygon(@block.vertices, run, theme)
+      polygon.aabb = @compute_aabb(polygon)
+      @polygons.push(polygon)
+
+  # Find maximal runs of consecutive vertices sharing the same edge texture.
+  # Wrapping runs (first and last with same texture) are merged.
+  extract_runs: (vertices) ->
+    n    = vertices.length
     runs = []
     i    = 0
 
     while i < n
       if vertices[i].edge
         texture = vertices[i].edge
-
         j =  i + 1
         j += 1 while j < n && vertices[j].edge == texture
-
         runs.push({ start: i, end: j - 1, texture: texture })
-
         i = j
       else
         i += 1
 
-    # Handle wrapping: if first and last runs share the same texture, merge them
     if runs.length > 1 && runs[0].texture == runs[runs.length - 1].texture
       runs[0].start = runs[runs.length - 1].start
       runs.pop()
 
-    # Build one polygon per run
-    for run in runs
-      start_idx          = run.start
-      closing_idx        = (run.end + 1) % vertices.length  # first vertex after the run (may wrap)
-      theme              = @assets.theme.edge_params(run.texture)
-      polygon            = @create_polygon(vertices, start_idx, closing_idx, run.texture, theme)
-      polygon.aabb       = @compute_aabb(polygon)
-      @polygons.push(polygon)
+    return runs
 
-  create_polygon: (vertices, start_idx, closing_idx, texture, theme) ->
-    n = vertices.length
+  # Build the geometry for a single edge polygon run.
+  # Collects the surface vertices from run.start through (run.end + 1),
+  # then builds a triangle strip projecting downward by theme.depth.
+  build_edge_polygon: (vertices, run, theme) ->
+    n     = vertices.length
+    depth = theme.depth
+    scale = theme.scale
 
-    # Collect surface vertices from start_idx to closing_idx (inclusive, may wrap)
+    # Collect surface vertices along this edge segment (may wrap)
     surface = []
-    i = start_idx
+    closing_idx = (run.end + 1) % n
+    i = run.start
     loop
-      surface.push({ x: vertices[i].absolute_x, y: vertices[i].absolute_y })
+      v = vertices[i]
+      surface.push({ x: v.absolute_x, y: v.absolute_y })
       break if i == closing_idx
       i = (i + 1) % n
 
-    N = surface.length  # number of surface vertices (K+1 where K = polygon segment count)
+    surface_count = surface.length
 
-    # Compute cumulative arc lengths along the surface for U coordinates
-    total_length = 0
+    # Cumulative arc length along the surface → U texture coordinate
     lengths = [0]
-    for s in [1...N]
+    for s in [1...surface_count]
       dx = surface[s].x - surface[s-1].x
       dy = surface[s].y - surface[s-1].y
-      total_length += Math.sqrt(dx * dx + dy * dy)
-      lengths.push(total_length)
+      lengths.push(lengths[s-1] + Math.sqrt(dx * dx + dy * dy))
 
-    # UV: U along the edge (tiles via repeat), V across the depth (0→1).
-    vertices = []
-    uvs      = []
-    depth    = theme.depth
-    scale    = theme.scale
-
-    for s in [0...N]
+    # Build vertex pairs: top row (surface vertices in order),
+    # then bottom row (same vertices reversed, offset by -depth)
+    poly_vertices = []
+    uvs           = []
+    for s in [0...surface_count]
       v = surface[s]
-      vertices.push({ x: v.x, y: v.y })
+      poly_vertices.push({ x: v.x, y: v.y })
       uvs.push(lengths[s] * scale, 0.0)
+    for s in [0...surface_count]
+      v = surface[surface_count - 1 - s]
+      poly_vertices.push({ x: v.x, y: v.y - depth })
+      uvs.push(lengths[surface_count - 1 - s] * scale, 0.99)
 
-    for s in [0...N]
-      v = surface[N - 1 - s]
-      vertices.push({ x: v.x, y: v.y - depth })
-      uvs.push(lengths[N - 1 - s] * scale, 0.99)
-
-    # Build triangle indices for the strip
+    # Triangle strip indices (2 triangles per segment)
     indices = []
-    for s in [0...N - 1]
-      o_i   = 2 * N - 1 - s
-      o_ip1 = 2 * N - 2 - s
-      indices.push(s, s + 1, o_i)
-      indices.push(s + 1, o_ip1, o_i)
+    for s in [0...surface_count - 1]
+      bot_curr = 2 * surface_count - 1 - s
+      bot_next = 2 * surface_count - 2 - s
+      indices.push(s, s + 1, bot_curr)
+      indices.push(s + 1, bot_next, bot_curr)
 
     return {
-      texture:  texture
+      texture:  run.texture
       theme:    theme
-      vertices: vertices
+      vertices: poly_vertices
       uvs:      new Float32Array(uvs)
       indices:  new Uint32Array(indices)
     }
