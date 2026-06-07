@@ -83,7 +83,7 @@ class Physics
       @level.camera.move()
       @world.Step(1.0/Constants.fps, 10, 10)
       @world.ClearForces()
-      @level.input.space = false
+      @level.input.space = false # Space can't stay pressed (used for `.move` and `.add_step`)
 
       if @level.need_to_restart
         @restart()

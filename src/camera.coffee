@@ -60,7 +60,7 @@ class Camera
       @translate.x = @translate.x * 0.97 + velocity.x/3.0 * 0.03
       @translate.y = @translate.y * 0.99 + velocity.y/3.0 * 0.01
 
-      @compute_aabb()
+    @compute_aabb()
 
   update: ->
     if Constants.debug_physics
