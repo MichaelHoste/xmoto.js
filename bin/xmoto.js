@@ -136,8 +136,9 @@
         if (this.scale.y < max_limit_y) {
           this.scale.y = max_limit_y;
         }
-        return event.preventDefault() && false;
+        return event.preventDefault() && false; // defensive for old browsers
       };
+      
       // Add scroll to game div container
       container = $(this.level.options.container)[0];
       container.addEventListener('DOMMouseScroll', scroll, false);

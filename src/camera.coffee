@@ -130,7 +130,7 @@ class Camera
       @scale.x = max_limit_x if @scale.x > max_limit_x
       @scale.y = max_limit_y if @scale.y < max_limit_y
 
-      return event.preventDefault() && false
+      return event.preventDefault() && false # defensive for old browsers
 
     # Add scroll to game div container
     container = $(@level.options.container)[0]
