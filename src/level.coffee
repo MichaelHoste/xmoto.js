@@ -33,6 +33,9 @@ class Level
     # Ghosts: previous saved run of various players (included himself)
     @ghosts = new Ghosts(this)
 
+    # Manage fullscreen on/off
+    @bind_fullscreen_change()
+
   load_from_file: (filename, callback) ->
     @assets.parse_theme( =>
       $.ajax({
@@ -137,3 +140,51 @@ class Level
 
     @init_timer()
     @update_timer()
+
+  toggle_fullscreen: ->
+    if document.fullscreenElement
+      document.exitFullscreen()
+    else
+      document.querySelector(@options.canvas).requestFullscreen()
+
+  bind_fullscreen_change: ->
+    $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', =>
+      if document.fullscreenElement
+        @renderer._orig_width  = @options.width
+        @renderer._orig_height = @options.height
+        @renderer._orig_zoom   = Constants.default_scale.x
+
+        screenW = screen.width
+        screenH = screen.height
+
+        @renderer.resize(screenW, screenH)
+
+        @options.width  = screenW
+        @options.height = screenH
+
+        debugCanvas = document.getElementById('xmoto-debug')
+        if debugCanvas
+          debugCanvas.width  = screenW
+          debugCanvas.height = screenH
+
+        ratio      = Math.min(screenW / @renderer._orig_width, screenH / @renderer._orig_height)
+        new_zoom_x =  @renderer._orig_zoom * ratio
+        new_zoom_y = -@renderer._orig_zoom * ratio
+
+        Constants.default_scale = { x: new_zoom_x, y: new_zoom_y }
+        @camera.scale.x = new_zoom_x
+        @camera.scale.y = new_zoom_y
+      else
+        @renderer.resize(@renderer._orig_width, @renderer._orig_height)
+        @options.width  = @renderer._orig_width
+        @options.height = @renderer._orig_height
+
+        debugCanvas = document.getElementById('xmoto-debug')
+        if debugCanvas
+          debugCanvas.width  = @renderer._orig_width
+          debugCanvas.height = @renderer._orig_height
+
+        Constants.default_scale = { x: @renderer._orig_zoom, y: -@renderer._orig_zoom }
+        @camera.scale.x = @renderer._orig_zoom
+        @camera.scale.y = -@renderer._orig_zoom
+    )

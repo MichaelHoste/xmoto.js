@@ -52,10 +52,7 @@ class Input
         when 70 # f
           if !$(':input').is(':focus')
             if !event.ctrlKey && !event.metaKey && !event.altKey
-              if document.fullscreenElement
-                document.exitFullscreen()
-              else
-                document.getElementById('xmoto').requestFullscreen()
+              @level.toggle_fullscreen()
               event.preventDefault()
         when 69 # e
           if !$(':input').is(':focus')

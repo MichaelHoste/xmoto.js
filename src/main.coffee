@@ -16,8 +16,6 @@ $.xmoto = (level_filename, options = {}) ->
     window.cancelAnimationFrame(window.game_loop)
 
     bind_render_to_dom(renderer, options)
-    window.xmoto_renderer = renderer
-    window.xmoto_options  = options
     main_loop(level_filename, renderer, options)
 
   load_options = (options) ->
@@ -80,7 +78,6 @@ $.xmoto = (level_filename, options = {}) ->
     stats_ms  = bind_stats_ms()  if Constants.debug
 
     level = new Level(renderer, options)
-    window.xmoto_level = level
 
     level.load_from_file(level_filename, =>
       level.init(renderer)
