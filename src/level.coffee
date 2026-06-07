@@ -145,7 +145,7 @@ class Level
     if document.fullscreenElement
       document.exitFullscreen()
     else
-      document.querySelector(@options.canvas).requestFullscreen()
+      document.querySelector(@options.container).requestFullscreen()
 
   bind_fullscreen_change: ->
     $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', =>

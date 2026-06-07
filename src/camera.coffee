@@ -136,9 +136,10 @@ class Camera
 
       return event.preventDefault() && false
 
-    canvas = $(@level.options.canvas).get(0)
-    canvas.addEventListener('DOMMouseScroll', scroll, false)
-    canvas.addEventListener('mousewheel',     scroll, false)
+    # Add scroll to game div container
+    container = $(@level.options.container).get(0)
+    container.addEventListener('DOMMouseScroll', scroll, false)
+    container.addEventListener('mousewheel',     scroll, false)
 
   compute_aabb: ->
     factor = if Constants.debug_clipping then 0.6 else 1.0

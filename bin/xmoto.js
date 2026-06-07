@@ -110,7 +110,7 @@
     // If there are some issues on other systems than MacOS,
     // check this to find a solution : http://stackoverflow.com/questions/5527601/normalizing-mousewheel-speed-across-browsers
     init_scroll() {
-      var canvas, scroll;
+      var container, scroll;
       scroll = (event) => {
         var delta, max_limit_x, max_limit_y, min_limit_x, min_limit_y;
         if (event.wheelDelta) {
@@ -142,9 +142,10 @@
         }
         return event.preventDefault() && false;
       };
-      canvas = $(this.level.options.canvas).get(0);
-      canvas.addEventListener('DOMMouseScroll', scroll, false);
-      return canvas.addEventListener('mousewheel', scroll, false);
+      // Add scroll to game div container
+      container = $(this.level.options.container).get(0);
+      container.addEventListener('DOMMouseScroll', scroll, false);
+      return container.addEventListener('mousewheel', scroll, false);
     }
 
     compute_aabb() {
@@ -525,7 +526,7 @@
     init_keyboard() {
       $(document).off('keydown');
       $(document).on('keydown', (event) => {
-        var url;
+        var canvas_selector, image, url;
         switch (event.which || event.keyCode) {
           case 38:
             return this.up = true;
@@ -557,9 +558,11 @@
           case 67: // c
             url = document.URL;
             url = url.substr(url.length - 1) !== '/' ? `${url}/capture` : `${url}capture`;
+            canvas_selector = `${this.level.options.container} > canvas:first`;
+            image = $(canvas_selector)[0].toDataURL();
             return $.post(url, {
               steps: this.level.physics.steps,
-              image: $(this.level.options.canvas)[0].toDataURL()
+              image: image
             }).done(function() {
               return alert("Capture uploaded");
             }).fail(function() {
@@ -743,7 +746,7 @@
       if (document.fullscreenElement) {
         return document.exitFullscreen();
       } else {
-        return document.querySelector(this.options.canvas).requestFullscreen();
+        return document.querySelector(this.options.container).requestFullscreen();
       }
     }
 
@@ -928,7 +931,7 @@
       var defaults;
       defaults = {
         // Selectors
-        canvas: '#xmoto', // canvas selector
+        container: '#xmoto', // empty div where the game will be created
         loading: '#loading', // loading selector
         chrono: '#chrono', // chrono selector
         
@@ -955,36 +958,40 @@
       return options;
     };
     bind_render_to_dom = function(renderer, options) {
-      $("#xmoto canvas").remove();
-      $(options.loading).show();
-      $('#xmoto').css('height', options.height);
-      $('#xmoto')[0].appendChild(renderer.canvas);
-      $('#xmoto').append('<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>');
-      return $('#xmoto-debug').hide();
+      var container, debug_canvas_html;
+      container = $(options.container);
+      container.find('canvas').remove(); // Remove old canvas
+      $(options.loading).show(); // Start loading
+      container.css('height', options.height); // Force height of parent
+      container[0].appendChild(renderer.canvas); // Add PixiJS canvas to container
+      debug_canvas_html = '<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>';
+      container.append(debug_canvas_html); // Add debug canvas to container (physics)
+      return $('#xmoto-debug').hide(); // Hide debug canvas
     };
-    bind_stats_fps = function() {
+    bind_stats_fps = function(container_selector) {
       var stats;
       stats = new Stats();
       stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-      $('#xmoto')[0].appendChild(stats.dom);
-      $('#xmoto div:last').addClass('stats-fps');
+      $(container_selector)[0].appendChild(stats.dom);
+      $(container_selector).find('div:last').addClass('stats-fps');
       return stats;
     };
-    bind_stats_ms = function() {
+    bind_stats_ms = function(container_selector) {
       var stats;
       stats = new Stats();
       stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
-      $('#xmoto')[0].appendChild(stats.dom);
-      $('#xmoto div:last').addClass('stats-ms');
+      $(container_selector)[0].appendChild(stats.dom);
+      $(container_selector).find('div:last').addClass('stats-ms');
       return stats;
     };
     main_loop = function(level_filename, renderer, options) {
-      var level, stats_fps, stats_ms;
+      var container_selector, level, stats_fps, stats_ms;
+      container_selector = $(options.container);
       if (Constants.debug) {
-        stats_fps = bind_stats_fps();
+        stats_fps = bind_stats_fps(container_selector);
       }
       if (Constants.debug) {
-        stats_ms = bind_stats_ms();
+        stats_ms = bind_stats_ms(container_selector);
       }
       level = new Level(renderer, options);
       return level.load_from_file(level_filename, () => {
@@ -1018,11 +1025,6 @@
     return initialize();
   };
 
-  //full_screen = ->
-  //  window.onresize = ->
-  //    $("#xmoto").width($("body").width())
-  //    $("#xmoto").height($("body").height())
-  //  window.onresize()
   b2World = Box2D.Dynamics.b2World;
 
   b2Vec2 = Box2D.Common.Math.b2Vec2;

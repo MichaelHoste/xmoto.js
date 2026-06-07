@@ -61,9 +61,13 @@ class Input
         when 67 # c
           url = document.URL
           url = if url.substr(url.length-1) != '/' then "#{url}/capture" else "#{url}capture"
+
+          canvas_selector = "#{@level.options.container} > canvas:first"
+          image           = $(canvas_selector)[0].toDataURL()
+
           $.post(url,
             steps: @level.physics.steps
-            image: $(@level.options.canvas)[0].toDataURL()
+            image: image
           ).done( -> alert("Capture uploaded")).fail( -> alert("Capture failed"))
     )
 
