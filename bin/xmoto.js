@@ -1348,6 +1348,142 @@
 
   };
 
+  // Old "naïve" Edge method. Drop-in replacement but:
+  //  -> 1 rectangle every 2 vertices + depth
+  //  -> Texture with same angle as rectangle
+  //  -> Visually quite nice but not the native XMoto implementation, and too many GPU calls?
+  EdgesWithAngle = class EdgesWithAngle {
+    constructor(level, block) {
+      this.level = level;
+      this.block = block;
+      this.assets = this.level.assets;
+      this.list = []; // List of edges
+    }
+
+    parse() {
+      var edge, i, k, len, ref, results, vertex;
+      ref = this.block.vertices;
+      results = [];
+      for (i = k = 0, len = ref.length; k < len; i = ++k) {
+        vertex = ref[i];
+        if (vertex.edge) {
+          edge = {
+            vertex1: vertex,
+            vertex2: i === this.block.vertices.length - 1 ? this.block.vertices[0] : this.block.vertices[i + 1],
+            block: this.block,
+            texture: vertex.edge,
+            theme: this.assets.theme.edge_params(vertex.edge)
+          };
+          edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
+          edge.vertices = [
+            {
+              x: edge.vertex1.absolute_x,
+              y: edge.vertex1.absolute_y - edge.theme.depth
+            },
+            {
+              x: edge.vertex2.absolute_x,
+              y: edge.vertex2.absolute_y - edge.theme.depth
+            },
+            {
+              x: edge.vertex2.absolute_x,
+              y: edge.vertex2.absolute_y
+            },
+            {
+              x: edge.vertex1.absolute_x,
+              y: edge.vertex1.absolute_y
+            }
+          ];
+          edge.aabb = this.compute_aabb(edge);
+          results.push(this.list.push(edge));
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    }
+
+    load_assets() {
+      var edge, k, len, ref, results;
+      ref = this.list;
+      results = [];
+      for (k = 0, len = ref.length; k < len; k++) {
+        edge = ref[k];
+        results.push(this.assets.effects.push(edge.theme.file));
+      }
+      return results;
+    }
+
+    init() {
+      return this.init_sprites();
+    }
+
+    init_sprites() {
+      var edge, k, len, matrix, points, ref, results, texture;
+      ref = this.list;
+      results = [];
+      for (k = 0, len = ref.length; k < len; k++) {
+        edge = ref[k];
+        // Build polygon in PIXI coordinates (y inverted)
+        points = edge.vertices.map(function(vertex) {
+          return new PIXI.Point(vertex.x, -vertex.y);
+        });
+        // Load edge texture
+        texture = PIXI.Texture.from(this.assets.get_url(edge.theme.file));
+        // Matrix maps world coords → texture UV, pivoting around top-left corner.
+        matrix = new PIXI.Matrix();
+        matrix.scale(1.0 / 110.0, 1.0 / 110.0 * edge.theme.scale * edge.theme.depth); // reverse engineering to get nice visual values
+        matrix.rotate(-edge.angle);
+        matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y);
+        // Create graphics with texture and matrix
+        edge.graphics = new PIXI.Graphics();
+        edge.graphics.poly(points);
+        edge.graphics.fill({
+          texture: texture,
+          matrix: matrix,
+          color: 0xffffff,
+          alpha: 1.0,
+          textureSpace: 'global'
+        });
+        results.push(this.level.camera.neutral_z_container.addChild(edge.graphics));
+      }
+      return results;
+    }
+
+    // only display edges present on the screen zone
+    update() {
+      var block_visible, edge, k, len, ref, results;
+      if (!Constants.debug_physics) {
+        block_visible = this.block.graphics.visible;
+        ref = this.list;
+        results = [];
+        for (k = 0, len = ref.length; k < len; k++) {
+          edge = ref[k];
+          results.push(edge.graphics.visible = block_visible && this.visible(edge)); // don't test aabb if block not visible
+        }
+        return results;
+      }
+    }
+
+    compute_aabb(edge) {
+      var aabb, x_positions, y_positions;
+      x_positions = edge.vertices.map(function(v) {
+        return v.x;
+      });
+      y_positions = edge.vertices.map(function(v) {
+        return v.y;
+      });
+      aabb = new Box2D.Collision.b2AABB();
+      aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions));
+      aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions));
+      return aabb;
+    }
+
+    visible(edge) {
+      return edge.aabb.TestOverlap(this.level.camera.aabb);
+    }
+
+  };
+
   // New Edges implementation:
   // -> 1 polygon for the continuous vertices with texture
   // -> MeshGeometry with uvs for texture position
@@ -1549,142 +1685,6 @@
 
     visible(polygon) {
       return polygon.aabb.TestOverlap(this.level.camera.aabb);
-    }
-
-  };
-
-  // Old "naïve" Edge method. Drop-in replacement but:
-  //  -> 1 rectangle every 2 vertices + depth
-  //  -> Texture with same angle as rectangle
-  //  -> Visually quite nice but not the native XMoto implementation, and too many GPU calls?
-  EdgesWithAngle = class EdgesWithAngle {
-    constructor(level, block) {
-      this.level = level;
-      this.block = block;
-      this.assets = this.level.assets;
-      this.list = []; // List of edges
-    }
-
-    parse() {
-      var edge, i, k, len, ref, results, vertex;
-      ref = this.block.vertices;
-      results = [];
-      for (i = k = 0, len = ref.length; k < len; i = ++k) {
-        vertex = ref[i];
-        if (vertex.edge) {
-          edge = {
-            vertex1: vertex,
-            vertex2: i === this.block.vertices.length - 1 ? this.block.vertices[0] : this.block.vertices[i + 1],
-            block: this.block,
-            texture: vertex.edge,
-            theme: this.assets.theme.edge_params(vertex.edge)
-          };
-          edge.angle = Math2D.angle_between_points(edge.vertex1, edge.vertex2) - Math.PI / 2;
-          edge.vertices = [
-            {
-              x: edge.vertex1.absolute_x,
-              y: edge.vertex1.absolute_y - edge.theme.depth
-            },
-            {
-              x: edge.vertex2.absolute_x,
-              y: edge.vertex2.absolute_y - edge.theme.depth
-            },
-            {
-              x: edge.vertex2.absolute_x,
-              y: edge.vertex2.absolute_y
-            },
-            {
-              x: edge.vertex1.absolute_x,
-              y: edge.vertex1.absolute_y
-            }
-          ];
-          edge.aabb = this.compute_aabb(edge);
-          results.push(this.list.push(edge));
-        } else {
-          results.push(void 0);
-        }
-      }
-      return results;
-    }
-
-    load_assets() {
-      var edge, k, len, ref, results;
-      ref = this.list;
-      results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        edge = ref[k];
-        results.push(this.assets.effects.push(edge.theme.file));
-      }
-      return results;
-    }
-
-    init() {
-      return this.init_sprites();
-    }
-
-    init_sprites() {
-      var edge, k, len, matrix, points, ref, results, texture;
-      ref = this.list;
-      results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        edge = ref[k];
-        // Build polygon in PIXI coordinates (y inverted)
-        points = edge.vertices.map(function(vertex) {
-          return new PIXI.Point(vertex.x, -vertex.y);
-        });
-        // Load edge texture
-        texture = PIXI.Texture.from(this.assets.get_url(edge.theme.file));
-        // Matrix maps world coords → texture UV, pivoting around top-left corner.
-        matrix = new PIXI.Matrix();
-        matrix.scale(1.0 / 110.0, 1.0 / 110.0 * edge.theme.scale * edge.theme.depth); // reverse engineering to get nice visual values
-        matrix.rotate(-edge.angle);
-        matrix.translate(edge.vertex1.absolute_x, -edge.vertex1.absolute_y);
-        // Create graphics with texture and matrix
-        edge.graphics = new PIXI.Graphics();
-        edge.graphics.poly(points);
-        edge.graphics.fill({
-          texture: texture,
-          matrix: matrix,
-          color: 0xffffff,
-          alpha: 1.0,
-          textureSpace: 'global'
-        });
-        results.push(this.level.camera.neutral_z_container.addChild(edge.graphics));
-      }
-      return results;
-    }
-
-    // only display edges present on the screen zone
-    update() {
-      var block_visible, edge, k, len, ref, results;
-      if (!Constants.debug_physics) {
-        block_visible = this.block.graphics.visible;
-        ref = this.list;
-        results = [];
-        for (k = 0, len = ref.length; k < len; k++) {
-          edge = ref[k];
-          results.push(edge.graphics.visible = block_visible && this.visible(edge)); // don't test aabb if block not visible
-        }
-        return results;
-      }
-    }
-
-    compute_aabb(edge) {
-      var aabb, x_positions, y_positions;
-      x_positions = edge.vertices.map(function(v) {
-        return v.x;
-      });
-      y_positions = edge.vertices.map(function(v) {
-        return v.y;
-      });
-      aabb = new Box2D.Collision.b2AABB();
-      aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions));
-      aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions));
-      return aabb;
-    }
-
-    visible(edge) {
-      return edge.aabb.TestOverlap(this.level.camera.aabb);
     }
 
   };
