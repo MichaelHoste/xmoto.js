@@ -29,8 +29,13 @@ class Sky
   init_sprites: ->
     texture = PIXI.Texture.from(@assets.get_url(@filename))
     @sprite = new PIXI.TilingSprite({ texture: texture, width: @options.width, height: @options.height })
+
     @sprite.position.x = 0
     @sprite.position.y = 0
+
+    @sprite.tileScale.x = 4
+    @sprite.tileScale.y = 4
+
     @level.stage.addChildAt(@sprite, 0)
 
   update: ->
@@ -47,11 +52,12 @@ class Sky
       ctx.fillStyle = "#222228"
       ctx.fill()
     else
-      @sprite.tileScale.x = 4
-      @sprite.tileScale.y = 4
+      # Only when going in/out fullscreen (avoid some internal computations)
+      @sprite.width  = @options.width  if @sprite.width != @options.width
+      @sprite.height = @options.height if @sprite.height != @options.height
 
-      position_factor_x = 15
-      position_factor_y = 7
+      parallax_x = 15 # sky parallax on x axix
+      parallax_y = 7  # sky parallax on y axis
 
-      @sprite.tilePosition.x = -@level.camera.target().x * position_factor_x
-      @sprite.tilePosition.y =  @level.camera.target().y * position_factor_y
+      @sprite.tilePosition.x = -@level.camera.target().x * parallax_x
+      @sprite.tilePosition.y =  @level.camera.target().y * parallax_y

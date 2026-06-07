@@ -174,6 +174,21 @@ div#debug {
   color: black;
 }
 
+.fullscreen-button {
+  position: absolute;
+  top: -24px;
+  left: 0px;
+  color: #08c;
+  text-decoration: none;
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  z-index: 2;
+}
+
+.fullscreen-button:hover {
+  color: black;
+}
+
 #debug form.debug {
   display: none;
 }
