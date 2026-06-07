@@ -33,10 +33,6 @@
       if (Constants.manual_scale) {
         this.init_scroll();
       }
-      if (Constants.debug_physics) {
-        $('#xmoto canvas').hide();
-        $('#xmoto-debug').show();
-      }
       if (Constants.debug_clipping) {
         this.clipping = new PIXI.Graphics();
         this.clipping.alpha = 0.2;
@@ -143,7 +139,7 @@
         return event.preventDefault() && false;
       };
       // Add scroll to game div container
-      container = $(this.level.options.container).get(0);
+      container = $(this.level.options.container)[0];
       container.addEventListener('DOMMouseScroll', scroll, false);
       return container.addEventListener('mousewheel', scroll, false);
     }
@@ -591,8 +587,10 @@
       this.renderer = renderer;
       this.options = options;
       // Context
-      this.debug_ctx = $('#xmoto-debug').get(0).getContext('2d');
+      this.debug_ctx = $('#xmoto-debug')[0].getContext('2d');
       this.stage = new PIXI.Container();
+      // Debug
+      this.init_debug_physics();
       // Level independant objects
       this.assets = new Assets();
       this.camera = new Camera(this);
@@ -742,17 +740,24 @@
       return this.update_timer();
     }
 
+    init_debug_physics() {
+      if (Constants.debug_physics) {
+        $(`${this.options.container} > canvas`).hide();
+        return $('#xmoto-debug').show();
+      }
+    }
+
     toggle_fullscreen() {
       if (document.fullscreenElement) {
         return document.exitFullscreen();
       } else {
-        return document.querySelector(this.options.container).requestFullscreen();
+        return $(this.options.container)[0].requestFullscreen();
       }
     }
 
     bind_fullscreen_change() {
       return $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', () => {
-        var debugCanvas, new_zoom_x, new_zoom_y, ratio, screenH, screenW;
+        var debug_canvas, new_zoom_x, new_zoom_y, ratio, screenH, screenW;
         if (document.fullscreenElement) {
           this.renderer._orig_width = this.options.width;
           this.renderer._orig_height = this.options.height;
@@ -762,10 +767,11 @@
           this.renderer.resize(screenW, screenH);
           this.options.width = screenW;
           this.options.height = screenH;
-          debugCanvas = document.getElementById('xmoto-debug');
-          if (debugCanvas) {
-            debugCanvas.width = screenW;
-            debugCanvas.height = screenH;
+          debug_canvas = $('#xmoto-debug')[0];
+          if (debug_canvas) {
+            debug_canvas.width = screenW;
+            debug_canvas.height = screenH;
+            this.debug_ctx.lineWidth = 0.03; // must be redefined
           }
           ratio = Math.min(screenW / this.renderer._orig_width, screenH / this.renderer._orig_height);
           new_zoom_x = this.renderer._orig_zoom * ratio;
@@ -780,10 +786,11 @@
           this.renderer.resize(this.renderer._orig_width, this.renderer._orig_height);
           this.options.width = this.renderer._orig_width;
           this.options.height = this.renderer._orig_height;
-          debugCanvas = document.getElementById('xmoto-debug');
-          if (debugCanvas) {
-            debugCanvas.width = this.renderer._orig_width;
-            debugCanvas.height = this.renderer._orig_height;
+          debug_canvas = $('#xmoto-debug')[0];
+          if (debug_canvas) {
+            debug_canvas.width = this.renderer._orig_width;
+            debug_canvas.height = this.renderer._orig_height;
+            this.debug_ctx.lineWidth = 0.03; // must be redefined
           }
           Constants.default_scale = {
             x: this.renderer._orig_zoom,
@@ -1068,7 +1075,7 @@
       // debug initialization
       debugDraw = new b2DebugDraw();
       debugDraw.SetSprite(this.debug_ctx); // context
-      this.debug_ctx.lineWidth = 0.05; // thickness of line (debugDraw.SetLineThickness doesn't work)
+      this.debug_ctx.lineWidth = 0.03; // thickness of line (debugDraw.SetLineThickness doesn't work)
       debugDraw.SetFillAlpha(0.5); // transparency
       debugDraw.m_sprite.graphics.clear = function() {};
       debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);

@@ -32,10 +32,6 @@ class Camera
     if Constants.manual_scale
       @init_scroll()
 
-    if Constants.debug_physics
-      $('#xmoto canvas').hide()
-      $('#xmoto-debug').show()
-
     if Constants.debug_clipping
       @clipping = new PIXI.Graphics()
       @clipping.alpha = 0.2
@@ -137,7 +133,7 @@ class Camera
       return event.preventDefault() && false
 
     # Add scroll to game div container
-    container = $(@level.options.container).get(0)
+    container = $(@level.options.container)[0]
     container.addEventListener('DOMMouseScroll', scroll, false)
     container.addEventListener('mousewheel',     scroll, false)
 

@@ -5,8 +5,11 @@ class Level
     @options  = options
 
     # Context
-    @debug_ctx = $('#xmoto-debug').get(0).getContext('2d')
+    @debug_ctx = $('#xmoto-debug')[0].getContext('2d')
     @stage     = new PIXI.Container()
+
+    # Debug
+    @init_debug_physics()
 
     # Level independant objects
     @assets    = new Assets()
@@ -141,11 +144,16 @@ class Level
     @init_timer()
     @update_timer()
 
+  init_debug_physics: ->
+    if Constants.debug_physics
+      $("#{@options.container} > canvas").hide()
+      $('#xmoto-debug').show()
+
   toggle_fullscreen: ->
     if document.fullscreenElement
       document.exitFullscreen()
     else
-      document.querySelector(@options.container).requestFullscreen()
+      $(@options.container)[0].requestFullscreen()
 
   bind_fullscreen_change: ->
     $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', =>
@@ -162,10 +170,11 @@ class Level
         @options.width  = screenW
         @options.height = screenH
 
-        debugCanvas = document.getElementById('xmoto-debug')
-        if debugCanvas
-          debugCanvas.width  = screenW
-          debugCanvas.height = screenH
+        debug_canvas = $('#xmoto-debug')[0]
+        if debug_canvas
+          debug_canvas.width   = screenW
+          debug_canvas.height  = screenH
+          @debug_ctx.lineWidth = 0.03 # must be redefined
 
         ratio      = Math.min(screenW / @renderer._orig_width, screenH / @renderer._orig_height)
         new_zoom_x =  @renderer._orig_zoom * ratio
@@ -179,10 +188,11 @@ class Level
         @options.width  = @renderer._orig_width
         @options.height = @renderer._orig_height
 
-        debugCanvas = document.getElementById('xmoto-debug')
-        if debugCanvas
-          debugCanvas.width  = @renderer._orig_width
-          debugCanvas.height = @renderer._orig_height
+        debug_canvas = $('#xmoto-debug')[0]
+        if debug_canvas
+          debug_canvas.width   = @renderer._orig_width
+          debug_canvas.height  = @renderer._orig_height
+          @debug_ctx.lineWidth = 0.03 # must be redefined
 
         Constants.default_scale = { x: @renderer._orig_zoom, y: -@renderer._orig_zoom }
         @camera.scale.x = @renderer._orig_zoom

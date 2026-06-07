@@ -53,7 +53,7 @@ class Sky
       ctx.fill()
     else
       # Only when going in/out fullscreen (avoid some internal computations)
-      @sprite.width  = @options.width  if @sprite.width != @options.width
+      @sprite.width  = @options.width  if @sprite.width  != @options.width
       @sprite.height = @options.height if @sprite.height != @options.height
 
       parallax_x = 15 # sky parallax on x axix
