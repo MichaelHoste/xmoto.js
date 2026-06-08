@@ -3,12 +3,13 @@ $.xmoto = (level_filename, options = {}) ->
     options = load_options(options)
 
     renderer = await PIXI.autoDetectRenderer({
-      preference:            'webgl',
+      preference:            'webgl', # or 'webgpu' or 'canvas'
       width:                 options.width,
       height:                options.height,
       background:            0xFFFFFF,
-      clearBeforeRender:     false  # No need to clear, we paint the entire canvas
-      antialias:             true   # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
+      clearBeforeRender:     false, # No need to clear, we paint the entire canvas
+      textureGCActive:       false, # We manage texture GC manually (`renderer.gc.enabled` can be toggled)
+      #antialias:             true  # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
       #preserveDrawingBuffer: true  # Need to be true when capturing with "toDataUrl" (may have low performance impact)
       #transparent: true            # May be useful later (moto on website)
     })
