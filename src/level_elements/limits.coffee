@@ -31,23 +31,23 @@ class Limits
     @left_wall_aabb.lowerBound.Set(@screen.left, @screen.bottom)
     @left_wall_aabb.upperBound.Set(@player.left, @screen.top)
 
-    # Right  AABB
+    # Right AABB
     @right_wall_aabb = new Box2D.Collision.b2AABB()
     @right_wall_aabb.lowerBound.Set(@player.right, @screen.bottom)
     @right_wall_aabb.upperBound.Set(@screen.right, @screen.top)
 
-    # Bottom  AABB
+    # Bottom AABB
     @bottom_wall_aabb = new Box2D.Collision.b2AABB()
     @bottom_wall_aabb.lowerBound.Set(@player.left,  @screen.bottom)
     @bottom_wall_aabb.upperBound.Set(@player.right, @player.bottom)
 
-    # Top  AABB
+    # Top AABB
     @top_wall_aabb = new Box2D.Collision.b2AABB()
     @top_wall_aabb.lowerBound.Set(@player.left,  @player.top)
     @top_wall_aabb.upperBound.Set(@player.right, @screen.top)
 
-    @texture = 'dirt'
-    @texture_name = @assets.theme.texture_params('dirt').file
+    @texture      = @level.infos.border || 'dirt'
+    @texture_name = @assets.theme.texture_params(@texture).file
 
     return this
 

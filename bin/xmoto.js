@@ -2147,20 +2147,20 @@
       this.left_wall_aabb = new Box2D.Collision.b2AABB();
       this.left_wall_aabb.lowerBound.Set(this.screen.left, this.screen.bottom);
       this.left_wall_aabb.upperBound.Set(this.player.left, this.screen.top);
-      // Right  AABB
+      // Right AABB
       this.right_wall_aabb = new Box2D.Collision.b2AABB();
       this.right_wall_aabb.lowerBound.Set(this.player.right, this.screen.bottom);
       this.right_wall_aabb.upperBound.Set(this.screen.right, this.screen.top);
-      // Bottom  AABB
+      // Bottom AABB
       this.bottom_wall_aabb = new Box2D.Collision.b2AABB();
       this.bottom_wall_aabb.lowerBound.Set(this.player.left, this.screen.bottom);
       this.bottom_wall_aabb.upperBound.Set(this.player.right, this.player.bottom);
-      // Top  AABB
+      // Top AABB
       this.top_wall_aabb = new Box2D.Collision.b2AABB();
       this.top_wall_aabb.lowerBound.Set(this.player.left, this.player.top);
       this.top_wall_aabb.upperBound.Set(this.player.right, this.screen.top);
-      this.texture = 'dirt';
-      this.texture_name = this.assets.theme.texture_params('dirt').file;
+      this.texture = this.level.infos.border || 'dirt';
+      this.texture_name = this.assets.theme.texture_params(this.texture).file;
       return this;
     }
 
