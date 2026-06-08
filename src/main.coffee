@@ -22,9 +22,9 @@ $.xmoto = (level_filename, options = {}) ->
     defaults =
 
       # Selectors
-      canvas:  '#xmoto'   # canvas selector
-      loading: '#loading' # loading selector
-      chrono:  '#chrono'  # chrono selector
+      container: '#xmoto'   # empty div where the game will be created
+      loading:   '#loading' # loading selector
+      chrono:    '#chrono'  # chrono selector
 
       # Size
       width:  800
@@ -51,31 +51,35 @@ $.xmoto = (level_filename, options = {}) ->
     return options
 
   bind_render_to_dom = (renderer, options) ->
-    $("#xmoto canvas").remove()
+    container = $(options.container)
 
-    $(options.loading).show()
-    $('#xmoto').css('height', options.height)
-    $('#xmoto')[0].appendChild(renderer.canvas)
-    $('#xmoto').append('<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>')
-    $('#xmoto-debug').hide()
+    container.find('canvas').remove()         # Remove old canvas
+    $(options.loading).show()                 # Start loading
+    container.css('height', options.height)   # Force height of parent
+    container[0].appendChild(renderer.canvas) # Add PixiJS canvas to container
+    debug_canvas_html = '<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>'
+    container.append(debug_canvas_html)       # Add debug canvas to container (physics)
+    $('#xmoto-debug').hide()                  # Hide debug canvas
 
-  bind_stats_fps = ->
+  bind_stats_fps = (container_selector) ->
     stats = new Stats()
     stats.showPanel(0) # 0: fps, 1: ms, 2: mb, 3+: custom
-    $('#xmoto')[0].appendChild(stats.dom)
-    $('#xmoto div:last').addClass('stats-fps')
+    $(container_selector)[0].appendChild(stats.dom)
+    $(container_selector).find('div:last').addClass('stats-fps')
     stats
 
-  bind_stats_ms = ->
+  bind_stats_ms = (container_selector) ->
     stats = new Stats()
     stats.showPanel(1) # 0: fps, 1: ms, 2: mb, 3+: custom
-    $('#xmoto')[0].appendChild(stats.dom)
-    $('#xmoto div:last').addClass('stats-ms')
+    $(container_selector)[0].appendChild(stats.dom)
+    $(container_selector).find('div:last').addClass('stats-ms')
     stats
 
   main_loop = (level_filename, renderer, options) ->
-    stats_fps = bind_stats_fps() if Constants.debug
-    stats_ms  = bind_stats_ms()  if Constants.debug
+    container_selector = $(options.container)
+
+    stats_fps = bind_stats_fps(container_selector) if Constants.debug
+    stats_ms  = bind_stats_ms(container_selector)  if Constants.debug
 
     level = new Level(renderer, options)
 
@@ -98,9 +102,3 @@ $.xmoto = (level_filename, options = {}) ->
     )
 
   initialize()
-
-#full_screen = ->
-#  window.onresize = ->
-#    $("#xmoto").width($("body").width())
-#    $("#xmoto").height($("body").height())
-#  window.onresize()

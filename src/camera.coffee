@@ -32,10 +32,6 @@ class Camera
     if Constants.manual_scale
       @init_scroll()
 
-    if Constants.debug_physics
-      $('#xmoto canvas').hide()
-      $('#xmoto-debug').show()
-
     if Constants.debug_clipping
       @clipping = new PIXI.Graphics()
       @clipping.alpha = 0.2
@@ -60,7 +56,7 @@ class Camera
       @translate.x = @translate.x * 0.97 + velocity.x/3.0 * 0.03
       @translate.y = @translate.y * 0.99 + velocity.y/3.0 * 0.01
 
-      @compute_aabb()
+    @compute_aabb()
 
   update: ->
     if Constants.debug_physics
@@ -134,11 +130,12 @@ class Camera
       @scale.x = max_limit_x if @scale.x > max_limit_x
       @scale.y = max_limit_y if @scale.y < max_limit_y
 
-      return event.preventDefault() && false
+      return event.preventDefault() && false # defensive for old browsers
 
-    canvas = $(@level.options.canvas).get(0)
-    canvas.addEventListener('DOMMouseScroll', scroll, false)
-    canvas.addEventListener('mousewheel',     scroll, false)
+    # Add scroll to game div container
+    container = $(@level.options.container)[0]
+    container.addEventListener('DOMMouseScroll', scroll, false)
+    container.addEventListener('mousewheel',     scroll, false)
 
   compute_aabb: ->
     factor = if Constants.debug_clipping then 0.6 else 1.0

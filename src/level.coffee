@@ -5,8 +5,11 @@ class Level
     @options  = options
 
     # Context
-    @debug_ctx = $('#xmoto-debug').get(0).getContext('2d')
+    @debug_ctx = $('#xmoto-debug')[0].getContext('2d')
     @stage     = new PIXI.Container()
+
+    # Debug
+    @init_debug_physics()
 
     # Level independant objects
     @assets    = new Assets()
@@ -32,6 +35,9 @@ class Level
 
     # Ghosts: previous saved run of various players (included himself)
     @ghosts = new Ghosts(this)
+
+    # Manage fullscreen on/off
+    @bind_fullscreen()
 
   load_from_file: (filename, callback) ->
     @assets.parse_theme( =>
@@ -137,3 +143,56 @@ class Level
 
     @init_timer()
     @update_timer()
+
+  init_debug_physics: ->
+    if Constants.debug_physics
+      $("#{@options.container} > canvas").hide()
+      $('#xmoto-debug').show()
+
+  toggle_fullscreen: ->
+    if document.fullscreenElement
+      document.exitFullscreen()
+    else
+      $(@options.container)[0].requestFullscreen()
+
+  bind_fullscreen: ->
+    $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', =>
+      debug_canvas = $('#xmoto-debug')[0]
+
+      if document.fullscreenElement
+        @original_width   = @options.width
+        @original_height  = @options.height
+        @original_scale_x = Constants.default_scale.x
+        @original_scale_y = Constants.default_scale.y
+
+        @renderer.resize(screen.width, screen.height)
+
+        @options.width  = screen.width
+        @options.height = screen.height
+
+        if debug_canvas
+          debug_canvas.width   = screen.width
+          debug_canvas.height  = screen.height
+          @debug_ctx.lineWidth = 0.03 # must be redefined
+
+        ratio       = Math.min(screen.width / @original_width, screen.height / @original_height)
+        new_scale_x = @original_scale_x * ratio
+        new_scale_y = @original_scale_y * ratio
+
+        Constants.default_scale = { x: new_scale_x, y: new_scale_y }
+        @camera.scale.x = new_scale_x
+        @camera.scale.y = new_scale_y
+      else
+        @renderer.resize(@original_width, @original_height)
+        @options.width  = @original_width
+        @options.height = @original_height
+
+        if debug_canvas
+          debug_canvas.width   = @original_width
+          debug_canvas.height  = @original_height
+          @debug_ctx.lineWidth = 0.03 # must be redefined
+
+        Constants.default_scale = { x: @original_scale_x, y: @original_scale_y }
+        @camera.scale.x = @original_scale_x
+        @camera.scale.y = @original_scale_y
+    )

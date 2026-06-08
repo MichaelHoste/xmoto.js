@@ -33,10 +33,6 @@
       if (Constants.manual_scale) {
         this.init_scroll();
       }
-      if (Constants.debug_physics) {
-        $('#xmoto canvas').hide();
-        $('#xmoto-debug').show();
-      }
       if (Constants.debug_clipping) {
         this.clipping = new PIXI.Graphics();
         this.clipping.alpha = 0.2;
@@ -62,8 +58,8 @@
         this.scale.y = this.scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed / 7.5)) * 0.005;
         this.translate.x = this.translate.x * 0.97 + velocity.x / 3.0 * 0.03;
         this.translate.y = this.translate.y * 0.99 + velocity.y / 3.0 * 0.01;
-        return this.compute_aabb();
       }
+      return this.compute_aabb();
     }
 
     update() {
@@ -110,7 +106,7 @@
     // If there are some issues on other systems than MacOS,
     // check this to find a solution : http://stackoverflow.com/questions/5527601/normalizing-mousewheel-speed-across-browsers
     init_scroll() {
-      var canvas, scroll;
+      var container, scroll;
       scroll = (event) => {
         var delta, max_limit_x, max_limit_y, min_limit_x, min_limit_y;
         if (event.wheelDelta) {
@@ -140,11 +136,13 @@
         if (this.scale.y < max_limit_y) {
           this.scale.y = max_limit_y;
         }
-        return event.preventDefault() && false;
+        return event.preventDefault() && false; // defensive for old browsers
       };
-      canvas = $(this.level.options.canvas).get(0);
-      canvas.addEventListener('DOMMouseScroll', scroll, false);
-      return canvas.addEventListener('mousewheel', scroll, false);
+      
+      // Add scroll to game div container
+      container = $(this.level.options.container)[0];
+      container.addEventListener('DOMMouseScroll', scroll, false);
+      return container.addEventListener('mousewheel', scroll, false);
     }
 
     compute_aabb() {
@@ -525,7 +523,7 @@
     init_keyboard() {
       $(document).off('keydown');
       $(document).on('keydown', (event) => {
-        var url;
+        var canvas_selector, image, url;
         switch (event.which || event.keyCode) {
           case 38:
             return this.up = true;
@@ -537,19 +535,31 @@
             return this.right = true;
           case 32:
             return this.space = true;
-          case 13:
+          case 13: // enter
             return this.level.need_to_restart = true;
+          case 70: // f
+            if (!$(':input').is(':focus')) {
+              if (!event.ctrlKey && !event.metaKey && !event.altKey) {
+                this.level.toggle_fullscreen();
+                return event.preventDefault();
+              }
+            }
+            break;
           case 69: // e
-            if (!$('input').is(':focus')) {
-              return this.level.moto.rider.eject();
+            if (!$(':input').is(':focus')) {
+              if (!event.ctrlKey && !event.metaKey && !event.altKey) {
+                return this.level.moto.rider.eject();
+              }
             }
             break;
           case 67: // c
             url = document.URL;
             url = url.substr(url.length - 1) !== '/' ? `${url}/capture` : `${url}capture`;
+            canvas_selector = `${this.level.options.container} > canvas:first`;
+            image = $(canvas_selector)[0].toDataURL();
             return $.post(url, {
               steps: this.level.physics.steps,
-              image: $(this.level.options.canvas)[0].toDataURL()
+              image: image
             }).done(function() {
               return alert("Capture uploaded");
             }).fail(function() {
@@ -578,8 +588,10 @@
       this.renderer = renderer;
       this.options = options;
       // Context
-      this.debug_ctx = $('#xmoto-debug').get(0).getContext('2d');
+      this.debug_ctx = $('#xmoto-debug')[0].getContext('2d');
       this.stage = new PIXI.Container();
+      // Debug
+      this.init_debug_physics();
       // Level independant objects
       this.assets = new Assets();
       this.camera = new Camera(this);
@@ -601,6 +613,8 @@
       this.replay = new Replay(this);
       // Ghosts: previous saved run of various players (included himself)
       this.ghosts = new Ghosts(this);
+      // Manage fullscreen on/off
+      this.bind_fullscreen();
     }
 
     load_from_file(filename, callback) {
@@ -725,6 +739,66 @@
       this.respawn_strawberries();
       this.init_timer();
       return this.update_timer();
+    }
+
+    init_debug_physics() {
+      if (Constants.debug_physics) {
+        $(`${this.options.container} > canvas`).hide();
+        return $('#xmoto-debug').show();
+      }
+    }
+
+    toggle_fullscreen() {
+      if (document.fullscreenElement) {
+        return document.exitFullscreen();
+      } else {
+        return $(this.options.container)[0].requestFullscreen();
+      }
+    }
+
+    bind_fullscreen() {
+      return $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', () => {
+        var debug_canvas, new_scale_x, new_scale_y, ratio;
+        debug_canvas = $('#xmoto-debug')[0];
+        if (document.fullscreenElement) {
+          this.original_width = this.options.width;
+          this.original_height = this.options.height;
+          this.original_scale_x = Constants.default_scale.x;
+          this.original_scale_y = Constants.default_scale.y;
+          this.renderer.resize(screen.width, screen.height);
+          this.options.width = screen.width;
+          this.options.height = screen.height;
+          if (debug_canvas) {
+            debug_canvas.width = screen.width;
+            debug_canvas.height = screen.height;
+            this.debug_ctx.lineWidth = 0.03; // must be redefined
+          }
+          ratio = Math.min(screen.width / this.original_width, screen.height / this.original_height);
+          new_scale_x = this.original_scale_x * ratio;
+          new_scale_y = this.original_scale_y * ratio;
+          Constants.default_scale = {
+            x: new_scale_x,
+            y: new_scale_y
+          };
+          this.camera.scale.x = new_scale_x;
+          return this.camera.scale.y = new_scale_y;
+        } else {
+          this.renderer.resize(this.original_width, this.original_height);
+          this.options.width = this.original_width;
+          this.options.height = this.original_height;
+          if (debug_canvas) {
+            debug_canvas.width = this.original_width;
+            debug_canvas.height = this.original_height;
+            this.debug_ctx.lineWidth = 0.03; // must be redefined
+          }
+          Constants.default_scale = {
+            x: this.original_scale_x,
+            y: this.original_scale_y
+          };
+          this.camera.scale.x = this.original_scale_x;
+          return this.camera.scale.y = this.original_scale_y;
+        }
+      });
     }
 
   };
@@ -863,7 +937,7 @@
       var defaults;
       defaults = {
         // Selectors
-        canvas: '#xmoto', // canvas selector
+        container: '#xmoto', // empty div where the game will be created
         loading: '#loading', // loading selector
         chrono: '#chrono', // chrono selector
         
@@ -890,36 +964,40 @@
       return options;
     };
     bind_render_to_dom = function(renderer, options) {
-      $("#xmoto canvas").remove();
-      $(options.loading).show();
-      $('#xmoto').css('height', options.height);
-      $('#xmoto')[0].appendChild(renderer.canvas);
-      $('#xmoto').append('<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>');
-      return $('#xmoto-debug').hide();
+      var container, debug_canvas_html;
+      container = $(options.container);
+      container.find('canvas').remove(); // Remove old canvas
+      $(options.loading).show(); // Start loading
+      container.css('height', options.height); // Force height of parent
+      container[0].appendChild(renderer.canvas); // Add PixiJS canvas to container
+      debug_canvas_html = '<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>';
+      container.append(debug_canvas_html); // Add debug canvas to container (physics)
+      return $('#xmoto-debug').hide(); // Hide debug canvas
     };
-    bind_stats_fps = function() {
+    bind_stats_fps = function(container_selector) {
       var stats;
       stats = new Stats();
       stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-      $('#xmoto')[0].appendChild(stats.dom);
-      $('#xmoto div:last').addClass('stats-fps');
+      $(container_selector)[0].appendChild(stats.dom);
+      $(container_selector).find('div:last').addClass('stats-fps');
       return stats;
     };
-    bind_stats_ms = function() {
+    bind_stats_ms = function(container_selector) {
       var stats;
       stats = new Stats();
       stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
-      $('#xmoto')[0].appendChild(stats.dom);
-      $('#xmoto div:last').addClass('stats-ms');
+      $(container_selector)[0].appendChild(stats.dom);
+      $(container_selector).find('div:last').addClass('stats-ms');
       return stats;
     };
     main_loop = function(level_filename, renderer, options) {
-      var level, stats_fps, stats_ms;
+      var container_selector, level, stats_fps, stats_ms;
+      container_selector = $(options.container);
       if (Constants.debug) {
-        stats_fps = bind_stats_fps();
+        stats_fps = bind_stats_fps(container_selector);
       }
       if (Constants.debug) {
-        stats_ms = bind_stats_ms();
+        stats_ms = bind_stats_ms(container_selector);
       }
       level = new Level(renderer, options);
       return level.load_from_file(level_filename, () => {
@@ -953,11 +1031,6 @@
     return initialize();
   };
 
-  //full_screen = ->
-  //  window.onresize = ->
-  //    $("#xmoto").width($("body").width())
-  //    $("#xmoto").height($("body").height())
-  //  window.onresize()
   b2World = Box2D.Dynamics.b2World;
 
   b2Vec2 = Box2D.Common.Math.b2Vec2;
@@ -1001,7 +1074,7 @@
       // debug initialization
       debugDraw = new b2DebugDraw();
       debugDraw.SetSprite(this.debug_ctx); // context
-      this.debug_ctx.lineWidth = 0.05; // thickness of line (debugDraw.SetLineThickness doesn't work)
+      this.debug_ctx.lineWidth = 0.03; // thickness of line (debugDraw.SetLineThickness doesn't work)
       debugDraw.SetFillAlpha(0.5); // transparency
       debugDraw.m_sprite.graphics.clear = function() {};
       debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
@@ -1058,7 +1131,7 @@
         this.level.camera.move();
         this.world.Step(1.0 / Constants.fps, 10, 10);
         this.world.ClearForces();
-        this.level.input.space = false;
+        this.level.input.space = false; // Space can't stay pressed (used for `.move` and `.add_step`)
         if (this.level.need_to_restart) {
           this.restart();
           results.push(this.level.need_to_restart = false);
@@ -2340,11 +2413,13 @@
       });
       this.sprite.position.x = 0;
       this.sprite.position.y = 0;
+      this.sprite.tileScale.x = 4;
+      this.sprite.tileScale.y = 4;
       return this.level.stage.addChildAt(this.sprite, 0);
     }
 
     update() {
-      var ctx, position_factor_x, position_factor_y;
+      var ctx, parallax_x, parallax_y;
       ctx = this.level.debug_ctx;
       if (Constants.debug_physics) {
         ctx.beginPath();
@@ -2356,12 +2431,17 @@
         ctx.fillStyle = "#222228";
         return ctx.fill();
       } else {
-        this.sprite.tileScale.x = 4;
-        this.sprite.tileScale.y = 4;
-        position_factor_x = 15;
-        position_factor_y = 7;
-        this.sprite.tilePosition.x = -this.level.camera.target().x * position_factor_x;
-        return this.sprite.tilePosition.y = this.level.camera.target().y * position_factor_y;
+        if (this.sprite.width !== this.options.width) {
+          // Only when going in/out fullscreen (avoid some internal computations)
+          this.sprite.width = this.options.width;
+        }
+        if (this.sprite.height !== this.options.height) {
+          this.sprite.height = this.options.height;
+        }
+        parallax_x = 15; // sky parallax on x axix
+        parallax_y = 7; // sky parallax on y axis
+        this.sprite.tilePosition.x = -this.level.camera.target().x * parallax_x;
+        return this.sprite.tilePosition.y = this.level.camera.target().y * parallax_y;
       }
     }
 

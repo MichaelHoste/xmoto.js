@@ -49,11 +49,11 @@ You can copy-paste the generated URL to keep the custom physics.
 
 ```
 {
-  canvas:  '#xmoto'   # canvas selector
-  loading: '#loading' # loading selector
-  chrono:  '#chrono'  # chrono selector
-  width:   800
-  height:  600
+  container: '#xmoto'   # game selector (empty div)
+  loading:   '#loading' # loading selector
+  chrono:    '#chrono'  # chrono selector
+  width:     800
+  height:    600
 }
 ```
 
@@ -102,7 +102,7 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
-* Fullscreen button
+* Manage `<border texture...` property to use something else than Dirt
 * Improve XML levels compatibility => layeroffsets (parallax) 
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
   * Make this (parallax) level compatible : http://localhost:3001/?level=943&debug=true / http://localhost:3001/?level=8682&debug=true

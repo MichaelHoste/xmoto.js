@@ -47,17 +47,27 @@ class Input
           @right = true
         when 32
           @space = true
-        when 13
+        when 13 # enter
           @level.need_to_restart = true
+        when 70 # f
+          if !$(':input').is(':focus')
+            if !event.ctrlKey && !event.metaKey && !event.altKey
+              @level.toggle_fullscreen()
+              event.preventDefault()
         when 69 # e
-          if !$('input').is(':focus')
-            @level.moto.rider.eject()
+          if !$(':input').is(':focus')
+            if !event.ctrlKey && !event.metaKey && !event.altKey
+              @level.moto.rider.eject()
         when 67 # c
           url = document.URL
           url = if url.substr(url.length-1) != '/' then "#{url}/capture" else "#{url}capture"
+
+          canvas_selector = "#{@level.options.container} > canvas:first"
+          image           = $(canvas_selector)[0].toDataURL()
+
           $.post(url,
             steps: @level.physics.steps
-            image: $(@level.options.canvas)[0].toDataURL()
+            image: image
           ).done( -> alert("Capture uploaded")).fail( -> alert("Capture failed"))
     )
 
