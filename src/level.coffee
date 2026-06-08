@@ -10,6 +10,7 @@ class Level
 
     # Debug
     @init_debug_physics()
+    @init_devtools()
 
     # Level independant objects
     @assets    = new Assets()
@@ -148,6 +149,12 @@ class Level
     if Constants.debug_physics
       $("#{@options.container} > canvas").hide()
       $('#xmoto-debug').show()
+
+  # To debug the stage in Chrome: https://pixijs.io/devtools/
+  init_devtools: ->
+    window.__PIXI_DEVTOOLS__ =
+      stage:    @stage
+      renderer: @renderer
 
   toggle_fullscreen: ->
     if document.fullscreenElement

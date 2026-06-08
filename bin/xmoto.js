@@ -592,6 +592,7 @@
       this.stage = new PIXI.Container();
       // Debug
       this.init_debug_physics();
+      this.init_devtools();
       // Level independant objects
       this.assets = new Assets();
       this.camera = new Camera(this);
@@ -746,6 +747,14 @@
         $(`${this.options.container} > canvas`).hide();
         return $('#xmoto-debug').show();
       }
+    }
+
+    // To debug the stage in Chrome: https://pixijs.io/devtools/
+    init_devtools() {
+      return window.__PIXI_DEVTOOLS__ = {
+        stage: this.stage,
+        renderer: this.renderer
+      };
     }
 
     toggle_fullscreen() {
