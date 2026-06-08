@@ -37,7 +37,7 @@ class Level
     @ghosts = new Ghosts(this)
 
     # Manage fullscreen on/off
-    @bind_fullscreen_change()
+    @bind_fullscreen()
 
   load_from_file: (filename, callback) ->
     @assets.parse_theme( =>
@@ -155,46 +155,44 @@ class Level
     else
       $(@options.container)[0].requestFullscreen()
 
-  bind_fullscreen_change: ->
+  bind_fullscreen: ->
     $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', =>
+      debug_canvas = $('#xmoto-debug')[0]
+
       if document.fullscreenElement
-        @renderer._orig_width  = @options.width
-        @renderer._orig_height = @options.height
-        @renderer._orig_zoom   = Constants.default_scale.x
+        @original_width   = @options.width
+        @original_height  = @options.height
+        @original_scale_x = Constants.default_scale.x
+        @original_scale_y = Constants.default_scale.y
 
-        screenW = screen.width
-        screenH = screen.height
+        @renderer.resize(screen.width, screen.height)
 
-        @renderer.resize(screenW, screenH)
+        @options.width  = screen.width
+        @options.height = screen.height
 
-        @options.width  = screenW
-        @options.height = screenH
-
-        debug_canvas = $('#xmoto-debug')[0]
         if debug_canvas
-          debug_canvas.width   = screenW
-          debug_canvas.height  = screenH
+          debug_canvas.width   = screen.width
+          debug_canvas.height  = screen.height
           @debug_ctx.lineWidth = 0.03 # must be redefined
 
-        ratio      = Math.min(screenW / @renderer._orig_width, screenH / @renderer._orig_height)
-        new_zoom_x =  @renderer._orig_zoom * ratio
-        new_zoom_y = -@renderer._orig_zoom * ratio
+        ratio       = Math.min(screen.width / @original_width, screen.height / @original_height)
+        new_scale_x = @original_scale_x * ratio
+        new_scale_y = @original_scale_y * ratio
 
-        Constants.default_scale = { x: new_zoom_x, y: new_zoom_y }
-        @camera.scale.x = new_zoom_x
-        @camera.scale.y = new_zoom_y
+        Constants.default_scale = { x: new_scale_x, y: new_scale_y }
+        @camera.scale.x = new_scale_x
+        @camera.scale.y = new_scale_y
       else
-        @renderer.resize(@renderer._orig_width, @renderer._orig_height)
-        @options.width  = @renderer._orig_width
-        @options.height = @renderer._orig_height
+        @renderer.resize(@original_width, @original_height)
+        @options.width  = @original_width
+        @options.height = @original_height
 
-        debug_canvas = $('#xmoto-debug')[0]
         if debug_canvas
-          debug_canvas.width   = @renderer._orig_width
-          debug_canvas.height  = @renderer._orig_height
+          debug_canvas.width   = @original_width
+          debug_canvas.height  = @original_height
           @debug_ctx.lineWidth = 0.03 # must be redefined
 
-        Constants.default_scale = { x: @renderer._orig_zoom, y: -@renderer._orig_zoom }
-        @camera.scale.x = @renderer._orig_zoom
-        @camera.scale.y = -@renderer._orig_zoom
+        Constants.default_scale = { x: @original_scale_x, y: @original_scale_y }
+        @camera.scale.x = @original_scale_x
+        @camera.scale.y = @original_scale_y
     )

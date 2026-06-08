@@ -614,7 +614,7 @@
       // Ghosts: previous saved run of various players (included himself)
       this.ghosts = new Ghosts(this);
       // Manage fullscreen on/off
-      this.bind_fullscreen_change();
+      this.bind_fullscreen();
     }
 
     load_from_file(filename, callback) {
@@ -756,49 +756,47 @@
       }
     }
 
-    bind_fullscreen_change() {
+    bind_fullscreen() {
       return $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', () => {
-        var debug_canvas, new_zoom_x, new_zoom_y, ratio, screenH, screenW;
+        var debug_canvas, new_scale_x, new_scale_y, ratio;
+        debug_canvas = $('#xmoto-debug')[0];
         if (document.fullscreenElement) {
-          this.renderer._orig_width = this.options.width;
-          this.renderer._orig_height = this.options.height;
-          this.renderer._orig_zoom = Constants.default_scale.x;
-          screenW = screen.width;
-          screenH = screen.height;
-          this.renderer.resize(screenW, screenH);
-          this.options.width = screenW;
-          this.options.height = screenH;
-          debug_canvas = $('#xmoto-debug')[0];
+          this.original_width = this.options.width;
+          this.original_height = this.options.height;
+          this.original_scale_x = Constants.default_scale.x;
+          this.original_scale_y = Constants.default_scale.y;
+          this.renderer.resize(screen.width, screen.height);
+          this.options.width = screen.width;
+          this.options.height = screen.height;
           if (debug_canvas) {
-            debug_canvas.width = screenW;
-            debug_canvas.height = screenH;
+            debug_canvas.width = screen.width;
+            debug_canvas.height = screen.height;
             this.debug_ctx.lineWidth = 0.03; // must be redefined
           }
-          ratio = Math.min(screenW / this.renderer._orig_width, screenH / this.renderer._orig_height);
-          new_zoom_x = this.renderer._orig_zoom * ratio;
-          new_zoom_y = -this.renderer._orig_zoom * ratio;
+          ratio = Math.min(screen.width / this.original_width, screen.height / this.original_height);
+          new_scale_x = this.original_scale_x * ratio;
+          new_scale_y = this.original_scale_y * ratio;
           Constants.default_scale = {
-            x: new_zoom_x,
-            y: new_zoom_y
+            x: new_scale_x,
+            y: new_scale_y
           };
-          this.camera.scale.x = new_zoom_x;
-          return this.camera.scale.y = new_zoom_y;
+          this.camera.scale.x = new_scale_x;
+          return this.camera.scale.y = new_scale_y;
         } else {
-          this.renderer.resize(this.renderer._orig_width, this.renderer._orig_height);
-          this.options.width = this.renderer._orig_width;
-          this.options.height = this.renderer._orig_height;
-          debug_canvas = $('#xmoto-debug')[0];
+          this.renderer.resize(this.original_width, this.original_height);
+          this.options.width = this.original_width;
+          this.options.height = this.original_height;
           if (debug_canvas) {
-            debug_canvas.width = this.renderer._orig_width;
-            debug_canvas.height = this.renderer._orig_height;
+            debug_canvas.width = this.original_width;
+            debug_canvas.height = this.original_height;
             this.debug_ctx.lineWidth = 0.03; // must be redefined
           }
           Constants.default_scale = {
-            x: this.renderer._orig_zoom,
-            y: -this.renderer._orig_zoom
+            x: this.original_scale_x,
+            y: this.original_scale_y
           };
-          this.camera.scale.x = this.renderer._orig_zoom;
-          return this.camera.scale.y = -this.renderer._orig_zoom;
+          this.camera.scale.x = this.original_scale_x;
+          return this.camera.scale.y = this.original_scale_y;
         }
       });
     }
