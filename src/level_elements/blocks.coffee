@@ -113,10 +113,13 @@ class Blocks
       # Matrix maps world coords
       matrix = new PIXI.Matrix()
       matrix.scale(1.0 / 50.0, 1.0 / 50.0)
-      matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
+      #matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
+      # -> not doing translation ensure texture continuity between blocks
 
       # Create graphics with texture and matrix
       block.graphics = new PIXI.Graphics()
+      block.graphics.label = block.id
+
       block.graphics.poly(points)
       block.graphics.fill({
         texture:      texture,

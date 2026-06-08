@@ -14,8 +14,8 @@ class Entities
     # parse entity xml
     for xml_entity in xml_entities
       entity =
-        id:      $(xml_entity).attr('id')
-        type_id: $(xml_entity).attr('typeid')
+        id:     $(xml_entity).attr('id')
+        typeid: $(xml_entity).attr('typeid')
         size:
           r:      parseFloat($(xml_entity).find('size').attr('r'))
           z:      parseInt($(xml_entity).find('size').attr('z')) || undefined
@@ -95,21 +95,21 @@ class Entities
   init_physics_parts: ->
     for entity in @list
       # End of level
-      if entity.type_id == 'EndOfLevel'
+      if entity.typeid == 'EndOfLevel'
         @create_entity(entity, 'end_of_level')
         @end_of_level = entity
 
       # Strawberries
-      else if entity.type_id == 'Strawberry'
+      else if entity.typeid == 'Strawberry'
         @create_entity(entity, 'strawberry')
         @strawberries.push(entity)
 
-      else if entity.type_id == 'Wrecker'
+      else if entity.typeid == 'Wrecker'
         @create_entity(entity, 'wrecker')
         @wreckers.push(entity)
 
       # Player start
-      else if entity.type_id == 'PlayerStart'
+      else if entity.typeid == 'PlayerStart'
         @player_start =
           x: entity.position.x
           y: entity.position.y
@@ -145,6 +145,8 @@ class Entities
       entity.sprite.x        =  entity.position.x
       entity.sprite.y        = -entity.position.y
       entity.sprite.rotation = -entity.position.angle
+      entity.sprite.name     = entity.params.name || entity.typeid
+
 
   create_entity: (entity, name) ->
     # Create fixture
@@ -178,12 +180,12 @@ class Entities
           entity.sprite.visible = @visible(entity)
 
   entity_texture_name: (entity) ->
-    if entity.type_id == 'Sprite'
+    if entity.typeid == 'Sprite'
       name = entity.params.name
-    else if entity.type_id == 'EndOfLevel' # hard-coded entity
+    else if entity.typeid == 'EndOfLevel' # hard-coded entity
       name = 'Flower'
-    else if entity.type_id in ['Strawberry', 'Wrecker'] # hard-coded entities
-      name = entity.type_id
+    else if entity.typeid in ['Strawberry', 'Wrecker'] # hard-coded entities
+      name = entity.typeid
 
     # theme_replacements in XML
     if @level.replacements.sprites[name]

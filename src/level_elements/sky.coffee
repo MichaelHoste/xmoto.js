@@ -30,6 +30,8 @@ class Sky
     texture = PIXI.Texture.from(@assets.get_url(@filename))
     @sprite = new PIXI.TilingSprite({ texture: texture, width: @options.width, height: @options.height })
 
+    @sprite.label = "sky"
+
     @sprite.position.x = 0
     @sprite.position.y = 0
 

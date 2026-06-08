@@ -22,6 +22,12 @@ class Camera
     @neutral_z_container  = new PIXI.Container()
     @positive_z_container = new PIXI.Container()
 
+    @scale_container.label      = 'scale'
+    @translate_container.label  = 'translate'
+    @negative_z_container.label = 'negative_z'
+    @neutral_z_container.label  = 'neutral_z'
+    @positive_z_container.label = 'positive_z'
+
     @level.stage.addChild(@scale_container)
     @scale_container.addChild(@translate_container)
     @translate_container.addChild(@negative_z_container)

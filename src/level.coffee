@@ -5,8 +5,9 @@ class Level
     @options  = options
 
     # Context
-    @debug_ctx = $('#xmoto-debug')[0].getContext('2d')
-    @stage     = new PIXI.Container()
+    @debug_ctx   = $('#xmoto-debug')[0].getContext('2d')
+    @stage       = new PIXI.Container()
+    @stage.label = @options.container # id of div
 
     # Debug
     @init_debug_physics()

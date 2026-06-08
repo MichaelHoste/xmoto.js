@@ -22,6 +22,11 @@
       this.negative_z_container = new PIXI.Container();
       this.neutral_z_container = new PIXI.Container();
       this.positive_z_container = new PIXI.Container();
+      this.scale_container.label = 'scale';
+      this.translate_container.label = 'translate';
+      this.negative_z_container.label = 'negative_z';
+      this.neutral_z_container.label = 'neutral_z';
+      this.positive_z_container.label = 'positive_z';
       this.level.stage.addChild(this.scale_container);
       this.scale_container.addChild(this.translate_container);
       this.translate_container.addChild(this.negative_z_container);
@@ -590,6 +595,8 @@
       // Context
       this.debug_ctx = $('#xmoto-debug')[0].getContext('2d');
       this.stage = new PIXI.Container();
+      this.stage.label = this.options.container; // id of div
+      
       // Debug
       this.init_debug_physics();
       this.init_devtools();
@@ -929,13 +936,14 @@
       var renderer;
       options = load_options(options);
       renderer = (await PIXI.autoDetectRenderer({
-        preference: 'webgl',
+        preference: 'webgl', // or 'webgpu' or 'canvas'
         width: options.width,
         height: options.height,
         background: 0xFFFFFF,
         clearBeforeRender: false, // No need to clear, we paint the entire canvas
-        antialias: true // Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
+        textureGCActive: false // We manage texture GC manually (`renderer.gc.enabled` can be toggled)
       }));
+      //antialias:             true  # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
       //preserveDrawingBuffer: true  # Need to be true when capturing with "toDataUrl" (may have low performance impact)
       //transparent: true            # May be useful later (moto on website)
       window.cancelAnimationFrame(window.game_loop);
@@ -1369,9 +1377,12 @@
         // Matrix maps world coords
         matrix = new PIXI.Matrix();
         matrix.scale(1.0 / 50.0, 1.0 / 50.0);
-        matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y);
+        //matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
+        // -> not doing translation ensure texture continuity between blocks
+
         // Create graphics with texture and matrix
         block.graphics = new PIXI.Graphics();
+        block.graphics.label = block.id;
         block.graphics.poly(points);
         block.graphics.fill({
           texture: texture,
@@ -1789,7 +1800,7 @@
         xml_entity = xml_entities[k];
         entity = {
           id: $(xml_entity).attr('id'),
-          type_id: $(xml_entity).attr('typeid'),
+          typeid: $(xml_entity).attr('typeid'),
           size: {
             r: parseFloat($(xml_entity).find('size').attr('r')),
             z: parseInt($(xml_entity).find('size').attr('z')) || void 0,
@@ -1911,18 +1922,18 @@
       for (k = 0, len = ref.length; k < len; k++) {
         entity = ref[k];
         // End of level
-        if (entity.type_id === 'EndOfLevel') {
+        if (entity.typeid === 'EndOfLevel') {
           this.create_entity(entity, 'end_of_level');
           results.push(this.end_of_level = entity);
         // Strawberries
-        } else if (entity.type_id === 'Strawberry') {
+        } else if (entity.typeid === 'Strawberry') {
           this.create_entity(entity, 'strawberry');
           results.push(this.strawberries.push(entity));
-        } else if (entity.type_id === 'Wrecker') {
+        } else if (entity.typeid === 'Wrecker') {
           this.create_entity(entity, 'wrecker');
           results.push(this.wreckers.push(entity));
         // Player start
-        } else if (entity.type_id === 'PlayerStart') {
+        } else if (entity.typeid === 'PlayerStart') {
           results.push(this.player_start = {
             x: entity.position.x,
             y: entity.position.y
@@ -1975,7 +1986,8 @@
         entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height);
         entity.sprite.x = entity.position.x;
         entity.sprite.y = -entity.position.y;
-        return entity.sprite.rotation = -entity.position.angle;
+        entity.sprite.rotation = -entity.position.angle;
+        return entity.sprite.name = entity.params.name || entity.typeid;
       }
     }
 
@@ -2020,12 +2032,12 @@
 
     entity_texture_name(entity) {
       var name, ref;
-      if (entity.type_id === 'Sprite') {
+      if (entity.typeid === 'Sprite') {
         name = entity.params.name;
-      } else if (entity.type_id === 'EndOfLevel') { // hard-coded entity
+      } else if (entity.typeid === 'EndOfLevel') { // hard-coded entity
         name = 'Flower';
-      } else if ((ref = entity.type_id) === 'Strawberry' || ref === 'Wrecker') { // hard-coded entities
-        name = entity.type_id;
+      } else if ((ref = entity.typeid) === 'Strawberry' || ref === 'Wrecker') { // hard-coded entities
+        name = entity.typeid;
       }
       // theme_replacements in XML
       if (this.level.replacements.sprites[name]) {
@@ -2420,6 +2432,7 @@
         width: this.options.width,
         height: this.options.height
       });
+      this.sprite.label = "sky";
       this.sprite.position.x = 0;
       this.sprite.position.y = 0;
       this.sprite.tileScale.x = 4;
