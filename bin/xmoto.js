@@ -1236,7 +1236,6 @@
       this.list = []; // total list
       this.back_list = []; // background list
       this.front_list = []; // front list (collisions)
-      this.edges = new Edges(this.level);
     }
 
     parse(xml) {
@@ -1299,6 +1298,7 @@
           block.vertices.push(vertex);
         }
         block.edges_list = new Edges(this.level, block);
+        //block.edges_list = new EdgesWithAngle(@level, block)
         block.edges_list.parse();
         block.aabb = this.compute_aabb(block);
         this.list.push(block);

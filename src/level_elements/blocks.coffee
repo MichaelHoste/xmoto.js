@@ -8,8 +8,6 @@ class Blocks
     @back_list  = [] # background list
     @front_list = [] # front list (collisions)
 
-    @edges = new Edges(@level)
-
   parse: (xml) ->
     xml_blocks = $(xml).find('block')
 
@@ -62,6 +60,7 @@ class Blocks
         block.vertices.push(vertex)
 
       block.edges_list = new Edges(@level, block)
+      #block.edges_list = new EdgesWithAngle(@level, block)
       block.edges_list.parse()
 
       block.aabb = @compute_aabb(block)
