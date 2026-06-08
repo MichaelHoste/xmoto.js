@@ -102,7 +102,6 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
-* Manage `<border texture...` property to use something else than Dirt
 * Improve XML levels compatibility => layeroffsets (parallax) 
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
   * Make this (parallax) level compatible : http://localhost:3001/?level=943&debug=true / http://localhost:3001/?level=8682&debug=true
