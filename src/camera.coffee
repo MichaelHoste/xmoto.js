@@ -86,16 +86,16 @@ class Camera
         cx = level_left + parallax.x * (t.x - level_left)
         cy = level_top  + parallax.y * (t.y - level_top) - default_half_h * (1.0 - parallax.y)
 
-        # Scale container: fixed default scale + canvas centre (zoom-independent)
-        scale_container = @level.layers.parallax_scale_layers[i]
-        scale_container.x       = 0
-        scale_container.y       = @options.height / 2
-        scale_container.scale.x =  Constants.default_scale.x
-        scale_container.scale.y = -Constants.default_scale.y
+        # Container: world-to-screen transform at fixed default scale (zoom-independent)
+        container = @level.layers.parallax_containers[i]
+        container.x       = 0
+        container.y       = @options.height / 2
+        container.scale.x =  Constants.default_scale.x
+        container.scale.y = -Constants.default_scale.y
 
-        # Translate container: parallax position only
-        @level.layers.parallax_layers[i].x = -cx
-        @level.layers.parallax_layers[i].y = cy
+        # Parallax: parallax camera position
+        @level.layers.parallax[i].x = -cx
+        @level.layers.parallax[i].y = cy
 
         parallax.aabb ?= new Box2D.Collision.b2AABB()
         parallax.aabb.lowerBound.Set(cx - half_w, cy - half_h)

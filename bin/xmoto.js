@@ -53,7 +53,7 @@
     }
 
     update() {
-      var ctx, cx, cy, default_half_h, half_h, half_w, i, k, len, level_left, level_top, parallax, ref, scale_container, size_x, size_y, t;
+      var container, ctx, cx, cy, default_half_h, half_h, half_w, i, k, len, level_left, level_top, parallax, ref, size_x, size_y, t;
       if (Constants.debug_physics) {
         ctx = this.level.physics.debug_ctx;
         ctx.save();
@@ -83,15 +83,15 @@
           parallax = ref[i];
           cx = level_left + parallax.x * (t.x - level_left);
           cy = level_top + parallax.y * (t.y - level_top) - default_half_h * (1.0 - parallax.y);
-          // Scale container: fixed default scale + canvas centre (zoom-independent)
-          scale_container = this.level.layers.parallax_scale_layers[i];
-          scale_container.x = 0;
-          scale_container.y = this.options.height / 2;
-          scale_container.scale.x = Constants.default_scale.x;
-          scale_container.scale.y = -Constants.default_scale.y;
-          // Translate container: parallax position only
-          this.level.layers.parallax_layers[i].x = -cx;
-          this.level.layers.parallax_layers[i].y = cy;
+          // Container: world-to-screen transform at fixed default scale (zoom-independent)
+          container = this.level.layers.parallax_containers[i];
+          container.x = 0;
+          container.y = this.options.height / 2;
+          container.scale.x = Constants.default_scale.x;
+          container.scale.y = -Constants.default_scale.y;
+          // Parallax: parallax camera position
+          this.level.layers.parallax[i].x = -cx;
+          this.level.layers.parallax[i].y = cy;
           if (parallax.aabb == null) {
             parallax.aabb = new Box2D.Collision.b2AABB();
           }
@@ -2141,9 +2141,9 @@
       this.static_background = void 0;
       this.static_level = void 0;
       this.static_foreground = void 0;
-      // Parallax layers — each has its own scale container (zoom-independent)
-      this.parallax_scale_layers = []; // direct children of stage, fixed default scale
-      this.parallax_layers = []; // translate containers inside their scale container
+      // Parallax layers — each has its own world-transform container (zoom-independent)
+      this.parallax_containers = []; // direct children of stage: world-to-screen transform (scale, Y-flip, canvas centre)
+      this.parallax = []; // translate containers inside their container (parallax camera position)
     }
 
     parse(xml) {
@@ -2187,20 +2187,20 @@
       return this.static_foreground.label = 'static-foreground';
     }
 
-    // Parallax layers — each gets its own scale container so camera zoom doesn't apply
+    // Each parallax layer gets its own world-transform container so camera zoom doesn't apply
     init_parallax_layers() {
-      var content_container, k, len, parallax, ref, results, scale_container;
+      var container, content, k, len, parallax_data, ref, results;
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
-        parallax = ref[k];
-        scale_container = new PIXI.Container();
-        content_container = new PIXI.Container();
-        scale_container.label = `${parallax.name}-scale`;
-        content_container.label = parallax.name;
-        scale_container.addChild(content_container);
-        this.parallax_scale_layers.push(scale_container);
-        results.push(this.parallax_layers.push(content_container));
+        parallax_data = ref[k];
+        container = new PIXI.Container();
+        content = new PIXI.Container();
+        container.label = `${parallax_data.name}-container`;
+        content.label = parallax_data.name;
+        container.addChild(content);
+        this.parallax_containers.push(container);
+        results.push(this.parallax.push(content));
       }
       return results;
     }
@@ -2211,20 +2211,20 @@
       /* Structure is like this
          Root
           - Sky
-          - n parallax-scale with frontlayer="false"   (direct children of Root, zoom-independent)
-              -> parallax-translate (blocks go here)
+          - n parallax_container with frontlayer="false"   (direct children of Root, zoom-independent)
+              -> parallax (blocks go here)
           - Scale
             -> Translate
               -> static-background
               -> static-level
               -> static-foreground
-          - n parallax-scale with frontlayer="true"
-              -> parallax-translate
+          - n parallax_container with frontlayer="true"
+              -> parallax
          */
       for (i = k = 0, len = ref.length; k < len; i = ++k) {
         parallax = ref[i];
         if (!parallax.frontlayer) {
-          this.level.stage.addChild(this.parallax_scale_layers[i]);
+          this.level.stage.addChild(this.parallax_containers[i]);
         }
       }
       this.level.stage.addChild(this.scale_layer);
@@ -2237,7 +2237,7 @@
       for (i = l = 0, len1 = ref1.length; l < len1; i = ++l) {
         parallax = ref1[i];
         if (parallax.frontlayer) {
-          results.push(this.level.stage.addChild(this.parallax_scale_layers[i]));
+          results.push(this.level.stage.addChild(this.parallax_containers[i]));
         } else {
           results.push(void 0);
         }
@@ -2250,7 +2250,7 @@
         return this.static_background;
       } else if (block.position.islayer) {
         if (block.position.layerid != null) {
-          return this.parallax_layers[block.position.layerid] || this.static_level;
+          return this.parallax[block.position.layerid] || this.static_level;
         } else {
           return this.static_foreground;
         }
