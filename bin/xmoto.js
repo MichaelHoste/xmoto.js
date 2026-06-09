@@ -53,7 +53,7 @@
     }
 
     update() {
-      var container, ctx, cx, cy, default_half_h, half_h, half_w, i, k, len, level_left, level_top, parallax, ref, size_x, size_y, t;
+      var container, ctx, cx, cy, default_half_h, default_half_w, factor, half_h, half_w, hh, hw, i, k, len, level_left, level_top, parallax, ref, size_x, size_y, t;
       if (Constants.debug_physics) {
         ctx = this.level.physics.debug_ctx;
         ctx.save();
@@ -74,10 +74,11 @@
         level_top = this.level.limits.player.top;
         half_w = (this.aabb.upperBound.x - this.aabb.lowerBound.x) / 2;
         half_h = (this.aabb.upperBound.y - this.aabb.lowerBound.y) / 2;
-        // C++ uses the viewport top-edge (ty + halfH) as the Y anchor, not the camera centre.
-        // Equivalent correction for this architecture: subtract default_half_h * (1 - ly).
-        // Uses the fixed default scale so it's constant — no oscillation with auto-zoom.
+        // cy correction uses the base (unfactored) half-height — position must not shift when
+        // debug_clipping is toggled. The AABB and overlay shrink to 60% when debug_clipping is on.
+        default_half_w = this.options.width / (2.0 * Math.abs(Constants.default_scale.x));
         default_half_h = this.options.height / (2.0 * Math.abs(Constants.default_scale.y));
+        factor = Constants.debug_clipping ? 0.6 : 1.0;
         ref = this.level.layers.list;
         for (i = k = 0, len = ref.length; k < len; i = ++k) {
           parallax = ref[i];
@@ -85,24 +86,27 @@
           cy = level_top + parallax.y * (t.y - level_top) - default_half_h * (1.0 - parallax.y);
           // Container: world-to-screen transform at fixed default scale (zoom-independent)
           container = this.level.layers.parallax_containers[i];
-          container.x = 0;
+          container.x = this.options.width / 2;
           container.y = this.options.height / 2;
           container.scale.x = Constants.default_scale.x;
           container.scale.y = -Constants.default_scale.y;
           // Parallax: parallax camera position
           this.level.layers.parallax[i].x = -cx;
           this.level.layers.parallax[i].y = cy;
+          // AABB shrinks to 60% when debug_clipping is on (matching the main camera behaviour)
+          hw = default_half_w * factor;
+          hh = default_half_h * factor;
           if (parallax.aabb == null) {
             parallax.aabb = new Box2D.Collision.b2AABB();
           }
-          parallax.aabb.lowerBound.Set(cx - half_w, cy - half_h);
-          parallax.aabb.upperBound.Set(cx + half_w, cy + half_h);
+          parallax.aabb.lowerBound.Set(cx - hw, cy - hh);
+          parallax.aabb.upperBound.Set(cx + hw, cy + hh);
         }
         // Opaque clipping to see where sprites are "filtered out"
         if (Constants.debug_clipping) {
-          this.clipping.clear();
           size_x = this.options.width / this.scale.x * 0.6;
           size_y = this.options.height / -this.scale.y * 0.6;
+          this.clipping.clear();
           this.clipping.rect(-size_x / 2, -size_y / 2, size_x, size_y);
           this.clipping.fill(0x333333);
           this.clipping.x = t.x;
@@ -1426,11 +1430,11 @@
     }
 
     visible(block) {
+      var layer_data, ref;
       if (block.position.islayer && (block.position.layerid != null)) {
-        return true;
+        layer_data = this.level.layers.list[block.position.layerid];
+        return (layer_data != null ? (ref = layer_data.aabb) != null ? ref.TestOverlap(block.aabb) : void 0 : void 0) || false;
       }
-      //layer_data = @level.layers.list[block.position.layerid]
-      //return layer_data?.aabb?.TestOverlap(block.aabb) || false
       return block.aabb.TestOverlap(this.level.camera.aabb);
     }
 
@@ -1784,10 +1788,10 @@
     }
 
     visible(polygon) {
+      var layer_data, ref;
       if (this.block.position.islayer && (this.block.position.layerid != null)) {
-        //layer_data = @level.layers.list[@block.position.layerid]
-        //return layer_data?.aabb?.TestOverlap(polygon.aabb) || false
-        return true;
+        layer_data = this.level.layers.list[this.block.position.layerid];
+        return (layer_data != null ? (ref = layer_data.aabb) != null ? ref.TestOverlap(polygon.aabb) : void 0 : void 0) || false;
       }
       return polygon.aabb.TestOverlap(this.level.camera.aabb);
     }

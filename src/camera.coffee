@@ -77,10 +77,11 @@ class Camera
       half_w = (@aabb.upperBound.x - @aabb.lowerBound.x) / 2
       half_h = (@aabb.upperBound.y - @aabb.lowerBound.y) / 2
 
-      # C++ uses the viewport top-edge (ty + halfH) as the Y anchor, not the camera centre.
-      # Equivalent correction for this architecture: subtract default_half_h * (1 - ly).
-      # Uses the fixed default scale so it's constant — no oscillation with auto-zoom.
+      # cy correction uses the base (unfactored) half-height — position must not shift when
+      # debug_clipping is toggled. The AABB and overlay shrink to 60% when debug_clipping is on.
+      default_half_w = @options.width  / (2.0 * Math.abs(Constants.default_scale.x))
       default_half_h = @options.height / (2.0 * Math.abs(Constants.default_scale.y))
+      factor         = if Constants.debug_clipping then 0.6 else 1.0
 
       for parallax, i in @level.layers.list
         cx = level_left + parallax.x * (t.x - level_left)
@@ -88,7 +89,7 @@ class Camera
 
         # Container: world-to-screen transform at fixed default scale (zoom-independent)
         container = @level.layers.parallax_containers[i]
-        container.x       = 0
+        container.x       = @options.width  / 2
         container.y       = @options.height / 2
         container.scale.x =  Constants.default_scale.x
         container.scale.y = -Constants.default_scale.y
@@ -97,19 +98,22 @@ class Camera
         @level.layers.parallax[i].x = -cx
         @level.layers.parallax[i].y = cy
 
+        # AABB shrinks to 60% when debug_clipping is on (matching the main camera behaviour)
+        hw = default_half_w * factor
+        hh = default_half_h * factor
         parallax.aabb ?= new Box2D.Collision.b2AABB()
-        parallax.aabb.lowerBound.Set(cx - half_w, cy - half_h)
-        parallax.aabb.upperBound.Set(cx + half_w, cy + half_h)
+        parallax.aabb.lowerBound.Set(cx - hw, cy - hh)
+        parallax.aabb.upperBound.Set(cx + hw, cy + hh)
 
       # Opaque clipping to see where sprites are "filtered out"
       if Constants.debug_clipping
-        @clipping.clear()
-
         size_x = @options.width  /  @scale.x * 0.6
         size_y = @options.height / -@scale.y * 0.6
 
+        @clipping.clear()
         @clipping.rect(-size_x/2, -size_y/2, size_x, size_y)
         @clipping.fill(0x333333)
+
         @clipping.x = t.x
         @clipping.y = -t.y
 
