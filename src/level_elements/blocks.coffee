@@ -130,6 +130,9 @@ class Blocks
         block.edges_list.update()
 
   visible: (block) ->
+    if block.position.islayer && block.position.layerid?
+      layer_data = @level.layers.list[block.position.layerid]
+      return layer_data?.aabb?.TestOverlap(block.aabb) || false
     block.aabb.TestOverlap(@level.camera.aabb)
 
   compute_aabb: (block) ->

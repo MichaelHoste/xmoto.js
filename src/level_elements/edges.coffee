@@ -147,4 +147,7 @@ class Edges
     return aabb
 
   visible: (polygon) ->
+    if @block.position.islayer && @block.position.layerid?
+      layer_data = @level.layers.list[@block.position.layerid]
+      return layer_data?.aabb?.TestOverlap(polygon.aabb) || false
     polygon.aabb.TestOverlap(@level.camera.aabb)

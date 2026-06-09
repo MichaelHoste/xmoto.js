@@ -60,14 +60,33 @@ class Camera
 
       ctx.restore()
     else
+      t = @target()
+
       @level.layers.scale_layer.x = @options.width/2
       @level.layers.scale_layer.y = @options.height/2
 
       @level.layers.scale_layer.scale.x = @scale.x
       @level.layers.scale_layer.scale.y = -@scale.y
 
-      @level.layers.translate_layer.x = -@target().x
-      @level.layers.translate_layer.y = @target().y
+      @level.layers.translate_layer.x = -t.x
+      @level.layers.translate_layer.y = t.y
+
+      level_left = @level.limits.player.left
+      level_top  = @level.limits.player.top
+
+      half_w = (@aabb.upperBound.x - @aabb.lowerBound.x) / 2
+      half_h = (@aabb.upperBound.y - @aabb.lowerBound.y) / 2
+
+      for parallax, i in @level.layers.list
+        @level.layers.parallax_layers[i].x = (t.x - level_left) * (1 - parallax.x)
+        @level.layers.parallax_layers[i].y = (t.y - level_top)  * (parallax.y - 1)
+
+        cx = level_left + parallax.x * (t.x - level_left)
+        cy = level_top  + parallax.y * (t.y - level_top)
+
+        parallax.aabb ?= new Box2D.Collision.b2AABB()
+        parallax.aabb.lowerBound.Set(cx - half_w, cy - half_h)
+        parallax.aabb.upperBound.Set(cx + half_w, cy + half_h)
 
       # Opaque clipping to see where sprites are "filtered out"
       if Constants.debug_clipping
@@ -78,8 +97,8 @@ class Camera
 
         @clipping.rect(-size_x/2, -size_y/2, size_x, size_y)
         @clipping.fill(0x333333)
-        @clipping.x = @target().x
-        @clipping.y = -@target().y
+        @clipping.x = t.x
+        @clipping.y = -t.y
 
   # must be something with x and y values
   target: ->
