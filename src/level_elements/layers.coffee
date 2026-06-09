@@ -44,8 +44,8 @@ class Layers
     @scale_layer     = new PIXI.Container()
     @translate_layer = new PIXI.Container()
 
-    @scale_layer.label       = 'scale'
-    @translate_layer.label   = 'translate'
+    @scale_layer.label     = 'scale'
+    @translate_layer.label = 'translate'
 
   # Static level layers
   init_static_layers: ->

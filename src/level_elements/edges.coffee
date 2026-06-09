@@ -136,6 +136,13 @@ class Edges
       for polygon in @polygons
         polygon.mesh.visible = block_visible && @visible(polygon)
 
+  visible: (polygon) ->
+    if @block.position.islayer && @block.position.layerid?
+      #layer_data = @level.layers.list[@block.position.layerid]
+      #return layer_data?.aabb?.TestOverlap(polygon.aabb) || false
+      return true
+    polygon.aabb.TestOverlap(@level.camera.aabb)
+
   compute_aabb: (polygon) ->
     x_positions = polygon.vertices.map((v) -> v.x)
     y_positions = polygon.vertices.map((v) -> v.y)
@@ -145,9 +152,3 @@ class Edges
     aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
 
     return aabb
-
-  visible: (polygon) ->
-    if @block.position.islayer && @block.position.layerid?
-      layer_data = @level.layers.list[@block.position.layerid]
-      return layer_data?.aabb?.TestOverlap(polygon.aabb) || false
-    polygon.aabb.TestOverlap(@level.camera.aabb)
