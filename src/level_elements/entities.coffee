@@ -5,6 +5,7 @@ class Entities
     @assets       = level.assets
     @world        = level.physics.world
     @list         = []
+    @player_start = { x: 0, y: 0 }
     @strawberries = []
     @wreckers     = []
 

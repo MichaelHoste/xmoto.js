@@ -14,8 +14,9 @@ class Layers
     @static_level      = undefined
     @static_foreground = undefined
 
-    # Parallax layers
-    @parallax_layers = []
+    # Parallax layers — each has its own scale container (zoom-independent)
+    @parallax_scale_layers = [] # direct children of stage, fixed default scale
+    @parallax_layers       = [] # translate containers inside their scale container
 
   parse: (xml) ->
     xml_layers = $(xml).find('layeroffsets layeroffset')
@@ -57,42 +58,48 @@ class Layers
     @static_level.label      = 'static-level'
     @static_foreground.label = 'static-foreground'
 
-  # Parallax layers
+  # Parallax layers — each gets its own scale container so camera zoom doesn't apply
   init_parallax_layers: ->
-    @parallax_layers = @list.map((parallax) -> # Blocks with islayer="true" and corresponding layerid=index
-      parallax_layer       = new PIXI.Container()
-      parallax_layer.label = parallax.name
+    for parallax in @list
+      scale_container   = new PIXI.Container()
+      content_container = new PIXI.Container()
 
-      parallax_layer
-    )
+      scale_container.label   = "#{parallax.name}-scale"
+      content_container.label = parallax.name
+
+      scale_container.addChild(content_container)
+
+      @parallax_scale_layers.push(scale_container)
+      @parallax_layers.push(content_container)
 
   assemble_layers: ->
     ### Structure is like this
     Root
      - Sky
+     - n parallax-scale with frontlayer="false"   (direct children of Root, zoom-independent)
+         -> parallax-translate (blocks go here)
      - Scale
        -> Translate
-         -> n parallax layers with frontlayer="false"
          -> static-background
          -> static-level
          -> static-foreground
-         -> n parallax layers with frontlayer="true"
+     - n parallax-scale with frontlayer="true"
+         -> parallax-translate
     ###
-
-    @level.stage.addChild(@scale_layer)
-    @scale_layer.addChild(@translate_layer)
 
     for parallax, i in @list
       if !parallax.frontlayer
-        @translate_layer.addChild(@parallax_layers[i])
+        @level.stage.addChild(@parallax_scale_layers[i])
 
+    @level.stage.addChild(@scale_layer)
+    @scale_layer.addChild(@translate_layer)
     @translate_layer.addChild(@static_background)
     @translate_layer.addChild(@static_level)
     @translate_layer.addChild(@static_foreground)
 
     for parallax, i in @list
       if parallax.frontlayer
-        @translate_layer.addChild(@parallax_layers[i])
+        @level.stage.addChild(@parallax_scale_layers[i])
 
   layer_for_block: (block) ->
     if block.position.background

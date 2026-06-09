@@ -75,6 +75,8 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 ### Technical informations
 
  * Implementation of replays is described [here](https://github.com/MichaelHoste/xmoto.js/issues/8)
+ * Use this link to compare with original X-Moto (same zoom/resolution): http://js.xmoto.io?level=943&debug=true&automatic_scale=false&manual_scale=false&default_scale.x=90&default_scale.y=-90&width=1024&height=768
+
 
 ## COVID-XMoto
 

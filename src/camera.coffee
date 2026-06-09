@@ -77,17 +77,25 @@ class Camera
       half_w = (@aabb.upperBound.x - @aabb.lowerBound.x) / 2
       half_h = (@aabb.upperBound.y - @aabb.lowerBound.y) / 2
 
-      # C++ anchors the parallax Y at the viewport's top edge (camera_y + halfH),
-      # not the camera centre. Using the live half_h would oscillate with auto-zoom,
-      # so we use the fixed default value — the screen-pixel correction stays constant.
+      # C++ uses the viewport top-edge (ty + halfH) as the Y anchor, not the camera centre.
+      # Equivalent correction for this architecture: subtract default_half_h * (1 - ly).
+      # Uses the fixed default scale so it's constant — no oscillation with auto-zoom.
       default_half_h = @options.height / (2.0 * Math.abs(Constants.default_scale.y))
 
       for parallax, i in @level.layers.list
-        @level.layers.parallax_layers[i].x = (t.x - level_left)                    * (1 - parallax.x)
-        @level.layers.parallax_layers[i].y = (t.y + default_half_h - level_top)    * (parallax.y - 1)
-
         cx = level_left + parallax.x * (t.x - level_left)
-        cy = level_top  + parallax.y * (t.y + default_half_h - level_top)
+        cy = level_top  + parallax.y * (t.y - level_top) - default_half_h * (1.0 - parallax.y)
+
+        # Scale container: fixed default scale + canvas centre (zoom-independent)
+        scale_container = @level.layers.parallax_scale_layers[i]
+        scale_container.x       = 0
+        scale_container.y       = @options.height / 2
+        scale_container.scale.x =  Constants.default_scale.x
+        scale_container.scale.y = -Constants.default_scale.y
+
+        # Translate container: parallax position only
+        @level.layers.parallax_layers[i].x = -cx
+        @level.layers.parallax_layers[i].y = cy
 
         parallax.aabb ?= new Box2D.Collision.b2AABB()
         parallax.aabb.lowerBound.Set(cx - half_w, cy - half_h)
