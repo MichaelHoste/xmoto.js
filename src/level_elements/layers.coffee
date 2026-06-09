@@ -61,7 +61,6 @@ class Layers
   init_parallax_layers: ->
     @parallax_layers = @list.map((parallax) -> # Blocks with islayer="true" and corresponding layerid=index
       parallax_layer       = new PIXI.Container()
-      console.log(parallax)
       parallax_layer.label = parallax.name
 
       parallax_layer
@@ -94,5 +93,16 @@ class Layers
     for parallax, i in @list
       if parallax.frontlayer
         @translate_layer.addChild(@parallax_layers[i])
+
+  layer_for_block: (block) ->
+    if block.position.background
+      @static_background
+    else if block.position.islayer
+      if block.position.layerid?
+        @parallax_layers[block.position.layerid] || @static_level
+      else
+        @static_foreground
+    else
+      @static_level
 
   update: ->

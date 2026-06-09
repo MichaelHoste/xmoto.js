@@ -1226,13 +1226,11 @@
     constructor(level) {
       this.level = level;
       this.assets = level.assets;
-      this.list = []; // total list
-      this.back_list = []; // background list
-      this.front_list = []; // front list (collisions)
+      this.list = [];
     }
 
     parse(xml) {
-      var block, is_background, k, l, len, len1, len2, m, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
+      var block, k, l, len, len1, len2, m, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
       xml_blocks = $(xml).find('block');
       for (k = 0, len = xml_blocks.length; k < len; k++) {
         xml_block = xml_blocks[k];
@@ -1244,7 +1242,15 @@
             dynamic: $(xml_block).find('position').attr('dynamic') === 'true',
             background: $(xml_block).find('position').attr('background') === 'true',
             islayer: $(xml_block).find('position').attr('islayer') === 'true',
-            layerid: parseInt($(xml_block).find('position').attr('layerid')) || 0
+            layerid: (function() {
+              var attr;
+              attr = $(xml_block).find('position').attr('layerid');
+              if (attr != null) {
+                return parseInt(attr);
+              } else {
+                return void 0; // integer or undefined if no attribute
+              }
+            })()
           },
           usetexture: {
             id: $(xml_block).find('usetexture').attr('id').toLowerCase(),
@@ -1259,6 +1265,7 @@
           },
           vertices: []
         };
+        block.has_collision = !block.position.islayer || (block.position.islayer && block.position.layerid === void 0); // islayer="true" without layerid has collision too
         if (block.usetexture.id === 'default') {
           block.usetexture.id = 'dirt';
         }
@@ -1295,17 +1302,8 @@
         block.edges_list.parse();
         block.aabb = this.compute_aabb(block);
         this.list.push(block);
-        is_background = block.position.background; // old syntax
-        is_background || (is_background = block.position.islayer && block.position.layerid > 0); // new syntax
-        if (is_background) {
-          this.back_list.push(block);
-        } else {
-          this.front_list.push(block);
-        }
       }
       this.list.sort(this.sort_blocks_by_texture);
-      this.back_list.sort(this.sort_blocks_by_texture);
-      this.front_list.sort(this.sort_blocks_by_texture);
       return this;
     }
 
@@ -1337,19 +1335,22 @@
     init_physics_parts() {
       var block, ground, k, len, ref, results;
       ground = Constants.ground;
-      ref = this.front_list;
+      ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         block = ref[k];
-        results.push(this.level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction));
+        if (block.has_collision) {
+          results.push(this.level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction));
+        } else {
+          results.push(void 0);
+        }
       }
       return results;
     }
 
     init_sprites() {
       var block, k, len, matrix, points, ref, results, texture;
-      ref = this.back_list.concat(this.front_list);
-      // draw back blocks before front blocks
+      ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         block = ref[k];
@@ -1357,13 +1358,12 @@
         points = block.vertices.map(function(v) {
           return new PIXI.Point(v.absolute_x, -v.absolute_y);
         });
-        // Load block texture
         texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
-        // Matrix maps world coords
+        // Not translating the matrix ensures texture continuity between blocks
         matrix = new PIXI.Matrix();
         matrix.scale(1.0 / 50.0, 1.0 / 50.0);
         //matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
-        // -> not doing translation ensure texture continuity between blocks
+        // -> Not translating the matrix ensures texture continuity between blocks
 
         // Create graphics with texture and matrix
         block.graphics = new PIXI.Graphics();
@@ -1376,7 +1376,7 @@
           alpha: 1.0,
           textureSpace: 'global'
         });
-        results.push(this.level.layers.static_level.addChild(block.graphics));
+        results.push(this.level.layers.layer_for_block(block).addChild(block.graphics));
       }
       return results;
     }
@@ -1728,7 +1728,7 @@
           geometry: geometry,
           texture: texture
         });
-        results.push(this.level.layers.static_level.addChild(polygon.mesh));
+        results.push(this.level.layers.layer_for_block(this.block).addChild(polygon.mesh));
       }
       return results;
     }
@@ -2147,7 +2147,6 @@
       return this.parallax_layers = this.list.map(function(parallax) { // Blocks with islayer="true" and corresponding layerid=index
         var parallax_layer;
         parallax_layer = new PIXI.Container();
-        console.log(parallax);
         parallax_layer.label = parallax.name;
         return parallax_layer;
       });
@@ -2189,6 +2188,20 @@
         }
       }
       return results;
+    }
+
+    layer_for_block(block) {
+      if (block.position.background) {
+        return this.static_background;
+      } else if (block.position.islayer) {
+        if (block.position.layerid != null) {
+          return this.parallax_layers[block.position.layerid] || this.static_level;
+        } else {
+          return this.static_foreground;
+        }
+      } else {
+        return this.static_level;
+      }
     }
 
     update() {}
