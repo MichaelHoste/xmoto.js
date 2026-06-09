@@ -102,6 +102,12 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
+* Manage sky better: 
+  * `<sky color_r="150" color_g="100" color_b="50" zoom="3.0">sky1</sky>`
+  * `<sky color_g="255" zoom="3.7" color_a="255" color_b="255" offset="0.16" drifted="false" use_params="true" color_r="255">Water1</sky>`
+  * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels
+* Manage Sprites better
+  * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels (at the end)
 * Improve XML levels compatibility => layeroffsets (parallax) 
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
   * Make this (parallax) level compatible : http://localhost:3001/?level=943&debug=true / http://localhost:3001/?level=8682&debug=true

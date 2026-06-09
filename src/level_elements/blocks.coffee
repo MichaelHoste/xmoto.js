@@ -150,6 +150,7 @@ class Blocks
 
     return aabb
 
+  # Blocks drawing is sorted by textures:
   # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
   sort_blocks_by_texture: (a, b) ->
     return 1  if a.usetexture.id > b.usetexture.id
