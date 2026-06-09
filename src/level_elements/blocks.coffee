@@ -31,7 +31,8 @@ class Blocks
           materials:  []
         vertices:     []
 
-      block.has_collision = !block.position.islayer || (block.position.islayer && block.position.layerid == undefined) # islayer="true" without layerid has collision too
+      block.no_collision  =  block.position.background                                     # background                   => no collision (old syntax)
+      block.no_collision ||= block.position.islayer && block.position.layerid != undefined # layer with specific layerid  => no collision
 
       block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
       block.texture_name  = @assets.theme.texture_params(block.usetexture.id).file
@@ -89,7 +90,7 @@ class Blocks
     ground = Constants.ground
 
     for block in @list
-      if block.has_collision
+      if !block.no_collision
         @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_sprites: ->
