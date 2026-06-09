@@ -38,7 +38,7 @@ class Sky
     @sprite.tileScale.x = 4
     @sprite.tileScale.y = 4
 
-    @level.stage.addChildAt(@sprite, 0)
+    @level.stage.addChildAt(@sprite, 0) # Fixed on the root level of stage (not influenced by scale/translation, only adapt tilePosition)
 
   update: ->
     ctx = @level.debug_ctx

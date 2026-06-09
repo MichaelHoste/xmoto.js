@@ -23,7 +23,7 @@ class Camera
     if Constants.debug_clipping
       @clipping = new PIXI.Graphics()
       @clipping.alpha = 0.2
-      @level.layers.translate_container.addChild(@clipping)
+      @level.layers.translate_layer.addChild(@clipping)
 
     @compute_aabb()
 
@@ -60,14 +60,14 @@ class Camera
 
       ctx.restore()
     else
-      @level.layers.scale_container.x = @options.width/2
-      @level.layers.scale_container.y = @options.height/2
+      @level.layers.scale_layer.x = @options.width/2
+      @level.layers.scale_layer.y = @options.height/2
 
-      @level.layers.scale_container.scale.x = @scale.x
-      @level.layers.scale_container.scale.y = -@scale.y
+      @level.layers.scale_layer.scale.x = @scale.x
+      @level.layers.scale_layer.scale.y = -@scale.y
 
-      @level.layers.translate_container.x = -@target().x
-      @level.layers.translate_container.y = @target().y
+      @level.layers.translate_layer.x = -@target().x
+      @level.layers.translate_layer.y = @target().y
 
       # Opaque clipping to see where sprites are "filtered out"
       if Constants.debug_clipping

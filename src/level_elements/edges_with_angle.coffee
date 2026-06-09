@@ -65,7 +65,7 @@ class EdgesWithAngle
         textureSpace: 'global'
       })
 
-      @level.layers.neutral_z_container.addChild(edge.graphics)
+      @level.layers.static_level.addChild(edge.graphics)
 
   # only display edges present on the screen zone
   update: ->

@@ -26,7 +26,7 @@
       if (Constants.debug_clipping) {
         this.clipping = new PIXI.Graphics();
         this.clipping.alpha = 0.2;
-        this.level.layers.translate_container.addChild(this.clipping);
+        this.level.layers.translate_layer.addChild(this.clipping);
       }
       return this.compute_aabb();
     }
@@ -63,12 +63,12 @@
         this.level.physics.world.DrawDebugData();
         return ctx.restore();
       } else {
-        this.level.layers.scale_container.x = this.options.width / 2;
-        this.level.layers.scale_container.y = this.options.height / 2;
-        this.level.layers.scale_container.scale.x = this.scale.x;
-        this.level.layers.scale_container.scale.y = -this.scale.y;
-        this.level.layers.translate_container.x = -this.target().x;
-        this.level.layers.translate_container.y = this.target().y;
+        this.level.layers.scale_layer.x = this.options.width / 2;
+        this.level.layers.scale_layer.y = this.options.height / 2;
+        this.level.layers.scale_layer.scale.x = this.scale.x;
+        this.level.layers.scale_layer.scale.y = -this.scale.y;
+        this.level.layers.translate_layer.x = -this.target().x;
+        this.level.layers.translate_layer.y = this.target().y;
         // Opaque clipping to see where sprites are "filtered out"
         if (Constants.debug_clipping) {
           this.clipping.clear();
@@ -1242,8 +1242,8 @@
             x: parseFloat($(xml_block).find('position').attr('x')),
             y: parseFloat($(xml_block).find('position').attr('y')),
             dynamic: $(xml_block).find('position').attr('dynamic') === 'true',
-            background: $(xml_block).find('position').attr('background') === 'true', // collisions and layer=0 but at the back
-            islayer: $(xml_block).find('position').attr('islayer') === 'true', // if true, then no collisions
+            background: $(xml_block).find('position').attr('background') === 'true',
+            islayer: $(xml_block).find('position').attr('islayer') === 'true',
             layerid: parseInt($(xml_block).find('position').attr('layerid')) || 0
           },
           usetexture: {
@@ -1284,8 +1284,8 @@
           vertex = {
             x: parseFloat($(xml_vertex).attr('x')),
             y: parseFloat($(xml_vertex).attr('y')),
-            absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x, // absolutes positions are here to
-            absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y, // accelerate drawing of each frame
+            absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x, // absolutes positions are practical
+            absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y, // for edges creation
             edge: $(xml_vertex).attr('edge') ? $(xml_vertex).attr('edge').toLowerCase() : void 0
           };
           block.vertices.push(vertex);
@@ -1376,7 +1376,7 @@
           alpha: 1.0,
           textureSpace: 'global'
         });
-        results.push(this.level.layers.neutral_z_container.addChild(block.graphics));
+        results.push(this.level.layers.static_level.addChild(block.graphics));
       }
       return results;
     }
@@ -1523,7 +1523,7 @@
           alpha: 1.0,
           textureSpace: 'global'
         });
-        results.push(this.level.layers.neutral_z_container.addChild(edge.graphics));
+        results.push(this.level.layers.static_level.addChild(edge.graphics));
       }
       return results;
     }
@@ -1728,7 +1728,7 @@
           geometry: geometry,
           texture: texture
         });
-        results.push(this.level.layers.neutral_z_container.addChild(polygon.mesh));
+        results.push(this.level.layers.static_level.addChild(polygon.mesh));
       }
       return results;
     }
@@ -1937,12 +1937,12 @@
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         entity = ref[k];
-        if (entity.z < 0) {
-          results.push(this.init_entity(entity, this.level.layers.negative_z_container));
+        if (entity.z === 0) {
+          results.push(this.init_entity(entity, this.level.layers.static_level));
+        } else if (entity.z < 0) {
+          results.push(this.init_entity(entity, this.level.layers.static_background));
         } else if (entity.z > 0) {
-          results.push(this.init_entity(entity, this.level.layers.positive_z_container));
-        } else if (entity.z === 0) {
-          results.push(this.init_entity(entity, this.level.layers.neutral_z_container));
+          results.push(this.init_entity(entity, this.level.layers.static_foreground));
         } else {
           results.push(void 0);
         }
@@ -2090,44 +2090,105 @@
       this.level = level;
       this.assets = level.assets;
       this.list = [];
+      // Camera layers
+      this.scale_layer = void 0;
+      this.translate_layer = void 0;
+      // Static layers
+      this.static_background = void 0;
+      this.static_level = void 0;
+      this.static_foreground = void 0;
+      // Parallax layers
+      this.parallax_layers = [];
     }
 
     parse(xml) {
-      var k, layer, len, xml_layer, xml_layers;
+      var i, k, layer, len, xml_layer, xml_layers;
       xml_layers = $(xml).find('layeroffsets layeroffset');
-      for (k = 0, len = xml_layers.length; k < len; k++) {
-        xml_layer = xml_layers[k];
+      for (i = k = 0, len = xml_layers.length; k < len; i = ++k) {
+        xml_layer = xml_layers[i];
         layer = {
           x: parseFloat($(xml_layer).attr('x')),
           y: parseFloat($(xml_layer).attr('y')),
-          frontlayer: $(xml_layer).attr('frontlayer') === 'true',
-          name: $(xml_layer).attr('name')
+          frontlayer: $(xml_layer).attr('frontlayer') === 'true'
         };
+        layer.name = $(xml_layer).attr('name') || `parallax-${layer.frontlayer ? 'front' : 'back'}-${i}`;
         this.list.push(layer);
       }
       return this;
     }
 
     init() {
-      return this.init_containers();
+      this.init_camera_layers();
+      this.init_static_layers();
+      this.init_parallax_layers();
+      return this.assemble_layers();
     }
 
-    init_containers() {
-      this.scale_container = new PIXI.Container();
-      this.translate_container = new PIXI.Container();
-      this.negative_z_container = new PIXI.Container();
-      this.neutral_z_container = new PIXI.Container();
-      this.positive_z_container = new PIXI.Container();
-      this.scale_container.label = 'scale';
-      this.translate_container.label = 'translate';
-      this.negative_z_container.label = 'negative_z';
-      this.neutral_z_container.label = 'neutral_z';
-      this.positive_z_container.label = 'positive_z';
-      this.level.stage.addChild(this.scale_container);
-      this.scale_container.addChild(this.translate_container);
-      this.translate_container.addChild(this.negative_z_container);
-      this.translate_container.addChild(this.neutral_z_container);
-      return this.translate_container.addChild(this.positive_z_container);
+    // Layers for easier camera control
+    init_camera_layers() {
+      this.scale_layer = new PIXI.Container();
+      this.translate_layer = new PIXI.Container();
+      this.scale_layer.label = 'scale';
+      return this.translate_layer.label = 'translate';
+    }
+
+    // Static level layers
+    init_static_layers() {
+      this.static_background = new PIXI.Container(); // entity.z < 0 or blocks with background="true"
+      this.static_level = new PIXI.Container(); // entity.z = 0 or blocks with classic blocks
+      this.static_foreground = new PIXI.Container(); // entity.z > 0 or blocks with islayer="true" and no layerid
+      this.static_background.label = 'static-background';
+      this.static_level.label = 'static-level';
+      return this.static_foreground.label = 'static-foreground';
+    }
+
+    // Parallax layers
+    init_parallax_layers() {
+      return this.parallax_layers = this.list.map(function(parallax) { // Blocks with islayer="true" and corresponding layerid=index
+        var parallax_layer;
+        parallax_layer = new PIXI.Container();
+        console.log(parallax);
+        parallax_layer.label = parallax.name;
+        return parallax_layer;
+      });
+    }
+
+    assemble_layers() {
+      var i, k, l, len, len1, parallax, ref, ref1, results;
+      /* Structure is like this
+         Root
+          - Sky
+          - Scale
+            -> Translate
+              -> n parallax layers with frontlayer="false"
+              -> static-background
+              -> static-level
+              -> static-foreground
+              -> n parallax layers with frontlayer="true"
+         */
+      this.level.stage.addChild(this.scale_layer);
+      this.scale_layer.addChild(this.translate_layer);
+      ref = this.list;
+      for (i = k = 0, len = ref.length; k < len; i = ++k) {
+        parallax = ref[i];
+        if (!parallax.frontlayer) {
+          this.translate_layer.addChild(this.parallax_layers[i]);
+        }
+      }
+      this.translate_layer.addChild(this.static_background);
+      this.translate_layer.addChild(this.static_level);
+      this.translate_layer.addChild(this.static_foreground);
+      ref1 = this.list;
+      results = [];
+      for (i = l = 0, len1 = ref1.length; l < len1; i = ++l) {
+        parallax = ref1[i];
+        if (parallax.frontlayer) {
+          results.push(this.translate_layer.addChild(this.parallax_layers[i]));
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
     }
 
     update() {}
@@ -2327,10 +2388,10 @@
       this.top_sprite.anchor.y = 0;
       this.top_sprite.tileScale.x = 1.0 / 50.0;
       this.top_sprite.tileScale.y = 1.0 / 50.0;
-      this.level.layers.neutral_z_container.addChild(this.left_sprite);
-      this.level.layers.neutral_z_container.addChild(this.right_sprite);
-      this.level.layers.neutral_z_container.addChild(this.bottom_sprite);
-      return this.level.layers.neutral_z_container.addChild(this.top_sprite);
+      this.level.layers.static_level.addChild(this.left_sprite);
+      this.level.layers.static_level.addChild(this.right_sprite);
+      this.level.layers.static_level.addChild(this.bottom_sprite);
+      return this.level.layers.static_level.addChild(this.top_sprite);
     }
 
     update() {
@@ -2443,7 +2504,7 @@
       this.sprite.position.y = 0;
       this.sprite.tileScale.x = 4;
       this.sprite.tileScale.y = 4;
-      return this.level.stage.addChildAt(this.sprite, 0);
+      return this.level.stage.addChildAt(this.sprite, 0); // Fixed on the root level of stage (not influenced by scale/translation, only adapt tilePosition)
     }
 
     update() {
@@ -2697,11 +2758,11 @@
       this.world.DestroyBody(this.left_axle);
       this.world.DestroyBody(this.right_axle);
       // graphics
-      this.level.layers.neutral_z_container.removeChild(this.body_sprite);
-      this.level.layers.neutral_z_container.removeChild(this.left_wheel_sprite);
-      this.level.layers.neutral_z_container.removeChild(this.right_wheel_sprite);
-      this.level.layers.neutral_z_container.removeChild(this.left_axle_sprite);
-      return this.level.layers.neutral_z_container.removeChild(this.right_axle_sprite);
+      this.level.layers.static_level.removeChild(this.body_sprite);
+      this.level.layers.static_level.removeChild(this.left_wheel_sprite);
+      this.level.layers.static_level.removeChild(this.right_wheel_sprite);
+      this.level.layers.static_level.removeChild(this.left_axle_sprite);
+      return this.level.layers.static_level.removeChild(this.right_axle_sprite);
     }
 
     load_assets() {
@@ -2749,7 +2810,7 @@
           asset_name = Constants[part].texture;
         }
         this[`${part}_sprite`] = PIXI.Sprite.from(this.assets.get_url(asset_name));
-        this.level.layers.neutral_z_container.addChild(this[`${part}_sprite`]);
+        this.level.layers.static_level.addChild(this[`${part}_sprite`]);
       }
       // Define body values
       this.body_sprite.width = Constants.body.texture_size.x;
@@ -3364,12 +3425,12 @@
       this.world.DestroyBody(this.upper_leg);
       this.world.DestroyBody(this.lower_arm);
       this.world.DestroyBody(this.upper_arm);
-      this.level.layers.neutral_z_container.removeChild(this.head_sprite);
-      this.level.layers.neutral_z_container.removeChild(this.torso_sprite);
-      this.level.layers.neutral_z_container.removeChild(this.lower_leg_sprite);
-      this.level.layers.neutral_z_container.removeChild(this.upper_leg_sprite);
-      this.level.layers.neutral_z_container.removeChild(this.lower_arm_sprite);
-      return this.level.layers.neutral_z_container.removeChild(this.upper_arm_sprite);
+      this.level.layers.static_level.removeChild(this.head_sprite);
+      this.level.layers.static_level.removeChild(this.torso_sprite);
+      this.level.layers.static_level.removeChild(this.lower_leg_sprite);
+      this.level.layers.static_level.removeChild(this.upper_leg_sprite);
+      this.level.layers.static_level.removeChild(this.lower_arm_sprite);
+      return this.level.layers.static_level.removeChild(this.upper_arm_sprite);
     }
 
     load_assets() {
@@ -3420,7 +3481,7 @@
         this[`${part}_sprite`].height = Constants[part].texture_size.y;
         this[`${part}_sprite`].anchor.x = 0.5;
         this[`${part}_sprite`].anchor.y = 0.5;
-        results.push(this.level.layers.neutral_z_container.addChild(this[`${part}_sprite`]));
+        results.push(this.level.layers.static_level.addChild(this[`${part}_sprite`]));
       }
       return results;
     }

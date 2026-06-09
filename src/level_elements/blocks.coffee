@@ -18,8 +18,8 @@ class Blocks
           x:          parseFloat($(xml_block).find('position').attr('x'))
           y:          parseFloat($(xml_block).find('position').attr('y'))
           dynamic:    $(xml_block).find('position').attr('dynamic')    == 'true'
-          background: $(xml_block).find('position').attr('background') == 'true'   # collisions and layer=0 but at the back
-          islayer:    $(xml_block).find('position').attr('islayer') == 'true'      # if true, then no collisions
+          background: $(xml_block).find('position').attr('background') == 'true'
+          islayer:    $(xml_block).find('position').attr('islayer') == 'true'
           layerid:    parseInt($(xml_block).find('position').attr('layerid')) || 0
         usetexture:
           id:         $(xml_block).find('usetexture').attr('id').toLowerCase()
@@ -53,8 +53,8 @@ class Blocks
         vertex =
           x:          parseFloat($(xml_vertex).attr('x'))
           y:          parseFloat($(xml_vertex).attr('y'))
-          absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are here to
-          absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # accelerate drawing of each frame
+          absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are practical
+          absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # for edges creation
           edge:       $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
@@ -129,7 +129,7 @@ class Blocks
         textureSpace: 'global'
       })
 
-      @level.layers.neutral_z_container.addChild(block.graphics)
+      @level.layers.static_level.addChild(block.graphics)
 
   update: ->
     if !Constants.debug_physics
