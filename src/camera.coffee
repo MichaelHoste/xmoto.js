@@ -16,24 +16,6 @@ class Camera
 
     @aabb = new Box2D.Collision.b2AABB()
 
-    @scale_container      = new PIXI.Container()
-    @translate_container  = new PIXI.Container()
-    @negative_z_container = new PIXI.Container()
-    @neutral_z_container  = new PIXI.Container()
-    @positive_z_container = new PIXI.Container()
-
-    @scale_container.label      = 'scale'
-    @translate_container.label  = 'translate'
-    @negative_z_container.label = 'negative_z'
-    @neutral_z_container.label  = 'neutral_z'
-    @positive_z_container.label = 'positive_z'
-
-    @level.stage.addChild(@scale_container)
-    @scale_container.addChild(@translate_container)
-    @translate_container.addChild(@negative_z_container)
-    @translate_container.addChild(@neutral_z_container)
-    @translate_container.addChild(@positive_z_container)
-
   init: ->
     if Constants.manual_scale
       @init_scroll()
@@ -41,7 +23,7 @@ class Camera
     if Constants.debug_clipping
       @clipping = new PIXI.Graphics()
       @clipping.alpha = 0.2
-      @translate_container.addChild(@clipping)
+      @level.layers.translate_container.addChild(@clipping)
 
     @compute_aabb()
 
@@ -78,14 +60,14 @@ class Camera
 
       ctx.restore()
     else
-      @scale_container.x = @options.width/2
-      @scale_container.y = @options.height/2
+      @level.layers.scale_container.x = @options.width/2
+      @level.layers.scale_container.y = @options.height/2
 
-      @scale_container.scale.x = @scale.x
-      @scale_container.scale.y = -@scale.y
+      @level.layers.scale_container.scale.x = @scale.x
+      @level.layers.scale_container.scale.y = -@scale.y
 
-      @translate_container.x = -@target().x
-      @translate_container.y = @target().y
+      @level.layers.translate_container.x = -@target().x
+      @level.layers.translate_container.y = @target().y
 
       # Opaque clipping to see where sprites are "filtered out"
       if Constants.debug_clipping

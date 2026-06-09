@@ -126,7 +126,7 @@ class Edges
       texture.source.addressMode = 'repeat'
 
       polygon.mesh = new PIXI.Mesh({ geometry: geometry, texture: texture })
-      @level.camera.neutral_z_container.addChild(polygon.mesh)
+      @level.layers.neutral_z_container.addChild(polygon.mesh)
 
   # only display edges present on the screen zone
   update: ->

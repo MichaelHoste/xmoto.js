@@ -142,10 +142,10 @@ class Limits
     @top_sprite.tileScale.x = 1.0/50.0
     @top_sprite.tileScale.y = 1.0/50.0
 
-    @level.camera.neutral_z_container.addChild(@left_sprite)
-    @level.camera.neutral_z_container.addChild(@right_sprite)
-    @level.camera.neutral_z_container.addChild(@bottom_sprite)
-    @level.camera.neutral_z_container.addChild(@top_sprite)
+    @level.layers.neutral_z_container.addChild(@left_sprite)
+    @level.layers.neutral_z_container.addChild(@right_sprite)
+    @level.layers.neutral_z_container.addChild(@bottom_sprite)
+    @level.layers.neutral_z_container.addChild(@top_sprite)
 
   update: ->
     if !Constants.debug_physics

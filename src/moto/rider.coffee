@@ -26,12 +26,12 @@ class Rider
     @world.DestroyBody(@lower_arm)
     @world.DestroyBody(@upper_arm)
 
-    @level.camera.neutral_z_container.removeChild(@head_sprite)
-    @level.camera.neutral_z_container.removeChild(@torso_sprite)
-    @level.camera.neutral_z_container.removeChild(@lower_leg_sprite)
-    @level.camera.neutral_z_container.removeChild(@upper_leg_sprite)
-    @level.camera.neutral_z_container.removeChild(@lower_arm_sprite)
-    @level.camera.neutral_z_container.removeChild(@upper_arm_sprite)
+    @level.layers.neutral_z_container.removeChild(@head_sprite)
+    @level.layers.neutral_z_container.removeChild(@torso_sprite)
+    @level.layers.neutral_z_container.removeChild(@lower_leg_sprite)
+    @level.layers.neutral_z_container.removeChild(@upper_leg_sprite)
+    @level.layers.neutral_z_container.removeChild(@lower_arm_sprite)
+    @level.layers.neutral_z_container.removeChild(@upper_arm_sprite)
 
   load_assets: ->
     parts = [ Constants.torso, Constants.upper_leg, Constants.lower_leg,
@@ -73,7 +73,7 @@ class Rider
       @["#{part}_sprite"].anchor.x = 0.5
       @["#{part}_sprite"].anchor.y = 0.5
 
-      @level.camera.neutral_z_container.addChild(@["#{part}_sprite"])
+      @level.layers.neutral_z_container.addChild(@["#{part}_sprite"])
 
   position: ->
     @moto.body.GetPosition()

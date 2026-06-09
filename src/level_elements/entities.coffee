@@ -117,11 +117,11 @@ class Entities
   init_sprites: ->
     for entity in @list
       if entity.z < 0
-        @init_entity(entity, @level.camera.negative_z_container)
+        @init_entity(entity, @level.layers.negative_z_container)
       else if entity.z > 0
-        @init_entity(entity, @level.camera.positive_z_container)
+        @init_entity(entity, @level.layers.positive_z_container)
       else if entity.z == 0
-        @init_entity(entity, @level.camera.neutral_z_container)
+        @init_entity(entity, @level.layers.neutral_z_container)
 
   init_entity: (entity, container) ->
     if entity.frames > 0

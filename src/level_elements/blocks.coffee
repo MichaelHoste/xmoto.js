@@ -129,7 +129,7 @@ class Blocks
         textureSpace: 'global'
       })
 
-      @level.camera.neutral_z_container.addChild(block.graphics)
+      @level.layers.neutral_z_container.addChild(block.graphics)
 
   update: ->
     if !Constants.debug_physics

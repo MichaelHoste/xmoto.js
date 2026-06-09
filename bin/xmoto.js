@@ -17,21 +17,6 @@
         y: 0
       };
       this.aabb = new Box2D.Collision.b2AABB();
-      this.scale_container = new PIXI.Container();
-      this.translate_container = new PIXI.Container();
-      this.negative_z_container = new PIXI.Container();
-      this.neutral_z_container = new PIXI.Container();
-      this.positive_z_container = new PIXI.Container();
-      this.scale_container.label = 'scale';
-      this.translate_container.label = 'translate';
-      this.negative_z_container.label = 'negative_z';
-      this.neutral_z_container.label = 'neutral_z';
-      this.positive_z_container.label = 'positive_z';
-      this.level.stage.addChild(this.scale_container);
-      this.scale_container.addChild(this.translate_container);
-      this.translate_container.addChild(this.negative_z_container);
-      this.translate_container.addChild(this.neutral_z_container);
-      this.translate_container.addChild(this.positive_z_container);
     }
 
     init() {
@@ -41,7 +26,7 @@
       if (Constants.debug_clipping) {
         this.clipping = new PIXI.Graphics();
         this.clipping.alpha = 0.2;
-        this.translate_container.addChild(this.clipping);
+        this.level.layers.translate_container.addChild(this.clipping);
       }
       return this.compute_aabb();
     }
@@ -78,12 +63,12 @@
         this.level.physics.world.DrawDebugData();
         return ctx.restore();
       } else {
-        this.scale_container.x = this.options.width / 2;
-        this.scale_container.y = this.options.height / 2;
-        this.scale_container.scale.x = this.scale.x;
-        this.scale_container.scale.y = -this.scale.y;
-        this.translate_container.x = -this.target().x;
-        this.translate_container.y = this.target().y;
+        this.level.layers.scale_container.x = this.options.width / 2;
+        this.level.layers.scale_container.y = this.options.height / 2;
+        this.level.layers.scale_container.scale.x = this.scale.x;
+        this.level.layers.scale_container.scale.y = -this.scale.y;
+        this.level.layers.translate_container.x = -this.target().x;
+        this.level.layers.translate_container.y = this.target().y;
         // Opaque clipping to see where sprites are "filtered out"
         if (Constants.debug_clipping) {
           this.clipping.clear();
@@ -611,8 +596,8 @@
       // Level dependent objects
       this.infos = new Infos(this);
       this.replacements = new Replacements(this);
-      this.sky = new Sky(this);
       this.layers = new Layers(this);
+      this.sky = new Sky(this);
       this.blocks = new Blocks(this);
       this.limits = new Limits(this);
       this.script = new Script(this);
@@ -1391,7 +1376,7 @@
           alpha: 1.0,
           textureSpace: 'global'
         });
-        results.push(this.level.camera.neutral_z_container.addChild(block.graphics));
+        results.push(this.level.layers.neutral_z_container.addChild(block.graphics));
       }
       return results;
     }
@@ -1538,7 +1523,7 @@
           alpha: 1.0,
           textureSpace: 'global'
         });
-        results.push(this.level.camera.neutral_z_container.addChild(edge.graphics));
+        results.push(this.level.layers.neutral_z_container.addChild(edge.graphics));
       }
       return results;
     }
@@ -1743,7 +1728,7 @@
           geometry: geometry,
           texture: texture
         });
-        results.push(this.level.camera.neutral_z_container.addChild(polygon.mesh));
+        results.push(this.level.layers.neutral_z_container.addChild(polygon.mesh));
       }
       return results;
     }
@@ -1953,11 +1938,11 @@
       for (k = 0, len = ref.length; k < len; k++) {
         entity = ref[k];
         if (entity.z < 0) {
-          results.push(this.init_entity(entity, this.level.camera.negative_z_container));
+          results.push(this.init_entity(entity, this.level.layers.negative_z_container));
         } else if (entity.z > 0) {
-          results.push(this.init_entity(entity, this.level.camera.positive_z_container));
+          results.push(this.init_entity(entity, this.level.layers.positive_z_container));
         } else if (entity.z === 0) {
-          results.push(this.init_entity(entity, this.level.camera.neutral_z_container));
+          results.push(this.init_entity(entity, this.level.layers.neutral_z_container));
         } else {
           results.push(void 0);
         }
@@ -2123,7 +2108,27 @@
       return this;
     }
 
-    init() {}
+    init() {
+      return this.init_containers();
+    }
+
+    init_containers() {
+      this.scale_container = new PIXI.Container();
+      this.translate_container = new PIXI.Container();
+      this.negative_z_container = new PIXI.Container();
+      this.neutral_z_container = new PIXI.Container();
+      this.positive_z_container = new PIXI.Container();
+      this.scale_container.label = 'scale';
+      this.translate_container.label = 'translate';
+      this.negative_z_container.label = 'negative_z';
+      this.neutral_z_container.label = 'neutral_z';
+      this.positive_z_container.label = 'positive_z';
+      this.level.stage.addChild(this.scale_container);
+      this.scale_container.addChild(this.translate_container);
+      this.translate_container.addChild(this.negative_z_container);
+      this.translate_container.addChild(this.neutral_z_container);
+      return this.translate_container.addChild(this.positive_z_container);
+    }
 
     update() {}
 
@@ -2322,10 +2327,10 @@
       this.top_sprite.anchor.y = 0;
       this.top_sprite.tileScale.x = 1.0 / 50.0;
       this.top_sprite.tileScale.y = 1.0 / 50.0;
-      this.level.camera.neutral_z_container.addChild(this.left_sprite);
-      this.level.camera.neutral_z_container.addChild(this.right_sprite);
-      this.level.camera.neutral_z_container.addChild(this.bottom_sprite);
-      return this.level.camera.neutral_z_container.addChild(this.top_sprite);
+      this.level.layers.neutral_z_container.addChild(this.left_sprite);
+      this.level.layers.neutral_z_container.addChild(this.right_sprite);
+      this.level.layers.neutral_z_container.addChild(this.bottom_sprite);
+      return this.level.layers.neutral_z_container.addChild(this.top_sprite);
     }
 
     update() {
@@ -2692,11 +2697,11 @@
       this.world.DestroyBody(this.left_axle);
       this.world.DestroyBody(this.right_axle);
       // graphics
-      this.level.camera.neutral_z_container.removeChild(this.body_sprite);
-      this.level.camera.neutral_z_container.removeChild(this.left_wheel_sprite);
-      this.level.camera.neutral_z_container.removeChild(this.right_wheel_sprite);
-      this.level.camera.neutral_z_container.removeChild(this.left_axle_sprite);
-      return this.level.camera.neutral_z_container.removeChild(this.right_axle_sprite);
+      this.level.layers.neutral_z_container.removeChild(this.body_sprite);
+      this.level.layers.neutral_z_container.removeChild(this.left_wheel_sprite);
+      this.level.layers.neutral_z_container.removeChild(this.right_wheel_sprite);
+      this.level.layers.neutral_z_container.removeChild(this.left_axle_sprite);
+      return this.level.layers.neutral_z_container.removeChild(this.right_axle_sprite);
     }
 
     load_assets() {
@@ -2744,7 +2749,7 @@
           asset_name = Constants[part].texture;
         }
         this[`${part}_sprite`] = PIXI.Sprite.from(this.assets.get_url(asset_name));
-        this.level.camera.neutral_z_container.addChild(this[`${part}_sprite`]);
+        this.level.layers.neutral_z_container.addChild(this[`${part}_sprite`]);
       }
       // Define body values
       this.body_sprite.width = Constants.body.texture_size.x;
@@ -3359,12 +3364,12 @@
       this.world.DestroyBody(this.upper_leg);
       this.world.DestroyBody(this.lower_arm);
       this.world.DestroyBody(this.upper_arm);
-      this.level.camera.neutral_z_container.removeChild(this.head_sprite);
-      this.level.camera.neutral_z_container.removeChild(this.torso_sprite);
-      this.level.camera.neutral_z_container.removeChild(this.lower_leg_sprite);
-      this.level.camera.neutral_z_container.removeChild(this.upper_leg_sprite);
-      this.level.camera.neutral_z_container.removeChild(this.lower_arm_sprite);
-      return this.level.camera.neutral_z_container.removeChild(this.upper_arm_sprite);
+      this.level.layers.neutral_z_container.removeChild(this.head_sprite);
+      this.level.layers.neutral_z_container.removeChild(this.torso_sprite);
+      this.level.layers.neutral_z_container.removeChild(this.lower_leg_sprite);
+      this.level.layers.neutral_z_container.removeChild(this.upper_leg_sprite);
+      this.level.layers.neutral_z_container.removeChild(this.lower_arm_sprite);
+      return this.level.layers.neutral_z_container.removeChild(this.upper_arm_sprite);
     }
 
     load_assets() {
@@ -3415,7 +3420,7 @@
         this[`${part}_sprite`].height = Constants[part].texture_size.y;
         this[`${part}_sprite`].anchor.x = 0.5;
         this[`${part}_sprite`].anchor.y = 0.5;
-        results.push(this.level.camera.neutral_z_container.addChild(this[`${part}_sprite`]));
+        results.push(this.level.layers.neutral_z_container.addChild(this[`${part}_sprite`]));
       }
       return results;
     }

@@ -25,8 +25,8 @@ class Level
     # Level dependent objects
     @infos        = new Infos(this)
     @replacements = new Replacements(this)
-    @sky          = new Sky(this)
     @layers       = new Layers(this)
+    @sky          = new Sky(this)
     @blocks       = new Blocks(this)
     @limits       = new Limits(this)
     @script       = new Script(this)
