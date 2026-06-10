@@ -72,11 +72,9 @@ class Camera
       @level.layers.translate_layer.y = t.y
 
       # Containers for parallax scale/translate transforms
-      level_left     = @level.limits.player.left
-      level_top      = @level.limits.player.top
-      default_half_w = @options.width  / (2.0 * Math.abs(Constants.default_scale.x))
-      default_half_h = @options.height / (2.0 * Math.abs(Constants.default_scale.y))
-      aabb_factor    = if Constants.debug_clipping then 0.6 else 1.0
+      level_left  = @level.limits.player.left
+      level_top   = @level.limits.player.top
+      aabb_factor = if Constants.debug_clipping then 0.6 else 1.0
 
       for parallax, i in @level.layers.list
         scale_layer     = @level.layers.parallax_scale_layers[i]
@@ -85,27 +83,34 @@ class Camera
         scale_layer.x = @options.width  / 2
         scale_layer.y = @options.height / 2
 
-        # scale_layer.scale.x = Constants.default_scale.x
-        # scale_layer.scale.y = -Constants.default_scale.y
+        # Blend between the camera's current scale and the default scale based on
+        # parallax depth (z). z=1 (parallax=1,1) follows the camera zoom like the
+        # main level; z=0 (distant parallax) keeps a constant default scale.
+        z = (parallax.x + parallax.y) / 2.0
+        effective_scale_x = z * @scale.x + (1.0 - z) * Constants.default_scale.x
+        effective_scale_y = z * @scale.y + (1.0 - z) * Constants.default_scale.y
 
-        z = (parallax.x + parallax.y)/2.0
-        scale_layer.scale.x =   z * @scale.x + (1.0-z) * Constants.default_scale.x
-        scale_layer.scale.y = -(z * @scale.y + (1.0-z) * Constants.default_scale.y)
+        scale_layer.scale.x =  effective_scale_x
+        scale_layer.scale.y = -effective_scale_y
+
+        # Half-viewport in this parallax layer's world coords, derived from its
+        # effective scale (NOT the default scale — each layer has its own zoom).
+        half_w = @options.width  / (2.0 * effective_scale_x)
+        half_h = @options.height / (2.0 * Math.abs(effective_scale_y))
 
         # Anchored to the level's top-left corner so that parallax=1 matches the
         # main level (translate=(-t.x, t.y)) and parallax=0 stays frozen there.
-        # The Y has an extra (1-parallax.y) * default_half_h correction because
-        # parallax layers anchor at the viewport TOP edge, not its centre.
+        # The Y has an extra (1-parallax.y) * half_h correction because parallax
+        # layers anchor at the viewport TOP edge, not its centre.
         translate_layer.x = -(level_left + parallax.x * (t.x - level_left))
-        translate_layer.y =   level_top  + parallax.y * (t.y - level_top) - default_half_h * (1.0 - parallax.y)
+        translate_layer.y =   level_top  + parallax.y * (t.y - level_top) - half_h * (1.0 - parallax.y)
 
         # Per-layer AABB in world coords, used by blocks/edges for visibility culling.
-        # Centre matches the parallax viewport centre; size uses the default scale
-        # (parallax layers don't follow the camera zoom).
+        # Centre matches the parallax viewport centre; size matches its effective scale.
         cx = -translate_layer.x
         cy =  translate_layer.y
-        hw = default_half_w * aabb_factor
-        hh = default_half_h * aabb_factor
+        hw = half_w * aabb_factor
+        hh = half_h * aabb_factor
 
         parallax.aabb ?= new Box2D.Collision.b2AABB()
         parallax.aabb.lowerBound.Set(cx - hw, cy - hh)

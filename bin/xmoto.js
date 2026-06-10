@@ -53,7 +53,7 @@
     }
 
     update() {
-      var container, ctx, cx, cy, default_half_h, default_half_w, factor, half_h, half_w, hh, hw, i, k, len, level_left, level_top, parallax, ref, size_x, size_y, t;
+      var aabb_factor, ctx, cx, cy, effective_scale_x, effective_scale_y, half_h, half_w, hh, hw, i, k, len, level_left, level_top, parallax, ref, scale_layer, size_x, size_y, t, translate_layer, z;
       if (Constants.debug_physics) {
         ctx = this.level.physics.debug_ctx;
         ctx.save();
@@ -70,32 +70,41 @@
         this.level.layers.scale_layer.scale.y = -this.scale.y;
         this.level.layers.translate_layer.x = -t.x;
         this.level.layers.translate_layer.y = t.y;
+        // Containers for parallax scale/translate transforms
         level_left = this.level.limits.player.left;
         level_top = this.level.limits.player.top;
-        half_w = (this.aabb.upperBound.x - this.aabb.lowerBound.x) / 2;
-        half_h = (this.aabb.upperBound.y - this.aabb.lowerBound.y) / 2;
-        // cy correction uses the base (unfactored) half-height — position must not shift when
-        // debug_clipping is toggled. The AABB and overlay shrink to 60% when debug_clipping is on.
-        default_half_w = this.options.width / (2.0 * Math.abs(Constants.default_scale.x));
-        default_half_h = this.options.height / (2.0 * Math.abs(Constants.default_scale.y));
-        factor = Constants.debug_clipping ? 0.6 : 1.0;
+        aabb_factor = Constants.debug_clipping ? 0.6 : 1.0;
         ref = this.level.layers.list;
         for (i = k = 0, len = ref.length; k < len; i = ++k) {
           parallax = ref[i];
-          cx = level_left + parallax.x * (t.x - level_left);
-          cy = level_top + parallax.y * (t.y - level_top) - default_half_h * (1.0 - parallax.y);
-          // Container: world-to-screen transform at fixed default scale (zoom-independent)
-          container = this.level.layers.parallax_containers[i];
-          container.x = this.options.width / 2;
-          container.y = this.options.height / 2;
-          container.scale.x = Constants.default_scale.x;
-          container.scale.y = -Constants.default_scale.y;
-          // Parallax: parallax camera position
-          this.level.layers.parallax[i].x = -cx;
-          this.level.layers.parallax[i].y = cy;
-          // AABB shrinks to 60% when debug_clipping is on (matching the main camera behaviour)
-          hw = default_half_w * factor;
-          hh = default_half_h * factor;
+          scale_layer = this.level.layers.parallax_scale_layers[i];
+          translate_layer = this.level.layers.parallax_translate_layers[i];
+          scale_layer.x = this.options.width / 2;
+          scale_layer.y = this.options.height / 2;
+          // Blend between the camera's current scale and the default scale based on
+          // parallax depth (z). z=1 (parallax=1,1) follows the camera zoom like the
+          // main level; z=0 (distant parallax) keeps a constant default scale.
+          z = (parallax.x + parallax.y) / 2.0;
+          effective_scale_x = z * this.scale.x + (1.0 - z) * Constants.default_scale.x;
+          effective_scale_y = z * this.scale.y + (1.0 - z) * Constants.default_scale.y;
+          scale_layer.scale.x = effective_scale_x;
+          scale_layer.scale.y = -effective_scale_y;
+          // Half-viewport in this parallax layer's world coords, derived from its
+          // effective scale (NOT the default scale — each layer has its own zoom).
+          half_w = this.options.width / (2.0 * effective_scale_x);
+          half_h = this.options.height / (2.0 * Math.abs(effective_scale_y));
+          // Anchored to the level's top-left corner so that parallax=1 matches the
+          // main level (translate=(-t.x, t.y)) and parallax=0 stays frozen there.
+          // The Y has an extra (1-parallax.y) * half_h correction because parallax
+          // layers anchor at the viewport TOP edge, not its centre.
+          translate_layer.x = -(level_left + parallax.x * (t.x - level_left));
+          translate_layer.y = level_top + parallax.y * (t.y - level_top) - half_h * (1.0 - parallax.y);
+          // Per-layer AABB in world coords, used by blocks/edges for visibility culling.
+          // Centre matches the parallax viewport centre; size matches its effective scale.
+          cx = -translate_layer.x;
+          cy = translate_layer.y;
+          hw = half_w * aabb_factor;
+          hh = half_h * aabb_factor;
           if (parallax.aabb == null) {
             parallax.aabb = new Box2D.Collision.b2AABB();
           }
@@ -1767,6 +1776,7 @@
           geometry: geometry,
           texture: texture
         });
+        polygon.mesh.label = `Edge (${this.block.graphics.label})`;
         results.push(this.level.layers.layer_for_block(this.block).addChild(polygon.mesh));
       }
       return results;
@@ -2145,9 +2155,10 @@
       this.static_background = void 0;
       this.static_level = void 0;
       this.static_foreground = void 0;
-      // Parallax layers — each has its own world-transform container (zoom-independent)
-      this.parallax_containers = []; // direct children of stage: world-to-screen transform (scale, Y-flip, canvas centre)
-      this.parallax = []; // translate containers inside their container (parallax camera position)
+      // Parallax layers — each has its own scale/translate containers
+      this.parallax_scale_layers = []; // direct children of stage for scaling
+      this.parallax_translate_layers = []; // translate containers inside their container with parallax values
+      this.parallax_layers = []; // parallax blocks
     }
 
     parse(xml) {
@@ -2177,8 +2188,8 @@
     init_camera_layers() {
       this.scale_layer = new PIXI.Container();
       this.translate_layer = new PIXI.Container();
-      this.scale_layer.label = 'scale';
-      return this.translate_layer.label = 'translate';
+      this.scale_layer.label = 'level - scale';
+      return this.translate_layer.label = 'level - translate';
     }
 
     // Static level layers
@@ -2186,25 +2197,28 @@
       this.static_background = new PIXI.Container(); // entity.z < 0 or blocks with background="true"
       this.static_level = new PIXI.Container(); // entity.z = 0 or blocks with classic blocks
       this.static_foreground = new PIXI.Container(); // entity.z > 0 or blocks with islayer="true" and no layerid
-      this.static_background.label = 'static-background';
-      this.static_level.label = 'static-level';
-      return this.static_foreground.label = 'static-foreground';
+      this.static_background.label = 'background';
+      this.static_level.label = 'level';
+      return this.static_foreground.label = 'foreground';
     }
 
-    // Each parallax layer gets its own world-transform container so camera zoom doesn't apply
     init_parallax_layers() {
-      var container, content, k, len, parallax_data, ref, results;
+      var k, len, parallax_data, parallax_layer, ref, results, scale_layer, translate_layer;
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         parallax_data = ref[k];
-        container = new PIXI.Container();
-        content = new PIXI.Container();
-        container.label = `${parallax_data.name}-container`;
-        content.label = parallax_data.name;
-        container.addChild(content);
-        this.parallax_containers.push(container);
-        results.push(this.parallax.push(content));
+        scale_layer = new PIXI.Container();
+        translate_layer = new PIXI.Container();
+        parallax_layer = new PIXI.Container();
+        scale_layer.label = `${parallax_data.name} - scale`;
+        translate_layer.label = `${parallax_data.name} - translate`;
+        parallax_layer.label = `${parallax_data.name}`;
+        scale_layer.addChild(translate_layer);
+        translate_layer.addChild(parallax_layer);
+        this.parallax_scale_layers.push(scale_layer);
+        this.parallax_translate_layers.push(translate_layer);
+        results.push(this.parallax_layers.push(parallax_layer));
       }
       return results;
     }
@@ -2228,7 +2242,7 @@
       for (i = k = 0, len = ref.length; k < len; i = ++k) {
         parallax = ref[i];
         if (!parallax.frontlayer) {
-          this.level.stage.addChild(this.parallax_containers[i]);
+          this.level.stage.addChild(this.parallax_scale_layers[i]);
         }
       }
       this.level.stage.addChild(this.scale_layer);
@@ -2241,7 +2255,7 @@
       for (i = l = 0, len1 = ref1.length; l < len1; i = ++l) {
         parallax = ref1[i];
         if (parallax.frontlayer) {
-          results.push(this.level.stage.addChild(this.parallax_containers[i]));
+          results.push(this.level.stage.addChild(this.parallax_scale_layers[i]));
         } else {
           results.push(void 0);
         }
@@ -2254,7 +2268,7 @@
         return this.static_background;
       } else if (block.position.islayer) {
         if (block.position.layerid != null) {
-          return this.parallax[block.position.layerid] || this.static_level;
+          return this.parallax_layers[block.position.layerid] || this.static_level; // TODO should "|| @static_level" be removed?
         } else {
           return this.static_foreground;
         }
@@ -2882,6 +2896,7 @@
           asset_name = Constants[part].texture;
         }
         this[`${part}_sprite`] = PIXI.Sprite.from(this.assets.get_url(asset_name));
+        this[`${part}_sprite`].label = part;
         this.level.layers.static_level.addChild(this[`${part}_sprite`]);
       }
       // Define body values
@@ -3553,6 +3568,7 @@
         this[`${part}_sprite`].height = Constants[part].texture_size.y;
         this[`${part}_sprite`].anchor.x = 0.5;
         this[`${part}_sprite`].anchor.y = 0.5;
+        this[`${part}_sprite`].label = part;
         results.push(this.level.layers.static_level.addChild(this[`${part}_sprite`]));
       }
       return results;
