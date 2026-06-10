@@ -62,8 +62,8 @@ class Camera
     else
       t = @target()
 
-      @level.layers.scale_layer.x = @options.width/2
-      @level.layers.scale_layer.y = @options.height/2
+      @level.layers.scale_layer.x = @options.width  / 2
+      @level.layers.scale_layer.y = @options.height / 2
 
       @level.layers.scale_layer.scale.x = @scale.x
       @level.layers.scale_layer.scale.y = -@scale.y
@@ -71,36 +71,42 @@ class Camera
       @level.layers.translate_layer.x = -t.x
       @level.layers.translate_layer.y = t.y
 
-      level_left = @level.limits.player.left
-      level_top  = @level.limits.player.top
-
-      half_w = (@aabb.upperBound.x - @aabb.lowerBound.x) / 2
-      half_h = (@aabb.upperBound.y - @aabb.lowerBound.y) / 2
-
-      # cy correction uses the base (unfactored) half-height — position must not shift when
-      # debug_clipping is toggled. The AABB and overlay shrink to 60% when debug_clipping is on.
+      # Containers for parallax scale/translate transforms
+      level_left     = @level.limits.player.left
+      level_top      = @level.limits.player.top
       default_half_w = @options.width  / (2.0 * Math.abs(Constants.default_scale.x))
       default_half_h = @options.height / (2.0 * Math.abs(Constants.default_scale.y))
-      factor         = if Constants.debug_clipping then 0.6 else 1.0
+      aabb_factor    = if Constants.debug_clipping then 0.6 else 1.0
 
       for parallax, i in @level.layers.list
-        cx = level_left + parallax.x * (t.x - level_left)
-        cy = level_top  + parallax.y * (t.y - level_top) - default_half_h * (1.0 - parallax.y)
+        scale_layer     = @level.layers.parallax_scale_layers[i]
+        translate_layer = @level.layers.parallax_translate_layers[i]
 
-        # Container: world-to-screen transform at fixed default scale (zoom-independent)
-        container = @level.layers.parallax_containers[i]
-        container.x       = @options.width  / 2
-        container.y       = @options.height / 2
-        container.scale.x =  Constants.default_scale.x
-        container.scale.y = -Constants.default_scale.y
+        scale_layer.x = @options.width  / 2
+        scale_layer.y = @options.height / 2
 
-        # Parallax: parallax camera position
-        @level.layers.parallax[i].x = -cx
-        @level.layers.parallax[i].y = cy
+        # scale_layer.scale.x = Constants.default_scale.x
+        # scale_layer.scale.y = -Constants.default_scale.y
 
-        # AABB shrinks to 60% when debug_clipping is on (matching the main camera behaviour)
-        hw = default_half_w * factor
-        hh = default_half_h * factor
+        z = (parallax.x + parallax.y)/2.0
+        scale_layer.scale.x =   z * @scale.x + (1.0-z) * Constants.default_scale.x
+        scale_layer.scale.y = -(z * @scale.y + (1.0-z) * Constants.default_scale.y)
+
+        # Anchored to the level's top-left corner so that parallax=1 matches the
+        # main level (translate=(-t.x, t.y)) and parallax=0 stays frozen there.
+        # The Y has an extra (1-parallax.y) * default_half_h correction because
+        # parallax layers anchor at the viewport TOP edge, not its centre.
+        translate_layer.x = -(level_left + parallax.x * (t.x - level_left))
+        translate_layer.y =   level_top  + parallax.y * (t.y - level_top) - default_half_h * (1.0 - parallax.y)
+
+        # Per-layer AABB in world coords, used by blocks/edges for visibility culling.
+        # Centre matches the parallax viewport centre; size uses the default scale
+        # (parallax layers don't follow the camera zoom).
+        cx = -translate_layer.x
+        cy =  translate_layer.y
+        hw = default_half_w * aabb_factor
+        hh = default_half_h * aabb_factor
+
         parallax.aabb ?= new Box2D.Collision.b2AABB()
         parallax.aabb.lowerBound.Set(cx - hw, cy - hh)
         parallax.aabb.upperBound.Set(cx + hw, cy + hh)

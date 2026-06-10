@@ -14,9 +14,10 @@ class Layers
     @static_level      = undefined
     @static_foreground = undefined
 
-    # Parallax layers — each has its own world-transform container (zoom-independent)
-    @parallax_containers = [] # direct children of stage: world-to-screen transform (scale, Y-flip, canvas centre)
-    @parallax            = [] # translate containers inside their container (parallax camera position)
+    # Parallax layers — each has its own scale/translate containers
+    @parallax_scale_layers     = [] # direct children of stage for scaling
+    @parallax_translate_layers = [] # translate containers inside their container with parallax values
+    @parallax_layers           = [] # parallax blocks
 
   parse: (xml) ->
     xml_layers = $(xml).find('layeroffsets layeroffset')
@@ -45,8 +46,8 @@ class Layers
     @scale_layer     = new PIXI.Container()
     @translate_layer = new PIXI.Container()
 
-    @scale_layer.label     = 'scale'
-    @translate_layer.label = 'translate'
+    @scale_layer.label     = 'level - scale'
+    @translate_layer.label = 'level - translate'
 
   # Static level layers
   init_static_layers: ->
@@ -54,23 +55,26 @@ class Layers
     @static_level      = new PIXI.Container() # entity.z = 0 or blocks with classic blocks
     @static_foreground = new PIXI.Container() # entity.z > 0 or blocks with islayer="true" and no layerid
 
-    @static_background.label = 'static-background'
-    @static_level.label      = 'static-level'
-    @static_foreground.label = 'static-foreground'
+    @static_background.label = 'background'
+    @static_level.label      = 'level'
+    @static_foreground.label = 'foreground'
 
-  # Each parallax layer gets its own world-transform container so camera zoom doesn't apply
   init_parallax_layers: ->
     for parallax_data in @list
-      container = new PIXI.Container()
-      content   = new PIXI.Container()
+      scale_layer      = new PIXI.Container()
+      translate_layer  = new PIXI.Container()
+      parallax_layer   = new PIXI.Container()
 
-      container.label = "#{parallax_data.name}-container"
-      content.label   = parallax_data.name
+      scale_layer.label     = "#{parallax_data.name} - scale"
+      translate_layer.label = "#{parallax_data.name} - translate"
+      parallax_layer.label  = "#{parallax_data.name}"
 
-      container.addChild(content)
+      scale_layer.addChild(translate_layer)
+      translate_layer.addChild(parallax_layer)
 
-      @parallax_containers.push(container)
-      @parallax.push(content)
+      @parallax_scale_layers.push(scale_layer)
+      @parallax_translate_layers.push(translate_layer)
+      @parallax_layers.push(parallax_layer)
 
   assemble_layers: ->
     ### Structure is like this
@@ -89,7 +93,7 @@ class Layers
 
     for parallax, i in @list
       if !parallax.frontlayer
-        @level.stage.addChild(@parallax_containers[i])
+        @level.stage.addChild(@parallax_scale_layers[i])
 
     @level.stage.addChild(@scale_layer)
     @scale_layer.addChild(@translate_layer)
@@ -99,14 +103,14 @@ class Layers
 
     for parallax, i in @list
       if parallax.frontlayer
-        @level.stage.addChild(@parallax_containers[i])
+        @level.stage.addChild(@parallax_scale_layers[i])
 
   layer_for_block: (block) ->
     if block.position.background
       @static_background
     else if block.position.islayer
       if block.position.layerid?
-        @parallax[block.position.layerid] || @static_level
+        @parallax_layers[block.position.layerid] || @static_level # TODO should "|| @static_level" be removed?
       else
         @static_foreground
     else
