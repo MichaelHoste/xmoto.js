@@ -125,7 +125,8 @@ class Edges
       texture = PIXI.Texture.from(@assets.get_url(polygon.theme.file))
       texture.source.addressMode = 'repeat'
 
-      polygon.mesh = new PIXI.Mesh({ geometry: geometry, texture: texture })
+      polygon.mesh       = new PIXI.Mesh({ geometry: geometry, texture: texture })
+      polygon.mesh.label = "Edge (#{@block.graphics.label})"
       @level.layers.layer_for_block(@block).addChild(polygon.mesh)
 
   # only display edges present on the screen zone

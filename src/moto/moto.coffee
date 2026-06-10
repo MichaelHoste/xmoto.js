@@ -76,7 +76,8 @@ class Moto
       else
         asset_name = Constants[part].texture
 
-      @["#{part}_sprite"] = PIXI.Sprite.from(@assets.get_url(asset_name))
+      @["#{part}_sprite"]       = PIXI.Sprite.from(@assets.get_url(asset_name))
+      @["#{part}_sprite"].label = part
       @level.layers.static_level.addChild(@["#{part}_sprite"])
 
     # Define body values

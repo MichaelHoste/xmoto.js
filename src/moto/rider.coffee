@@ -72,6 +72,7 @@ class Rider
       @["#{part}_sprite"].height   = Constants[part].texture_size.y
       @["#{part}_sprite"].anchor.x = 0.5
       @["#{part}_sprite"].anchor.y = 0.5
+      @["#{part}_sprite"].label    = part
 
       @level.layers.static_level.addChild(@["#{part}_sprite"])
 
