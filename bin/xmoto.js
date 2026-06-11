@@ -1402,12 +1402,12 @@
         points = block.vertices.map(function(v) {
           return new PIXI.Point(v.absolute_x, -v.absolute_y);
         });
+        // Load block texture
         texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
         // Not translating the matrix ensures texture continuity between blocks
         matrix = new PIXI.Matrix();
         matrix.scale(1.0 / 50.0, 1.0 / 50.0);
         //matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
-        // -> Not translating the matrix ensures texture continuity between blocks
 
         // Create graphics with texture and matrix
         block.graphics = new PIXI.Graphics();
@@ -2230,15 +2230,13 @@
       /* Structure is like this
          Root
           - Sky
-          - n parallax_container with frontlayer="false"   (direct children of Root, zoom-independent)
-              -> parallax (blocks go here)
+          - n Scale > Translate > Parallax layers with frontlayer="false"
           - Scale
             -> Translate
               -> static-background
               -> static-level
               -> static-foreground
-          - n parallax_container with frontlayer="true"
-              -> parallax
+          - n Scale > Translate > Parallax layers with frontlayer="true"
          */
       for (i = k = 0, len = ref.length; k < len; i = ++k) {
         parallax = ref[i];

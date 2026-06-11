@@ -80,15 +80,13 @@ class Layers
     ### Structure is like this
     Root
      - Sky
-     - n parallax_container with frontlayer="false"   (direct children of Root, zoom-independent)
-         -> parallax (blocks go here)
+     - n Scale > Translate > Parallax layers with frontlayer="false"
      - Scale
        -> Translate
          -> static-background
          -> static-level
          -> static-foreground
-     - n parallax_container with frontlayer="true"
-         -> parallax
+     - n Scale > Translate > Parallax layers with frontlayer="true"
     ###
 
     for parallax, i in @list
