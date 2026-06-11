@@ -75,8 +75,7 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 ### Technical informations
 
  * Implementation of replays is described [here](https://github.com/MichaelHoste/xmoto.js/issues/8)
- * Use this link to compare with original X-Moto (same zoom/resolution): http://js.xmoto.io?level=943&debug=true&automatic_scale=false&manual_scale=false&default_scale.x=90&default_scale.y=-90&width=1024&height=768
-
+ * Use [this link](http://js.xmoto.io?level=943&debug=true&automatic_scale=false&manual_scale=false&default_scale.x=90&default_scale.y=-90&width=1024&height=768) to compare screen 1/1 with original X-Moto (same zoom/resolution): 
 
 ## COVID-XMoto
 
@@ -104,6 +103,7 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
+* On l7388, scale and direction of layer textures is wrong (look clouds!)
 * Improve XML levels compatibility => layeroffsets (parallax) 
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
   * Make this (parallax) level compatible : http://localhost:3001/?level=943&debug=true / http://localhost:3001/?level=8682&debug=true

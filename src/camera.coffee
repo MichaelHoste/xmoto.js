@@ -72,7 +72,8 @@ class Camera
       @level.layers.translate_layer.y = t.y
 
       # Containers for parallax scale/translate transforms
-      level_left  = @level.limits.player.left
+      delta_x     = 5 # Special delta so that x parallax is exactly the same as original XMOTO
+      level_left  = @level.limits.player.left + delta_x
       level_top   = @level.limits.player.top
       aabb_factor = if Constants.debug_clipping then 0.6 else 1.0
 

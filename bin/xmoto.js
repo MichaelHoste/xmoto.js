@@ -53,7 +53,7 @@
     }
 
     update() {
-      var aabb_factor, ctx, cx, cy, effective_scale_x, effective_scale_y, half_h, half_w, hh, hw, i, k, len, level_left, level_top, parallax, ref, scale_layer, size_x, size_y, t, translate_layer, z;
+      var aabb_factor, ctx, cx, cy, delta_x, effective_scale_x, effective_scale_y, half_h, half_w, hh, hw, i, k, len, level_left, level_top, parallax, ref, scale_layer, size_x, size_y, t, translate_layer, z;
       if (Constants.debug_physics) {
         ctx = this.level.physics.debug_ctx;
         ctx.save();
@@ -71,7 +71,8 @@
         this.level.layers.translate_layer.x = -t.x;
         this.level.layers.translate_layer.y = t.y;
         // Containers for parallax scale/translate transforms
-        level_left = this.level.limits.player.left;
+        delta_x = 5; // Special delta so that x parallax is exactly the same as original XMOTO
+        level_left = this.level.limits.player.left + delta_x;
         level_top = this.level.limits.player.top;
         aabb_factor = Constants.debug_clipping ? 0.6 : 1.0;
         ref = this.level.layers.list;
