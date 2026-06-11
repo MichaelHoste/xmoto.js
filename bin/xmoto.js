@@ -1406,7 +1406,7 @@
         texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
         // Not translating the matrix ensures texture continuity between blocks
         matrix = new PIXI.Matrix();
-        matrix.scale(1.0 / 50.0, 1.0 / 50.0);
+        matrix.scale(1.0 / 60.0, 1.0 / 60.0);
         //matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
 
         // Create graphics with texture and matrix
