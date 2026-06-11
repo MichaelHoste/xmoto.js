@@ -4,9 +4,7 @@ class Blocks
     @level  = level
     @assets = level.assets
 
-    @list       = [] # total list
-    @back_list  = [] # background list
-    @front_list = [] # front list (collisions)
+    @list = []
 
   parse: (xml) ->
     xml_blocks = $(xml).find('block')
@@ -18,9 +16,11 @@ class Blocks
           x:          parseFloat($(xml_block).find('position').attr('x'))
           y:          parseFloat($(xml_block).find('position').attr('y'))
           dynamic:    $(xml_block).find('position').attr('dynamic')    == 'true'
-          background: $(xml_block).find('position').attr('background') == 'true'   # collisions and layer=0 but at the back
-          islayer:    $(xml_block).find('position').attr('islayer') == 'true'      # if true, then no collisions
-          layerid:    parseInt($(xml_block).find('position').attr('layerid')) || 0
+          background: $(xml_block).find('position').attr('background') == 'true'
+          islayer:    $(xml_block).find('position').attr('islayer') == 'true'
+          layerid:    do ->
+                        attr = $(xml_block).find('position').attr('layerid')
+                        if attr? then parseInt(attr) else undefined # integer or undefined if no attribute
         usetexture:
           id:         $(xml_block).find('usetexture').attr('id').toLowerCase()
           scale:      parseFloat($(xml_block).find('usetexture').attr('scale'))
@@ -31,8 +31,11 @@ class Blocks
           materials:  []
         vertices:     []
 
+      block.no_collision  =  block.position.background                                     # background                   => no collision (old syntax)
+      block.no_collision ||= block.position.islayer && block.position.layerid != undefined # layer with specific layerid  => no collision
+
       block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
-      block.texture_name = @assets.theme.texture_params(block.usetexture.id).file
+      block.texture_name  = @assets.theme.texture_params(block.usetexture.id).file
 
       xml_materials = $(xml_block).find('edges material')
       for xml_material in xml_materials
@@ -53,8 +56,8 @@ class Blocks
         vertex =
           x:          parseFloat($(xml_vertex).attr('x'))
           y:          parseFloat($(xml_vertex).attr('y'))
-          absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are here to
-          absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # accelerate drawing of each frame
+          absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are practical
+          absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # for edges creation
           edge:       $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
@@ -67,17 +70,7 @@ class Blocks
 
       @list.push(block)
 
-      is_background =   block.position.background                            # old syntax
-      is_background ||= block.position.islayer && block.position.layerid > 0 # new syntax
-
-      if is_background
-        @back_list.push(block)
-      else
-        @front_list.push(block)
-
-    @list      .sort(@sort_blocks_by_texture)
-    @back_list .sort(@sort_blocks_by_texture)
-    @front_list.sort(@sort_blocks_by_texture)
+    @list.sort(@sort_blocks_by_texture)
 
     return this
 
@@ -96,12 +89,12 @@ class Blocks
   init_physics_parts: ->
     ground = Constants.ground
 
-    for block in @front_list
-      @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
+    for block in @list
+      if !block.no_collision
+        @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_sprites: ->
-    # draw back blocks before front blocks
-    for block in @back_list.concat(@front_list)
+    for block in @list
       # Build polygon in world PIXI coordinates (y inverted)
       points = block.vertices.map((v) ->
         new PIXI.Point(v.absolute_x, -v.absolute_y)
@@ -110,11 +103,10 @@ class Blocks
       # Load block texture
       texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
 
-      # Matrix maps world coords
+      # Not translating the matrix ensures texture continuity between blocks
       matrix = new PIXI.Matrix()
-      matrix.scale(1.0 / 50.0, 1.0 / 50.0)
+      matrix.scale(1.0 / 60.0, 1.0 / 60.0)
       #matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
-      # -> not doing translation ensure texture continuity between blocks
 
       # Create graphics with texture and matrix
       block.graphics = new PIXI.Graphics()
@@ -129,7 +121,7 @@ class Blocks
         textureSpace: 'global'
       })
 
-      @level.layers.neutral_z_container.addChild(block.graphics)
+      @level.layers.layer_for_block(block).addChild(block.graphics)
 
   update: ->
     if !Constants.debug_physics
@@ -138,6 +130,9 @@ class Blocks
         block.edges_list.update()
 
   visible: (block) ->
+    if block.position.islayer && block.position.layerid?
+      layer_data = @level.layers.list[block.position.layerid]
+      return layer_data?.aabb?.TestOverlap(block.aabb) || false
     block.aabb.TestOverlap(@level.camera.aabb)
 
   compute_aabb: (block) ->

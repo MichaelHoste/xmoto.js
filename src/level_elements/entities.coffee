@@ -5,6 +5,7 @@ class Entities
     @assets       = level.assets
     @world        = level.physics.world
     @list         = []
+    @player_start = { x: 0, y: 0 }
     @strawberries = []
     @wreckers     = []
 
@@ -116,12 +117,12 @@ class Entities
 
   init_sprites: ->
     for entity in @list
-      if entity.z < 0
-        @init_entity(entity, @level.layers.negative_z_container)
+      if entity.z == 0
+        @init_entity(entity, @level.layers.static_level)
+      else if entity.z < 0
+        @init_entity(entity, @level.layers.static_background)
       else if entity.z > 0
-        @init_entity(entity, @level.layers.positive_z_container)
-      else if entity.z == 0
-        @init_entity(entity, @level.layers.neutral_z_container)
+        @init_entity(entity, @level.layers.static_foreground)
 
   init_entity: (entity, container) ->
     if entity.frames > 0

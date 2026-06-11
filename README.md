@@ -75,6 +75,7 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 ### Technical informations
 
  * Implementation of replays is described [here](https://github.com/MichaelHoste/xmoto.js/issues/8)
+ * Use [this link](http://js.xmoto.io?level=943&debug=true&automatic_scale=false&manual_scale=false&default_scale.x=90&default_scale.y=-90&width=1024&height=768) to compare screen 1/1 with original X-Moto (same zoom/resolution): 
 
 ## COVID-XMoto
 
@@ -102,17 +103,19 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
+* On l7388, scale and direction of layer textures is wrong (look clouds!)
+* Animated textures for blocks/edges? (l8682)
+* Improve XML levels compatibility => layeroffsets (parallax) 
+  * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
+  * Make this (parallax) level compatible : http://localhost:3001/?level=943&debug=true / http://localhost:3001/?level=8682&debug=true
 * Manage sky better: 
   * `<sky color_r="150" color_g="100" color_b="50" zoom="3.0">sky1</sky>`
   * `<sky color_g="255" zoom="3.7" color_a="255" color_b="255" offset="0.16" drifted="false" use_params="true" color_r="255">Water1</sky>`
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels
 * Manage Sprites better
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels (at the end)
-* Improve XML levels compatibility => layeroffsets (parallax) 
-  * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
-  * Make this (parallax) level compatible : http://localhost:3001/?level=943&debug=true / http://localhost:3001/?level=8682&debug=true
-  * Manage theme_replacements (test on level 943 for rings)
 * Manage checkpoints
+  * http://wiki.xmoto.tuxfamily.org/index.php?title=Notes_on_Checkpoints
 * Parse maps from https://github.com/bjorn/tiled ?
 * Create alternative box2D physics using DIV elements on screen.
 * use color on image to create mesh of collisions: https://github.com/Tamersoul/magic-wand-js

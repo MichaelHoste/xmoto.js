@@ -68,21 +68,26 @@
         <label>
         <select id="levels">
           <!-- SOME TEST LEVELS -->
-          <!--
-          <option value="l1043.lvl">l1043.lvl</option>
-          <option value="l1.lvl">l1.lvl</option>
-          <option value="l2.lvl">l2.lvl</option>
-          <option value="l3.lvl">l3.lvl</option>
-          <option value="l4.lvl">l4.lvl</option>
-          <option value="l5.lvl">l5.lvl</option>
-          <option value="l7.lvl">l7.lvl</option>
-          <option value="l1038.lvl">l1038.lvl</option>
-          <option value="l74.lvl">l74.lvl</option>
-          <option value="l1287.lvl">l1287.lvl</option>
-          <option value="l1041.lvl">l1041.lvl</option>
-          <option value="l1042.lvl">l1042.lvl</option>
-          -->
+
           <option value="l1.lvl">1</option>
+          <option value="l2.lvl">2</option>
+          <option value="l3.lvl">3</option>
+          <option value="l4.lvl">4</option>
+          <option value="l5.lvl">5</option>
+          <option value="l7.lvl">7</option>
+          <option value="l74.lvl">74</option>
+          <option value="l943.lvl">943</option>
+          <option value="l1010.lvl">1010</option>
+          <option value="l1038.lvl">1038</option>
+          <option value="l1041.lvl">1041</option>
+          <option value="l1042.lvl">1042</option>
+          <option value="l1043.lvl">1043</option>
+          <option value="l1136.lvl">1136</option>
+          <option value="l1287.lvl">1287</option>
+          <option value="l7388.lvl">7388</option>
+          <option value="l8682.lvl">8682</option>
+
+<!--           <option value="l1.lvl">1</option>
           <option value="l2.lvl">2</option>
           <option value="l3.lvl">3</option>
           <option value="l4.lvl">4</option>
@@ -3233,7 +3238,7 @@
           <option value="l13238.lvl">13238</option>
           <option value="l13239.lvl">13239</option>
           <option value="l13242.lvl">13242</option>
-          <option value="l13251.lvl">13251</option>
+          <option value="l13251.lvl">13251</option> -->
         </select>
       </div>
 
@@ -3306,7 +3311,11 @@
     <script type="text/javascript">
       $(document).ready(function(){
         var params = $.url().param()
-        var options = { width: 1000, height: 600, debug: params.debug == 'true' }
+        var options = {
+          width:  params.width  || 1000,
+          height: params.height || 600,
+          debug:  params.debug == 'true'
+        }
 
         // Change on select
         $("#levels").on('change', function(){ $.xmoto($(this).val(), options) })

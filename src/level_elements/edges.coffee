@@ -125,8 +125,9 @@ class Edges
       texture = PIXI.Texture.from(@assets.get_url(polygon.theme.file))
       texture.source.addressMode = 'repeat'
 
-      polygon.mesh = new PIXI.Mesh({ geometry: geometry, texture: texture })
-      @level.layers.neutral_z_container.addChild(polygon.mesh)
+      polygon.mesh       = new PIXI.Mesh({ geometry: geometry, texture: texture })
+      polygon.mesh.label = "Edge (#{@block.graphics.label})"
+      @level.layers.layer_for_block(@block).addChild(polygon.mesh)
 
   # only display edges present on the screen zone
   update: ->
@@ -135,6 +136,12 @@ class Edges
 
       for polygon in @polygons
         polygon.mesh.visible = block_visible && @visible(polygon)
+
+  visible: (polygon) ->
+    if @block.position.islayer && @block.position.layerid?
+      layer_data = @level.layers.list[@block.position.layerid]
+      return layer_data?.aabb?.TestOverlap(polygon.aabb) || false
+    polygon.aabb.TestOverlap(@level.camera.aabb)
 
   compute_aabb: (polygon) ->
     x_positions = polygon.vertices.map((v) -> v.x)
@@ -145,6 +152,3 @@ class Edges
     aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
 
     return aabb
-
-  visible: (polygon) ->
-    polygon.aabb.TestOverlap(@level.camera.aabb)

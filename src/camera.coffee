@@ -23,7 +23,7 @@ class Camera
     if Constants.debug_clipping
       @clipping = new PIXI.Graphics()
       @clipping.alpha = 0.2
-      @level.layers.translate_container.addChild(@clipping)
+      @level.layers.translate_layer.addChild(@clipping)
 
     @compute_aabb()
 
@@ -60,26 +60,74 @@ class Camera
 
       ctx.restore()
     else
-      @level.layers.scale_container.x = @options.width/2
-      @level.layers.scale_container.y = @options.height/2
+      t = @target()
 
-      @level.layers.scale_container.scale.x = @scale.x
-      @level.layers.scale_container.scale.y = -@scale.y
+      @level.layers.scale_layer.x = @options.width  / 2
+      @level.layers.scale_layer.y = @options.height / 2
 
-      @level.layers.translate_container.x = -@target().x
-      @level.layers.translate_container.y = @target().y
+      @level.layers.scale_layer.scale.x = @scale.x
+      @level.layers.scale_layer.scale.y = -@scale.y
+
+      @level.layers.translate_layer.x = -t.x
+      @level.layers.translate_layer.y = t.y
+
+      # Containers for parallax scale/translate transforms
+      delta_x     = 5 # Special delta so that x parallax is exactly the same as original XMOTO
+      level_left  = @level.limits.player.left + delta_x
+      level_top   = @level.limits.player.top
+      aabb_factor = if Constants.debug_clipping then 0.6 else 1.0
+
+      for parallax, i in @level.layers.list
+        scale_layer     = @level.layers.parallax_scale_layers[i]
+        translate_layer = @level.layers.parallax_translate_layers[i]
+
+        scale_layer.x = @options.width  / 2
+        scale_layer.y = @options.height / 2
+
+        # Blend between the camera's current scale and the default scale based on
+        # parallax depth (z). z=1 (parallax=1,1) follows the camera zoom like the
+        # main level; z=0 (distant parallax) keeps a constant default scale.
+        z = (parallax.x + parallax.y) / 2.0
+        effective_scale_x = z * @scale.x + (1.0 - z) * Constants.default_scale.x
+        effective_scale_y = z * @scale.y + (1.0 - z) * Constants.default_scale.y
+
+        scale_layer.scale.x =  effective_scale_x
+        scale_layer.scale.y = -effective_scale_y
+
+        # Half-viewport in this parallax layer's world coords, derived from its
+        # effective scale (NOT the default scale — each layer has its own zoom).
+        half_w = @options.width  / (2.0 * effective_scale_x)
+        half_h = @options.height / (2.0 * Math.abs(effective_scale_y))
+
+        # Anchored to the level's top-left corner so that parallax=1 matches the
+        # main level (translate=(-t.x, t.y)) and parallax=0 stays frozen there.
+        # The Y has an extra (1-parallax.y) * half_h correction because parallax
+        # layers anchor at the viewport TOP edge, not its centre.
+        translate_layer.x = -(level_left + parallax.x * (t.x - level_left))
+        translate_layer.y =   level_top  + parallax.y * (t.y - level_top) - half_h * (1.0 - parallax.y)
+
+        # Per-layer AABB in world coords, used by blocks/edges for visibility culling.
+        # Centre matches the parallax viewport centre; size matches its effective scale.
+        cx = -translate_layer.x
+        cy =  translate_layer.y
+        hw = half_w * aabb_factor
+        hh = half_h * aabb_factor
+
+        parallax.aabb ?= new Box2D.Collision.b2AABB()
+        parallax.aabb.lowerBound.Set(cx - hw, cy - hh)
+        parallax.aabb.upperBound.Set(cx + hw, cy + hh)
 
       # Opaque clipping to see where sprites are "filtered out"
       if Constants.debug_clipping
-        @clipping.clear()
-
         size_x = @options.width  /  @scale.x * 0.6
         size_y = @options.height / -@scale.y * 0.6
 
+        @clipping.clear()
         @clipping.rect(-size_x/2, -size_y/2, size_x, size_y)
         @clipping.fill(0x333333)
-        @clipping.x = @target().x
-        @clipping.y = -@target().y
+
+        @clipping.x = t.x
+        @clipping.y = -t.y
 
   # must be something with x and y values
   target: ->
