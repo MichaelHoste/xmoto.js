@@ -171,6 +171,7 @@ class Entities
   init_culling_debug: ->
     if Constants.debug_culling
       @culling_debug = new PIXI.Graphics()
+      @culling_debug.label = 'culling (entities)'
       @level.layers.translate_layer.addChild(@culling_debug)
 
   init_entity_physics: (entity, name) ->

@@ -22,6 +22,7 @@ class Camera
 
     if Constants.debug_culling
       @culling = new PIXI.Graphics()
+      @culling.label = 'culling (window)'
       @culling.alpha = 0.2
       @level.layers.translate_layer.addChild(@culling)
 
