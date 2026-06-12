@@ -42,7 +42,7 @@ class Rider
       else
         @assets.moto.push(part.texture)
 
-  init_physics_parts: ->
+  init_physics: ->
     @player_start = @level.entities.player_start
 
     @head      = @create_head()

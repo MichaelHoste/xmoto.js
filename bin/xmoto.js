@@ -25,6 +25,7 @@
       }
       if (Constants.debug_culling) {
         this.culling = new PIXI.Graphics();
+        this.culling.label = 'culling (window)';
         this.culling.alpha = 0.2;
         this.level.layers.translate_layer.addChild(this.culling);
       }
@@ -1365,8 +1366,9 @@
 
     init() {
       var block, k, len, ref, results;
-      this.init_physics_parts();
+      this.init_physics();
       this.init_sprites();
+      this.init_culling_debug();
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
@@ -1376,7 +1378,7 @@
       return results;
     }
 
-    init_physics_parts() {
+    init_physics() {
       var block, ground, k, len, ref, results;
       ground = Constants.ground;
       ref = this.list;
@@ -1425,18 +1427,45 @@
       return results;
     }
 
+    init_culling_debug() {
+      if (Constants.debug_culling) {
+        this.culling_debug = new PIXI.Graphics();
+        this.culling_debug.label = 'culling (blocks)';
+        return this.level.layers.translate_layer.addChild(this.culling_debug);
+      }
+    }
+
     update() {
-      var block, k, len, ref, results;
+      var block, k, len, ref;
       if (!Constants.debug_physics) {
         ref = this.list;
-        results = [];
         for (k = 0, len = ref.length; k < len; k++) {
           block = ref[k];
           block.graphics.visible = this.visible(block);
-          results.push(block.edges_list.update());
+          block.edges_list.update();
         }
-        return results;
       }
+      if (Constants.debug_culling) {
+        return this.draw_debug_culling();
+      }
+    }
+
+    draw_debug_culling() {
+      var block, k, len, line_width, ref;
+      this.culling_debug.clear();
+      ref = this.list;
+      for (k = 0, len = ref.length; k < len; k++) {
+        block = ref[k];
+        if (block.aabb && block.graphics.visible) {
+          this.culling_debug.rect(block.aabb.lowerBound.x, -block.aabb.upperBound.y, block.aabb.upperBound.x - block.aabb.lowerBound.x, block.aabb.upperBound.y - block.aabb.lowerBound.y);
+        }
+      }
+      line_width = 0.04 * Constants.default_scale.x / this.level.camera.scale.x;
+      return this.culling_debug.stroke({
+        width: line_width,
+        color: 0xC7C778,
+        alpha: 0.7
+      });
     }
 
     visible(block) {
@@ -1982,15 +2011,15 @@
         entity = ref[k];
         // End of level
         if (entity.typeid === 'EndOfLevel') {
-          this.init_entity_physics(entity, 'end_of_level');
+          this.create_entity_physics(entity, 'end_of_level');
           results.push(this.end_of_level = entity);
         // Strawberries
         } else if (entity.typeid === 'Strawberry') {
-          this.init_entity_physics(entity, 'strawberry');
+          this.create_entity_physics(entity, 'strawberry');
           results.push(this.strawberries.push(entity));
         // Wreckers
         } else if (entity.typeid === 'Wrecker') {
-          this.init_entity_physics(entity, 'wrecker');
+          this.create_entity_physics(entity, 'wrecker');
           results.push(this.wreckers.push(entity));
         // Player start
         } else if (entity.typeid === 'PlayerStart') {
@@ -2003,6 +2032,28 @@
         }
       }
       return results;
+    }
+
+    create_entity_physics(entity, name) {
+      var body, bodyDef, fixDef;
+      // Create fixture
+      fixDef = new Box2D.Dynamics.b2FixtureDef();
+      fixDef.shape = new b2CircleShape(entity.size.r);
+      fixDef.isSensor = true;
+      // Create body
+      bodyDef = new b2BodyDef();
+      // Assign body position
+      bodyDef.position.x = entity.position.x;
+      bodyDef.position.y = entity.position.y;
+      bodyDef.userData = {
+        name: name,
+        entity: entity
+      };
+      bodyDef.type = b2Body.b2_staticBody;
+      // Assign fixture to body and add body to 2D world
+      body = this.world.CreateBody(bodyDef);
+      body.CreateFixture(fixDef);
+      return body;
     }
 
     init_sprites() {
@@ -2057,30 +2108,9 @@
     init_culling_debug() {
       if (Constants.debug_culling) {
         this.culling_debug = new PIXI.Graphics();
+        this.culling_debug.label = 'culling (entities)';
         return this.level.layers.translate_layer.addChild(this.culling_debug);
       }
-    }
-
-    init_entity_physics(entity, name) {
-      var body, bodyDef, fixDef;
-      // Create fixture
-      fixDef = new Box2D.Dynamics.b2FixtureDef();
-      fixDef.shape = new b2CircleShape(entity.size.r);
-      fixDef.isSensor = true;
-      // Create body
-      bodyDef = new b2BodyDef();
-      // Assign body position
-      bodyDef.position.x = entity.position.x;
-      bodyDef.position.y = entity.position.y;
-      bodyDef.userData = {
-        name: name,
-        entity: entity
-      };
-      bodyDef.type = b2Body.b2_staticBody;
-      // Assign fixture to body and add body to 2D world
-      body = this.world.CreateBody(bodyDef);
-      body.CreateFixture(fixDef);
-      return body;
     }
 
     update(entity) {
@@ -2331,10 +2361,10 @@
     }
 
     parse(xml) {
-      var xml_limits;
+      var k, len, ref, wall, xml_limits;
       xml_limits = $(xml).find('limits');
-      // CAREFUL ! The limits on files are not real, some polygons could
-      // be in the limits (maybe it's the limits where the player can go)
+      // CAREFUL ! The limits on files are not real, some polygons could be outside
+      // => It seems to be the limits where the player can go
       this.player = {
         left: parseFloat(xml_limits.attr('left')),
         right: parseFloat(xml_limits.attr('right')),
@@ -2342,31 +2372,53 @@
         bottom: parseFloat(xml_limits.attr('bottom'))
       };
       this.screen = {
-        left: parseFloat(xml_limits.attr('left')) - 20,
-        right: parseFloat(xml_limits.attr('right')) + 20,
-        top: parseFloat(xml_limits.attr('top')) + 20,
-        bottom: parseFloat(xml_limits.attr('bottom')) - 20
+        left: this.player.left - 20,
+        right: this.player.right + 20,
+        top: this.player.top + 20,
+        bottom: this.player.bottom - 20
       };
       this.size = {
         x: this.screen.right - this.screen.left,
         y: this.screen.top - this.screen.bottom
       };
-      // Left AABB
-      this.left_wall_aabb = new Box2D.Collision.b2AABB();
-      this.left_wall_aabb.lowerBound.Set(this.screen.left, this.screen.bottom);
-      this.left_wall_aabb.upperBound.Set(this.player.left, this.screen.top);
-      // Right AABB
-      this.right_wall_aabb = new Box2D.Collision.b2AABB();
-      this.right_wall_aabb.lowerBound.Set(this.player.right, this.screen.bottom);
-      this.right_wall_aabb.upperBound.Set(this.screen.right, this.screen.top);
-      // Bottom AABB
-      this.bottom_wall_aabb = new Box2D.Collision.b2AABB();
-      this.bottom_wall_aabb.lowerBound.Set(this.player.left, this.screen.bottom);
-      this.bottom_wall_aabb.upperBound.Set(this.player.right, this.player.bottom);
-      // Top AABB
-      this.top_wall_aabb = new Box2D.Collision.b2AABB();
-      this.top_wall_aabb.lowerBound.Set(this.player.left, this.player.top);
-      this.top_wall_aabb.upperBound.Set(this.player.right, this.screen.top);
+      // Each wall is a rectangle (in Y-up world coords) — its AABB, physics polygon,
+      // and TilingSprite are all derived from these four bounds.
+      this.walls = [
+        {
+          name: 'left',
+          left: this.screen.left,
+          right: this.player.left,
+          bottom: this.screen.bottom,
+          top: this.screen.top
+        },
+        {
+          name: 'right',
+          left: this.player.right,
+          right: this.screen.right,
+          bottom: this.screen.bottom,
+          top: this.screen.top
+        },
+        {
+          name: 'bottom',
+          left: this.player.left,
+          right: this.player.right,
+          bottom: this.screen.bottom,
+          top: this.player.bottom
+        },
+        {
+          name: 'top',
+          left: this.player.left,
+          right: this.player.right,
+          bottom: this.player.top,
+          top: this.screen.top
+        }
+      ];
+      ref = this.walls;
+      // Compute AABB
+      for (k = 0, len = ref.length; k < len; k++) {
+        wall = ref[k];
+        wall.aabb = this.compute_aabb(wall);
+      }
       this.texture = this.level.infos.border || 'dirt';
       this.texture_name = this.assets.theme.texture_params(this.texture).file;
       return this;
@@ -2377,163 +2429,114 @@
     }
 
     init() {
-      this.init_physics_parts();
-      return this.init_sprites();
+      this.init_physics();
+      this.init_sprites();
+      return this.init_culling_debug();
     }
 
-    init_physics_parts() {
-      var ground, vertices;
+    init_physics() {
+      var ground, k, len, ref, results, vertices, wall;
       ground = Constants.ground;
-      // Left
-      vertices = [];
-      vertices.push({
-        x: this.screen.left,
-        y: this.screen.top
-      });
-      vertices.push({
-        x: this.screen.left,
-        y: this.screen.bottom
-      });
-      vertices.push({
-        x: this.player.left,
-        y: this.screen.bottom
-      });
-      vertices.push({
-        x: this.player.left,
-        y: this.screen.top
-      });
-      this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction);
-      // Right
-      vertices = [];
-      vertices.push({
-        x: this.player.right,
-        y: this.screen.top
-      });
-      vertices.push({
-        x: this.player.right,
-        y: this.screen.bottom
-      });
-      vertices.push({
-        x: this.screen.right,
-        y: this.screen.bottom
-      });
-      vertices.push({
-        x: this.screen.right,
-        y: this.screen.top
-      });
-      this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction);
-      // Bottom
-      vertices = [];
-      vertices.push({
-        x: this.player.right,
-        y: this.player.bottom
-      });
-      vertices.push({
-        x: this.player.left,
-        y: this.player.bottom
-      });
-      vertices.push({
-        x: this.player.left,
-        y: this.screen.bottom
-      });
-      vertices.push({
-        x: this.player.right,
-        y: this.screen.bottom
-      });
-      this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction);
-      // Bottom
-      vertices = [];
-      vertices.push({
-        x: this.player.right,
-        y: this.screen.top
-      });
-      vertices.push({
-        x: this.player.left,
-        y: this.screen.top
-      });
-      vertices.push({
-        x: this.player.left,
-        y: this.player.top
-      });
-      vertices.push({
-        x: this.player.right,
-        y: this.player.top
-      });
-      return this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction);
+      ref = this.walls;
+      results = [];
+      for (k = 0, len = ref.length; k < len; k++) {
+        wall = ref[k];
+        vertices = [
+          {
+            x: wall.left,
+            y: wall.top
+          },
+          {
+            x: wall.left,
+            y: wall.bottom
+          },
+          {
+            x: wall.right,
+            y: wall.bottom
+          },
+          {
+            x: wall.right,
+            y: wall.top
+          }
+        ];
+        results.push(this.level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction));
+      }
+      return results;
     }
 
     init_sprites() {
-      var bottom_size_x, bottom_size_y, left_size_x, left_size_y, right_size_x, right_size_y, texture, top_size_x, top_size_y;
+      var k, len, ref, results, texture, wall;
       texture = PIXI.Texture.from(this.assets.get_url(this.texture_name));
-      left_size_x = this.player.left - this.screen.left;
-      left_size_y = this.screen.top - this.screen.bottom;
-      right_size_x = this.screen.right - this.player.right;
-      right_size_y = this.screen.top - this.screen.bottom;
-      bottom_size_x = this.player.right - this.player.left;
-      bottom_size_y = this.player.bottom - this.screen.bottom;
-      top_size_x = this.player.right - this.player.left;
-      top_size_y = this.screen.top - this.player.top;
-      this.left_sprite = new PIXI.TilingSprite({
-        texture: texture,
-        width: left_size_x,
-        height: left_size_y
-      });
-      this.right_sprite = new PIXI.TilingSprite({
-        texture: texture,
-        width: right_size_x,
-        height: right_size_y
-      });
-      this.bottom_sprite = new PIXI.TilingSprite({
-        texture: texture,
-        width: bottom_size_x,
-        height: bottom_size_y
-      });
-      this.top_sprite = new PIXI.TilingSprite({
-        texture: texture,
-        width: top_size_x,
-        height: top_size_y
-      });
-      this.left_sprite.x = this.screen.left;
-      this.left_sprite.y = -this.screen.top;
-      this.left_sprite.anchor.x = 0;
-      this.left_sprite.anchor.y = 0;
-      this.left_sprite.tileScale.x = 1.0 / 50.0;
-      this.left_sprite.tileScale.y = 1.0 / 50.0;
-      this.right_sprite.x = this.player.right;
-      this.right_sprite.y = -this.screen.top;
-      this.right_sprite.anchor.x = 0;
-      this.right_sprite.anchor.y = 0;
-      this.right_sprite.tileScale.x = 1.0 / 50.0;
-      this.right_sprite.tileScale.y = 1.0 / 50.0;
-      this.bottom_sprite.x = this.player.left;
-      this.bottom_sprite.y = -this.player.bottom;
-      this.bottom_sprite.anchor.x = 0;
-      this.bottom_sprite.anchor.y = 0;
-      this.bottom_sprite.tileScale.x = 1.0 / 50.0;
-      this.bottom_sprite.tileScale.y = 1.0 / 50.0;
-      this.top_sprite.x = this.player.left;
-      this.top_sprite.y = -this.screen.top;
-      this.top_sprite.anchor.x = 0;
-      this.top_sprite.anchor.y = 0;
-      this.top_sprite.tileScale.x = 1.0 / 50.0;
-      this.top_sprite.tileScale.y = 1.0 / 50.0;
-      this.level.layers.static_level.addChild(this.left_sprite);
-      this.level.layers.static_level.addChild(this.right_sprite);
-      this.level.layers.static_level.addChild(this.bottom_sprite);
-      return this.level.layers.static_level.addChild(this.top_sprite);
+      ref = this.walls;
+      results = [];
+      for (k = 0, len = ref.length; k < len; k++) {
+        wall = ref[k];
+        wall.sprite = new PIXI.TilingSprite({
+          texture: texture,
+          width: wall.right - wall.left,
+          height: wall.top - wall.bottom
+        });
+        wall.sprite.x = wall.left;
+        wall.sprite.y = -wall.top;
+        wall.sprite.anchor.x = 0;
+        wall.sprite.anchor.y = 0;
+        wall.sprite.tileScale.x = 1.0 / 60.0;
+        wall.sprite.tileScale.y = 1.0 / 60.0;
+        results.push(this.level.layers.static_level.addChild(wall.sprite));
+      }
+      return results;
     }
 
-    update() {
-      if (!Constants.debug_physics) {
-        this.left_sprite.visible = this.visible(this.left_wall_aabb);
-        this.right_sprite.visible = this.visible(this.right_wall_aabb);
-        this.top_sprite.visible = this.visible(this.top_wall_aabb);
-        return this.bottom_sprite.visible = this.visible(this.bottom_wall_aabb);
+    init_culling_debug() {
+      if (Constants.debug_culling) {
+        this.culling_debug = new PIXI.Graphics();
+        this.culling_debug.label = 'culling (limits)';
+        return this.level.layers.translate_layer.addChild(this.culling_debug);
       }
     }
 
-    visible(wall_aabb) {
-      return wall_aabb.TestOverlap(this.level.camera.aabb);
+    update() {
+      var k, len, ref, wall;
+      if (!Constants.debug_physics) {
+        ref = this.walls;
+        for (k = 0, len = ref.length; k < len; k++) {
+          wall = ref[k];
+          wall.sprite.visible = this.visible(wall);
+        }
+      }
+      if (Constants.debug_culling) {
+        return this.draw_debug_culling();
+      }
+    }
+
+    draw_debug_culling() {
+      var k, len, line_width, ref, wall;
+      this.culling_debug.clear();
+      ref = this.walls;
+      for (k = 0, len = ref.length; k < len; k++) {
+        wall = ref[k];
+        if (wall.sprite.visible) {
+          this.culling_debug.rect(wall.aabb.lowerBound.x, -wall.aabb.upperBound.y, wall.aabb.upperBound.x - wall.aabb.lowerBound.x, wall.aabb.upperBound.y - wall.aabb.lowerBound.y);
+        }
+      }
+      line_width = 0.04 * Constants.default_scale.x / this.level.camera.scale.x;
+      return this.culling_debug.stroke({
+        width: line_width,
+        color: 0xC778C7,
+        alpha: 0.7
+      });
+    }
+
+    visible(wall) {
+      return wall.aabb.TestOverlap(this.level.camera.aabb);
+    }
+
+    compute_aabb(wall) {
+      var aabb;
+      aabb = new Box2D.Collision.b2AABB();
+      aabb.lowerBound.Set(wall.left, wall.bottom);
+      aabb.upperBound.Set(wall.right, wall.top);
+      return aabb;
     }
 
   };
@@ -2909,11 +2912,11 @@
     }
 
     init() {
-      this.init_physics_parts();
+      this.init_physics();
       return this.init_sprites();
     }
 
-    init_physics_parts() {
+    init_physics() {
       this.player_start = this.level.entities.player_start;
       this.body = this.create_body();
       this.left_wheel = this.create_wheel(Constants.left_wheel);
@@ -2924,7 +2927,7 @@
       this.right_revolute_joint = this.create_revolute_joint(this.right_axle, this.right_wheel);
       this.left_prismatic_joint = this.create_prismatic_joint(this.left_axle, Constants.left_suspension);
       this.right_prismatic_joint = this.create_prismatic_joint(this.right_axle, Constants.right_suspension);
-      return this.rider.init_physics_parts();
+      return this.rider.init_physics();
     }
 
     init_sprites() {
@@ -3578,7 +3581,7 @@
       return results;
     }
 
-    init_physics_parts() {
+    init_physics() {
       this.player_start = this.level.entities.player_start;
       this.head = this.create_head();
       this.torso = this.create_part(Constants.torso, 'torso');

@@ -80,13 +80,14 @@ class Blocks
       block.edges_list.load_assets()
 
   init: ->
-    @init_physics_parts()
+    @init_physics()
     @init_sprites()
+    @init_culling_debug()
 
     for block in @list
       block.edges_list.init()
 
-  init_physics_parts: ->
+  init_physics: ->
     ground = Constants.ground
 
     for block in @list
@@ -123,11 +124,36 @@ class Blocks
 
       @level.layers.layer_for_block(block).addChild(block.graphics)
 
+  init_culling_debug: ->
+    if Constants.debug_culling
+      @culling_debug = new PIXI.Graphics()
+      @culling_debug.label = 'culling (blocks)'
+      @level.layers.translate_layer.addChild(@culling_debug)
+
   update: ->
     if !Constants.debug_physics
       for block in @list
         block.graphics.visible = @visible(block)
         block.edges_list.update()
+
+    if Constants.debug_culling
+      @draw_debug_culling()
+
+  draw_debug_culling: ->
+    @culling_debug.clear()
+
+    for block in @list
+      if block.aabb && block.graphics.visible
+        @culling_debug.rect(
+          block.aabb.lowerBound.x,
+          -block.aabb.upperBound.y,
+          block.aabb.upperBound.x - block.aabb.lowerBound.x,
+          block.aabb.upperBound.y - block.aabb.lowerBound.y
+        )
+
+    line_width = 0.04 * Constants.default_scale.x / @level.camera.scale.x
+
+    @culling_debug.stroke(width: line_width, color: 0xC7C778, alpha: 0.7)
 
   visible: (block) ->
     if block.position.islayer && block.position.layerid?

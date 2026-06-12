@@ -7,8 +7,8 @@ class Limits
   parse: (xml) ->
     xml_limits = $(xml).find('limits')
 
-    # CAREFUL ! The limits on files are not real, some polygons could
-    # be in the limits (maybe it's the limits where the player can go)
+    # CAREFUL ! The limits on files are not real, some polygons could be outside
+    # => It seems to be the limits where the player can go
 
     @player =
       left:   parseFloat(xml_limits.attr('left'))
@@ -17,34 +17,27 @@ class Limits
       bottom: parseFloat(xml_limits.attr('bottom'))
 
     @screen =
-      left:   parseFloat(xml_limits.attr('left'))   - 20
-      right:  parseFloat(xml_limits.attr('right'))  + 20
-      top:    parseFloat(xml_limits.attr('top'))    + 20
-      bottom: parseFloat(xml_limits.attr('bottom')) - 20
+      left:   @player.left   - 20
+      right:  @player.right  + 20
+      top:    @player.top    + 20
+      bottom: @player.bottom - 20
 
     @size =
       x: @screen.right - @screen.left
       y: @screen.top   - @screen.bottom
 
-    # Left AABB
-    @left_wall_aabb = new Box2D.Collision.b2AABB()
-    @left_wall_aabb.lowerBound.Set(@screen.left, @screen.bottom)
-    @left_wall_aabb.upperBound.Set(@player.left, @screen.top)
+    # Each wall is a rectangle (in Y-up world coords) — its AABB, physics polygon,
+    # and TilingSprite are all derived from these four bounds.
+    @walls = [
+      { name: 'left',   left: @screen.left,  right: @player.left,   bottom: @screen.bottom, top: @screen.top    }
+      { name: 'right',  left: @player.right, right: @screen.right,  bottom: @screen.bottom, top: @screen.top    }
+      { name: 'bottom', left: @player.left,  right: @player.right,  bottom: @screen.bottom, top: @player.bottom }
+      { name: 'top',    left: @player.left,  right: @player.right,  bottom: @player.top,    top: @screen.top    }
+    ]
 
-    # Right AABB
-    @right_wall_aabb = new Box2D.Collision.b2AABB()
-    @right_wall_aabb.lowerBound.Set(@player.right, @screen.bottom)
-    @right_wall_aabb.upperBound.Set(@screen.right, @screen.top)
-
-    # Bottom AABB
-    @bottom_wall_aabb = new Box2D.Collision.b2AABB()
-    @bottom_wall_aabb.lowerBound.Set(@player.left,  @screen.bottom)
-    @bottom_wall_aabb.upperBound.Set(@player.right, @player.bottom)
-
-    # Top AABB
-    @top_wall_aabb = new Box2D.Collision.b2AABB()
-    @top_wall_aabb.lowerBound.Set(@player.left,  @player.top)
-    @top_wall_aabb.upperBound.Set(@player.right, @screen.top)
+    # Compute AABB
+    for wall in @walls
+      wall.aabb = @compute_aabb(wall)
 
     @texture      = @level.infos.border || 'dirt'
     @texture_name = @assets.theme.texture_params(@texture).file
@@ -55,104 +48,76 @@ class Limits
     @assets.textures.push(@texture_name)
 
   init: ->
-    @init_physics_parts()
+    @init_physics()
     @init_sprites()
+    @init_culling_debug()
 
-  init_physics_parts: ->
+  init_physics: ->
     ground = Constants.ground
 
-    # Left
-    vertices = []
-    vertices.push({ x: @screen.left, y: @screen.top })
-    vertices.push({ x: @screen.left, y: @screen.bottom })
-    vertices.push({ x: @player.left, y: @screen.bottom })
-    vertices.push({ x: @player.left, y: @screen.top })
-    @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
-
-    # Right
-    vertices = []
-    vertices.push({ x: @player.right, y: @screen.top })
-    vertices.push({ x: @player.right, y: @screen.bottom })
-    vertices.push({ x: @screen.right, y: @screen.bottom })
-    vertices.push({ x: @screen.right, y: @screen.top })
-    @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
-
-    # Bottom
-    vertices = []
-    vertices.push({ x: @player.right, y: @player.bottom })
-    vertices.push({ x: @player.left,  y: @player.bottom })
-    vertices.push({ x: @player.left,  y: @screen.bottom })
-    vertices.push({ x: @player.right, y: @screen.bottom })
-    @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
-
-    # Bottom
-    vertices = []
-    vertices.push({ x: @player.right, y: @screen.top })
-    vertices.push({ x: @player.left,  y: @screen.top })
-    vertices.push({ x: @player.left,  y: @player.top })
-    vertices.push({ x: @player.right, y: @player.top })
-
-    @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
+    for wall in @walls
+      vertices = [
+        { x: wall.left,  y: wall.top    }
+        { x: wall.left,  y: wall.bottom }
+        { x: wall.right, y: wall.bottom }
+        { x: wall.right, y: wall.top    }
+      ]
+      @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_sprites: ->
     texture = PIXI.Texture.from(@assets.get_url(@texture_name))
 
-    left_size_x = @player.left - @screen.left
-    left_size_y = @screen.top  - @screen.bottom
+    for wall in @walls
+      wall.sprite = new PIXI.TilingSprite({
+        texture: texture
+        width:   wall.right - wall.left
+        height:  wall.top   - wall.bottom
+      })
+      wall.sprite.x =  wall.left
+      wall.sprite.y = -wall.top
+      wall.sprite.anchor.x = 0
+      wall.sprite.anchor.y = 0
+      wall.sprite.tileScale.x = 1.0 / 60.0
+      wall.sprite.tileScale.y = 1.0 / 60.0
 
-    right_size_x = @screen.right - @player.right
-    right_size_y = @screen.top   - @screen.bottom
+      @level.layers.static_level.addChild(wall.sprite)
 
-    bottom_size_x = @player.right  - @player.left
-    bottom_size_y = @player.bottom - @screen.bottom
-
-    top_size_x = @player.right - @player.left
-    top_size_y = @screen.top   - @player.top
-
-    @left_sprite   = new PIXI.TilingSprite({ texture: texture, width: left_size_x,   height: left_size_y   })
-    @right_sprite  = new PIXI.TilingSprite({ texture: texture, width: right_size_x,  height: right_size_y  })
-    @bottom_sprite = new PIXI.TilingSprite({ texture: texture, width: bottom_size_x, height: bottom_size_y })
-    @top_sprite    = new PIXI.TilingSprite({ texture: texture, width: top_size_x,    height: top_size_y    })
-
-    @left_sprite.x = @screen.left
-    @left_sprite.y = -@screen.top
-    @left_sprite.anchor.x = 0
-    @left_sprite.anchor.y = 0
-    @left_sprite.tileScale.x = 1.0/50.0
-    @left_sprite.tileScale.y = 1.0/50.0
-
-    @right_sprite.x = @player.right
-    @right_sprite.y = -@screen.top
-    @right_sprite.anchor.x = 0
-    @right_sprite.anchor.y = 0
-    @right_sprite.tileScale.x = 1.0/50.0
-    @right_sprite.tileScale.y = 1.0/50.0
-
-    @bottom_sprite.x =  @player.left
-    @bottom_sprite.y = -@player.bottom
-    @bottom_sprite.anchor.x = 0
-    @bottom_sprite.anchor.y = 0
-    @bottom_sprite.tileScale.x = 1.0/50.0
-    @bottom_sprite.tileScale.y = 1.0/50.0
-
-    @top_sprite.x =  @player.left
-    @top_sprite.y = -@screen.top
-    @top_sprite.anchor.x = 0
-    @top_sprite.anchor.y = 0
-    @top_sprite.tileScale.x = 1.0/50.0
-    @top_sprite.tileScale.y = 1.0/50.0
-
-    @level.layers.static_level.addChild(@left_sprite)
-    @level.layers.static_level.addChild(@right_sprite)
-    @level.layers.static_level.addChild(@bottom_sprite)
-    @level.layers.static_level.addChild(@top_sprite)
+  init_culling_debug: ->
+    if Constants.debug_culling
+      @culling_debug = new PIXI.Graphics()
+      @culling_debug.label = 'culling (limits)'
+      @level.layers.translate_layer.addChild(@culling_debug)
 
   update: ->
     if !Constants.debug_physics
-      @left_sprite.visible   = @visible(@left_wall_aabb)
-      @right_sprite.visible  = @visible(@right_wall_aabb)
-      @top_sprite.visible    = @visible(@top_wall_aabb)
-      @bottom_sprite.visible = @visible(@bottom_wall_aabb)
+      for wall in @walls
+        wall.sprite.visible = @visible(wall)
 
-  visible: (wall_aabb) ->
-    wall_aabb.TestOverlap(@level.camera.aabb)
+    if Constants.debug_culling
+      @draw_debug_culling()
+
+  draw_debug_culling: ->
+    @culling_debug.clear()
+
+    for wall in @walls
+      if wall.sprite.visible
+        @culling_debug.rect(
+          wall.aabb.lowerBound.x,
+          -wall.aabb.upperBound.y,
+          wall.aabb.upperBound.x - wall.aabb.lowerBound.x,
+          wall.aabb.upperBound.y - wall.aabb.lowerBound.y
+        )
+
+    line_width = 0.04 * Constants.default_scale.x / @level.camera.scale.x
+
+    @culling_debug.stroke(width: line_width, color: 0xC778C7, alpha: 0.7)
+
+  visible: (wall) ->
+    wall.aabb.TestOverlap(@level.camera.aabb)
+
+  compute_aabb: (wall) ->
+    aabb = new Box2D.Collision.b2AABB()
+    aabb.lowerBound.Set(wall.left,  wall.bottom)
+    aabb.upperBound.Set(wall.right, wall.top)
+
+    return aabb

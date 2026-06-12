@@ -48,10 +48,10 @@ class Moto
     @rider.load_assets()
 
   init: ->
-    @init_physics_parts()
+    @init_physics()
     @init_sprites()
 
-  init_physics_parts: ->
+  init_physics: ->
     @player_start = @level.entities.player_start
 
     @body         = @create_body()
@@ -66,7 +66,7 @@ class Moto
     @left_prismatic_joint  = @create_prismatic_joint(@left_axle,  Constants.left_suspension)
     @right_prismatic_joint = @create_prismatic_joint(@right_axle, Constants.right_suspension)
 
-    @rider.init_physics_parts()
+    @rider.init_physics()
 
   init_sprites: ->
     # Create and add sprites to the scene
