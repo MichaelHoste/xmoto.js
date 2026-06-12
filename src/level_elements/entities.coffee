@@ -106,24 +106,25 @@ class Entities
             @assets.anims.push(@frame_name(entity, i))
 
   init: ->
-    @init_physics_parts()
+    @init_physics()
     @init_sprites()
+    @init_culling_debug()
 
-  init_physics_parts: ->
+  init_physics: ->
     for entity in @list
       # End of level
       if entity.typeid == 'EndOfLevel'
-        @create_entity(entity, 'end_of_level')
+        @init_entity_physics(entity, 'end_of_level')
         @end_of_level = entity
 
       # Strawberries
       else if entity.typeid == 'Strawberry'
-        @create_entity(entity, 'strawberry')
+        @init_entity_physics(entity, 'strawberry')
         @strawberries.push(entity)
 
       # Wreckers
       else if entity.typeid == 'Wrecker'
-        @create_entity(entity, 'wrecker')
+        @init_entity_physics(entity, 'wrecker')
         @wreckers.push(entity)
 
       # Player start
@@ -167,7 +168,12 @@ class Entities
       entity.sprite = sprite # keep reference to the sprite
       container.addChild(sprite)
 
-  create_entity: (entity, name) ->
+  init_culling_debug: ->
+    if Constants.debug_culling
+      @culling_debug = new PIXI.Graphics()
+      @level.layers.translate_layer.addChild(@culling_debug)
+
+  init_entity_physics: (entity, name) ->
     # Create fixture
     fixDef = new Box2D.Dynamics.b2FixtureDef()
     fixDef.shape = new b2CircleShape(entity.size.r)
@@ -197,6 +203,25 @@ class Entities
       for entity in @list
         if entity.sprite
           entity.sprite.visible = @visible(entity)
+
+    if Constants.debug_culling
+      @draw_debug_culling()
+
+  draw_debug_culling: ->
+    @culling_debug.clear()
+
+    for entity in @list
+      if entity.aabb && entity.sprite.visible
+        @culling_debug.rect(
+          entity.aabb.lowerBound.x,
+          -entity.aabb.upperBound.y,
+          entity.aabb.upperBound.x - entity.aabb.lowerBound.x,
+          entity.aabb.upperBound.y - entity.aabb.lowerBound.y
+        )
+
+    line_width = 0.04 * Constants.default_scale.x / @level.camera.scale.x
+
+    @culling_debug.stroke(width: line_width, color: 0x78C7C7, alpha: 0.7)
 
   entity_texture_name: (entity) ->
     if entity.typeid == 'Sprite'

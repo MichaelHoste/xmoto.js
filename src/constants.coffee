@@ -6,7 +6,7 @@ class Constants
 
   @debug             = false # Panel on the right to debug everything
   @debug_physics     = false # "Ugly" mode to debug physics
-  @debug_clipping    = false # Debug clipping of sprites
+  @debug_culling     = false # Debug culling of sprites
   @hooking           = false # Hooking is a special trick in XMoto that allow the bike
                              # to "hook" on blocks (http://www.youtube.com/watch?v=ebCgtnm_1m0)
                              # (no collisions and no kill except for head)

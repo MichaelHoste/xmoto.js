@@ -20,10 +20,10 @@ class Camera
     if Constants.manual_scale
       @init_scroll()
 
-    if Constants.debug_clipping
-      @clipping = new PIXI.Graphics()
-      @clipping.alpha = 0.2
-      @level.layers.translate_layer.addChild(@clipping)
+    if Constants.debug_culling
+      @culling = new PIXI.Graphics()
+      @culling.alpha = 0.2
+      @level.layers.translate_layer.addChild(@culling)
 
     @compute_aabb()
 
@@ -75,7 +75,7 @@ class Camera
       delta_x     = 5 # Special delta so that x parallax is exactly the same as original XMOTO
       level_left  = @level.limits.player.left + delta_x
       level_top   = @level.limits.player.top
-      aabb_factor = if Constants.debug_clipping then 0.6 else 1.0
+      aabb_factor = if Constants.debug_culling then 0.6 else 1.0
 
       for parallax, i in @level.layers.list
         scale_layer     = @level.layers.parallax_scale_layers[i]
@@ -117,17 +117,17 @@ class Camera
         parallax.aabb.lowerBound.Set(cx - hw, cy - hh)
         parallax.aabb.upperBound.Set(cx + hw, cy + hh)
 
-      # Opaque clipping to see where sprites are "filtered out"
-      if Constants.debug_clipping
+      # Opaque culling to see where sprites are "filtered out"
+      if Constants.debug_culling
         size_x = @options.width  /  @scale.x * 0.6
         size_y = @options.height / -@scale.y * 0.6
 
-        @clipping.clear()
-        @clipping.rect(-size_x/2, -size_y/2, size_x, size_y)
-        @clipping.fill(0x333333)
+        @culling.clear()
+        @culling.rect(-size_x/2, -size_y/2, size_x, size_y)
+        @culling.fill(0x333333)
 
-        @clipping.x = t.x
-        @clipping.y = -t.y
+        @culling.x = t.x
+        @culling.y = -t.y
 
   # must be something with x and y values
   target: ->
@@ -174,7 +174,7 @@ class Camera
     container.addEventListener('mousewheel',     scroll, false)
 
   compute_aabb: ->
-    factor = if Constants.debug_clipping then 0.6 else 1.0
+    factor = if Constants.debug_culling then 0.6 else 1.0
 
     size_x =   @options.width  * factor / @scale.x
     size_y = - @options.height * factor / @scale.y

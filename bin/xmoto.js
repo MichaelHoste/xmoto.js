@@ -23,10 +23,10 @@
       if (Constants.manual_scale) {
         this.init_scroll();
       }
-      if (Constants.debug_clipping) {
-        this.clipping = new PIXI.Graphics();
-        this.clipping.alpha = 0.2;
-        this.level.layers.translate_layer.addChild(this.clipping);
+      if (Constants.debug_culling) {
+        this.culling = new PIXI.Graphics();
+        this.culling.alpha = 0.2;
+        this.level.layers.translate_layer.addChild(this.culling);
       }
       return this.compute_aabb();
     }
@@ -74,7 +74,7 @@
         delta_x = 5; // Special delta so that x parallax is exactly the same as original XMOTO
         level_left = this.level.limits.player.left + delta_x;
         level_top = this.level.limits.player.top;
-        aabb_factor = Constants.debug_clipping ? 0.6 : 1.0;
+        aabb_factor = Constants.debug_culling ? 0.6 : 1.0;
         ref = this.level.layers.list;
         for (i = k = 0, len = ref.length; k < len; i = ++k) {
           parallax = ref[i];
@@ -112,15 +112,15 @@
           parallax.aabb.lowerBound.Set(cx - hw, cy - hh);
           parallax.aabb.upperBound.Set(cx + hw, cy + hh);
         }
-        // Opaque clipping to see where sprites are "filtered out"
-        if (Constants.debug_clipping) {
+        // Opaque culling to see where sprites are "filtered out"
+        if (Constants.debug_culling) {
           size_x = this.options.width / this.scale.x * 0.6;
           size_y = this.options.height / -this.scale.y * 0.6;
-          this.clipping.clear();
-          this.clipping.rect(-size_x / 2, -size_y / 2, size_x, size_y);
-          this.clipping.fill(0x333333);
-          this.clipping.x = t.x;
-          return this.clipping.y = -t.y;
+          this.culling.clear();
+          this.culling.rect(-size_x / 2, -size_y / 2, size_x, size_y);
+          this.culling.fill(0x333333);
+          this.culling.x = t.x;
+          return this.culling.y = -t.y;
         }
       }
     }
@@ -180,7 +180,7 @@
 
     compute_aabb() {
       var factor, half_h, half_w, size_x, size_y, t;
-      factor = Constants.debug_clipping ? 0.6 : 1.0;
+      factor = Constants.debug_culling ? 0.6 : 1.0;
       size_x = this.options.width * factor / this.scale.x;
       size_y = -this.options.height * factor / this.scale.y;
       t = this.target();
@@ -218,7 +218,7 @@
 
     Constants.debug_physics = false; // "Ugly" mode to debug physics
 
-    Constants.debug_clipping = false; // Debug clipping of sprites
+    Constants.debug_culling = false; // Debug culling of sprites
 
     Constants.hooking = false; // Hooking is a special trick in XMoto that allow the bike
 
@@ -1969,11 +1969,12 @@
     }
 
     init() {
-      this.init_physics_parts();
-      return this.init_sprites();
+      this.init_physics();
+      this.init_sprites();
+      return this.init_culling_debug();
     }
 
-    init_physics_parts() {
+    init_physics() {
       var entity, k, len, ref, results;
       ref = this.list;
       results = [];
@@ -1981,15 +1982,15 @@
         entity = ref[k];
         // End of level
         if (entity.typeid === 'EndOfLevel') {
-          this.create_entity(entity, 'end_of_level');
+          this.init_entity_physics(entity, 'end_of_level');
           results.push(this.end_of_level = entity);
         // Strawberries
         } else if (entity.typeid === 'Strawberry') {
-          this.create_entity(entity, 'strawberry');
+          this.init_entity_physics(entity, 'strawberry');
           results.push(this.strawberries.push(entity));
         // Wreckers
         } else if (entity.typeid === 'Wrecker') {
-          this.create_entity(entity, 'wrecker');
+          this.init_entity_physics(entity, 'wrecker');
           results.push(this.wreckers.push(entity));
         // Player start
         } else if (entity.typeid === 'PlayerStart') {
@@ -2053,7 +2054,14 @@
       }
     }
 
-    create_entity(entity, name) {
+    init_culling_debug() {
+      if (Constants.debug_culling) {
+        this.culling_debug = new PIXI.Graphics();
+        return this.level.layers.translate_layer.addChild(this.culling_debug);
+      }
+    }
+
+    init_entity_physics(entity, name) {
       var body, bodyDef, fixDef;
       // Create fixture
       fixDef = new Box2D.Dynamics.b2FixtureDef();
@@ -2076,20 +2084,37 @@
     }
 
     update(entity) {
-      var k, len, ref, results;
+      var k, len, ref;
       if (!Constants.debug_physics) {
         ref = this.list;
-        results = [];
         for (k = 0, len = ref.length; k < len; k++) {
           entity = ref[k];
           if (entity.sprite) {
-            results.push(entity.sprite.visible = this.visible(entity));
-          } else {
-            results.push(void 0);
+            entity.sprite.visible = this.visible(entity);
           }
         }
-        return results;
       }
+      if (Constants.debug_culling) {
+        return this.draw_debug_culling();
+      }
+    }
+
+    draw_debug_culling() {
+      var entity, k, len, line_width, ref;
+      this.culling_debug.clear();
+      ref = this.list;
+      for (k = 0, len = ref.length; k < len; k++) {
+        entity = ref[k];
+        if (entity.aabb && entity.sprite.visible) {
+          this.culling_debug.rect(entity.aabb.lowerBound.x, -entity.aabb.upperBound.y, entity.aabb.upperBound.x - entity.aabb.lowerBound.x, entity.aabb.upperBound.y - entity.aabb.lowerBound.y);
+        }
+      }
+      line_width = 0.04 * Constants.default_scale.x / this.level.camera.scale.x;
+      return this.culling_debug.stroke({
+        width: line_width,
+        color: 0x78C7C7,
+        alpha: 0.7
+      });
     }
 
     entity_texture_name(entity) {
