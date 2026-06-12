@@ -29,7 +29,7 @@ class Entities
           reversed: $(xml_entity).find('position').attr('reversed') == 'true'
         params: {}
 
-      # parse params xml
+      # parse params tags
       xml_params = $(xml_entity).find('param')
       for xml_param in xml_params
         name  = $(xml_param).attr('name')
@@ -41,34 +41,35 @@ class Entities
 
       # Get default values for sprite from theme
       texture_name = @entity_texture_name(entity)
+
       if texture_name
-        sprite = @assets.theme.sprite_params(texture_name)
+        theme_sprite = @assets.theme.sprite_params(texture_name)
 
-        if sprite
-          entity.file           = sprite.file
-          entity.file_base      = sprite.file_base
-          entity.file_extension = sprite.file_extension
+        if theme_sprite
+          entity.file           = theme_sprite.file
+          entity.file_base      = theme_sprite.file_base
+          entity.file_extension = theme_sprite.file_extension
+          entity.delay          = theme_sprite.delay
+          entity.frames         = theme_sprite.frames
+          entity.display        = true # if an entity has a texture, it needs to be displayed
 
-          # Sprite dimensions from theme (XMoto defaults: width=1, height=1, centerX=0.5, centerY=0.5)
-          sprite_width  = if isNaN(sprite.size.width)  then 1.0 else sprite.size.width
-          sprite_height = if isNaN(sprite.size.height) then 1.0 else sprite.size.height
-          sprite_cx     = if isNaN(sprite.center.x)    then 0.5 else sprite.center.x
-          sprite_cy     = if isNaN(sprite.center.y)    then 0.5 else sprite.center.y
+          # Default theme values of not specifically defined
+          theme_width  = theme_sprite.size.width  || 1.0
+          theme_height = theme_sprite.size.height || 1.0
+          theme_cx     = theme_sprite.center.x    || 0.5
+          theme_cy     = theme_sprite.center.y    || 0.5
 
           # When the level overrides width/height, XMoto keeps the sprite centered on the
           # sprite's original centerX/centerY by shifting the center by half the size delta.
           # (cf. xmoto Renderer.cpp::_RenderSprite — `v_centerX += (entity.width - sprite.width)/2`)
           level_width  = entity.size.width  > 0
           level_height = entity.size.height > 0
-          entity.size.width  = sprite_width  if not level_width
-          entity.size.height = sprite_height if not level_height
-          entity.center =
-            x: sprite_cx + (if level_width  then (entity.size.width  - sprite_width)  / 2 else 0)
-            y: sprite_cy + (if level_height then (entity.size.height - sprite_height) / 2 else 0)
 
-          entity.delay   = sprite.delay
-          entity.frames  = sprite.frames
-          entity.display = true # if an entity has a texture, it needs to be displayed
+          entity.size.width  = theme_width  if not level_width
+          entity.size.height = theme_height if not level_height
+          entity.center =
+            x: theme_cx + (if level_width  then (entity.size.width  - theme_width)  / 2 else 0)
+            y: theme_cy + (if level_height then (entity.size.height - theme_height) / 2 else 0)
 
           entity.aabb = @compute_aabb(entity)
         else

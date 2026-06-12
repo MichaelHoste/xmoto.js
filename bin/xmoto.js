@@ -1838,7 +1838,7 @@
     }
 
     parse(xml) {
-      var entity, k, l, len, len1, level_height, level_width, name, sprite, sprite_cx, sprite_cy, sprite_height, sprite_width, texture_name, value, xml_entities, xml_entity, xml_param, xml_params;
+      var entity, k, l, len, len1, level_height, level_width, name, texture_name, theme_cx, theme_cy, theme_height, theme_sprite, theme_width, value, xml_entities, xml_entity, xml_param, xml_params;
       xml_entities = $(xml).find('entity');
 // parse entity xml
       for (k = 0, len = xml_entities.length; k < len; k++) {
@@ -1860,7 +1860,7 @@
           },
           params: {}
         };
-        // parse params xml
+        // parse params tags
         xml_params = $(xml_entity).find('param');
         for (l = 0, len1 = xml_params.length; l < len1; l++) {
           xml_param = xml_params[l];
@@ -1873,34 +1873,35 @@
         // Get default values for sprite from theme
         texture_name = this.entity_texture_name(entity);
         if (texture_name) {
-          sprite = this.assets.theme.sprite_params(texture_name);
-          if (sprite) {
-            entity.file = sprite.file;
-            entity.file_base = sprite.file_base;
-            entity.file_extension = sprite.file_extension;
-            // Sprite dimensions from theme (XMoto defaults: width=1, height=1, centerX=0.5, centerY=0.5)
-            sprite_width = isNaN(sprite.size.width) ? 1.0 : sprite.size.width;
-            sprite_height = isNaN(sprite.size.height) ? 1.0 : sprite.size.height;
-            sprite_cx = isNaN(sprite.center.x) ? 0.5 : sprite.center.x;
-            sprite_cy = isNaN(sprite.center.y) ? 0.5 : sprite.center.y;
+          theme_sprite = this.assets.theme.sprite_params(texture_name);
+          if (theme_sprite) {
+            entity.file = theme_sprite.file;
+            entity.file_base = theme_sprite.file_base;
+            entity.file_extension = theme_sprite.file_extension;
+            entity.delay = theme_sprite.delay;
+            entity.frames = theme_sprite.frames;
+            entity.display = true; // if an entity has a texture, it needs to be displayed
+            
+            // Default theme values of not specifically defined
+            theme_width = theme_sprite.size.width || 1.0;
+            theme_height = theme_sprite.size.height || 1.0;
+            theme_cx = theme_sprite.center.x || 0.5;
+            theme_cy = theme_sprite.center.y || 0.5;
             // When the level overrides width/height, XMoto keeps the sprite centered on the
             // sprite's original centerX/centerY by shifting the center by half the size delta.
             // (cf. xmoto Renderer.cpp::_RenderSprite — `v_centerX += (entity.width - sprite.width)/2`)
             level_width = entity.size.width > 0;
             level_height = entity.size.height > 0;
             if (!level_width) {
-              entity.size.width = sprite_width;
+              entity.size.width = theme_width;
             }
             if (!level_height) {
-              entity.size.height = sprite_height;
+              entity.size.height = theme_height;
             }
             entity.center = {
-              x: sprite_cx + (level_width ? (entity.size.width - sprite_width) / 2 : 0),
-              y: sprite_cy + (level_height ? (entity.size.height - sprite_height) / 2 : 0)
+              x: theme_cx + (level_width ? (entity.size.width - theme_width) / 2 : 0),
+              y: theme_cy + (level_height ? (entity.size.height - theme_height) / 2 : 0)
             };
-            entity.delay = sprite.delay;
-            entity.frames = sprite.frames;
-            entity.display = true; // if an entity has a texture, it needs to be displayed
             entity.aabb = this.compute_aabb(entity);
           } else {
             console.error(`XMoto warning: texture file \"${texture_name}\" was not found in the theme and is ignored.`);
