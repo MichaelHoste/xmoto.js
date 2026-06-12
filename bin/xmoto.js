@@ -1838,7 +1838,7 @@
     }
 
     parse(xml) {
-      var entity, k, l, len, len1, name, sprite, texture_name, value, xml_entities, xml_entity, xml_param, xml_params;
+      var entity, k, l, len, len1, level_height, level_width, name, sprite, sprite_cx, sprite_cy, sprite_height, sprite_width, texture_name, value, xml_entities, xml_entity, xml_param, xml_params;
       xml_entities = $(xml).find('entity');
 // parse entity xml
       for (k = 0, len = xml_entities.length; k < len; k++) {
@@ -1878,30 +1878,26 @@
             entity.file = sprite.file;
             entity.file_base = sprite.file_base;
             entity.file_extension = sprite.file_extension;
-            if (!entity.size.width) {
-              entity.size.width = sprite.size.width;
+            // Sprite dimensions from theme (XMoto defaults: width=1, height=1, centerX=0.5, centerY=0.5)
+            sprite_width = isNaN(sprite.size.width) ? 1.0 : sprite.size.width;
+            sprite_height = isNaN(sprite.size.height) ? 1.0 : sprite.size.height;
+            sprite_cx = isNaN(sprite.center.x) ? 0.5 : sprite.center.x;
+            sprite_cy = isNaN(sprite.center.y) ? 0.5 : sprite.center.y;
+            // When the level overrides width/height, XMoto keeps the sprite centered on the
+            // sprite's original centerX/centerY by shifting the center by half the size delta.
+            // (cf. xmoto Renderer.cpp::_RenderSprite — `v_centerX += (entity.width - sprite.width)/2`)
+            level_width = entity.size.width > 0;
+            level_height = entity.size.height > 0;
+            if (!level_width) {
+              entity.size.width = sprite_width;
             }
-            if (!entity.size.height) {
-              entity.size.height = sprite.size.height;
+            if (!level_height) {
+              entity.size.height = sprite_height;
             }
             entity.center = {
-              x: sprite.center.x,
-              y: sprite.center.y
+              x: sprite_cx + (level_width ? (entity.size.width - sprite_width) / 2 : 0),
+              y: sprite_cy + (level_height ? (entity.size.height - sprite_height) / 2 : 0)
             };
-            if (!entity.center.x) {
-              // XMoto theme default when centerX/centerY are not specified
-              entity.center.x = 0.5;
-            }
-            if (!entity.center.y) {
-              entity.center.y = 0.5;
-            }
-            if (!entity.size.width) {
-              // no size informations into the theme or into the level
-              entity.size.width = 2 * entity.size.r;
-            }
-            if (!entity.size.height) {
-              entity.size.height = 2 * entity.size.r;
-            }
             entity.delay = sprite.delay;
             entity.frames = sprite.frames;
             entity.display = true; // if an entity has a texture, it needs to be displayed
@@ -1994,11 +1990,11 @@
       for (k = 0, len = ref.length; k < len; k++) {
         entity = ref[k];
         if (entity.z === 0) {
-          results.push(this.init_entity(entity, this.level.layers.static_level));
+          results.push(this.init_sprite(entity, this.level.layers.static_level));
         } else if (entity.z < 0) {
-          results.push(this.init_entity(entity, this.level.layers.static_background));
+          results.push(this.init_sprite(entity, this.level.layers.static_background));
         } else if (entity.z > 0) {
-          results.push(this.init_entity(entity, this.level.layers.static_foreground));
+          results.push(this.init_sprite(entity, this.level.layers.static_foreground));
         } else {
           results.push(void 0);
         }
@@ -2006,33 +2002,33 @@
       return results;
     }
 
-    init_entity(entity, container) {
-      var i, k, ref, textures;
+    init_sprite(entity, container) {
+      var i, k, ref, sprite, textures;
       if (entity.frames > 0) {
         textures = [];
         for (i = k = 0, ref = entity.frames - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
           textures.push(PIXI.Texture.from(this.assets.get_url(this.frame_name(entity, i))));
         }
-        entity.sprite = new PIXI.AnimatedSprite(textures);
-        entity.sprite.animationSpeed = (1.0 / entity.delay) / Constants.fps;
-        entity.sprite.play();
-        container.addChild(entity.sprite);
+        sprite = new PIXI.AnimatedSprite(textures);
+        sprite.animationSpeed = (1.0 / entity.delay) / Constants.fps;
+        sprite.play();
       } else if (entity.file) {
-        entity.sprite = PIXI.Sprite.from(this.assets.get_url(entity.file));
-        container.addChild(entity.sprite);
+        sprite = PIXI.Sprite.from(this.assets.get_url(entity.file));
       }
-      if (entity.sprite) {
-        entity.sprite.width = entity.size.width;
-        entity.sprite.height = entity.size.height;
-        entity.sprite.anchor.x = entity.center.x / entity.size.width;
-        entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height);
-        entity.sprite.x = entity.position.x;
-        entity.sprite.y = -entity.position.y;
-        entity.sprite.rotation = -entity.position.angle;
-        entity.sprite.name = entity.params.name || entity.typeid;
+      if (sprite) {
+        sprite.width = entity.size.width;
+        sprite.height = entity.size.height;
+        sprite.anchor.x = entity.center.x / entity.size.width;
+        sprite.anchor.y = 1 - (entity.center.y / entity.size.height);
+        sprite.x = entity.position.x;
+        sprite.y = -entity.position.y;
+        sprite.rotation = -entity.position.angle;
+        sprite.name = entity.params.name || entity.typeid;
         if (entity.position.reversed) {
-          return entity.sprite.scale.x *= -1;
+          sprite.scale.x *= -1;
         }
+        entity.sprite = sprite; // keep reference to the sprite
+        return container.addChild(sprite);
       }
     }
 
@@ -2093,8 +2089,10 @@
 
     compute_aabb(entity) {
       var aabb, lower_bound, upper_bound;
+      // Mirrors XMoto Renderer.cpp::_RenderSprite — the sprite occupies
+      // [pos.x - centerX, pos.x - centerX + width] × [pos.y - centerY, pos.y - centerY + height]
       lower_bound = {
-        x: entity.position.x - entity.size.width + entity.center.x,
+        x: entity.position.x - entity.center.x,
         y: entity.position.y - entity.center.y
       };
       upper_bound = {
@@ -2108,7 +2106,7 @@
     }
 
     visible(entity) {
-      return entity.aabb.TestOverlap(this.level.camera.aabb) && entity.display;
+      return entity.display && entity.aabb.TestOverlap(this.level.camera.aabb);
     }
 
     frame_name(entity, frame_number) {

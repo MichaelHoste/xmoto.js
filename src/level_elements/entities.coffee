@@ -48,17 +48,23 @@ class Entities
           entity.file           = sprite.file
           entity.file_base      = sprite.file_base
           entity.file_extension = sprite.file_extension
-          entity.size.width     = sprite.size.width  if not entity.size.width
-          entity.size.height    = sprite.size.height if not entity.size.height
-          entity.center =
-            x: sprite.center.x
-            y: sprite.center.y
-          entity.center.x = entity.size.width/2  if not entity.center.x
-          entity.center.y = entity.size.height/2 if not entity.center.y
 
-          # no size informations into the theme or into the level
-          entity.size.width  = 2*entity.size.r   if not entity.size.width
-          entity.size.height = 2*entity.size.r   if not entity.size.height
+          # Sprite dimensions from theme (XMoto defaults: width=1, height=1, centerX=0.5, centerY=0.5)
+          sprite_width  = if isNaN(sprite.size.width)  then 1.0 else sprite.size.width
+          sprite_height = if isNaN(sprite.size.height) then 1.0 else sprite.size.height
+          sprite_cx     = if isNaN(sprite.center.x)    then 0.5 else sprite.center.x
+          sprite_cy     = if isNaN(sprite.center.y)    then 0.5 else sprite.center.y
+
+          # When the level overrides width/height, XMoto keeps the sprite centered on the
+          # sprite's original centerX/centerY by shifting the center by half the size delta.
+          # (cf. xmoto Renderer.cpp::_RenderSprite — `v_centerX += (entity.width - sprite.width)/2`)
+          level_width  = entity.size.width  > 0
+          level_height = entity.size.height > 0
+          entity.size.width  = sprite_width  if not level_width
+          entity.size.height = sprite_height if not level_height
+          entity.center =
+            x: sprite_cx + (if level_width  then (entity.size.width  - sprite_width)  / 2 else 0)
+            y: sprite_cy + (if level_height then (entity.size.height - sprite_height) / 2 else 0)
 
           entity.delay   = sprite.delay
           entity.frames  = sprite.frames
@@ -118,36 +124,37 @@ class Entities
   init_sprites: ->
     for entity in @list
       if entity.z == 0
-        @init_entity(entity, @level.layers.static_level)
+        @init_sprite(entity, @level.layers.static_level)
       else if entity.z < 0
-        @init_entity(entity, @level.layers.static_background)
+        @init_sprite(entity, @level.layers.static_background)
       else if entity.z > 0
-        @init_entity(entity, @level.layers.static_foreground)
+        @init_sprite(entity, @level.layers.static_foreground)
 
-  init_entity: (entity, container) ->
+  init_sprite: (entity, container) ->
     if entity.frames > 0
       textures = []
       for i in [0..entity.frames - 1]
         textures.push(PIXI.Texture.from(@assets.get_url(@frame_name(entity, i))))
 
-      entity.sprite = new PIXI.AnimatedSprite(textures)
-      entity.sprite.animationSpeed = (1.0 / entity.delay) / Constants.fps
-      entity.sprite.play()
-      container.addChild(entity.sprite)
+      sprite = new PIXI.AnimatedSprite(textures)
+      sprite.animationSpeed = (1.0 / entity.delay) / Constants.fps
+      sprite.play()
     else if entity.file
-      entity.sprite = PIXI.Sprite.from(@assets.get_url(entity.file))
-      container.addChild(entity.sprite)
+      sprite = PIXI.Sprite.from(@assets.get_url(entity.file))
 
-    if entity.sprite
-      entity.sprite.width    = entity.size.width
-      entity.sprite.height   = entity.size.height
-      entity.sprite.anchor.x = entity.center.x / entity.size.width
-      entity.sprite.anchor.y = 1 - (entity.center.y / entity.size.height)
-      entity.sprite.x        =  entity.position.x
-      entity.sprite.y        = -entity.position.y
-      entity.sprite.rotation = -entity.position.angle
-      entity.sprite.name     = entity.params.name || entity.typeid
-      entity.sprite.scale.x *= -1 if entity.position.reversed
+    if sprite
+      sprite.width    = entity.size.width
+      sprite.height   = entity.size.height
+      sprite.anchor.x = entity.center.x / entity.size.width
+      sprite.anchor.y = 1 - (entity.center.y / entity.size.height)
+      sprite.x        =  entity.position.x
+      sprite.y        = -entity.position.y
+      sprite.rotation = -entity.position.angle
+      sprite.name     = entity.params.name || entity.typeid
+      sprite.scale.x *= -1 if entity.position.reversed
+
+      entity.sprite = sprite # keep reference to the sprite
+      container.addChild(sprite)
 
   create_entity: (entity, name) ->
     # Create fixture
@@ -195,8 +202,10 @@ class Entities
     name
 
   compute_aabb: (entity) ->
+    # Mirrors XMoto Renderer.cpp::_RenderSprite — the sprite occupies
+    # [pos.x - centerX, pos.x - centerX + width] × [pos.y - centerY, pos.y - centerY + height]
     lower_bound =
-      x: entity.position.x - entity.size.width + entity.center.x
+      x: entity.position.x - entity.center.x
       y: entity.position.y - entity.center.y
 
     upper_bound =
@@ -210,7 +219,7 @@ class Entities
     return aabb
 
   visible: (entity) ->
-    entity.aabb.TestOverlap(@level.camera.aabb) && entity.display
+    entity.display && entity.aabb.TestOverlap(@level.camera.aabb)
 
   frame_name: (entity, frame_number) ->
     "#{entity.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{entity.file_extension}"
