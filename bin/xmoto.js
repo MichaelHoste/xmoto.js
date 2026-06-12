@@ -1876,7 +1876,7 @@
           if (sprite) {
             entity.file = sprite.file;
             entity.file_base = sprite.file_base;
-            entity.file_ext = sprite.file_ext;
+            entity.file_extension = sprite.file_extension;
             if (!entity.size.width) {
               entity.size.width = sprite.size.width;
             }
@@ -2017,7 +2017,7 @@
           textures.push(PIXI.Texture.from(this.assets.get_url(this.frame_name(entity, i))));
         }
         entity.sprite = new PIXI.AnimatedSprite(textures);
-        entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay;
+        entity.sprite.animationSpeed = (1.0 / entity.delay) / Constants.fps;
         entity.sprite.play();
         container.addChild(entity.sprite);
       } else if (entity.file) {
@@ -2112,7 +2112,7 @@
     }
 
     frame_name(entity, frame_number) {
-      return `${entity.file_base}${(frame_number / 100.0).toFixed(2).toString().substring(2)}.${entity.file_ext}`;
+      return `${entity.file_base}${(frame_number / 100.0).toFixed(2).toString().substring(2)}.${entity.file_extension}`;
     }
 
   };
@@ -4220,7 +4220,7 @@
           this.sprites[$(xml_sprite).attr('name')] = {
             file: $(xml_sprite).attr('file'),
             file_base: $(xml_sprite).attr('fileBase'),
-            file_ext: $(xml_sprite).attr('fileExtension'),
+            file_extension: $(xml_sprite).attr('fileExtension'),
             size: {
               width: parseFloat($(xml_sprite).attr('width')),
               height: parseFloat($(xml_sprite).attr('height'))
@@ -4242,7 +4242,7 @@
           this.textures[$(xml_sprite).attr('name').toLowerCase()] = {
             file: $(xml_sprite).attr('file') ? $(xml_sprite).attr('file').toLowerCase() : '',
             file_base: $(xml_sprite).attr('fileBase'),
-            file_ext: $(xml_sprite).attr('fileExtension'),
+            file_extension: $(xml_sprite).attr('fileExtension'),
             frames: $(xml_sprite).find('frame').length,
             delay: parseFloat($(xml_sprite).attr('delay'))
           };

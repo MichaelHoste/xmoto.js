@@ -44,11 +44,11 @@ class Entities
         sprite = @assets.theme.sprite_params(texture_name)
 
         if sprite
-          entity.file        = sprite.file
-          entity.file_base   = sprite.file_base
-          entity.file_ext    = sprite.file_ext
-          entity.size.width  = sprite.size.width  if not entity.size.width
-          entity.size.height = sprite.size.height if not entity.size.height
+          entity.file           = sprite.file
+          entity.file_base      = sprite.file_base
+          entity.file_extension = sprite.file_extension
+          entity.size.width     = sprite.size.width  if not entity.size.width
+          entity.size.height    = sprite.size.height if not entity.size.height
           entity.center =
             x: sprite.center.x
             y: sprite.center.y
@@ -131,7 +131,7 @@ class Entities
         textures.push(PIXI.Texture.from(@assets.get_url(@frame_name(entity, i))))
 
       entity.sprite = new PIXI.AnimatedSprite(textures)
-      entity.sprite.animationSpeed = 0.5 - 0.5 * entity.delay
+      entity.sprite.animationSpeed = (1.0 / entity.delay) / Constants.fps
       entity.sprite.play()
       container.addChild(entity.sprite)
     else if entity.file
@@ -147,7 +147,6 @@ class Entities
       entity.sprite.y        = -entity.position.y
       entity.sprite.rotation = -entity.position.angle
       entity.sprite.name     = entity.params.name || entity.typeid
-
 
   create_entity: (entity, name) ->
     # Create fixture
@@ -213,4 +212,4 @@ class Entities
     entity.aabb.TestOverlap(@level.camera.aabb) && entity.display
 
   frame_name: (entity, frame_number) ->
-    "#{entity.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{entity.file_ext}"
+    "#{entity.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{entity.file_extension}"

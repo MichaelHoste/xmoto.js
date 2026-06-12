@@ -23,9 +23,9 @@ class Theme
 
       if $(xml_sprite).attr('type') == 'Entity'
         @sprites[$(xml_sprite).attr('name')] =
-          file:      $(xml_sprite).attr('file')
-          file_base: $(xml_sprite).attr('fileBase')
-          file_ext:  $(xml_sprite).attr('fileExtension')
+          file:           $(xml_sprite).attr('file')
+          file_base:      $(xml_sprite).attr('fileBase')
+          file_extension: $(xml_sprite).attr('fileExtension')
           size:
             width:   parseFloat($(xml_sprite).attr('width'))
             height:  parseFloat($(xml_sprite).attr('height'))
@@ -43,11 +43,11 @@ class Theme
 
       else if $(xml_sprite).attr('type') == 'Texture'
         @textures[$(xml_sprite).attr('name').toLowerCase()] =
-          file:      if $(xml_sprite).attr('file') then $(xml_sprite).attr('file').toLowerCase() else ''
-          file_base: $(xml_sprite).attr('fileBase')
-          file_ext:  $(xml_sprite).attr('fileExtension')
-          frames:    $(xml_sprite).find('frame').length
-          delay:     parseFloat($(xml_sprite).attr('delay'))
+          file:           if $(xml_sprite).attr('file') then $(xml_sprite).attr('file').toLowerCase() else ''
+          file_base:      $(xml_sprite).attr('fileBase')
+          file_extension: $(xml_sprite).attr('fileExtension')
+          frames:         $(xml_sprite).find('frame').length
+          delay:          parseFloat($(xml_sprite).attr('delay'))
 
     @callback()
 
