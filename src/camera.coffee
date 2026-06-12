@@ -114,9 +114,9 @@ class Camera
         hw = half_w * aabb_factor
         hh = half_h * aabb_factor
 
-        parallax.aabb ?= new Box2D.Collision.b2AABB()
-        parallax.aabb.lowerBound.Set(cx - hw, cy - hh)
-        parallax.aabb.upperBound.Set(cx + hw, cy + hh)
+        parallax.camera_aabb ?= new Box2D.Collision.b2AABB()
+        parallax.camera_aabb.lowerBound.Set(cx - hw, cy - hh)
+        parallax.camera_aabb.upperBound.Set(cx + hw, cy + hh)
 
       # Opaque culling to see where sprites are "filtered out"
       if Constants.debug_culling

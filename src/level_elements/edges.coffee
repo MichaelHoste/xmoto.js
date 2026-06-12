@@ -139,8 +139,8 @@ class Edges
 
   visible: (polygon) ->
     if @block.position.islayer && @block.position.layerid != undefined
-      parallax_camera = @level.layers.list[@block.position.layerid]
-      polygon.aabb.TestOverlap(parallax_camera.aabb)
+      parallax_layer = @level.layers.list[@block.position.layerid]
+      polygon.aabb.TestOverlap(parallax_layer.camera_aabb)
     else
       polygon.aabb.TestOverlap(@level.camera.aabb)
 

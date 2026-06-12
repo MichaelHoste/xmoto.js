@@ -178,8 +178,8 @@ class Blocks
 
   visible: (block) ->
     if block.position.islayer && block.position.layerid != undefined
-      parallax_camera = @level.layers.list[block.position.layerid]
-      block.aabb.TestOverlap(parallax_camera.aabb)
+      parallax_layer = @level.layers.list[block.position.layerid]
+      block.aabb.TestOverlap(parallax_layer.camera_aabb)
     else
       block.aabb.TestOverlap(@level.camera.aabb)
 

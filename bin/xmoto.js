@@ -107,11 +107,11 @@
           cy = translate_layer.y;
           hw = half_w * aabb_factor;
           hh = half_h * aabb_factor;
-          if (parallax.aabb == null) {
-            parallax.aabb = new Box2D.Collision.b2AABB();
+          if (parallax.camera_aabb == null) {
+            parallax.camera_aabb = new Box2D.Collision.b2AABB();
           }
-          parallax.aabb.lowerBound.Set(cx - hw, cy - hh);
-          parallax.aabb.upperBound.Set(cx + hw, cy + hh);
+          parallax.camera_aabb.lowerBound.Set(cx - hw, cy - hh);
+          parallax.camera_aabb.upperBound.Set(cx + hw, cy + hh);
         }
         // Opaque culling to see where sprites are "filtered out"
         if (Constants.debug_culling) {
@@ -1508,10 +1508,10 @@
     }
 
     visible(block) {
-      var parallax_camera;
+      var parallax_layer;
       if (block.position.islayer && block.position.layerid !== void 0) {
-        parallax_camera = this.level.layers.list[block.position.layerid];
-        return block.aabb.TestOverlap(parallax_camera.aabb);
+        parallax_layer = this.level.layers.list[block.position.layerid];
+        return block.aabb.TestOverlap(parallax_layer.camera_aabb);
       } else {
         return block.aabb.TestOverlap(this.level.camera.aabb);
       }
@@ -1868,10 +1868,10 @@
     }
 
     visible(polygon) {
-      var parallax_camera;
+      var parallax_layer;
       if (this.block.position.islayer && this.block.position.layerid !== void 0) {
-        parallax_camera = this.level.layers.list[this.block.position.layerid];
-        return polygon.aabb.TestOverlap(parallax_camera.aabb);
+        parallax_layer = this.level.layers.list[this.block.position.layerid];
+        return polygon.aabb.TestOverlap(parallax_layer.camera_aabb);
       } else {
         return polygon.aabb.TestOverlap(this.level.camera.aabb);
       }
