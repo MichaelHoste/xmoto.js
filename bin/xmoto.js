@@ -1855,7 +1855,8 @@
           position: {
             x: parseFloat($(xml_entity).find('position').attr('x')),
             y: parseFloat($(xml_entity).find('position').attr('y')),
-            angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0
+            angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0,
+            reversed: $(xml_entity).find('position').attr('reversed') === 'true'
           },
           params: {}
         };
@@ -1888,10 +1889,11 @@
               y: sprite.center.y
             };
             if (!entity.center.x) {
-              entity.center.x = entity.size.width / 2;
+              // XMoto theme default when centerX/centerY are not specified
+              entity.center.x = 0.5;
             }
             if (!entity.center.y) {
-              entity.center.y = entity.size.height / 2;
+              entity.center.y = 0.5;
             }
             if (!entity.size.width) {
               // no size informations into the theme or into the level
@@ -1899,12 +1901,6 @@
             }
             if (!entity.size.height) {
               entity.size.height = 2 * entity.size.r;
-            }
-            if (!entity.center.x) {
-              entity.center.x = entity.size.r;
-            }
-            if (!entity.center.y) {
-              entity.center.y = entity.size.r;
             }
             entity.delay = sprite.delay;
             entity.frames = sprite.frames;
@@ -1974,6 +1970,7 @@
         } else if (entity.typeid === 'Strawberry') {
           this.create_entity(entity, 'strawberry');
           results.push(this.strawberries.push(entity));
+        // Wreckers
         } else if (entity.typeid === 'Wrecker') {
           this.create_entity(entity, 'wrecker');
           results.push(this.wreckers.push(entity));
@@ -2032,7 +2029,10 @@
         entity.sprite.x = entity.position.x;
         entity.sprite.y = -entity.position.y;
         entity.sprite.rotation = -entity.position.angle;
-        return entity.sprite.name = entity.params.name || entity.typeid;
+        entity.sprite.name = entity.params.name || entity.typeid;
+        if (entity.position.reversed) {
+          return entity.sprite.scale.x *= -1;
+        }
       }
     }
 

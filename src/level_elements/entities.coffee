@@ -23,9 +23,10 @@ class Entities
           width:  parseFloat($(xml_entity).find('size').attr('width'))
           height: parseFloat($(xml_entity).find('size').attr('height'))
         position:
-          x:     parseFloat($(xml_entity).find('position').attr('x'))
-          y:     parseFloat($(xml_entity).find('position').attr('y'))
-          angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0
+          x:        parseFloat($(xml_entity).find('position').attr('x'))
+          y:        parseFloat($(xml_entity).find('position').attr('y'))
+          angle:    parseFloat($(xml_entity).find('position').attr('angle')) || 0
+          reversed: $(xml_entity).find('position').attr('reversed') == 'true'
         params: {}
 
       # parse params xml
@@ -58,8 +59,6 @@ class Entities
           # no size informations into the theme or into the level
           entity.size.width  = 2*entity.size.r   if not entity.size.width
           entity.size.height = 2*entity.size.r   if not entity.size.height
-          entity.center.x    = entity.size.r     if not entity.center.x
-          entity.center.y    = entity.size.r     if not entity.center.y
 
           entity.delay   = sprite.delay
           entity.frames  = sprite.frames
@@ -105,6 +104,7 @@ class Entities
         @create_entity(entity, 'strawberry')
         @strawberries.push(entity)
 
+      # Wreckers
       else if entity.typeid == 'Wrecker'
         @create_entity(entity, 'wrecker')
         @wreckers.push(entity)
@@ -147,6 +147,7 @@ class Entities
       entity.sprite.y        = -entity.position.y
       entity.sprite.rotation = -entity.position.angle
       entity.sprite.name     = entity.params.name || entity.typeid
+      entity.sprite.scale.x *= -1 if entity.position.reversed
 
   create_entity: (entity, name) ->
     # Create fixture
