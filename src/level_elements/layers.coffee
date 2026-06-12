@@ -65,9 +65,10 @@ class Layers
       translate_layer  = new PIXI.Container()
       parallax_layer   = new PIXI.Container()
 
-      scale_layer.label     = "#{parallax_data.name} - scale"
-      translate_layer.label = "#{parallax_data.name} - translate"
-      parallax_layer.label  = "#{parallax_data.name}"
+      scale_layer.label       = "#{parallax_data.name} - scale"
+      translate_layer.label   = "#{parallax_data.name} - translate"
+      parallax_layer.label    = "#{parallax_data.name}"
+      parallax_layer.parallax = true
 
       scale_layer.addChild(translate_layer)
       translate_layer.addChild(parallax_layer)

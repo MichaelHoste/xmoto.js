@@ -1427,11 +1427,29 @@
       return results;
     }
 
+    // One Graphic is created in each block layer (parallax or static)
+    // for drawing culling rectangles. It's because parallax layers
+    // have their own scale/translate reference
     init_culling_debug() {
+      var block, graphics, k, layer, len, ref, results;
       if (Constants.debug_culling) {
-        this.culling_debug = new PIXI.Graphics();
-        this.culling_debug.label = 'culling (blocks)';
-        return this.level.layers.translate_layer.addChild(this.culling_debug);
+        this.culling_debug_graphics = {}; // { label => graphics }
+        ref = this.list;
+        results = [];
+        for (k = 0, len = ref.length; k < len; k++) {
+          block = ref[k];
+          layer = this.level.layers.layer_for_block(block);
+          if (!this.culling_debug_graphics[layer.label]) {
+            graphics = new PIXI.Graphics();
+            graphics.label = `culling (blocks - ${layer.label})`;
+            graphics.parallax = layer.parallax; // needed for later
+            layer.addChild(graphics);
+            results.push(this.culling_debug_graphics[layer.label] = graphics);
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
       }
     }
 
@@ -1451,21 +1469,42 @@
     }
 
     draw_debug_culling() {
-      var block, k, len, line_width, ref;
-      this.culling_debug.clear();
+      var block, calling_debug, culling_debug, culling_debugs, k, l, layer, len, len1, len2, line_width, m, ref, ref1, results;
+      culling_debugs = Object.values(this.culling_debug_graphics);
+      for (k = 0, len = culling_debugs.length; k < len; k++) {
+        culling_debug = culling_debugs[k];
+        culling_debug.clear();
+      }
       ref = this.list;
-      for (k = 0, len = ref.length; k < len; k++) {
-        block = ref[k];
+      for (l = 0, len1 = ref.length; l < len1; l++) {
+        block = ref[l];
         if (block.aabb && block.graphics.visible) {
-          this.culling_debug.rect(block.aabb.lowerBound.x, -block.aabb.upperBound.y, block.aabb.upperBound.x - block.aabb.lowerBound.x, block.aabb.upperBound.y - block.aabb.lowerBound.y);
+          layer = this.level.layers.layer_for_block(block);
+          culling_debug = this.culling_debug_graphics[layer.label];
+          culling_debug.rect(block.aabb.lowerBound.x, -block.aabb.upperBound.y, block.aabb.upperBound.x - block.aabb.lowerBound.x, block.aabb.upperBound.y - block.aabb.lowerBound.y);
         }
       }
-      line_width = 0.04 * Constants.default_scale.x / this.level.camera.scale.x;
-      return this.culling_debug.stroke({
-        width: line_width,
-        color: 0xC7C778,
-        alpha: 0.7
-      });
+      ref1 = Object.values(this.culling_debug_graphics);
+      // Parallax layers use a fixed 1px stroke (pixelLine) to stay readable
+      results = [];
+      for (m = 0, len2 = ref1.length; m < len2; m++) {
+        calling_debug = ref1[m];
+        if (calling_debug.parallax) {
+          results.push(calling_debug.stroke({
+            color: 0xC7C778,
+            alpha: 0.7,
+            pixelLine: true
+          }));
+        } else {
+          line_width = 0.04 * Constants.default_scale.x / this.level.camera.scale.x;
+          results.push(calling_debug.stroke({
+            width: line_width,
+            color: 0xC7C778,
+            alpha: 0.7
+          }));
+        }
+      }
+      return results;
     }
 
     visible(block) {
@@ -2289,6 +2328,7 @@
         scale_layer.label = `${parallax_data.name} - scale`;
         translate_layer.label = `${parallax_data.name} - translate`;
         parallax_layer.label = `${parallax_data.name}`;
+        parallax_layer.parallax = true;
         scale_layer.addChild(translate_layer);
         translate_layer.addChild(parallax_layer);
         this.parallax_scale_layers.push(scale_layer);

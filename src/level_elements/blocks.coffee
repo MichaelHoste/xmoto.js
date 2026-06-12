@@ -124,11 +124,23 @@ class Blocks
 
       @level.layers.layer_for_block(block).addChild(block.graphics)
 
+  # One Graphic is created in each block layer (parallax or static)
+  # for drawing culling rectangles. It's because parallax layers
+  # have their own scale/translate reference
   init_culling_debug: ->
     if Constants.debug_culling
-      @culling_debug = new PIXI.Graphics()
-      @culling_debug.label = 'culling (blocks)'
-      @level.layers.translate_layer.addChild(@culling_debug)
+      @culling_debug_graphics = {} # { label => graphics }
+
+      for block in @list
+        layer = @level.layers.layer_for_block(block)
+
+        if !@culling_debug_graphics[layer.label]
+          graphics          = new PIXI.Graphics()
+          graphics.label    = "culling (blocks - #{layer.label})"
+          graphics.parallax = layer.parallax # needed for later
+          layer.addChild(graphics)
+
+          @culling_debug_graphics[layer.label] = graphics
 
   update: ->
     if !Constants.debug_physics
@@ -140,20 +152,29 @@ class Blocks
       @draw_debug_culling()
 
   draw_debug_culling: ->
-    @culling_debug.clear()
+    culling_debugs = Object.values(@culling_debug_graphics)
+
+    for culling_debug in culling_debugs
+      culling_debug.clear()
 
     for block in @list
       if block.aabb && block.graphics.visible
-        @culling_debug.rect(
+        layer         = @level.layers.layer_for_block(block)
+        culling_debug = @culling_debug_graphics[layer.label]
+        culling_debug.rect(
           block.aabb.lowerBound.x,
           -block.aabb.upperBound.y,
           block.aabb.upperBound.x - block.aabb.lowerBound.x,
           block.aabb.upperBound.y - block.aabb.lowerBound.y
         )
 
-    line_width = 0.04 * Constants.default_scale.x / @level.camera.scale.x
-
-    @culling_debug.stroke(width: line_width, color: 0xC7C778, alpha: 0.7)
+    # Parallax layers use a fixed 1px stroke (pixelLine) to stay readable
+    for calling_debug in Object.values(@culling_debug_graphics)
+      if calling_debug.parallax
+        calling_debug.stroke(color: 0xC7C778, alpha: 0.7, pixelLine: true)
+      else
+        line_width = 0.04 * Constants.default_scale.x / @level.camera.scale.x
+        calling_debug.stroke(width: line_width, color: 0xC7C778, alpha: 0.7)
 
   visible: (block) ->
     if block.position.islayer && block.position.layerid?
