@@ -177,10 +177,11 @@ class Blocks
         calling_debug.stroke(width: line_width, color: 0xC7C778, alpha: 0.7)
 
   visible: (block) ->
-    if block.position.islayer && block.position.layerid?
-      layer_data = @level.layers.list[block.position.layerid]
-      return layer_data?.aabb?.TestOverlap(block.aabb) || false
-    block.aabb.TestOverlap(@level.camera.aabb)
+    if block.position.islayer && block.position.layerid != undefined
+      parallax_camera = @level.layers.list[block.position.layerid]
+      block.aabb.TestOverlap(parallax_camera.aabb)
+    else
+      block.aabb.TestOverlap(@level.camera.aabb)
 
   compute_aabb: (block) ->
     x_positions = block.vertices.map((v) -> v.absolute_x)

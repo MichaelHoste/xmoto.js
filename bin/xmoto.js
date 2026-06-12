@@ -1508,12 +1508,13 @@
     }
 
     visible(block) {
-      var layer_data, ref;
-      if (block.position.islayer && (block.position.layerid != null)) {
-        layer_data = this.level.layers.list[block.position.layerid];
-        return (layer_data != null ? (ref = layer_data.aabb) != null ? ref.TestOverlap(block.aabb) : void 0 : void 0) || false;
+      var parallax_camera;
+      if (block.position.islayer && block.position.layerid !== void 0) {
+        parallax_camera = this.level.layers.list[block.position.layerid];
+        return block.aabb.TestOverlap(parallax_camera.aabb);
+      } else {
+        return block.aabb.TestOverlap(this.level.camera.aabb);
       }
-      return block.aabb.TestOverlap(this.level.camera.aabb);
     }
 
     compute_aabb(block) {
@@ -1867,12 +1868,13 @@
     }
 
     visible(polygon) {
-      var layer_data, ref;
-      if (this.block.position.islayer && (this.block.position.layerid != null)) {
-        layer_data = this.level.layers.list[this.block.position.layerid];
-        return (layer_data != null ? (ref = layer_data.aabb) != null ? ref.TestOverlap(polygon.aabb) : void 0 : void 0) || false;
+      var parallax_camera;
+      if (this.block.position.islayer && this.block.position.layerid !== void 0) {
+        parallax_camera = this.level.layers.list[this.block.position.layerid];
+        return polygon.aabb.TestOverlap(parallax_camera.aabb);
+      } else {
+        return polygon.aabb.TestOverlap(this.level.camera.aabb);
       }
-      return polygon.aabb.TestOverlap(this.level.camera.aabb);
     }
 
     compute_aabb(polygon) {
@@ -2380,8 +2382,8 @@
       if (block.position.background) {
         return this.static_background;
       } else if (block.position.islayer) {
-        if (block.position.layerid != null) {
-          return this.parallax_layers[block.position.layerid] || this.static_level; // TODO should "|| @static_level" be removed?
+        if (block.position.layerid !== void 0) {
+          return this.parallax_layers[block.position.layerid];
         } else {
           return this.static_foreground;
         }

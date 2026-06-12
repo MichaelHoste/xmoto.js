@@ -108,8 +108,8 @@ class Layers
     if block.position.background
       @static_background
     else if block.position.islayer
-      if block.position.layerid?
-        @parallax_layers[block.position.layerid] || @static_level # TODO should "|| @static_level" be removed?
+      if block.position.layerid != undefined
+        @parallax_layers[block.position.layerid]
       else
         @static_foreground
     else

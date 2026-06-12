@@ -138,10 +138,11 @@ class Edges
         polygon.mesh.visible = block_visible && @visible(polygon)
 
   visible: (polygon) ->
-    if @block.position.islayer && @block.position.layerid?
-      layer_data = @level.layers.list[@block.position.layerid]
-      return layer_data?.aabb?.TestOverlap(polygon.aabb) || false
-    polygon.aabb.TestOverlap(@level.camera.aabb)
+    if @block.position.islayer && @block.position.layerid != undefined
+      parallax_camera = @level.layers.list[@block.position.layerid]
+      polygon.aabb.TestOverlap(parallax_camera.aabb)
+    else
+      polygon.aabb.TestOverlap(@level.camera.aabb)
 
   compute_aabb: (polygon) ->
     x_positions = polygon.vertices.map((v) -> v.x)
