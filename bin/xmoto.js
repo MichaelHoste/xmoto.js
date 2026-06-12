@@ -1838,7 +1838,7 @@
     }
 
     parse(xml) {
-      var entity, k, l, len, len1, level_height, level_width, name, texture_name, theme_cx, theme_cy, theme_height, theme_sprite, theme_width, value, xml_entities, xml_entity, xml_param, xml_params;
+      var entity, k, l, len, len1, name, texture_name, theme_center_x, theme_center_y, theme_height, theme_sprite, theme_width, value, xml_entities, xml_entity, xml_param, xml_params;
       xml_entities = $(xml).find('entity');
 // parse entity xml
       for (k = 0, len = xml_entities.length; k < len; k++) {
@@ -1849,14 +1849,34 @@
           size: {
             r: parseFloat($(xml_entity).find('size').attr('r')),
             z: parseInt($(xml_entity).find('size').attr('z')) || void 0,
-            width: parseFloat($(xml_entity).find('size').attr('width')),
-            height: parseFloat($(xml_entity).find('size').attr('height'))
+            width: (function() {
+              var attr;
+              attr = $(xml_entity).find('size').attr('width');
+              if (attr != null) {
+                return parseFloat(attr);
+              } else {
+                return void 0; // integer or undefined if no attribute (will come from theme)
+              }
+            })(),
+            height: (function() {
+              var attr;
+              attr = $(xml_entity).find('size').attr('height');
+              if (attr != null) {
+                return parseFloat(attr);
+              } else {
+                return void 0; // integer or undefined if no attribute (will come from theme)
+              }
+            })()
           },
           position: {
             x: parseFloat($(xml_entity).find('position').attr('x')),
             y: parseFloat($(xml_entity).find('position').attr('y')),
             angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0,
             reversed: $(xml_entity).find('position').attr('reversed') === 'true'
+          },
+          center: {
+            x: void 0, // can only come from theme
+            y: void 0 // can only come from theme
           },
           params: {}
         };
@@ -1882,26 +1902,26 @@
             entity.frames = theme_sprite.frames;
             entity.display = true; // if an entity has a texture, it needs to be displayed
             
-            // Default theme values of not specifically defined
+            // Default theme values if not defined in XML
             theme_width = theme_sprite.size.width || 1.0;
             theme_height = theme_sprite.size.height || 1.0;
-            theme_cx = theme_sprite.center.x || 0.5;
-            theme_cy = theme_sprite.center.y || 0.5;
-            // When the level overrides width/height, XMoto keeps the sprite centered on the
-            // sprite's original centerX/centerY by shifting the center by half the size delta.
-            // (cf. xmoto Renderer.cpp::_RenderSprite — `v_centerX += (entity.width - sprite.width)/2`)
-            level_width = entity.size.width > 0;
-            level_height = entity.size.height > 0;
-            if (!level_width) {
+            theme_center_x = theme_sprite.center.x || 0.5;
+            theme_center_y = theme_sprite.center.y || 0.5;
+            // - When the level overrides width/height, we keep the sprite centered on the
+            //   sprite's original centerX/centerY by shifting the center by half the size delta.
+            // - If level doesn't overrides width/height, we simply use theme values
+            if (entity.size.width) {
+              entity.center.x = theme_center_x + (entity.size.width - theme_width) / 2;
+            } else {
               entity.size.width = theme_width;
+              entity.center.x = theme_center_x;
             }
-            if (!level_height) {
+            if (entity.size.height) {
+              entity.center.y = theme_center_y + (entity.size.height - theme_height) / 2;
+            } else {
               entity.size.height = theme_height;
+              entity.center.y = theme_center_y;
             }
-            entity.center = {
-              x: theme_cx + (level_width ? (entity.size.width - theme_width) / 2 : 0),
-              y: theme_cy + (level_height ? (entity.size.height - theme_height) / 2 : 0)
-            };
             entity.aabb = this.compute_aabb(entity);
           } else {
             console.error(`XMoto warning: texture file \"${texture_name}\" was not found in the theme and is ignored.`);

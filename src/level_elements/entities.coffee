@@ -20,13 +20,20 @@ class Entities
         size:
           r:      parseFloat($(xml_entity).find('size').attr('r'))
           z:      parseInt($(xml_entity).find('size').attr('z')) || undefined
-          width:  parseFloat($(xml_entity).find('size').attr('width'))
-          height: parseFloat($(xml_entity).find('size').attr('height'))
+          width:  do ->
+                    attr = $(xml_entity).find('size').attr('width')
+                    if attr? then parseFloat(attr) else undefined # integer or undefined if no attribute (will come from theme)
+          height: do ->
+                    attr = $(xml_entity).find('size').attr('height')
+                    if attr? then parseFloat(attr) else undefined # integer or undefined if no attribute (will come from theme)
         position:
           x:        parseFloat($(xml_entity).find('position').attr('x'))
           y:        parseFloat($(xml_entity).find('position').attr('y'))
           angle:    parseFloat($(xml_entity).find('position').attr('angle')) || 0
           reversed: $(xml_entity).find('position').attr('reversed') == 'true'
+        center:
+          x: undefined # can only come from theme
+          y: undefined # can only come from theme
         params: {}
 
       # parse params tags
@@ -53,23 +60,26 @@ class Entities
           entity.frames         = theme_sprite.frames
           entity.display        = true # if an entity has a texture, it needs to be displayed
 
-          # Default theme values of not specifically defined
-          theme_width  = theme_sprite.size.width  || 1.0
-          theme_height = theme_sprite.size.height || 1.0
-          theme_cx     = theme_sprite.center.x    || 0.5
-          theme_cy     = theme_sprite.center.y    || 0.5
+          # Default theme values if not defined in XML
+          theme_width    = theme_sprite.size.width  || 1.0
+          theme_height   = theme_sprite.size.height || 1.0
+          theme_center_x = theme_sprite.center.x    || 0.5
+          theme_center_y = theme_sprite.center.y    || 0.5
 
-          # When the level overrides width/height, XMoto keeps the sprite centered on the
-          # sprite's original centerX/centerY by shifting the center by half the size delta.
-          # (cf. xmoto Renderer.cpp::_RenderSprite — `v_centerX += (entity.width - sprite.width)/2`)
-          level_width  = entity.size.width  > 0
-          level_height = entity.size.height > 0
+          # - When the level overrides width/height, we keep the sprite centered on the
+          #   sprite's original centerX/centerY by shifting the center by half the size delta.
+          # - If level doesn't overrides width/height, we simply use theme values
+          if entity.size.width
+            entity.center.x = theme_center_x + (entity.size.width - theme_width)  / 2
+          else
+            entity.size.width = theme_width
+            entity.center.x   = theme_center_x
 
-          entity.size.width  = theme_width  if not level_width
-          entity.size.height = theme_height if not level_height
-          entity.center =
-            x: theme_cx + (if level_width  then (entity.size.width  - theme_width)  / 2 else 0)
-            y: theme_cy + (if level_height then (entity.size.height - theme_height) / 2 else 0)
+          if entity.size.height
+            entity.center.y = theme_center_y + (entity.size.height - theme_height) / 2
+          else
+            entity.size.height = theme_height
+            entity.center.y    = theme_center_y
 
           entity.aabb = @compute_aabb(entity)
         else
