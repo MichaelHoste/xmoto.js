@@ -1708,9 +1708,8 @@
     }
 
     // Find maximal runs of consecutive vertices sharing the same edge texture.
-    // Wrapping runs (first and last with same texture) are merged.
     extract_runs(vertices) {
-      var i, j, n, runs, texture;
+      var first, i, j, last, n, runs, texture;
       n = vertices.length;
       runs = [];
       i = 0;
@@ -1731,9 +1730,14 @@
           i += 1;
         }
       }
-      if (runs.length > 1 && runs[0].texture === runs[runs.length - 1].texture) {
-        runs[0].start = runs[runs.length - 1].start;
-        runs.pop();
+      // Wrapping runs (first and last with same texture and continuous positions) are merged.
+      if (runs.length >= 2) {
+        first = runs[0];
+        last = runs[runs.length - 1];
+        if (first.start === 0 && last.end === n - 1 && first.texture === last.texture) {
+          first.start = last.start;
+          runs.pop();
+        }
       }
       return runs;
     }
