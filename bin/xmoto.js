@@ -2209,20 +2209,43 @@
     }
 
     compute_aabb(entity) {
-      var aabb, lower_bound, upper_bound;
-      // Mirrors XMoto Renderer.cpp::_RenderSprite — the sprite occupies
-      // [pos.x - centerX, pos.x - centerX + width] × [pos.y - centerY, pos.y - centerY + height]
-      lower_bound = {
-        x: entity.position.x - entity.center.x,
-        y: entity.position.y - entity.center.y
-      };
-      upper_bound = {
-        x: lower_bound.x + entity.size.width,
-        y: lower_bound.y + entity.size.height
-      };
+      var aabb, bottom, corner, corners, k, left, len, right, rotated, top, xs, ys;
+      // limits relative to anchor
+      left = -entity.center.x;
+      right = left + entity.size.width;
+      bottom = -entity.center.y;
+      top = bottom + entity.size.height;
+      corners = [
+        {
+          x: left,
+          y: bottom
+        },
+        {
+          x: right,
+          y: bottom
+        },
+        {
+          x: right,
+          y: top
+        },
+        {
+          x: left,
+          y: top
+        }
+      ];
+      // We always rotate the 4 corners by the entity.position.angle (usually 0!)
+      // with entity.position as anchor
+      xs = [];
+      ys = [];
+      for (k = 0, len = corners.length; k < len; k++) {
+        corner = corners[k];
+        rotated = Math2D.rotate_point(corner, entity.position.angle, entity.position);
+        xs.push(rotated.x);
+        ys.push(rotated.y);
+      }
       aabb = new Box2D.Collision.b2AABB();
-      aabb.lowerBound.Set(lower_bound.x, lower_bound.y);
-      aabb.upperBound.Set(upper_bound.x, upper_bound.y);
+      aabb.lowerBound.Set(Math.min(...xs), Math.min(...ys));
+      aabb.upperBound.Set(Math.max(...xs), Math.max(...ys));
       return aabb;
     }
 
