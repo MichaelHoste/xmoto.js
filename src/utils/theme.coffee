@@ -42,12 +42,19 @@ class Theme
           depth: parseFloat($(xml_sprite).attr('depth'))
 
       else if $(xml_sprite).attr('type') == 'Texture'
-        @textures[$(xml_sprite).attr('name').toLowerCase()] =
-          file:           if $(xml_sprite).attr('file') then $(xml_sprite).attr('file').toLowerCase() else ''
-          file_base:      $(xml_sprite).attr('fileBase')
-          file_extension: $(xml_sprite).attr('fileExtension')
-          frames:         $(xml_sprite).find('frame').length
-          delay:          parseFloat($(xml_sprite).attr('delay'))
+        name     = $(xml_sprite).attr('name').toLowerCase()
+        frames   = $(xml_sprite).find('frame').length
+        existing = @textures[name]
+
+        # Some themes declare both an animated entry and a static fallback under
+        # the same name (for older xmoto versions). Always keep the animated one.
+        if !existing || existing.frames == 0
+          @textures[name] =
+            file:           if $(xml_sprite).attr('file') then $(xml_sprite).attr('file').toLowerCase() else ''
+            file_base:      $(xml_sprite).attr('fileBase')
+            file_extension: $(xml_sprite).attr('fileExtension')?.toLowerCase()
+            frames:         frames
+            delay:          parseFloat($(xml_sprite).attr('delay'))
 
     @callback()
 

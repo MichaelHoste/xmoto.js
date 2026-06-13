@@ -1274,7 +1274,7 @@
     }
 
     parse(xml) {
-      var block, k, l, len, len1, len2, m, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
+      var block, i, k, l, len, len1, len2, m, material, texture_params, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
       xml_blocks = $(xml).find('block');
       for (k = 0, len = xml_blocks.length; k < len; k++) {
         xml_block = xml_blocks[k];
@@ -1314,7 +1314,24 @@
         if (block.usetexture.id === 'default') {
           block.usetexture.id = 'dirt';
         }
-        block.texture_name = this.assets.theme.texture_params(block.usetexture.id).file;
+        texture_params = this.assets.theme.texture_params(block.usetexture.id);
+        if (texture_params.frames > 0) {
+          block.animated = true;
+          block.frames_count = texture_params.frames;
+          block.delay = texture_params.delay;
+          block.frame_names = (function() {
+            var l, ref, results;
+            results = [];
+            for (i = l = 0, ref = texture_params.frames - 1; (0 <= ref ? l <= ref : l >= ref); i = 0 <= ref ? ++l : --l) {
+              results.push(this.frame_name(texture_params, i));
+            }
+            return results;
+          }).call(this);
+          block.texture_name = block.frame_names[0];
+        } else {
+          block.animated = false;
+          block.texture_name = texture_params.file;
+        }
         xml_materials = $(xml_block).find('edges material');
         for (l = 0, len1 = xml_materials.length; l < len1; l++) {
           xml_material = xml_materials[l];
@@ -1353,12 +1370,20 @@
     }
 
     load_assets() {
-      var block, k, len, ref, results;
+      var block, frame_name, k, l, len, len1, ref, ref1, results;
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         block = ref[k];
-        this.assets.textures.push(block.texture_name);
+        if (block.animated) {
+          ref1 = block.frame_names;
+          for (l = 0, len1 = ref1.length; l < len1; l++) {
+            frame_name = ref1[l];
+            this.assets.textures.push(frame_name);
+          }
+        } else {
+          this.assets.textures.push(block.texture_name);
+        }
         results.push(block.edges_list.load_assets());
       }
       return results;
@@ -1395,36 +1420,56 @@
     }
 
     init_sprites() {
-      var block, k, len, matrix, points, ref, results, texture;
+      var block, k, len, name, ref, results;
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         block = ref[k];
         // Build polygon in world PIXI coordinates (y inverted)
-        points = block.vertices.map(function(v) {
+        block.points = block.vertices.map(function(v) {
           return new PIXI.Point(v.absolute_x, -v.absolute_y);
         });
-        // Load block texture
-        texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
         // Not translating the matrix ensures texture continuity between blocks
-        matrix = new PIXI.Matrix();
-        matrix.scale(block.usetexture.scale / 60.0, -block.usetexture.scale / 60.0);
-        //matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
-
+        block.matrix = new PIXI.Matrix();
+        block.matrix.scale(block.usetexture.scale / 60.0, -block.usetexture.scale / 60.0);
+        //block.matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
+        if (block.animated) {
+          block.frame_textures = (function() {
+            var l, len1, ref1, results1;
+            ref1 = block.frame_names;
+            results1 = [];
+            for (l = 0, len1 = ref1.length; l < len1; l++) {
+              name = ref1[l];
+              results1.push(PIXI.Texture.from(this.assets.get_url(name)));
+            }
+            return results1;
+          }).call(this);
+          block.current_frame = 0;
+          // Stagger the animation start so neighbouring blocks of the same texture
+          // don't tear: they all share the same wall-clock based frame index.
+          block.animation_start = performance.now();
+        } else {
+          block.texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
+        }
         // Create graphics with texture and matrix
         block.graphics = new PIXI.Graphics();
         block.graphics.label = block.id;
-        block.graphics.poly(points);
-        block.graphics.fill({
-          texture: texture,
-          matrix: matrix,
-          color: 0xffffff,
-          alpha: 1.0,
-          textureSpace: 'global'
-        });
+        this.draw_block_fill(block, block.animated ? block.frame_textures[0] : block.texture);
         results.push(this.level.layers.layer_for_block(block).addChild(block.graphics));
       }
       return results;
+    }
+
+    draw_block_fill(block, texture) {
+      block.graphics.clear();
+      block.graphics.poly(block.points);
+      return block.graphics.fill({
+        texture: texture,
+        matrix: block.matrix,
+        color: 0xffffff,
+        alpha: 1.0,
+        textureSpace: 'global'
+      });
     }
 
     // One Graphic is created in each block layer (parallax or static)
@@ -1454,17 +1499,31 @@
     }
 
     update() {
-      var block, k, len, ref;
+      var block, k, len, now, ref;
       if (!Constants.debug_physics) {
+        now = performance.now();
         ref = this.list;
         for (k = 0, len = ref.length; k < len; k++) {
           block = ref[k];
           block.graphics.visible = this.visible(block);
           block.edges_list.update();
+          if (block.animated && block.graphics.visible) {
+            this.update_animation(block, now);
+          }
         }
       }
       if (Constants.debug_culling) {
         return this.draw_debug_culling();
+      }
+    }
+
+    update_animation(block, now) {
+      var elapsed, frame;
+      elapsed = (now - block.animation_start) / 1000.0;
+      frame = Math.floor(elapsed / block.delay) % block.frames_count;
+      if (frame !== block.current_frame) {
+        block.current_frame = frame;
+        return this.draw_block_fill(block, block.frame_textures[frame]);
       }
     }
 
@@ -1529,6 +1588,10 @@
       aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions));
       aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions));
       return aabb;
+    }
+
+    frame_name(texture_params, frame_number) {
+      return `${texture_params.file_base}${(frame_number / 100.0).toFixed(2).toString().substring(2)}.${texture_params.file_extension}`;
     }
 
     // Blocks drawing is sorted by textures:
@@ -4328,7 +4391,7 @@
     }
 
     load_theme(xml) {
-      var k, len, xml_sprite, xml_sprites;
+      var existing, frames, k, len, name, ref, xml_sprite, xml_sprites;
       xml_sprites = $(xml).find('sprite');
       for (k = 0, len = xml_sprites.length; k < len; k++) {
         xml_sprite = xml_sprites[k];
@@ -4355,13 +4418,18 @@
             depth: parseFloat($(xml_sprite).attr('depth'))
           };
         } else if ($(xml_sprite).attr('type') === 'Texture') {
-          this.textures[$(xml_sprite).attr('name').toLowerCase()] = {
-            file: $(xml_sprite).attr('file') ? $(xml_sprite).attr('file').toLowerCase() : '',
-            file_base: $(xml_sprite).attr('fileBase'),
-            file_extension: $(xml_sprite).attr('fileExtension'),
-            frames: $(xml_sprite).find('frame').length,
-            delay: parseFloat($(xml_sprite).attr('delay'))
-          };
+          name = $(xml_sprite).attr('name').toLowerCase();
+          frames = $(xml_sprite).find('frame').length;
+          existing = this.textures[name];
+          if (!existing || existing.frames === 0) {
+            this.textures[name] = {
+              file: $(xml_sprite).attr('file') ? $(xml_sprite).attr('file').toLowerCase() : '',
+              file_base: $(xml_sprite).attr('fileBase'),
+              file_extension: (ref = $(xml_sprite).attr('fileExtension')) != null ? ref.toLowerCase() : void 0,
+              frames: frames,
+              delay: parseFloat($(xml_sprite).attr('delay'))
+            };
+          }
         }
       }
       return this.callback();

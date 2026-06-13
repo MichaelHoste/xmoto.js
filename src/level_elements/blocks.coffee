@@ -35,7 +35,18 @@ class Blocks
       block.no_collision ||= block.position.islayer && block.position.layerid != undefined # layer with specific layerid  => no collision
 
       block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
-      block.texture_name  = @assets.theme.texture_params(block.usetexture.id).file
+
+      texture_params = @assets.theme.texture_params(block.usetexture.id)
+
+      if texture_params.frames > 0
+        block.animated     = true
+        block.frames_count = texture_params.frames
+        block.delay        = texture_params.delay
+        block.frame_names  = (@frame_name(texture_params, i) for i in [0..texture_params.frames - 1])
+        block.texture_name = block.frame_names[0]
+      else
+        block.animated     = false
+        block.texture_name = texture_params.file
 
       xml_materials = $(xml_block).find('edges material')
       for xml_material in xml_materials
@@ -76,7 +87,11 @@ class Blocks
 
   load_assets: ->
     for block in @list
-      @assets.textures.push(block.texture_name)
+      if block.animated
+        @assets.textures.push(frame_name) for frame_name in block.frame_names
+      else
+        @assets.textures.push(block.texture_name)
+
       block.edges_list.load_assets()
 
   init: ->
@@ -97,32 +112,42 @@ class Blocks
   init_sprites: ->
     for block in @list
       # Build polygon in world PIXI coordinates (y inverted)
-      points = block.vertices.map((v) ->
+      block.points = block.vertices.map((v) ->
         new PIXI.Point(v.absolute_x, -v.absolute_y)
       )
 
-      # Load block texture
-      texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
-
       # Not translating the matrix ensures texture continuity between blocks
-      matrix = new PIXI.Matrix()
-      matrix.scale(block.usetexture.scale / 60.0, -block.usetexture.scale / 60.0)
-      #matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
+      block.matrix = new PIXI.Matrix()
+      block.matrix.scale(block.usetexture.scale / 60.0, -block.usetexture.scale / 60.0)
+      #block.matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
+
+      if block.animated
+        block.frame_textures = (PIXI.Texture.from(@assets.get_url(name)) for name in block.frame_names)
+        block.current_frame  = 0
+        # Stagger the animation start so neighbouring blocks of the same texture
+        # don't tear: they all share the same wall-clock based frame index.
+        block.animation_start = performance.now()
+      else
+        block.texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
 
       # Create graphics with texture and matrix
       block.graphics = new PIXI.Graphics()
       block.graphics.label = block.id
 
-      block.graphics.poly(points)
-      block.graphics.fill({
-        texture:      texture,
-        matrix:       matrix,
-        color:        0xffffff,
-        alpha:        1.0,
-        textureSpace: 'global'
-      })
+      @draw_block_fill(block, if block.animated then block.frame_textures[0] else block.texture)
 
       @level.layers.layer_for_block(block).addChild(block.graphics)
+
+  draw_block_fill: (block, texture) ->
+    block.graphics.clear()
+    block.graphics.poly(block.points)
+    block.graphics.fill({
+      texture:      texture,
+      matrix:       block.matrix,
+      color:        0xffffff,
+      alpha:        1.0,
+      textureSpace: 'global'
+    })
 
   # One Graphic is created in each block layer (parallax or static)
   # for drawing culling rectangles. It's because parallax layers
@@ -144,12 +169,25 @@ class Blocks
 
   update: ->
     if !Constants.debug_physics
+      now = performance.now()
+
       for block in @list
         block.graphics.visible = @visible(block)
         block.edges_list.update()
 
+        if block.animated && block.graphics.visible
+          @update_animation(block, now)
+
     if Constants.debug_culling
       @draw_debug_culling()
+
+  update_animation: (block, now) ->
+    elapsed = (now - block.animation_start) / 1000.0
+    frame   = Math.floor(elapsed / block.delay) % block.frames_count
+
+    if frame != block.current_frame
+      block.current_frame = frame
+      @draw_block_fill(block, block.frame_textures[frame])
 
   draw_debug_culling: ->
     culling_debugs = Object.values(@culling_debug_graphics)
@@ -192,6 +230,9 @@ class Blocks
     aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
 
     return aabb
+
+  frame_name: (texture_params, frame_number) ->
+    "#{texture_params.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{texture_params.file_extension}"
 
   # Blocks drawing is sorted by textures:
   # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
