@@ -23,7 +23,7 @@ class Blocks
                         if attr? then parseInt(attr) else undefined # integer or undefined if no attribute
         usetexture:
           id:         $(xml_block).find('usetexture').attr('id').toLowerCase()
-          scale:      parseFloat($(xml_block).find('usetexture').attr('scale'))
+          scale:      parseFloat($(xml_block).find('usetexture').attr('scale')) || 1.0
         physics:
           grip:       parseFloat($(xml_block).find('physics').attr('grip'))
         edges:
@@ -106,7 +106,7 @@ class Blocks
 
       # Not translating the matrix ensures texture continuity between blocks
       matrix = new PIXI.Matrix()
-      matrix.scale(1.0 / 60.0, -1.0 / 60.0)
+      matrix.scale(block.usetexture.scale / 60.0, -block.usetexture.scale / 60.0)
       #matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
 
       # Create graphics with texture and matrix
