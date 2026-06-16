@@ -125,7 +125,7 @@ class Blocks
 
       # 'repeat' wrap lets UVs > 1 tile the texture across the polygon.
       for texture in block.textures
-        texture.source.style.addressMode = 'repeat'
+        texture.source.addressMode = 'repeat'
 
       block.graphics       = @build_mesh(block)
       block.graphics.label = block.id
@@ -152,7 +152,7 @@ class Blocks
       uvs[i * 2]           =  uv_scale * point.x
       uvs[i * 2 + 1]       = -uv_scale * point.y
 
-    indices = new Uint16Array(PIXI.earcut(positions))
+    indices = new Uint32Array(PIXI.earcut(positions))
 
     geometry = new PIXI.MeshGeometry({
       positions: positions

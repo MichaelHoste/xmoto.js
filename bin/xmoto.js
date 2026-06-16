@@ -1449,7 +1449,7 @@
         // 'repeat' wrap lets UVs > 1 tile the texture across the polygon.
         for (l = 0, len1 = ref1.length; l < len1; l++) {
           texture = ref1[l];
-          texture.source.style.addressMode = 'repeat';
+          texture.source.addressMode = 'repeat';
         }
         block.graphics = this.build_mesh(block);
         block.graphics.label = block.id;
@@ -1479,7 +1479,7 @@
         uvs[i * 2] = uv_scale * point.x;
         uvs[i * 2 + 1] = -uv_scale * point.y;
       }
-      indices = new Uint16Array(PIXI.earcut(positions));
+      indices = new Uint32Array(PIXI.earcut(positions));
       geometry = new PIXI.MeshGeometry({
         positions: positions,
         uvs: uvs,
