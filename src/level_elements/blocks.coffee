@@ -116,37 +116,77 @@ class Blocks
         new PIXI.Point(v.absolute_x, -v.absolute_y)
       )
 
-      # Not translating the matrix ensures texture continuity between blocks
-      block.matrix = new PIXI.Matrix()
-      block.matrix.scale(block.usetexture.scale / 60.0, -block.usetexture.scale / 60.0)
-      #block.matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
-
       if block.animated
         block.frame_textures = (PIXI.Texture.from(@assets.get_url(name)) for name in block.frame_names)
-        block.current_frame  = 0
-        # Stagger the animation start so neighbouring blocks of the same texture
-        # don't tear: they all share the same wall-clock based frame index.
+
+        # Enable repeat wrap so UVs outside 0..1 tile the texture
+        # (mimicking the textureSpace: 'global' behaviour of Graphics fills).
+        for texture in block.frame_textures
+          texture.source.style.addressMode = 'repeat'
+
+        block.current_frame   = 0
         block.animation_start = performance.now()
+        block.graphics        = @build_animated_mesh(block)
       else
+        # Static blocks keep the Graphics + global-space texture matrix path.
+        # Not translating the matrix ensures texture continuity between blocks.
+        # We want UV per world unit = scale * 0.25 (xmoto C++ convention,
+        # see src/xmscene/Block.cpp: texturePos = world * scale * 0.25).
+        # PIXI's textureSpace='global' inverts our matrix then multiplies by
+        # 1/source.size, so we pre-compensate with source.size to cancel that
+        # out and land on the texture-size-independent xmoto factor.
         block.texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
+        source        = block.texture.source
+        m             = 4.0 / block.usetexture.scale
 
-      # Create graphics with texture and matrix
-      block.graphics = new PIXI.Graphics()
+        block.matrix = new PIXI.Matrix()
+        block.matrix.scale(m / source.width, -m / source.height)
+
+        block.graphics = new PIXI.Graphics()
+        @draw_static_block_fill(block)
+
       block.graphics.label = block.id
-
-      @draw_block_fill(block, if block.animated then block.frame_textures[0] else block.texture)
-
       @level.layers.layer_for_block(block).addChild(block.graphics)
 
-  draw_block_fill: (block, texture) ->
+  draw_static_block_fill: (block) ->
     block.graphics.clear()
     block.graphics.poly(block.points)
     block.graphics.fill({
-      texture:      texture,
+      texture:      block.texture,
       matrix:       block.matrix,
       color:        0xffffff,
       alpha:        1.0,
       textureSpace: 'global'
+    })
+
+  # Animated blocks use a Mesh so we can swap textures without rebuilding geometry.
+  # UV per world unit = scale * 0.25, matching xmoto C++
+  # (src/xmscene/Block.cpp: texturePos = world * scale * 0.25). Combined with
+  # the source's 'repeat' wrap, the texture tiles every 4 world units at
+  # scale=1, independently of texture pixel size.
+  build_animated_mesh: (block) ->
+    uv_scale =  0.25 * block.usetexture.scale
+
+    positions = new Float32Array(block.points.length * 2)
+    uvs       = new Float32Array(block.points.length * 2)
+
+    for point, i in block.points
+      positions[i * 2]     = point.x
+      positions[i * 2 + 1] = point.y
+      uvs[i * 2]           =  uv_scale * point.x
+      uvs[i * 2 + 1]       = -uv_scale * point.y
+
+    indices = new Uint16Array(PIXI.earcut(positions))
+
+    geometry = new PIXI.MeshGeometry({
+      positions: positions
+      uvs:       uvs
+      indices:   indices
+    })
+
+    new PIXI.Mesh({
+      geometry: geometry
+      texture:  block.frame_textures[0]
     })
 
   # One Graphic is created in each block layer (parallax or static)
@@ -187,7 +227,7 @@ class Blocks
 
     if frame != block.current_frame
       block.current_frame = frame
-      @draw_block_fill(block, block.frame_textures[frame])
+      block.graphics.texture = block.frame_textures[frame]
 
   draw_debug_culling: ->
     culling_debugs = Object.values(@culling_debug_graphics)

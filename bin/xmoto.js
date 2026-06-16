@@ -1274,7 +1274,7 @@
     }
 
     parse(xml) {
-      var block, i, k, l, len, len1, len2, m, material, texture_params, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
+      var block, i, k, l, len, len1, len2, material, o, texture_params, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
       xml_blocks = $(xml).find('block');
       for (k = 0, len = xml_blocks.length; k < len; k++) {
         xml_block = xml_blocks[k];
@@ -1348,8 +1348,8 @@
           block.edges.materials.push(material);
         }
         xml_vertices = $(xml_block).find('vertex');
-        for (m = 0, len2 = xml_vertices.length; m < len2; m++) {
-          xml_vertex = xml_vertices[m];
+        for (o = 0, len2 = xml_vertices.length; o < len2; o++) {
+          xml_vertex = xml_vertices[o];
           vertex = {
             x: parseFloat($(xml_vertex).attr('x')),
             y: parseFloat($(xml_vertex).attr('y')),
@@ -1420,7 +1420,7 @@
     }
 
     init_sprites() {
-      var block, k, len, name, ref, results;
+      var block, k, l, len, len1, m, name, ref, ref1, results, source, texture;
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
@@ -1429,10 +1429,6 @@
         block.points = block.vertices.map(function(v) {
           return new PIXI.Point(v.absolute_x, -v.absolute_y);
         });
-        // Not translating the matrix ensures texture continuity between blocks
-        block.matrix = new PIXI.Matrix();
-        block.matrix.scale(block.usetexture.scale / 60.0, -block.usetexture.scale / 60.0);
-        //block.matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
         if (block.animated) {
           block.frame_textures = (function() {
             var l, len1, ref1, results1;
@@ -1444,31 +1440,77 @@
             }
             return results1;
           }).call(this);
+          ref1 = block.frame_textures;
+          // Enable repeat wrap so UVs outside 0..1 tile the texture
+          // (mimicking the textureSpace: 'global' behaviour of Graphics fills).
+          for (l = 0, len1 = ref1.length; l < len1; l++) {
+            texture = ref1[l];
+            texture.source.style.addressMode = 'repeat';
+          }
           block.current_frame = 0;
-          // Stagger the animation start so neighbouring blocks of the same texture
-          // don't tear: they all share the same wall-clock based frame index.
           block.animation_start = performance.now();
+          block.graphics = this.build_animated_mesh(block);
         } else {
+          // Static blocks keep the Graphics + global-space texture matrix path.
+          // Not translating the matrix ensures texture continuity between blocks.
+          // We want UV per world unit = scale * 0.25 (xmoto C++ convention,
+          // see src/xmscene/Block.cpp: texturePos = world * scale * 0.25).
+          // PIXI's textureSpace='global' inverts our matrix then multiplies by
+          // 1/source.size, so we pre-compensate with source.size to cancel that
+          // out and land on the texture-size-independent xmoto factor.
           block.texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
+          source = block.texture.source;
+          m = 4.0 / block.usetexture.scale;
+          block.matrix = new PIXI.Matrix();
+          block.matrix.scale(m / source.width, -m / source.height);
+          block.graphics = new PIXI.Graphics();
+          this.draw_static_block_fill(block);
         }
-        // Create graphics with texture and matrix
-        block.graphics = new PIXI.Graphics();
         block.graphics.label = block.id;
-        this.draw_block_fill(block, block.animated ? block.frame_textures[0] : block.texture);
         results.push(this.level.layers.layer_for_block(block).addChild(block.graphics));
       }
       return results;
     }
 
-    draw_block_fill(block, texture) {
+    draw_static_block_fill(block) {
       block.graphics.clear();
       block.graphics.poly(block.points);
       return block.graphics.fill({
-        texture: texture,
+        texture: block.texture,
         matrix: block.matrix,
         color: 0xffffff,
         alpha: 1.0,
         textureSpace: 'global'
+      });
+    }
+
+    // Animated blocks use a Mesh so we can swap textures without rebuilding geometry.
+    // UV per world unit = scale * 0.25, matching xmoto C++
+    // (src/xmscene/Block.cpp: texturePos = world * scale * 0.25). Combined with
+    // the source's 'repeat' wrap, the texture tiles every 4 world units at
+    // scale=1, independently of texture pixel size.
+    build_animated_mesh(block) {
+      var geometry, i, indices, k, len, point, positions, ref, uv_scale, uvs;
+      uv_scale = 0.25 * block.usetexture.scale;
+      positions = new Float32Array(block.points.length * 2);
+      uvs = new Float32Array(block.points.length * 2);
+      ref = block.points;
+      for (i = k = 0, len = ref.length; k < len; i = ++k) {
+        point = ref[i];
+        positions[i * 2] = point.x;
+        positions[i * 2 + 1] = point.y;
+        uvs[i * 2] = uv_scale * point.x;
+        uvs[i * 2 + 1] = -uv_scale * point.y;
+      }
+      indices = new Uint16Array(PIXI.earcut(positions));
+      geometry = new PIXI.MeshGeometry({
+        positions: positions,
+        uvs: uvs,
+        indices: indices
+      });
+      return new PIXI.Mesh({
+        geometry: geometry,
+        texture: block.frame_textures[0]
       });
     }
 
@@ -1523,12 +1565,12 @@
       frame = Math.floor(elapsed / block.delay) % block.frames_count;
       if (frame !== block.current_frame) {
         block.current_frame = frame;
-        return this.draw_block_fill(block, block.frame_textures[frame]);
+        return block.graphics.texture = block.frame_textures[frame];
       }
     }
 
     draw_debug_culling() {
-      var block, calling_debug, culling_debug, culling_debugs, k, l, layer, len, len1, len2, line_width, m, ref, ref1, results;
+      var block, calling_debug, culling_debug, culling_debugs, k, l, layer, len, len1, len2, line_width, o, ref, ref1, results;
       culling_debugs = Object.values(this.culling_debug_graphics);
       for (k = 0, len = culling_debugs.length; k < len; k++) {
         culling_debug = culling_debugs[k];
@@ -1546,8 +1588,8 @@
       ref1 = Object.values(this.culling_debug_graphics);
       // Parallax layers use a fixed 1px stroke (pixelLine) to stay readable
       results = [];
-      for (m = 0, len2 = ref1.length; m < len2; m++) {
-        calling_debug = ref1[m];
+      for (o = 0, len2 = ref1.length; o < len2; o++) {
+        calling_debug = ref1[o];
         if (calling_debug.parallax) {
           results.push(calling_debug.stroke({
             color: 0xC7C778,
@@ -1809,7 +1851,7 @@
     // Collects the surface vertices from run.start through (run.end + 1),
     // then builds a triangle strip projecting downward by theme.depth.
     build_edge_polygon(vertices, run, theme) {
-      var bot_curr, bot_next, closing_idx, depth, dx, dy, i, indices, k, l, lengths, m, n, o, poly_vertices, ref, ref1, ref2, ref3, s, scale, surface, surface_count, uvs, v;
+      var bot_curr, bot_next, closing_idx, depth, dx, dy, i, indices, k, l, lengths, n, o, p, poly_vertices, ref, ref1, ref2, ref3, s, scale, surface, surface_count, uvs, v;
       n = vertices.length;
       depth = theme.depth;
       scale = theme.scale;
@@ -1848,7 +1890,7 @@
         });
         uvs.push(lengths[s] * scale, 0.0);
       }
-      for (s = m = 0, ref2 = surface_count; (0 <= ref2 ? m < ref2 : m > ref2); s = 0 <= ref2 ? ++m : --m) {
+      for (s = o = 0, ref2 = surface_count; (0 <= ref2 ? o < ref2 : o > ref2); s = 0 <= ref2 ? ++o : --o) {
         v = surface[surface_count - 1 - s];
         poly_vertices.push({
           x: v.x,
@@ -1858,7 +1900,7 @@
       }
       // Triangle strip indices (2 triangles per segment)
       indices = [];
-      for (s = o = 0, ref3 = surface_count - 1; (0 <= ref3 ? o < ref3 : o > ref3); s = 0 <= ref3 ? ++o : --o) {
+      for (s = p = 0, ref3 = surface_count - 1; (0 <= ref3 ? p < ref3 : p > ref3); s = 0 <= ref3 ? ++p : --p) {
         bot_curr = 2 * surface_count - 1 - s;
         bot_next = 2 * surface_count - 2 - s;
         indices.push(s, s + 1, bot_curr);
@@ -3063,7 +3105,7 @@
     }
 
     init_sprites() {
-      var asset_name, axle_name, k, l, len, len1, len2, m, part, ref, ref1, ref2, wheel_name;
+      var asset_name, axle_name, k, l, len, len1, len2, o, part, ref, ref1, ref2, wheel_name;
       ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
       // Create and add sprites to the scene
       for (k = 0, len = ref.length; k < len; k++) {
@@ -3093,8 +3135,8 @@
       }
       ref2 = ['left_axle', 'right_axle'];
       // Define axles values
-      for (m = 0, len2 = ref2.length; m < len2; m++) {
-        axle_name = ref2[m];
+      for (o = 0, len2 = ref2.length; o < len2; o++) {
+        axle_name = ref2[o];
         this[`${axle_name}_sprite`].anchor.x = 0.0;
         this[`${axle_name}_sprite`].anchor.y = 0.5;
       }
@@ -4158,7 +4200,7 @@
     }
 
     load(callback) {
-      var item, items, k, l, len, len1, len2, len3, m, o, ref, ref1, ref2, ref3, urls;
+      var item, items, k, l, len, len1, len2, len3, o, p, ref, ref1, ref2, ref3, urls;
       items = [];
       ref = this.textures;
       for (k = 0, len = ref.length; k < len; k++) {
@@ -4177,16 +4219,16 @@
         });
       }
       ref2 = this.effects;
-      for (m = 0, len2 = ref2.length; m < len2; m++) {
-        item = ref2[m];
+      for (o = 0, len2 = ref2.length; o < len2; o++) {
+        item = ref2[o];
         items.push({
           id: item,
           src: `/data/Textures/Effects/${item.toLowerCase()}`
         });
       }
       ref3 = this.moto;
-      for (o = 0, len3 = ref3.length; o < len3; o++) {
-        item = ref3[o];
+      for (p = 0, len3 = ref3.length; p < len3; p++) {
+        item = ref3[p];
         items.push({
           id: item,
           src: `/data/Textures/Riders/${item.toLowerCase()}`
@@ -4197,9 +4239,9 @@
         return item.src;
       });
       return PIXI.Assets.load(urls).then(() => {
-        var len4, p;
-        for (p = 0, len4 = items.length; p < len4; p++) {
-          item = items[p];
+        var len4, q;
+        for (q = 0, len4 = items.length; q < len4; q++) {
+          item = items[q];
           this.resources[item.id] = {
             url: item.src
           };
