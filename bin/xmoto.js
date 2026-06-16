@@ -1462,13 +1462,17 @@
     // later swap mesh.texture between frame textures; static blocks just keep
     // their single texture.
 
-    // UV per world unit = scale * 0.25, matching xmoto C++
-    // (src/xmscene/Block.cpp: texturePos = world * scale * 0.25). Combined with
-    // the source's 'repeat' wrap, the texture tiles every 4 world units at
-    // scale=1, independently of texture pixel size.
+    // UV per world unit = scale * 0.25 * (256 / source.width).
+    // xmoto C++ uses scale * 0.25 directly (src/xmscene/Block.cpp:
+    // texturePos = world * scale * 0.25), which assumes 256-pixel textures and
+    // stretches lower-resolution textures (e.g. 128px clouds/water). Anchoring
+    // on 256 keeps standard-size textures identical to xmoto while tiling
+    // smaller textures proportionally denser for consistent on-screen pixel
+    // density.
     build_mesh(block) {
-      var geometry, i, indices, k, len, point, positions, ref, uv_scale, uvs;
-      uv_scale = 0.25 * block.usetexture.scale;
+      var geometry, i, indices, k, len, point, positions, ref, source, uv_scale, uvs;
+      source = block.textures[0].source;
+      uv_scale = block.usetexture.scale * 64.0 / source.width;
       positions = new Float32Array(block.points.length * 2);
       uvs = new Float32Array(block.points.length * 2);
       ref = block.points;
