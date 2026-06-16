@@ -117,55 +117,31 @@ class Blocks
       )
 
       if block.animated
-        block.frame_textures = (PIXI.Texture.from(@assets.get_url(name)) for name in block.frame_names)
-
-        # Enable repeat wrap so UVs outside 0..1 tile the texture
-        # (mimicking the textureSpace: 'global' behaviour of Graphics fills).
-        for texture in block.frame_textures
-          texture.source.style.addressMode = 'repeat'
-
+        block.textures        = (PIXI.Texture.from(@assets.get_url(name)) for name in block.frame_names)
         block.current_frame   = 0
         block.animation_start = performance.now()
-        block.graphics        = @build_animated_mesh(block)
       else
-        # Static blocks keep the Graphics + global-space texture matrix path.
-        # Not translating the matrix ensures texture continuity between blocks.
-        # We want UV per world unit = scale * 0.25 (xmoto C++ convention,
-        # see src/xmscene/Block.cpp: texturePos = world * scale * 0.25).
-        # PIXI's textureSpace='global' inverts our matrix then multiplies by
-        # 1/source.size, so we pre-compensate with source.size to cancel that
-        # out and land on the texture-size-independent xmoto factor.
-        block.texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
-        source        = block.texture.source
-        m             = 4.0 / block.usetexture.scale
+        block.textures = [PIXI.Texture.from(@assets.get_url(block.texture_name))]
 
-        block.matrix = new PIXI.Matrix()
-        block.matrix.scale(m / source.width, -m / source.height)
+      # 'repeat' wrap lets UVs > 1 tile the texture across the polygon.
+      for texture in block.textures
+        texture.source.style.addressMode = 'repeat'
 
-        block.graphics = new PIXI.Graphics()
-        @draw_static_block_fill(block)
-
+      block.graphics       = @build_mesh(block)
       block.graphics.label = block.id
+
       @level.layers.layer_for_block(block).addChild(block.graphics)
 
-  draw_static_block_fill: (block) ->
-    block.graphics.clear()
-    block.graphics.poly(block.points)
-    block.graphics.fill({
-      texture:      block.texture,
-      matrix:       block.matrix,
-      color:        0xffffff,
-      alpha:        1.0,
-      textureSpace: 'global'
-    })
-
-  # Animated blocks use a Mesh so we can swap textures without rebuilding geometry.
+  # Every block (static or animated) is rendered as a Mesh. Animated blocks
+  # later swap mesh.texture between frame textures; static blocks just keep
+  # their single texture.
+  #
   # UV per world unit = scale * 0.25, matching xmoto C++
   # (src/xmscene/Block.cpp: texturePos = world * scale * 0.25). Combined with
   # the source's 'repeat' wrap, the texture tiles every 4 world units at
   # scale=1, independently of texture pixel size.
-  build_animated_mesh: (block) ->
-    uv_scale =  0.25 * block.usetexture.scale
+  build_mesh: (block) ->
+    uv_scale = 0.25 * block.usetexture.scale
 
     positions = new Float32Array(block.points.length * 2)
     uvs       = new Float32Array(block.points.length * 2)
@@ -186,7 +162,7 @@ class Blocks
 
     new PIXI.Mesh({
       geometry: geometry
-      texture:  block.frame_textures[0]
+      texture:  block.textures[0]
     })
 
   # One Graphic is created in each block layer (parallax or static)
@@ -227,7 +203,7 @@ class Blocks
 
     if frame != block.current_frame
       block.current_frame = frame
-      block.graphics.texture = block.frame_textures[frame]
+      block.graphics.texture = block.textures[frame]
 
   draw_debug_culling: ->
     culling_debugs = Object.values(@culling_debug_graphics)
