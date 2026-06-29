@@ -7,7 +7,7 @@ class Sky
 
   parse: (xml) ->
     xml_sky  = $(xml).find('level info sky')
-    @name    = xml_sky.text().toLowerCase()
+    @name    = xml_sky.text()
     @color_r = parseInt(xml_sky.attr('color_r'))
     @color_g = parseInt(xml_sky.attr('color_g'))
     @color_b = parseInt(xml_sky.attr('color_b'))

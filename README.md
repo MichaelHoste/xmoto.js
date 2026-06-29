@@ -103,6 +103,7 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
+* Fix grass edge on l1136
 * Rename: init_sprites => init_graphics?
 * Manage the limits in mesh as well?
   => See level 1136 (Green Hill Zone Act 2) to align checkerboard and scale.

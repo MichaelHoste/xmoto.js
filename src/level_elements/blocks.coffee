@@ -22,7 +22,7 @@ class Blocks
                         attr = $(xml_block).find('position').attr('layerid')
                         if attr? then parseInt(attr) else undefined # integer or undefined if no attribute
         usetexture:
-          id:         $(xml_block).find('usetexture').attr('id').toLowerCase()
+          id:         $(xml_block).find('usetexture').attr('id')
           scale:      parseFloat($(xml_block).find('usetexture').attr('scale')) || 1.0
         physics:
           grip:       parseFloat($(xml_block).find('physics').attr('grip'))
@@ -69,7 +69,7 @@ class Blocks
           y:          parseFloat($(xml_vertex).attr('y'))
           absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are practical
           absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # for edges creation
-          edge:       $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
+          edge:       $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
 

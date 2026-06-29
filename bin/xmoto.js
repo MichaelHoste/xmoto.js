@@ -1297,7 +1297,7 @@
             })()
           },
           usetexture: {
-            id: $(xml_block).find('usetexture').attr('id').toLowerCase(),
+            id: $(xml_block).find('usetexture').attr('id'),
             scale: parseFloat($(xml_block).find('usetexture').attr('scale')) || 1.0
           },
           physics: {
@@ -1355,7 +1355,7 @@
             y: parseFloat($(xml_vertex).attr('y')),
             absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x, // absolutes positions are practical
             absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y, // for edges creation
-            edge: $(xml_vertex).attr('edge') ? $(xml_vertex).attr('edge').toLowerCase() : void 0
+            edge: $(xml_vertex).attr('edge')
           };
           block.vertices.push(vertex);
         }
@@ -2756,7 +2756,7 @@
     parse(xml) {
       var xml_sky;
       xml_sky = $(xml).find('level info sky');
-      this.name = xml_sky.text().toLowerCase();
+      this.name = xml_sky.text();
       this.color_r = parseInt(xml_sky.attr('color_r'));
       this.color_g = parseInt(xml_sky.attr('color_g'));
       this.color_b = parseInt(xml_sky.attr('color_b'));
@@ -4414,12 +4414,13 @@
     }
 
     load_theme(xml) {
-      var existing, frames, k, len, name, ref, xml_sprite, xml_sprites;
+      var existing, frames, k, len, name, xml_sprite, xml_sprites;
       xml_sprites = $(xml).find('sprite');
       for (k = 0, len = xml_sprites.length; k < len; k++) {
         xml_sprite = xml_sprites[k];
+        name = $(xml_sprite).attr('name').toLowerCase();
         if ($(xml_sprite).attr('type') === 'Entity') {
-          this.sprites[$(xml_sprite).attr('name')] = {
+          this.sprites[name] = {
             file: $(xml_sprite).attr('file'),
             file_base: $(xml_sprite).attr('fileBase'),
             file_extension: $(xml_sprite).attr('fileExtension'),
@@ -4435,20 +4436,19 @@
             delay: parseFloat($(xml_sprite).attr('delay'))
           };
         } else if ($(xml_sprite).attr('type') === 'EdgeEffect') {
-          this.edges[$(xml_sprite).attr('name').toLowerCase()] = {
-            file: $(xml_sprite).attr('file').toLowerCase(),
+          this.edges[name] = {
+            file: $(xml_sprite).attr('file'),
             scale: parseFloat($(xml_sprite).attr('scale')),
             depth: parseFloat($(xml_sprite).attr('depth'))
           };
         } else if ($(xml_sprite).attr('type') === 'Texture') {
-          name = $(xml_sprite).attr('name').toLowerCase();
           frames = $(xml_sprite).find('frame').length;
           existing = this.textures[name];
           if (!existing || existing.frames === 0) {
             this.textures[name] = {
-              file: $(xml_sprite).attr('file') ? $(xml_sprite).attr('file').toLowerCase() : '',
+              file: $(xml_sprite).attr('file'),
               file_base: $(xml_sprite).attr('fileBase'),
-              file_extension: (ref = $(xml_sprite).attr('fileExtension')) != null ? ref.toLowerCase() : void 0,
+              file_extension: $(xml_sprite).attr('fileExtension'),
               frames: frames,
               delay: parseFloat($(xml_sprite).attr('delay'))
             };
@@ -4459,15 +4459,15 @@
     }
 
     sprite_params(name) {
-      return this.sprites[name];
+      return this.sprites[name.toLowerCase()];
     }
 
     edge_params(name) {
-      return this.edges[name];
+      return this.edges[name.toLowerCase()];
     }
 
     texture_params(name) {
-      return this.textures[name];
+      return this.textures[name.toLowerCase()];
     }
 
   };
