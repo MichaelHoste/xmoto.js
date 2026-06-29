@@ -1315,7 +1315,7 @@
           block.usetexture.id = 'dirt';
         }
         texture_params = this.assets.theme.texture_params(block.usetexture.id);
-        if (texture_params.frames_count > 0) {
+        if (texture_params.frames_count) {
           block.frames_count = texture_params.frames_count;
           block.delay = texture_params.delay;
           block.texture_names = this.texture_names(texture_params);
@@ -1365,7 +1365,7 @@
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         block = ref[k];
-        if (block.frames_count > 0) {
+        if (block.frames_count) {
           ref1 = block.texture_names;
           for (l = 0, len1 = ref1.length; l < len1; l++) {
             texture_name = ref1[l];
@@ -1410,7 +1410,8 @@
     }
 
     init_sprites() {
-      var block, k, l, len, len1, name, ref, ref1, results, texture;
+      var block, k, l, len, len1, name, now, ref, ref1, results, texture;
+      now = performance.now();
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
@@ -1419,6 +1420,7 @@
         block.points = block.vertices.map(function(v) {
           return new PIXI.Point(v.absolute_x, -v.absolute_y);
         });
+        // Load block texture(s)
         if (block.frames_count) {
           block.textures = (function() {
             var l, len1, ref1, results1;
@@ -1431,15 +1433,15 @@
             return results1;
           }).call(this);
           block.current_frame = 0;
-          block.animation_start = performance.now();
+          block.animation_start = now;
+          ref1 = block.textures;
+          for (l = 0, len1 = ref1.length; l < len1; l++) {
+            texture = ref1[l];
+            texture.source.addressMode = 'repeat';
+          }
         } else {
-          block.textures = [PIXI.Texture.from(this.assets.get_url(block.texture_name))];
-        }
-        ref1 = block.textures;
-        // 'repeat' wrap lets UVs > 1 tile the texture across the polygon.
-        for (l = 0, len1 = ref1.length; l < len1; l++) {
-          texture = ref1[l];
-          texture.source.addressMode = 'repeat';
+          block.texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
+          block.texture.source.addressMode = 'repeat';
         }
         block.graphics = this.build_mesh(block);
         block.graphics.label = block.id;
@@ -1448,20 +1450,12 @@
       return results;
     }
 
-    // Every block (static or animated) is rendered as a Mesh. Animated blocks
-    // later swap mesh.texture between frame textures; static blocks just keep
-    // their single texture.
-
-    // UV per world unit = scale * 0.25 * (256 / source.width).
-    // xmoto C++ uses scale * 0.25 directly (src/xmscene/Block.cpp:
-    // texturePos = world * scale * 0.25), which assumes 256-pixel textures and
-    // stretches lower-resolution textures (e.g. 128px clouds/water). Anchoring
-    // on 256 keeps standard-size textures identical to xmoto while tiling
-    // smaller textures proportionally denser for consistent on-screen pixel
-    // density.
+    // Every block (static or animated) is rendered as a Mesh (faster!).
+    // Animated blocks swap mesh.texture between frame textures
     build_mesh(block) {
-      var geometry, i, indices, k, len, point, positions, ref, source, uv_scale, uvs;
-      source = block.textures[0].source;
+      var geometry, i, indices, k, len, point, positions, ref, source, texture, uv_scale, uvs;
+      texture = block.frames_count ? block.textures[0] : block.texture;
+      source = texture.source;
       uv_scale = block.usetexture.scale * 64.0 / source.width;
       positions = new Float32Array(block.points.length * 2);
       uvs = new Float32Array(block.points.length * 2);
@@ -1473,7 +1467,7 @@
         uvs[i * 2] = uv_scale * point.x;
         uvs[i * 2 + 1] = -uv_scale * point.y;
       }
-      indices = new Uint32Array(PIXI.earcut(positions));
+      indices = new Uint32Array(PIXI.earcut(positions)); // Polygon Triangulation
       geometry = new PIXI.MeshGeometry({
         positions: positions,
         uvs: uvs,
@@ -1481,7 +1475,7 @@
       });
       return new PIXI.Mesh({
         geometry: geometry,
-        texture: block.textures[0]
+        texture: texture
       });
     }
 
@@ -1520,7 +1514,7 @@
           block = ref[k];
           block.graphics.visible = this.visible(block);
           block.edges_list.update();
-          if (block.frames_count > 0 && block.graphics.visible) {
+          if (block.frames_count && block.graphics.visible) {
             this.update_animation(block, now);
           }
         }
@@ -2203,7 +2197,7 @@
 
     init_sprite(entity, container) {
       var i, k, ref, sprite, textures;
-      if (entity.frames_count > 0) {
+      if (entity.frames_count) {
         textures = [];
         for (i = k = 0, ref = entity.frames_count - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
           textures.push(PIXI.Texture.from(this.assets.get_url(this.frame_name(entity, i))));

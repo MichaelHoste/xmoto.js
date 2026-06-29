@@ -38,7 +38,7 @@ class Blocks
 
       texture_params = @assets.theme.texture_params(block.usetexture.id)
 
-      if texture_params.frames_count > 0
+      if texture_params.frames_count
         block.frames_count  = texture_params.frames_count
         block.delay         = texture_params.delay
         block.texture_names = @texture_names(texture_params)
@@ -84,7 +84,7 @@ class Blocks
 
   load_assets: ->
     for block in @list
-      if block.frames_count > 0
+      if block.frames_count
         @assets.textures.push(texture_name) for texture_name in block.texture_names
       else
         @assets.textures.push(block.texture_name)
@@ -107,41 +107,34 @@ class Blocks
         @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_sprites: ->
+    now = performance.now()
+
     for block in @list
       # Build polygon in world PIXI coordinates (y inverted)
       block.points = block.vertices.map((v) ->
         new PIXI.Point(v.absolute_x, -v.absolute_y)
       )
 
+      # Load block texture(s)
       if block.frames_count
         block.textures        = (PIXI.Texture.from(@assets.get_url(name)) for name in block.texture_names)
         block.current_frame   = 0
-        block.animation_start = performance.now()
+        block.animation_start = now
+        texture.source.addressMode = 'repeat' for texture in block.textures
       else
-        block.textures = [PIXI.Texture.from(@assets.get_url(block.texture_name))]
-
-      # 'repeat' wrap lets UVs > 1 tile the texture across the polygon.
-      for texture in block.textures
-        texture.source.addressMode = 'repeat'
+        block.texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
+        block.texture.source.addressMode = 'repeat'
 
       block.graphics       = @build_mesh(block)
       block.graphics.label = block.id
 
       @level.layers.layer_for_block(block).addChild(block.graphics)
 
-  # Every block (static or animated) is rendered as a Mesh. Animated blocks
-  # later swap mesh.texture between frame textures; static blocks just keep
-  # their single texture.
-  #
-  # UV per world unit = scale * 0.25 * (256 / source.width).
-  # xmoto C++ uses scale * 0.25 directly (src/xmscene/Block.cpp:
-  # texturePos = world * scale * 0.25), which assumes 256-pixel textures and
-  # stretches lower-resolution textures (e.g. 128px clouds/water). Anchoring
-  # on 256 keeps standard-size textures identical to xmoto while tiling
-  # smaller textures proportionally denser for consistent on-screen pixel
-  # density.
+  # Every block (static or animated) is rendered as a Mesh (faster!).
+  # Animated blocks swap mesh.texture between frame textures
   build_mesh: (block) ->
-    source   = block.textures[0].source
+    texture  = if block.frames_count then block.textures[0] else block.texture
+    source   = texture.source
     uv_scale = block.usetexture.scale * 64.0 / source.width
 
     positions = new Float32Array(block.points.length * 2)
@@ -153,7 +146,9 @@ class Blocks
       uvs[i * 2]           =  uv_scale * point.x
       uvs[i * 2 + 1]       = -uv_scale * point.y
 
-    indices = new Uint32Array(PIXI.earcut(positions))
+    indices = new Uint32Array(
+      PIXI.earcut(positions) # Polygon Triangulation
+    )
 
     geometry = new PIXI.MeshGeometry({
       positions: positions
@@ -163,7 +158,7 @@ class Blocks
 
     new PIXI.Mesh({
       geometry: geometry
-      texture:  block.textures[0]
+      texture:  texture
     })
 
   # One Graphic is created in each block layer (parallax or static)
@@ -192,7 +187,7 @@ class Blocks
         block.graphics.visible = @visible(block)
         block.edges_list.update()
 
-        if block.frames_count > 0 && block.graphics.visible
+        if block.frames_count && block.graphics.visible
           @update_animation(block, now)
 
     if Constants.debug_culling
@@ -203,7 +198,7 @@ class Blocks
     frame   = Math.floor(elapsed / block.delay) % block.frames_count
 
     if frame != block.current_frame
-      block.current_frame = frame
+      block.current_frame    = frame
       block.graphics.texture = block.textures[frame]
 
   draw_debug_culling: ->

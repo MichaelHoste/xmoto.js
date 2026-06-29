@@ -168,7 +168,7 @@ class Entities
         @init_sprite(entity, @level.layers.static_foreground)
 
   init_sprite: (entity, container) ->
-    if entity.frames_count > 0
+    if entity.frames_count
       textures = []
       for i in [0..entity.frames_count - 1]
         textures.push(PIXI.Texture.from(@assets.get_url(@frame_name(entity, i))))
