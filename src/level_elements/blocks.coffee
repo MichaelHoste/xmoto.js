@@ -39,13 +39,10 @@ class Blocks
       texture_params = @assets.theme.texture_params(block.usetexture.id)
 
       if texture_params.frames_count > 0
-        block.animated     = true
-        block.frames_count = texture_params.frames_count
-        block.delay        = texture_params.delay
-        block.frame_names  = (@frame_name(texture_params, i) for i in [0..texture_params.frames_count - 1])
-        block.texture_name = block.frame_names[0]
+        block.frames_count  = texture_params.frames_count
+        block.delay         = texture_params.delay
+        block.texture_names = @texture_names(texture_params)
       else
-        block.animated     = false
         block.texture_name = texture_params.file
 
       xml_materials = $(xml_block).find('edges material')
@@ -87,8 +84,8 @@ class Blocks
 
   load_assets: ->
     for block in @list
-      if block.animated
-        @assets.textures.push(frame_name) for frame_name in block.frame_names
+      if block.frames_count > 0
+        @assets.textures.push(texture_name) for texture_name in block.texture_names
       else
         @assets.textures.push(block.texture_name)
 
@@ -116,8 +113,8 @@ class Blocks
         new PIXI.Point(v.absolute_x, -v.absolute_y)
       )
 
-      if block.animated
-        block.textures        = (PIXI.Texture.from(@assets.get_url(name)) for name in block.frame_names)
+      if block.frames_count
+        block.textures        = (PIXI.Texture.from(@assets.get_url(name)) for name in block.texture_names)
         block.current_frame   = 0
         block.animation_start = performance.now()
       else
@@ -195,7 +192,7 @@ class Blocks
         block.graphics.visible = @visible(block)
         block.edges_list.update()
 
-        if block.animated && block.graphics.visible
+        if block.frames_count > 0 && block.graphics.visible
           @update_animation(block, now)
 
     if Constants.debug_culling
@@ -251,8 +248,9 @@ class Blocks
 
     return aabb
 
-  frame_name: (texture_params, frame_number) ->
-    "#{texture_params.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{texture_params.file_extension}"
+  texture_names: (texture_params) ->
+    for frame_i in [0..texture_params.frames_count - 1]
+      "#{texture_params.file_base}#{(frame_i/100.0).toFixed(2).toString().substring(2)}.#{texture_params.file_extension}"
 
   # Blocks drawing is sorted by textures:
   # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers

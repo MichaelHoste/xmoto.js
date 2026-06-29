@@ -104,6 +104,8 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 ## TODO
 
 * Fix grass edge on l1136
+* Shouldn't `assets.get_url(texture_name)` be `assets.get_url(texture_file)`?
+* Attach texture_params directly to blocks, entities etc? Instead of adding the params one by one?
 * Rename: init_sprites => init_graphics?
 * Manage the limits in mesh as well?
   => See level 1136 (Green Hill Zone Act 2) to align checkerboard and scale.

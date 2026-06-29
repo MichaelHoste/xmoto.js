@@ -1274,7 +1274,7 @@
     }
 
     parse(xml) {
-      var block, i, k, l, len, len1, len2, m, material, texture_params, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
+      var block, k, l, len, len1, len2, m, material, texture_params, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
       xml_blocks = $(xml).find('block');
       for (k = 0, len = xml_blocks.length; k < len; k++) {
         xml_block = xml_blocks[k];
@@ -1316,20 +1316,10 @@
         }
         texture_params = this.assets.theme.texture_params(block.usetexture.id);
         if (texture_params.frames_count > 0) {
-          block.animated = true;
           block.frames_count = texture_params.frames_count;
           block.delay = texture_params.delay;
-          block.frame_names = (function() {
-            var l, ref, results;
-            results = [];
-            for (i = l = 0, ref = texture_params.frames_count - 1; (0 <= ref ? l <= ref : l >= ref); i = 0 <= ref ? ++l : --l) {
-              results.push(this.frame_name(texture_params, i));
-            }
-            return results;
-          }).call(this);
-          block.texture_name = block.frame_names[0];
+          block.texture_names = this.texture_names(texture_params);
         } else {
-          block.animated = false;
           block.texture_name = texture_params.file;
         }
         xml_materials = $(xml_block).find('edges material');
@@ -1370,16 +1360,16 @@
     }
 
     load_assets() {
-      var block, frame_name, k, l, len, len1, ref, ref1, results;
+      var block, k, l, len, len1, ref, ref1, results, texture_name;
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         block = ref[k];
-        if (block.animated) {
-          ref1 = block.frame_names;
+        if (block.frames_count > 0) {
+          ref1 = block.texture_names;
           for (l = 0, len1 = ref1.length; l < len1; l++) {
-            frame_name = ref1[l];
-            this.assets.textures.push(frame_name);
+            texture_name = ref1[l];
+            this.assets.textures.push(texture_name);
           }
         } else {
           this.assets.textures.push(block.texture_name);
@@ -1429,10 +1419,10 @@
         block.points = block.vertices.map(function(v) {
           return new PIXI.Point(v.absolute_x, -v.absolute_y);
         });
-        if (block.animated) {
+        if (block.frames_count) {
           block.textures = (function() {
             var l, len1, ref1, results1;
-            ref1 = block.frame_names;
+            ref1 = block.texture_names;
             results1 = [];
             for (l = 0, len1 = ref1.length; l < len1; l++) {
               name = ref1[l];
@@ -1530,7 +1520,7 @@
           block = ref[k];
           block.graphics.visible = this.visible(block);
           block.edges_list.update();
-          if (block.animated && block.graphics.visible) {
+          if (block.frames_count > 0 && block.graphics.visible) {
             this.update_animation(block, now);
           }
         }
@@ -1613,8 +1603,13 @@
       return aabb;
     }
 
-    frame_name(texture_params, frame_number) {
-      return `${texture_params.file_base}${(frame_number / 100.0).toFixed(2).toString().substring(2)}.${texture_params.file_extension}`;
+    texture_names(texture_params) {
+      var frame_i, k, ref, results;
+      results = [];
+      for (frame_i = k = 0, ref = texture_params.frames_count - 1; (0 <= ref ? k <= ref : k >= ref); frame_i = 0 <= ref ? ++k : --k) {
+        results.push(`${texture_params.file_base}${(frame_i / 100.0).toFixed(2).toString().substring(2)}.${texture_params.file_extension}`);
+      }
+      return results;
     }
 
     // Blocks drawing is sorted by textures:
