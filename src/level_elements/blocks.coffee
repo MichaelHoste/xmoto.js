@@ -22,7 +22,7 @@ class Blocks
                         attr = $(xml_block).find('position').attr('layerid')
                         if attr? then parseInt(attr) else undefined # integer or undefined if no attribute
         usetexture:
-          id:         $(xml_block).find('usetexture').attr('id').toLowerCase()
+          id:         $(xml_block).find('usetexture').attr('id')
           scale:      parseFloat($(xml_block).find('usetexture').attr('scale')) || 1.0
         physics:
           grip:       parseFloat($(xml_block).find('physics').attr('grip'))
@@ -35,7 +35,15 @@ class Blocks
       block.no_collision ||= block.position.islayer && block.position.layerid != undefined # layer with specific layerid  => no collision
 
       block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
-      block.texture_name  = @assets.theme.texture_params(block.usetexture.id).file
+
+      texture_params = @assets.theme.texture_params(block.usetexture.id)
+
+      if texture_params.frames_count
+        block.frames_count  = texture_params.frames_count
+        block.delay         = texture_params.delay
+        block.texture_names = @texture_names(texture_params)
+      else
+        block.texture_name = texture_params.file
 
       xml_materials = $(xml_block).find('edges material')
       for xml_material in xml_materials
@@ -58,7 +66,7 @@ class Blocks
           y:          parseFloat($(xml_vertex).attr('y'))
           absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are practical
           absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # for edges creation
-          edge:       $(xml_vertex).attr('edge').toLowerCase() if $(xml_vertex).attr('edge')
+          edge:       $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
 
@@ -76,7 +84,11 @@ class Blocks
 
   load_assets: ->
     for block in @list
-      @assets.textures.push(block.texture_name)
+      if block.frames_count
+        @assets.textures.push(texture_name) for texture_name in block.texture_names
+      else
+        @assets.textures.push(block.texture_name)
+
       block.edges_list.load_assets()
 
   init: ->
@@ -95,34 +107,59 @@ class Blocks
         @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_sprites: ->
+    now = performance.now()
+
     for block in @list
       # Build polygon in world PIXI coordinates (y inverted)
-      points = block.vertices.map((v) ->
+      block.points = block.vertices.map((v) ->
         new PIXI.Point(v.absolute_x, -v.absolute_y)
       )
 
-      # Load block texture
-      texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
+      # Load block texture(s)
+      if block.frames_count
+        block.textures        = (PIXI.Texture.from(@assets.get_url(name)) for name in block.texture_names)
+        block.current_frame   = 0
+        block.animation_start = now
+        texture.source.addressMode = 'repeat' for texture in block.textures
+      else
+        block.texture = PIXI.Texture.from(@assets.get_url(block.texture_name))
+        block.texture.source.addressMode = 'repeat'
 
-      # Not translating the matrix ensures texture continuity between blocks
-      matrix = new PIXI.Matrix()
-      matrix.scale(block.usetexture.scale / 60.0, -block.usetexture.scale / 60.0)
-      #matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
-
-      # Create graphics with texture and matrix
-      block.graphics = new PIXI.Graphics()
+      block.graphics       = @build_mesh(block)
       block.graphics.label = block.id
 
-      block.graphics.poly(points)
-      block.graphics.fill({
-        texture:      texture,
-        matrix:       matrix,
-        color:        0xffffff,
-        alpha:        1.0,
-        textureSpace: 'global'
-      })
-
       @level.layers.layer_for_block(block).addChild(block.graphics)
+
+  # Every block (static or animated) is rendered as a Mesh (faster!).
+  # Animated blocks swap mesh.texture between frame textures
+  build_mesh: (block) ->
+    texture  = if block.frames_count then block.textures[0] else block.texture
+    source   = texture.source
+    uv_scale = block.usetexture.scale * 64.0 / source.width
+
+    positions = new Float32Array(block.points.length * 2)
+    uvs       = new Float32Array(block.points.length * 2)
+
+    for point, i in block.points
+      positions[i * 2]     = point.x
+      positions[i * 2 + 1] = point.y
+      uvs[i * 2]           =  uv_scale * point.x
+      uvs[i * 2 + 1]       = -uv_scale * point.y
+
+    indices = new Uint32Array(
+      PIXI.earcut(positions) # Polygon Triangulation
+    )
+
+    geometry = new PIXI.MeshGeometry({
+      positions: positions
+      uvs:       uvs
+      indices:   indices
+    })
+
+    new PIXI.Mesh({
+      geometry: geometry
+      texture:  texture
+    })
 
   # One Graphic is created in each block layer (parallax or static)
   # for drawing culling rectangles. It's because parallax layers
@@ -144,12 +181,25 @@ class Blocks
 
   update: ->
     if !Constants.debug_physics
+      now = performance.now()
+
       for block in @list
         block.graphics.visible = @visible(block)
         block.edges_list.update()
 
+        if block.frames_count && block.graphics.visible
+          @update_animation(block, now)
+
     if Constants.debug_culling
       @draw_debug_culling()
+
+  update_animation: (block, now) ->
+    elapsed = (now - block.animation_start) / 1000.0
+    frame   = Math.floor(elapsed / block.delay) % block.frames_count
+
+    if frame != block.current_frame
+      block.current_frame    = frame
+      block.graphics.texture = block.textures[frame]
 
   draw_debug_culling: ->
     culling_debugs = Object.values(@culling_debug_graphics)
@@ -192,6 +242,10 @@ class Blocks
     aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
 
     return aabb
+
+  texture_names: (texture_params) ->
+    for frame_i in [0..texture_params.frames_count - 1]
+      "#{texture_params.file_base}#{(frame_i/100.0).toFixed(2).toString().substring(2)}.#{texture_params.file_extension}"
 
   # Blocks drawing is sorted by textures:
   # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers

@@ -57,7 +57,7 @@ class Entities
           entity.file_base      = theme_sprite.file_base
           entity.file_extension = theme_sprite.file_extension
           entity.delay          = theme_sprite.delay
-          entity.frames         = theme_sprite.frames
+          entity.frames_count   = theme_sprite.frames_count
           entity.display        = true # if an entity has a texture, it needs to be displayed
 
           # Default theme values if not defined in XML
@@ -99,10 +99,10 @@ class Entities
   load_assets: ->
     for entity in @list
       if entity.display
-        if entity.frames == 0
+        if entity.frames_count == 0
           @assets.anims.push(entity.file)
         else
-          for i in [0..entity.frames-1]
+          for i in [0..entity.frames_count-1]
             @assets.anims.push(@frame_name(entity, i))
 
   init: ->
@@ -168,9 +168,9 @@ class Entities
         @init_sprite(entity, @level.layers.static_foreground)
 
   init_sprite: (entity, container) ->
-    if entity.frames > 0
+    if entity.frames_count
       textures = []
-      for i in [0..entity.frames - 1]
+      for i in [0..entity.frames_count - 1]
         textures.push(PIXI.Texture.from(@assets.get_url(@frame_name(entity, i))))
 
       sprite = new PIXI.AnimatedSprite(textures)

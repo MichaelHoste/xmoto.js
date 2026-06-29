@@ -1274,7 +1274,7 @@
     }
 
     parse(xml) {
-      var block, k, l, len, len1, len2, m, material, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
+      var block, k, l, len, len1, len2, m, material, texture_params, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
       xml_blocks = $(xml).find('block');
       for (k = 0, len = xml_blocks.length; k < len; k++) {
         xml_block = xml_blocks[k];
@@ -1297,7 +1297,7 @@
             })()
           },
           usetexture: {
-            id: $(xml_block).find('usetexture').attr('id').toLowerCase(),
+            id: $(xml_block).find('usetexture').attr('id'),
             scale: parseFloat($(xml_block).find('usetexture').attr('scale')) || 1.0
           },
           physics: {
@@ -1314,7 +1314,14 @@
         if (block.usetexture.id === 'default') {
           block.usetexture.id = 'dirt';
         }
-        block.texture_name = this.assets.theme.texture_params(block.usetexture.id).file;
+        texture_params = this.assets.theme.texture_params(block.usetexture.id);
+        if (texture_params.frames_count) {
+          block.frames_count = texture_params.frames_count;
+          block.delay = texture_params.delay;
+          block.texture_names = this.texture_names(texture_params);
+        } else {
+          block.texture_name = texture_params.file;
+        }
         xml_materials = $(xml_block).find('edges material');
         for (l = 0, len1 = xml_materials.length; l < len1; l++) {
           xml_material = xml_materials[l];
@@ -1338,7 +1345,7 @@
             y: parseFloat($(xml_vertex).attr('y')),
             absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x, // absolutes positions are practical
             absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y, // for edges creation
-            edge: $(xml_vertex).attr('edge') ? $(xml_vertex).attr('edge').toLowerCase() : void 0
+            edge: $(xml_vertex).attr('edge')
           };
           block.vertices.push(vertex);
         }
@@ -1353,12 +1360,20 @@
     }
 
     load_assets() {
-      var block, k, len, ref, results;
+      var block, k, l, len, len1, ref, ref1, results, texture_name;
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         block = ref[k];
-        this.assets.textures.push(block.texture_name);
+        if (block.frames_count) {
+          ref1 = block.texture_names;
+          for (l = 0, len1 = ref1.length; l < len1; l++) {
+            texture_name = ref1[l];
+            this.assets.textures.push(texture_name);
+          }
+        } else {
+          this.assets.textures.push(block.texture_name);
+        }
         results.push(block.edges_list.load_assets());
       }
       return results;
@@ -1395,36 +1410,73 @@
     }
 
     init_sprites() {
-      var block, k, len, matrix, points, ref, results, texture;
+      var block, k, l, len, len1, name, now, ref, ref1, results, texture;
+      now = performance.now();
       ref = this.list;
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         block = ref[k];
         // Build polygon in world PIXI coordinates (y inverted)
-        points = block.vertices.map(function(v) {
+        block.points = block.vertices.map(function(v) {
           return new PIXI.Point(v.absolute_x, -v.absolute_y);
         });
-        // Load block texture
-        texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
-        // Not translating the matrix ensures texture continuity between blocks
-        matrix = new PIXI.Matrix();
-        matrix.scale(block.usetexture.scale / 60.0, -block.usetexture.scale / 60.0);
-        //matrix.translate(block.aabb.lowerBound.x, -block.aabb.upperBound.y)
-
-        // Create graphics with texture and matrix
-        block.graphics = new PIXI.Graphics();
+        // Load block texture(s)
+        if (block.frames_count) {
+          block.textures = (function() {
+            var l, len1, ref1, results1;
+            ref1 = block.texture_names;
+            results1 = [];
+            for (l = 0, len1 = ref1.length; l < len1; l++) {
+              name = ref1[l];
+              results1.push(PIXI.Texture.from(this.assets.get_url(name)));
+            }
+            return results1;
+          }).call(this);
+          block.current_frame = 0;
+          block.animation_start = now;
+          ref1 = block.textures;
+          for (l = 0, len1 = ref1.length; l < len1; l++) {
+            texture = ref1[l];
+            texture.source.addressMode = 'repeat';
+          }
+        } else {
+          block.texture = PIXI.Texture.from(this.assets.get_url(block.texture_name));
+          block.texture.source.addressMode = 'repeat';
+        }
+        block.graphics = this.build_mesh(block);
         block.graphics.label = block.id;
-        block.graphics.poly(points);
-        block.graphics.fill({
-          texture: texture,
-          matrix: matrix,
-          color: 0xffffff,
-          alpha: 1.0,
-          textureSpace: 'global'
-        });
         results.push(this.level.layers.layer_for_block(block).addChild(block.graphics));
       }
       return results;
+    }
+
+    // Every block (static or animated) is rendered as a Mesh (faster!).
+    // Animated blocks swap mesh.texture between frame textures
+    build_mesh(block) {
+      var geometry, i, indices, k, len, point, positions, ref, source, texture, uv_scale, uvs;
+      texture = block.frames_count ? block.textures[0] : block.texture;
+      source = texture.source;
+      uv_scale = block.usetexture.scale * 64.0 / source.width;
+      positions = new Float32Array(block.points.length * 2);
+      uvs = new Float32Array(block.points.length * 2);
+      ref = block.points;
+      for (i = k = 0, len = ref.length; k < len; i = ++k) {
+        point = ref[i];
+        positions[i * 2] = point.x;
+        positions[i * 2 + 1] = point.y;
+        uvs[i * 2] = uv_scale * point.x;
+        uvs[i * 2 + 1] = -uv_scale * point.y;
+      }
+      indices = new Uint32Array(PIXI.earcut(positions)); // Polygon Triangulation
+      geometry = new PIXI.MeshGeometry({
+        positions: positions,
+        uvs: uvs,
+        indices: indices
+      });
+      return new PIXI.Mesh({
+        geometry: geometry,
+        texture: texture
+      });
     }
 
     // One Graphic is created in each block layer (parallax or static)
@@ -1454,17 +1506,31 @@
     }
 
     update() {
-      var block, k, len, ref;
+      var block, k, len, now, ref;
       if (!Constants.debug_physics) {
+        now = performance.now();
         ref = this.list;
         for (k = 0, len = ref.length; k < len; k++) {
           block = ref[k];
           block.graphics.visible = this.visible(block);
           block.edges_list.update();
+          if (block.frames_count && block.graphics.visible) {
+            this.update_animation(block, now);
+          }
         }
       }
       if (Constants.debug_culling) {
         return this.draw_debug_culling();
+      }
+    }
+
+    update_animation(block, now) {
+      var elapsed, frame;
+      elapsed = (now - block.animation_start) / 1000.0;
+      frame = Math.floor(elapsed / block.delay) % block.frames_count;
+      if (frame !== block.current_frame) {
+        block.current_frame = frame;
+        return block.graphics.texture = block.textures[frame];
       }
     }
 
@@ -1529,6 +1595,15 @@
       aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions));
       aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions));
       return aabb;
+    }
+
+    texture_names(texture_params) {
+      var frame_i, k, ref, results;
+      results = [];
+      for (frame_i = k = 0, ref = texture_params.frames_count - 1; (0 <= ref ? k <= ref : k >= ref); frame_i = 0 <= ref ? ++k : --k) {
+        results.push(`${texture_params.file_base}${(frame_i / 100.0).toFixed(2).toString().substring(2)}.${texture_params.file_extension}`);
+      }
+      return results;
     }
 
     // Blocks drawing is sorted by textures:
@@ -1973,7 +2048,7 @@
             entity.file_base = theme_sprite.file_base;
             entity.file_extension = theme_sprite.file_extension;
             entity.delay = theme_sprite.delay;
-            entity.frames = theme_sprite.frames;
+            entity.frames_count = theme_sprite.frames_count;
             entity.display = true; // if an entity has a texture, it needs to be displayed
             
             // Default theme values if not defined in XML
@@ -2023,13 +2098,13 @@
       for (k = 0, len = ref.length; k < len; k++) {
         entity = ref[k];
         if (entity.display) {
-          if (entity.frames === 0) {
+          if (entity.frames_count === 0) {
             results.push(this.assets.anims.push(entity.file));
           } else {
             results.push((function() {
               var l, ref1, results1;
               results1 = [];
-              for (i = l = 0, ref1 = entity.frames - 1; (0 <= ref1 ? l <= ref1 : l >= ref1); i = 0 <= ref1 ? ++l : --l) {
+              for (i = l = 0, ref1 = entity.frames_count - 1; (0 <= ref1 ? l <= ref1 : l >= ref1); i = 0 <= ref1 ? ++l : --l) {
                 results1.push(this.assets.anims.push(this.frame_name(entity, i)));
               }
               return results1;
@@ -2122,9 +2197,9 @@
 
     init_sprite(entity, container) {
       var i, k, ref, sprite, textures;
-      if (entity.frames > 0) {
+      if (entity.frames_count) {
         textures = [];
-        for (i = k = 0, ref = entity.frames - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
+        for (i = k = 0, ref = entity.frames_count - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
           textures.push(PIXI.Texture.from(this.assets.get_url(this.frame_name(entity, i))));
         }
         sprite = new PIXI.AnimatedSprite(textures);
@@ -2670,7 +2745,7 @@
     parse(xml) {
       var xml_sky;
       xml_sky = $(xml).find('level info sky');
-      this.name = xml_sky.text().toLowerCase();
+      this.name = xml_sky.text();
       this.color_r = parseInt(xml_sky.attr('color_r'));
       this.color_g = parseInt(xml_sky.attr('color_g'));
       this.color_b = parseInt(xml_sky.attr('color_b'));
@@ -4328,12 +4403,13 @@
     }
 
     load_theme(xml) {
-      var k, len, xml_sprite, xml_sprites;
+      var k, len, name, xml_sprite, xml_sprites;
       xml_sprites = $(xml).find('sprite');
       for (k = 0, len = xml_sprites.length; k < len; k++) {
         xml_sprite = xml_sprites[k];
+        name = $(xml_sprite).attr('name').toLowerCase();
         if ($(xml_sprite).attr('type') === 'Entity') {
-          this.sprites[$(xml_sprite).attr('name')] = {
+          this.sprites[name] = {
             file: $(xml_sprite).attr('file'),
             file_base: $(xml_sprite).attr('fileBase'),
             file_extension: $(xml_sprite).attr('fileExtension'),
@@ -4345,38 +4421,40 @@
               x: parseFloat($(xml_sprite).attr('centerX')),
               y: parseFloat($(xml_sprite).attr('centerY'))
             },
-            frames: $(xml_sprite).find('frame').length,
+            frames_count: $(xml_sprite).find('frame').length,
             delay: parseFloat($(xml_sprite).attr('delay'))
           };
         } else if ($(xml_sprite).attr('type') === 'EdgeEffect') {
-          this.edges[$(xml_sprite).attr('name').toLowerCase()] = {
-            file: $(xml_sprite).attr('file').toLowerCase(),
+          this.edges[name] = {
+            file: $(xml_sprite).attr('file'),
             scale: parseFloat($(xml_sprite).attr('scale')),
             depth: parseFloat($(xml_sprite).attr('depth'))
           };
         } else if ($(xml_sprite).attr('type') === 'Texture') {
-          this.textures[$(xml_sprite).attr('name').toLowerCase()] = {
-            file: $(xml_sprite).attr('file') ? $(xml_sprite).attr('file').toLowerCase() : '',
-            file_base: $(xml_sprite).attr('fileBase'),
-            file_extension: $(xml_sprite).attr('fileExtension'),
-            frames: $(xml_sprite).find('frame').length,
-            delay: parseFloat($(xml_sprite).attr('delay'))
-          };
+          if (!this.textures[name] || this.textures[name].frames_count === 0) {
+            this.textures[name] = {
+              file: $(xml_sprite).attr('file'),
+              file_base: $(xml_sprite).attr('fileBase'),
+              file_extension: $(xml_sprite).attr('fileExtension'),
+              frames_count: $(xml_sprite).find('frame').length,
+              delay: parseFloat($(xml_sprite).attr('delay'))
+            };
+          }
         }
       }
       return this.callback();
     }
 
     sprite_params(name) {
-      return this.sprites[name];
+      return this.sprites[name.toLowerCase()];
     }
 
     edge_params(name) {
-      return this.edges[name];
+      return this.edges[name.toLowerCase()];
     }
 
     texture_params(name) {
-      return this.textures[name];
+      return this.textures[name.toLowerCase()];
     }
 
   };

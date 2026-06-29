@@ -103,15 +103,21 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
-* On l7388, scale and direction of layer textures is wrong (look clouds!)
-* Animated textures for blocks/edges? (l8682/l7388)
+* Fix grass edge on l1136
+* Shouldn't `assets.get_url(texture_name)` be `assets.get_url(texture_file)`?
+* Attach texture_params directly to blocks, entities etc? Instead of adding the params one by one?
+* Rename: init_sprites => init_graphics?
+* Manage the limits in mesh as well?
+  => See level 1136 (Green Hill Zone Act 2) to align checkerboard and scale.
+* Animated textures for blocks/edges? (l8682/l7388) 
+  => performance.now(), Date.now() or Ticker?
 * Manage sky better: 
   * `<sky color_r="150" color_g="100" color_b="50" zoom="3.0">sky1</sky>`
   * `<sky color_g="255" zoom="3.7" color_a="255" color_b="255" offset="0.16" drifted="false" use_params="true" color_r="255">Water1</sky>`
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels
-* Manage Sprites better
-  * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels (at the end)
-  * => Still need to adapt aabb if rotation (just increase the size, don't try to rotate)
+* Adjust a bit the camera (player more on the borders of the camera, less zoom)
+* Sounds with PixiJS Sound and play on the left/right depending on position
+* Adjust the height of the driver (less bumpy!? Height of sprite? Compare values?)
 * Manage checkpoints
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Notes_on_Checkpoints
 * Parse maps from https://github.com/bjorn/tiled ?
