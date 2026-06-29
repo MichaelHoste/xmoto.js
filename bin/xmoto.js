@@ -1315,14 +1315,14 @@
           block.usetexture.id = 'dirt';
         }
         texture_params = this.assets.theme.texture_params(block.usetexture.id);
-        if (texture_params.frames > 0) {
+        if (texture_params.frames_count > 0) {
           block.animated = true;
-          block.frames_count = texture_params.frames;
+          block.frames_count = texture_params.frames_count;
           block.delay = texture_params.delay;
           block.frame_names = (function() {
             var l, ref, results;
             results = [];
-            for (i = l = 0, ref = texture_params.frames - 1; (0 <= ref ? l <= ref : l >= ref); i = 0 <= ref ? ++l : --l) {
+            for (i = l = 0, ref = texture_params.frames_count - 1; (0 <= ref ? l <= ref : l >= ref); i = 0 <= ref ? ++l : --l) {
               results.push(this.frame_name(texture_params, i));
             }
             return results;
@@ -2059,7 +2059,7 @@
             entity.file_base = theme_sprite.file_base;
             entity.file_extension = theme_sprite.file_extension;
             entity.delay = theme_sprite.delay;
-            entity.frames = theme_sprite.frames;
+            entity.frames_count = theme_sprite.frames_count;
             entity.display = true; // if an entity has a texture, it needs to be displayed
             
             // Default theme values if not defined in XML
@@ -2109,13 +2109,13 @@
       for (k = 0, len = ref.length; k < len; k++) {
         entity = ref[k];
         if (entity.display) {
-          if (entity.frames === 0) {
+          if (entity.frames_count === 0) {
             results.push(this.assets.anims.push(entity.file));
           } else {
             results.push((function() {
               var l, ref1, results1;
               results1 = [];
-              for (i = l = 0, ref1 = entity.frames - 1; (0 <= ref1 ? l <= ref1 : l >= ref1); i = 0 <= ref1 ? ++l : --l) {
+              for (i = l = 0, ref1 = entity.frames_count - 1; (0 <= ref1 ? l <= ref1 : l >= ref1); i = 0 <= ref1 ? ++l : --l) {
                 results1.push(this.assets.anims.push(this.frame_name(entity, i)));
               }
               return results1;
@@ -2208,9 +2208,9 @@
 
     init_sprite(entity, container) {
       var i, k, ref, sprite, textures;
-      if (entity.frames > 0) {
+      if (entity.frames_count > 0) {
         textures = [];
-        for (i = k = 0, ref = entity.frames - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
+        for (i = k = 0, ref = entity.frames_count - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
           textures.push(PIXI.Texture.from(this.assets.get_url(this.frame_name(entity, i))));
         }
         sprite = new PIXI.AnimatedSprite(textures);
@@ -4414,7 +4414,7 @@
     }
 
     load_theme(xml) {
-      var existing, frames, k, len, name, xml_sprite, xml_sprites;
+      var k, len, name, xml_sprite, xml_sprites;
       xml_sprites = $(xml).find('sprite');
       for (k = 0, len = xml_sprites.length; k < len; k++) {
         xml_sprite = xml_sprites[k];
@@ -4432,7 +4432,7 @@
               x: parseFloat($(xml_sprite).attr('centerX')),
               y: parseFloat($(xml_sprite).attr('centerY'))
             },
-            frames: $(xml_sprite).find('frame').length,
+            frames_count: $(xml_sprite).find('frame').length,
             delay: parseFloat($(xml_sprite).attr('delay'))
           };
         } else if ($(xml_sprite).attr('type') === 'EdgeEffect') {
@@ -4442,14 +4442,12 @@
             depth: parseFloat($(xml_sprite).attr('depth'))
           };
         } else if ($(xml_sprite).attr('type') === 'Texture') {
-          frames = $(xml_sprite).find('frame').length;
-          existing = this.textures[name];
-          if (!existing || existing.frames === 0) {
+          if (!this.textures[name] || this.textures[name].frames_count === 0) {
             this.textures[name] = {
               file: $(xml_sprite).attr('file'),
               file_base: $(xml_sprite).attr('fileBase'),
               file_extension: $(xml_sprite).attr('fileExtension'),
-              frames: frames,
+              frames_count: $(xml_sprite).find('frame').length,
               delay: parseFloat($(xml_sprite).attr('delay'))
             };
           }

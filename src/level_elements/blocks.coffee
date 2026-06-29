@@ -38,11 +38,11 @@ class Blocks
 
       texture_params = @assets.theme.texture_params(block.usetexture.id)
 
-      if texture_params.frames > 0
+      if texture_params.frames_count > 0
         block.animated     = true
-        block.frames_count = texture_params.frames
+        block.frames_count = texture_params.frames_count
         block.delay        = texture_params.delay
-        block.frame_names  = (@frame_name(texture_params, i) for i in [0..texture_params.frames - 1])
+        block.frame_names  = (@frame_name(texture_params, i) for i in [0..texture_params.frames_count - 1])
         block.texture_name = block.frame_names[0]
       else
         block.animated     = false
