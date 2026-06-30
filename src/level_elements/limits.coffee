@@ -27,7 +27,7 @@ class Limits
       y: @screen.top   - @screen.bottom
 
     # Each wall is a rectangle (in Y-up world coords) — its AABB, physics polygon,
-    # and TilingSprite are all derived from these four bounds.
+    # and Mesh are all derived from these four bounds.
     @walls = [
       { name: 'left',   left: @screen.left,  right: @player.left,   bottom: @screen.bottom, top: @screen.top    }
       { name: 'right',  left: @player.right, right: @screen.right,  bottom: @screen.bottom, top: @screen.top    }
@@ -49,7 +49,7 @@ class Limits
 
   init: ->
     @init_physics()
-    @init_sprites()
+    @init_graphics()
     @init_culling_debug()
 
   init_physics: ->
@@ -64,23 +64,43 @@ class Limits
       ]
       @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
 
-  init_sprites: ->
+  init_graphics: ->
     texture = PIXI.Texture.from(@assets.get_url(@texture_name))
+    texture.source.addressMode = 'repeat'
 
     for wall in @walls
-      wall.sprite = new PIXI.TilingSprite({
-        texture: texture
-        width:   wall.right - wall.left
-        height:  wall.top   - wall.bottom
-      })
-      wall.sprite.x =  wall.left
-      wall.sprite.y = -wall.top
-      wall.sprite.anchor.x = 0
-      wall.sprite.anchor.y = 0
-      wall.sprite.tileScale.x = 1.0 / 60.0
-      wall.sprite.tileScale.y = 1.0 / 60.0
+      # Four corners in PIXI coords (y inverted): TL, TR, BR, BL.
+      corners = [
+        { x: wall.left,  y: -wall.top    }
+        { x: wall.right, y: -wall.top    }
+        { x: wall.right, y: -wall.bottom }
+        { x: wall.left,  y: -wall.bottom }
+      ]
 
-      @level.layers.static_level.addChild(wall.sprite)
+      positions = new Float32Array(8)
+      uvs       = new Float32Array(8)
+      uv_scale  = 64.0 / texture.source.width # Same world-space UV formula as Blocks so the texture stays continuous
+
+      for corner, i in corners
+        positions[i * 2]     = corner.x
+        positions[i * 2 + 1] = corner.y
+        uvs[i * 2]           =  uv_scale * corner.x
+        uvs[i * 2 + 1]       = -uv_scale * corner.y
+
+      geometry = new PIXI.MeshGeometry({
+        positions: positions
+        uvs:       uvs
+        indices:   new Uint32Array([0, 1, 2, 0, 2, 3])
+      })
+
+      wall.graphic = new PIXI.Mesh({
+        geometry: geometry
+        texture:  texture
+      })
+
+      wall.graphic.label = "limit (#{wall.name})"
+
+      @level.layers.static_level.addChild(wall.graphic)
 
   init_culling_debug: ->
     if Constants.debug_culling
@@ -91,7 +111,7 @@ class Limits
   update: ->
     if !Constants.debug_physics
       for wall in @walls
-        wall.sprite.visible = @visible(wall)
+        wall.graphic.visible = @visible(wall)
 
     if Constants.debug_culling
       @draw_debug_culling()
@@ -100,7 +120,7 @@ class Limits
     @culling_debug.clear()
 
     for wall in @walls
-      if wall.sprite.visible
+      if wall.graphic.visible
         @culling_debug.rect(
           wall.aabb.lowerBound.x,
           -wall.aabb.upperBound.y,
