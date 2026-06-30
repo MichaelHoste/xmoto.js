@@ -58,10 +58,10 @@ class Edges
 
     # Collect surface vertices along this edge segment (may wrap)
     surface = []
-    closing_idx = (run.end + 1) % n
-    i = run.start
-    loop
-      v = vertices[i]
+    span    = ((run.end - run.start + n) % n) + 1 # handles end of run that may be the start vertex!
+    i       = run.start
+    for k in [0..span]
+      v = vertices[i % n]
       surface.push({ x: v.absolute_x, y: v.absolute_y })
       break if i == closing_idx
       i = (i + 1) % n
