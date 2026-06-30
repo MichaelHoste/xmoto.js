@@ -1270,7 +1270,7 @@
     constructor(level) {
       this.level = level;
       this.assets = level.assets;
-      this.list = [];
+      this.blocks = [];
     }
 
     parse(xml) {
@@ -1353,15 +1353,15 @@
         //block.edges_list = new EdgesWithAngle(@level, block)
         block.edges_list.parse();
         block.aabb = this.compute_aabb(block);
-        this.list.push(block);
+        this.blocks.push(block);
       }
-      this.list.sort(this.sort_blocks_by_texture);
+      this.blocks.sort(this.sort_blocks_by_texture);
       return this;
     }
 
     load_assets() {
       var block, l, len, len1, m, ref, ref1, results, texture_name;
-      ref = this.list;
+      ref = this.blocks;
       results = [];
       for (l = 0, len = ref.length; l < len; l++) {
         block = ref[l];
@@ -1384,7 +1384,7 @@
       this.init_physics();
       this.init_graphics();
       this.init_culling_debug();
-      ref = this.list;
+      ref = this.blocks;
       results = [];
       for (l = 0, len = ref.length; l < len; l++) {
         block = ref[l];
@@ -1396,7 +1396,7 @@
     init_physics() {
       var block, ground, l, len, ref, results;
       ground = Constants.ground;
-      ref = this.list;
+      ref = this.blocks;
       results = [];
       for (l = 0, len = ref.length; l < len; l++) {
         block = ref[l];
@@ -1412,7 +1412,7 @@
     init_graphics() {
       var block, l, len, len1, m, name, now, ref, ref1, results, texture;
       now = performance.now();
-      ref = this.list;
+      ref = this.blocks;
       results = [];
       for (l = 0, len = ref.length; l < len; l++) {
         block = ref[l];
@@ -1486,7 +1486,7 @@
       var block, graphics, l, layer, len, ref, results;
       if (Constants.debug_culling) {
         this.culling_debug_graphics = {}; // { label => graphics }
-        ref = this.list;
+        ref = this.blocks;
         results = [];
         for (l = 0, len = ref.length; l < len; l++) {
           block = ref[l];
@@ -1509,7 +1509,7 @@
       var block, l, len, now, ref;
       if (!Constants.debug_physics) {
         now = performance.now();
-        ref = this.list;
+        ref = this.blocks;
         for (l = 0, len = ref.length; l < len; l++) {
           block = ref[l];
           block.graphics.visible = this.visible(block);
@@ -1541,7 +1541,7 @@
         culling_debug = culling_debugs[l];
         culling_debug.clear();
       }
-      ref = this.list;
+      ref = this.blocks;
       for (m = 0, len1 = ref.length; m < len1; m++) {
         block = ref[m];
         if (block.aabb && block.graphics.visible) {

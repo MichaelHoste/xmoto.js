@@ -4,7 +4,7 @@ class Blocks
     @level  = level
     @assets = level.assets
 
-    @list = []
+    @blocks = []
 
   parse: (xml) ->
     xml_blocks = $(xml).find('block')
@@ -76,14 +76,14 @@ class Blocks
 
       block.aabb = @compute_aabb(block)
 
-      @list.push(block)
+      @blocks.push(block)
 
-    @list.sort(@sort_blocks_by_texture)
+    @blocks.sort(@sort_blocks_by_texture)
 
     return this
 
   load_assets: ->
-    for block in @list
+    for block in @blocks
       if block.frames_count
         @assets.textures.push(texture_name) for texture_name in block.texture_names
       else
@@ -96,20 +96,20 @@ class Blocks
     @init_graphics()
     @init_culling_debug()
 
-    for block in @list
+    for block in @blocks
       block.edges_list.init()
 
   init_physics: ->
     ground = Constants.ground
 
-    for block in @list
+    for block in @blocks
       if !block.no_collision
         @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_graphics: ->
     now = performance.now()
 
-    for block in @list
+    for block in @blocks
       # Build polygon in world PIXI coordinates (y inverted)
       block.points = block.vertices.map((v) ->
         new PIXI.Point(v.absolute_x, -v.absolute_y)
@@ -168,7 +168,7 @@ class Blocks
     if Constants.debug_culling
       @culling_debug_graphics = {} # { label => graphics }
 
-      for block in @list
+      for block in @blocks
         layer = @level.layers.layer_for_block(block)
 
         if !@culling_debug_graphics[layer.label]
@@ -183,7 +183,7 @@ class Blocks
     if !Constants.debug_physics
       now = performance.now()
 
-      for block in @list
+      for block in @blocks
         block.graphics.visible = @visible(block)
         block.edges_list.update()
 
@@ -207,7 +207,7 @@ class Blocks
     for culling_debug in culling_debugs
       culling_debug.clear()
 
-    for block in @list
+    for block in @blocks
       if block.aabb && block.graphics.visible
         layer         = @level.layers.layer_for_block(block)
         culling_debug = @culling_debug_graphics[layer.label]
