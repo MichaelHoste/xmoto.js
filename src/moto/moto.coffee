@@ -49,7 +49,7 @@ class Moto
 
   init: ->
     @init_physics()
-    @init_sprites()
+    @init_graphics()
 
   init_physics: ->
     @player_start = @level.entities.player_start
@@ -68,7 +68,7 @@ class Moto
 
     @rider.init_physics()
 
-  init_sprites: ->
+  init_graphics: ->
     # Create and add sprites to the scene
     for part in ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle']
       if @ghost
@@ -98,7 +98,7 @@ class Moto
       @["#{axle_name}_sprite"].anchor.x = 0.0
       @["#{axle_name}_sprite"].anchor.y = 0.5
 
-    @rider.init_sprites()
+    @rider.init_graphics()
 
   move: (input = @level.input) ->
     moto_acceleration = Constants.moto_acceleration

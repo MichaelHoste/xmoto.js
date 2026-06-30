@@ -60,7 +60,7 @@ class Rider
     @shoulder_joint = @create_joint(Constants.shoulder, @upper_arm, @torso, true)
     @hip_joint      = @create_joint(Constants.hip,      @upper_leg, @torso, true)
 
-  init_sprites: ->
+  init_graphics: ->
     for part in ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm']
       if @ghost
         asset_name = Constants[part].ghost_texture

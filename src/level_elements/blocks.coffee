@@ -93,7 +93,7 @@ class Blocks
 
   init: ->
     @init_physics()
-    @init_sprites()
+    @init_graphics()
     @init_culling_debug()
 
     for block in @list
@@ -106,7 +106,7 @@ class Blocks
       if !block.no_collision
         @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
-  init_sprites: ->
+  init_graphics: ->
     now = performance.now()
 
     for block in @list

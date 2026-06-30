@@ -24,9 +24,9 @@ class Sky
     @assets.textures.push(@filename)
 
   init: ->
-    @init_sprites()
+    @init_graphics()
 
-  init_sprites: ->
+  init_graphics: ->
     texture = PIXI.Texture.from(@assets.get_url(@filename))
     @sprite = new PIXI.TilingSprite({ texture: texture, width: @options.width, height: @options.height })
 

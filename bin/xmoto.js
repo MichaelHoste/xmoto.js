@@ -54,7 +54,7 @@
     }
 
     update() {
-      var aabb_factor, ctx, cx, cy, delta_x, effective_scale_x, effective_scale_y, half_h, half_w, hh, hw, i, k, len, level_left, level_top, parallax, ref, scale_layer, size_x, size_y, t, translate_layer, z;
+      var aabb_factor, ctx, cx, cy, delta_x, effective_scale_x, effective_scale_y, half_h, half_w, hh, hw, i, l, len, level_left, level_top, parallax, ref, scale_layer, size_x, size_y, t, translate_layer, z;
       if (Constants.debug_physics) {
         ctx = this.level.physics.debug_ctx;
         ctx.save();
@@ -77,7 +77,7 @@
         level_top = this.level.limits.player.top;
         aabb_factor = Constants.debug_culling ? 0.6 : 1.0;
         ref = this.level.layers.list;
-        for (i = k = 0, len = ref.length; k < len; i = ++k) {
+        for (i = l = 0, len = ref.length; l < len; i = ++l) {
           parallax = ref[i];
           scale_layer = this.level.layers.parallax_scale_layers[i];
           translate_layer = this.level.layers.parallax_translate_layers[i];
@@ -199,13 +199,13 @@
     class Constants {
       // CHAIN REACTION OF SOME ATTRIBUTES
       static chain_reaction() {
-        var element, k, len, ref, results;
+        var element, l, len, ref, results;
         // If hooking == true, no collisions !
         if (this.hooking === true) {
           ref = ['body', 'left_axle', 'right_axle', 'torso', 'lower_leg', 'upper_leg', 'lower_arm', 'upper_arm'];
           results = [];
-          for (k = 0, len = ref.length; k < len; k++) {
-            element = ref[k];
+          for (l = 0, len = ref.length; l < len; l++) {
+            element = ref[l];
             results.push(Constants[element].collisions = false);
           }
           return results;
@@ -542,9 +542,9 @@
         }
       };
       keydown = function(e) {
-        var i, k, len;
-        for (k = 0, len = keys.length; k < len; k++) {
-          i = keys[k];
+        var i, l, len;
+        for (l = 0, len = keys.length; l < len; l++) {
+          i = keys[l];
           if (e.keyCode === i) {
             preventDefault(e);
             return;
@@ -745,10 +745,10 @@
     }
 
     got_strawberries() {
-      var k, len, ref, strawberry;
+      var l, len, ref, strawberry;
       ref = this.entities.strawberries;
-      for (k = 0, len = ref.length; k < len; k++) {
-        strawberry = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        strawberry = ref[l];
         if (strawberry.display) {
           return false;
         }
@@ -757,11 +757,11 @@
     }
 
     respawn_strawberries() {
-      var entity, k, len, ref, results;
+      var entity, l, len, ref, results;
       ref = this.entities.strawberries;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        entity = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        entity = ref[l];
         results.push(entity.display = true);
       }
       return results;
@@ -1213,7 +1213,7 @@
     }
 
     create_lines(block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) {
-      var body, bodyDef, fixDef, i, k, len, ref, results, vertex, vertex1, vertex2;
+      var body, bodyDef, fixDef, i, l, len, ref, results, vertex, vertex1, vertex2;
       // Create body
       bodyDef = new b2BodyDef();
       // Assign body position
@@ -1228,7 +1228,7 @@
       ref = block.vertices;
       // assign each couple of vertices to a line
       results = [];
-      for (i = k = 0, len = ref.length; k < len; i = ++k) {
+      for (i = l = 0, len = ref.length; l < len; i = ++l) {
         vertex = ref[i];
         // Create fixture
         fixDef = new b2FixtureDef();
@@ -1248,16 +1248,16 @@
     }
 
     static create_shape(fix_def, shape, mirror = false) {
-      var b2vertices, k, l, len, len1, vertex;
+      var b2vertices, l, len, len1, m, vertex;
       b2vertices = [];
       if (mirror === false) {
-        for (k = 0, len = shape.length; k < len; k++) {
-          vertex = shape[k];
+        for (l = 0, len = shape.length; l < len; l++) {
+          vertex = shape[l];
           b2vertices.push(new b2Vec2(vertex.x, vertex.y));
         }
       } else {
-        for (l = 0, len1 = shape.length; l < len1; l++) {
-          vertex = shape[l];
+        for (m = 0, len1 = shape.length; m < len1; m++) {
+          vertex = shape[m];
           b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y));
         }
       }
@@ -1274,10 +1274,10 @@
     }
 
     parse(xml) {
-      var block, k, l, len, len1, len2, m, material, texture_params, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
+      var block, l, len, len1, len2, m, material, o, texture_params, vertex, xml_block, xml_blocks, xml_material, xml_materials, xml_vertex, xml_vertices;
       xml_blocks = $(xml).find('block');
-      for (k = 0, len = xml_blocks.length; k < len; k++) {
-        xml_block = xml_blocks[k];
+      for (l = 0, len = xml_blocks.length; l < len; l++) {
+        xml_block = xml_blocks[l];
         block = {
           id: $(xml_block).attr('id'),
           position: {
@@ -1323,8 +1323,8 @@
           block.texture_name = texture_params.file;
         }
         xml_materials = $(xml_block).find('edges material');
-        for (l = 0, len1 = xml_materials.length; l < len1; l++) {
-          xml_material = xml_materials[l];
+        for (m = 0, len1 = xml_materials.length; m < len1; m++) {
+          xml_material = xml_materials[m];
           material = {
             name: $(xml_material).attr('name'),
             edge: $(xml_material).attr('edge'),
@@ -1338,8 +1338,8 @@
           block.edges.materials.push(material);
         }
         xml_vertices = $(xml_block).find('vertex');
-        for (m = 0, len2 = xml_vertices.length; m < len2; m++) {
-          xml_vertex = xml_vertices[m];
+        for (o = 0, len2 = xml_vertices.length; o < len2; o++) {
+          xml_vertex = xml_vertices[o];
           vertex = {
             x: parseFloat($(xml_vertex).attr('x')),
             y: parseFloat($(xml_vertex).attr('y')),
@@ -1360,15 +1360,15 @@
     }
 
     load_assets() {
-      var block, k, l, len, len1, ref, ref1, results, texture_name;
+      var block, l, len, len1, m, ref, ref1, results, texture_name;
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        block = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        block = ref[l];
         if (block.frames_count) {
           ref1 = block.texture_names;
-          for (l = 0, len1 = ref1.length; l < len1; l++) {
-            texture_name = ref1[l];
+          for (m = 0, len1 = ref1.length; m < len1; m++) {
+            texture_name = ref1[m];
             this.assets.textures.push(texture_name);
           }
         } else {
@@ -1380,26 +1380,26 @@
     }
 
     init() {
-      var block, k, len, ref, results;
+      var block, l, len, ref, results;
       this.init_physics();
-      this.init_sprites();
+      this.init_graphics();
       this.init_culling_debug();
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        block = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        block = ref[l];
         results.push(block.edges_list.init());
       }
       return results;
     }
 
     init_physics() {
-      var block, ground, k, len, ref, results;
+      var block, ground, l, len, ref, results;
       ground = Constants.ground;
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        block = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        block = ref[l];
         if (!block.no_collision) {
           results.push(this.level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction));
         } else {
@@ -1409,13 +1409,13 @@
       return results;
     }
 
-    init_sprites() {
-      var block, k, l, len, len1, name, now, ref, ref1, results, texture;
+    init_graphics() {
+      var block, l, len, len1, m, name, now, ref, ref1, results, texture;
       now = performance.now();
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        block = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        block = ref[l];
         // Build polygon in world PIXI coordinates (y inverted)
         block.points = block.vertices.map(function(v) {
           return new PIXI.Point(v.absolute_x, -v.absolute_y);
@@ -1423,11 +1423,11 @@
         // Load block texture(s)
         if (block.frames_count) {
           block.textures = (function() {
-            var l, len1, ref1, results1;
+            var len1, m, ref1, results1;
             ref1 = block.texture_names;
             results1 = [];
-            for (l = 0, len1 = ref1.length; l < len1; l++) {
-              name = ref1[l];
+            for (m = 0, len1 = ref1.length; m < len1; m++) {
+              name = ref1[m];
               results1.push(PIXI.Texture.from(this.assets.get_url(name)));
             }
             return results1;
@@ -1435,8 +1435,8 @@
           block.current_frame = 0;
           block.animation_start = now;
           ref1 = block.textures;
-          for (l = 0, len1 = ref1.length; l < len1; l++) {
-            texture = ref1[l];
+          for (m = 0, len1 = ref1.length; m < len1; m++) {
+            texture = ref1[m];
             texture.source.addressMode = 'repeat';
           }
         } else {
@@ -1453,14 +1453,14 @@
     // Every block (static or animated) is rendered as a Mesh (faster!).
     // Animated blocks swap mesh.texture between frame textures
     build_mesh(block) {
-      var geometry, i, indices, k, len, point, positions, ref, source, texture, uv_scale, uvs;
+      var geometry, i, indices, l, len, point, positions, ref, source, texture, uv_scale, uvs;
       texture = block.frames_count ? block.textures[0] : block.texture;
       source = texture.source;
       uv_scale = block.usetexture.scale * 64.0 / source.width;
       positions = new Float32Array(block.points.length * 2);
       uvs = new Float32Array(block.points.length * 2);
       ref = block.points;
-      for (i = k = 0, len = ref.length; k < len; i = ++k) {
+      for (i = l = 0, len = ref.length; l < len; i = ++l) {
         point = ref[i];
         positions[i * 2] = point.x;
         positions[i * 2 + 1] = point.y;
@@ -1483,13 +1483,13 @@
     // for drawing culling rectangles. It's because parallax layers
     // have their own scale/translate reference
     init_culling_debug() {
-      var block, graphics, k, layer, len, ref, results;
+      var block, graphics, l, layer, len, ref, results;
       if (Constants.debug_culling) {
         this.culling_debug_graphics = {}; // { label => graphics }
         ref = this.list;
         results = [];
-        for (k = 0, len = ref.length; k < len; k++) {
-          block = ref[k];
+        for (l = 0, len = ref.length; l < len; l++) {
+          block = ref[l];
           layer = this.level.layers.layer_for_block(block);
           if (!this.culling_debug_graphics[layer.label]) {
             graphics = new PIXI.Graphics();
@@ -1506,12 +1506,12 @@
     }
 
     update() {
-      var block, k, len, now, ref;
+      var block, l, len, now, ref;
       if (!Constants.debug_physics) {
         now = performance.now();
         ref = this.list;
-        for (k = 0, len = ref.length; k < len; k++) {
-          block = ref[k];
+        for (l = 0, len = ref.length; l < len; l++) {
+          block = ref[l];
           block.graphics.visible = this.visible(block);
           block.edges_list.update();
           if (block.frames_count && block.graphics.visible) {
@@ -1535,15 +1535,15 @@
     }
 
     draw_debug_culling() {
-      var block, calling_debug, culling_debug, culling_debugs, k, l, layer, len, len1, len2, line_width, m, ref, ref1, results;
+      var block, calling_debug, culling_debug, culling_debugs, l, layer, len, len1, len2, line_width, m, o, ref, ref1, results;
       culling_debugs = Object.values(this.culling_debug_graphics);
-      for (k = 0, len = culling_debugs.length; k < len; k++) {
-        culling_debug = culling_debugs[k];
+      for (l = 0, len = culling_debugs.length; l < len; l++) {
+        culling_debug = culling_debugs[l];
         culling_debug.clear();
       }
       ref = this.list;
-      for (l = 0, len1 = ref.length; l < len1; l++) {
-        block = ref[l];
+      for (m = 0, len1 = ref.length; m < len1; m++) {
+        block = ref[m];
         if (block.aabb && block.graphics.visible) {
           layer = this.level.layers.layer_for_block(block);
           culling_debug = this.culling_debug_graphics[layer.label];
@@ -1553,8 +1553,8 @@
       ref1 = Object.values(this.culling_debug_graphics);
       // Parallax layers use a fixed 1px stroke (pixelLine) to stay readable
       results = [];
-      for (m = 0, len2 = ref1.length; m < len2; m++) {
-        calling_debug = ref1[m];
+      for (o = 0, len2 = ref1.length; o < len2; o++) {
+        calling_debug = ref1[o];
         if (calling_debug.parallax) {
           results.push(calling_debug.stroke({
             color: 0xC7C778,
@@ -1598,9 +1598,9 @@
     }
 
     texture_names(texture_params) {
-      var frame_i, k, ref, results;
+      var frame_i, l, ref, results;
       results = [];
-      for (frame_i = k = 0, ref = texture_params.frames_count - 1; (0 <= ref ? k <= ref : k >= ref); frame_i = 0 <= ref ? ++k : --k) {
+      for (frame_i = l = 0, ref = texture_params.frames_count - 1; (0 <= ref ? l <= ref : l >= ref); frame_i = 0 <= ref ? ++l : --l) {
         results.push(`${texture_params.file_base}${(frame_i / 100.0).toFixed(2).toString().substring(2)}.${texture_params.file_extension}`);
       }
       return results;
@@ -1633,10 +1633,10 @@
     }
 
     parse() {
-      var edge, i, k, len, ref, results, vertex;
+      var edge, i, l, len, ref, results, vertex;
       ref = this.block.vertices;
       results = [];
-      for (i = k = 0, len = ref.length; k < len; i = ++k) {
+      for (i = l = 0, len = ref.length; l < len; i = ++l) {
         vertex = ref[i];
         if (vertex.edge) {
           edge = {
@@ -1675,26 +1675,26 @@
     }
 
     load_assets() {
-      var edge, k, len, ref, results;
+      var edge, l, len, ref, results;
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        edge = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        edge = ref[l];
         results.push(this.assets.effects.push(edge.theme.file));
       }
       return results;
     }
 
     init() {
-      return this.init_sprites();
+      return this.init_graphics();
     }
 
-    init_sprites() {
-      var edge, k, len, matrix, points, ref, results, texture;
+    init_graphics() {
+      var edge, l, len, matrix, points, ref, results, texture;
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        edge = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        edge = ref[l];
         // Build polygon in PIXI coordinates (y inverted)
         points = edge.vertices.map(function(vertex) {
           return new PIXI.Point(vertex.x, -vertex.y);
@@ -1723,13 +1723,13 @@
 
     // only display edges present on the screen zone
     update() {
-      var block_visible, edge, k, len, ref, results;
+      var block_visible, edge, l, len, ref, results;
       if (!Constants.debug_physics) {
         block_visible = this.block.graphics.visible;
         ref = this.list;
         results = [];
-        for (k = 0, len = ref.length; k < len; k++) {
-          edge = ref[k];
+        for (l = 0, len = ref.length; l < len; l++) {
+          edge = ref[l];
           results.push(edge.graphics.visible = block_visible && this.visible(edge)); // don't test aabb if block not visible
         }
         return results;
@@ -1769,11 +1769,11 @@
     }
 
     parse() {
-      var k, len, polygon, results, run, runs, theme;
+      var l, len, polygon, results, run, runs, theme;
       runs = this.extract_runs(this.block.vertices);
       results = [];
-      for (k = 0, len = runs.length; k < len; k++) {
-        run = runs[k];
+      for (l = 0, len = runs.length; l < len; l++) {
+        run = runs[l];
         theme = this.assets.theme.edge_params(run.texture);
         polygon = this.build_edge_polygon(this.block.vertices, run, theme);
         polygon.aabb = this.compute_aabb(polygon);
@@ -1821,29 +1821,26 @@
     // Collects the surface vertices from run.start through (run.end + 1),
     // then builds a triangle strip projecting downward by theme.depth.
     build_edge_polygon(vertices, run, theme) {
-      var bot_curr, bot_next, closing_idx, depth, dx, dy, i, indices, k, l, lengths, m, n, o, poly_vertices, ref, ref1, ref2, ref3, s, scale, surface, surface_count, uvs, v;
+      var bot_curr, bot_next, depth, dx, dy, i, indices, k, l, lengths, m, n, o, p, poly_vertices, q, ref, ref1, ref2, ref3, ref4, s, scale, span, surface, surface_count, uvs, v;
       n = vertices.length;
       depth = theme.depth;
       scale = theme.scale;
       // Collect surface vertices along this edge segment (may wrap)
       surface = [];
-      closing_idx = (run.end + 1) % n;
+      span = ((run.end - run.start + n) % n) + 1; // handles end of run that may be the start vertex!
       i = run.start;
-      while (true) {
-        v = vertices[i];
+      for (k = l = 0, ref = span; (0 <= ref ? l <= ref : l >= ref); k = 0 <= ref ? ++l : --l) {
+        v = vertices[i % n];
         surface.push({
           x: v.absolute_x,
           y: v.absolute_y
         });
-        if (i === closing_idx) {
-          break;
-        }
         i = (i + 1) % n;
       }
       surface_count = surface.length;
       // Cumulative arc length along the surface → U texture coordinate
       lengths = [0];
-      for (s = k = 1, ref = surface_count; (1 <= ref ? k < ref : k > ref); s = 1 <= ref ? ++k : --k) {
+      for (s = m = 1, ref1 = surface_count; (1 <= ref1 ? m < ref1 : m > ref1); s = 1 <= ref1 ? ++m : --m) {
         dx = surface[s].x - surface[s - 1].x;
         dy = surface[s].y - surface[s - 1].y;
         lengths.push(lengths[s - 1] + Math.sqrt(dx * dx + dy * dy));
@@ -1852,7 +1849,7 @@
       // then bottom row (same vertices reversed, offset by -depth)
       poly_vertices = [];
       uvs = [];
-      for (s = l = 0, ref1 = surface_count; (0 <= ref1 ? l < ref1 : l > ref1); s = 0 <= ref1 ? ++l : --l) {
+      for (s = o = 0, ref2 = surface_count; (0 <= ref2 ? o < ref2 : o > ref2); s = 0 <= ref2 ? ++o : --o) {
         v = surface[s];
         poly_vertices.push({
           x: v.x,
@@ -1860,7 +1857,7 @@
         });
         uvs.push(lengths[s] * scale, 0.0);
       }
-      for (s = m = 0, ref2 = surface_count; (0 <= ref2 ? m < ref2 : m > ref2); s = 0 <= ref2 ? ++m : --m) {
+      for (s = p = 0, ref3 = surface_count; (0 <= ref3 ? p < ref3 : p > ref3); s = 0 <= ref3 ? ++p : --p) {
         v = surface[surface_count - 1 - s];
         poly_vertices.push({
           x: v.x,
@@ -1870,7 +1867,7 @@
       }
       // Triangle strip indices (2 triangles per segment)
       indices = [];
-      for (s = o = 0, ref3 = surface_count - 1; (0 <= ref3 ? o < ref3 : o > ref3); s = 0 <= ref3 ? ++o : --o) {
+      for (s = q = 0, ref4 = surface_count - 1; (0 <= ref4 ? q < ref4 : q > ref4); s = 0 <= ref4 ? ++q : --q) {
         bot_curr = 2 * surface_count - 1 - s;
         bot_next = 2 * surface_count - 2 - s;
         indices.push(s, s + 1, bot_curr);
@@ -1885,31 +1882,31 @@
     }
 
     load_assets() {
-      var k, len, polygon, ref, results;
+      var l, len, polygon, ref, results;
       ref = this.polygons;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        polygon = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        polygon = ref[l];
         results.push(this.assets.effects.push(polygon.theme.file));
       }
       return results;
     }
 
     init() {
-      return this.init_sprites();
+      return this.init_graphics();
     }
 
-    init_sprites() {
-      var count, geometry, i, k, l, len, len1, polygon, positions, ref, ref1, results, texture, v;
+    init_graphics() {
+      var count, geometry, i, l, len, len1, m, polygon, positions, ref, ref1, results, texture, v;
       ref = this.polygons;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        polygon = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        polygon = ref[l];
         // Convert world coords (Y-up) to PIXI coords (Y-down)
         count = polygon.vertices.length;
         positions = new Float32Array(count * 2);
         ref1 = polygon.vertices;
-        for (i = l = 0, len1 = ref1.length; l < len1; i = ++l) {
+        for (i = m = 0, len1 = ref1.length; m < len1; i = ++m) {
           v = ref1[i];
           positions[i * 2] = v.x;
           positions[i * 2 + 1] = -v.y;
@@ -1921,26 +1918,26 @@
         });
         texture = PIXI.Texture.from(this.assets.get_url(polygon.theme.file));
         texture.source.addressMode = 'repeat';
-        polygon.mesh = new PIXI.Mesh({
+        polygon.graphics = new PIXI.Mesh({
           geometry: geometry,
           texture: texture
         });
-        polygon.mesh.label = `Edge (${this.block.graphics.label})`;
-        results.push(this.level.layers.layer_for_block(this.block).addChild(polygon.mesh));
+        polygon.graphics.label = `Edge (${this.block.graphics.label})`;
+        results.push(this.level.layers.layer_for_block(this.block).addChild(polygon.graphics));
       }
       return results;
     }
 
     // only display edges present on the screen zone
     update() {
-      var block_visible, k, len, polygon, ref, results;
+      var block_visible, l, len, polygon, ref, results;
       if (!Constants.debug_physics) {
         block_visible = this.block.graphics.visible;
         ref = this.polygons;
         results = [];
-        for (k = 0, len = ref.length; k < len; k++) {
-          polygon = ref[k];
-          results.push(polygon.mesh.visible = block_visible && this.visible(polygon));
+        for (l = 0, len = ref.length; l < len; l++) {
+          polygon = ref[l];
+          results.push(polygon.graphics.visible = block_visible && this.visible(polygon));
         }
         return results;
       }
@@ -1987,11 +1984,11 @@
     }
 
     parse(xml) {
-      var entity, k, l, len, len1, name, texture_name, theme_center_x, theme_center_y, theme_height, theme_sprite, theme_width, value, xml_entities, xml_entity, xml_param, xml_params;
+      var entity, l, len, len1, m, name, texture_name, theme_center_x, theme_center_y, theme_height, theme_sprite, theme_width, value, xml_entities, xml_entity, xml_param, xml_params;
       xml_entities = $(xml).find('entity');
 // parse entity xml
-      for (k = 0, len = xml_entities.length; k < len; k++) {
-        xml_entity = xml_entities[k];
+      for (l = 0, len = xml_entities.length; l < len; l++) {
+        xml_entity = xml_entities[l];
         entity = {
           id: $(xml_entity).attr('id'),
           typeid: $(xml_entity).attr('typeid'),
@@ -2031,8 +2028,8 @@
         };
         // parse params tags
         xml_params = $(xml_entity).find('param');
-        for (l = 0, len1 = xml_params.length; l < len1; l++) {
-          xml_param = xml_params[l];
+        for (m = 0, len1 = xml_params.length; m < len1; m++) {
+          xml_param = xml_params[m];
           name = $(xml_param).attr('name');
           value = $(xml_param).attr('value');
           entity.params[name] = value;
@@ -2092,19 +2089,19 @@
     }
 
     load_assets() {
-      var entity, i, k, len, ref, results;
+      var entity, i, l, len, ref, results;
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        entity = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        entity = ref[l];
         if (entity.display) {
           if (entity.frames_count === 0) {
             results.push(this.assets.anims.push(entity.file));
           } else {
             results.push((function() {
-              var l, ref1, results1;
+              var m, ref1, results1;
               results1 = [];
-              for (i = l = 0, ref1 = entity.frames_count - 1; (0 <= ref1 ? l <= ref1 : l >= ref1); i = 0 <= ref1 ? ++l : --l) {
+              for (i = m = 0, ref1 = entity.frames_count - 1; (0 <= ref1 ? m <= ref1 : m >= ref1); i = 0 <= ref1 ? ++m : --m) {
                 results1.push(this.assets.anims.push(this.frame_name(entity, i)));
               }
               return results1;
@@ -2119,16 +2116,16 @@
 
     init() {
       this.init_physics();
-      this.init_sprites();
+      this.init_graphics();
       return this.init_culling_debug();
     }
 
     init_physics() {
-      var entity, k, len, ref, results;
+      var entity, l, len, ref, results;
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        entity = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        entity = ref[l];
         // End of level
         if (entity.typeid === 'EndOfLevel') {
           this.create_entity_physics(entity, 'end_of_level');
@@ -2176,12 +2173,12 @@
       return body;
     }
 
-    init_sprites() {
-      var entity, k, len, ref, results;
+    init_graphics() {
+      var entity, l, len, ref, results;
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        entity = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        entity = ref[l];
         if (entity.z === 0) {
           results.push(this.init_sprite(entity, this.level.layers.static_level));
         } else if (entity.z < 0) {
@@ -2196,10 +2193,10 @@
     }
 
     init_sprite(entity, container) {
-      var i, k, ref, sprite, textures;
+      var i, l, ref, sprite, textures;
       if (entity.frames_count) {
         textures = [];
-        for (i = k = 0, ref = entity.frames_count - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
+        for (i = l = 0, ref = entity.frames_count - 1; (0 <= ref ? l <= ref : l >= ref); i = 0 <= ref ? ++l : --l) {
           textures.push(PIXI.Texture.from(this.assets.get_url(this.frame_name(entity, i))));
         }
         sprite = new PIXI.AnimatedSprite(textures);
@@ -2220,7 +2217,7 @@
         if (entity.position.reversed) {
           sprite.scale.x *= -1;
         }
-        entity.sprite = sprite; // keep reference to the sprite
+        entity.graphics = sprite; // keep reference to the sprite
         return container.addChild(sprite);
       }
     }
@@ -2234,13 +2231,13 @@
     }
 
     update(entity) {
-      var k, len, ref;
+      var l, len, ref;
       if (!Constants.debug_physics) {
         ref = this.list;
-        for (k = 0, len = ref.length; k < len; k++) {
-          entity = ref[k];
-          if (entity.sprite) {
-            entity.sprite.visible = this.visible(entity);
+        for (l = 0, len = ref.length; l < len; l++) {
+          entity = ref[l];
+          if (entity.graphics) {
+            entity.graphics.visible = this.visible(entity);
           }
         }
       }
@@ -2250,12 +2247,12 @@
     }
 
     draw_debug_culling() {
-      var entity, k, len, line_width, ref;
+      var entity, l, len, line_width, ref;
       this.culling_debug.clear();
       ref = this.list;
-      for (k = 0, len = ref.length; k < len; k++) {
-        entity = ref[k];
-        if (entity.aabb && entity.sprite.visible) {
+      for (l = 0, len = ref.length; l < len; l++) {
+        entity = ref[l];
+        if (entity.aabb && entity.graphics.visible) {
           this.culling_debug.rect(entity.aabb.lowerBound.x, -entity.aabb.upperBound.y, entity.aabb.upperBound.x - entity.aabb.lowerBound.x, entity.aabb.upperBound.y - entity.aabb.lowerBound.y);
         }
       }
@@ -2284,7 +2281,7 @@
     }
 
     compute_aabb(entity) {
-      var aabb, bottom, corner, corners, k, left, len, right, rotated, top, xs, ys;
+      var aabb, bottom, corner, corners, l, left, len, right, rotated, top, xs, ys;
       // limits relative to anchor
       left = -entity.center.x;
       right = left + entity.size.width;
@@ -2312,8 +2309,8 @@
       // with entity.position as anchor
       xs = [];
       ys = [];
-      for (k = 0, len = corners.length; k < len; k++) {
-        corner = corners[k];
+      for (l = 0, len = corners.length; l < len; l++) {
+        corner = corners[l];
         rotated = Math2D.rotate_point(corner, entity.position.angle, entity.position);
         xs.push(rotated.x);
         ys.push(rotated.y);
@@ -2380,9 +2377,9 @@
     }
 
     parse(xml) {
-      var i, k, layer, len, xml_layer, xml_layers;
+      var i, l, layer, len, xml_layer, xml_layers;
       xml_layers = $(xml).find('layeroffsets layeroffset');
-      for (i = k = 0, len = xml_layers.length; k < len; i = ++k) {
+      for (i = l = 0, len = xml_layers.length; l < len; i = ++l) {
         xml_layer = xml_layers[i];
         layer = {
           x: parseFloat($(xml_layer).attr('x')),
@@ -2421,11 +2418,11 @@
     }
 
     init_parallax_layers() {
-      var k, len, parallax_data, parallax_layer, ref, results, scale_layer, translate_layer;
+      var l, len, parallax_data, parallax_layer, ref, results, scale_layer, translate_layer;
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        parallax_data = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        parallax_data = ref[l];
         scale_layer = new PIXI.Container();
         translate_layer = new PIXI.Container();
         parallax_layer = new PIXI.Container();
@@ -2443,7 +2440,7 @@
     }
 
     assemble_layers() {
-      var i, k, l, len, len1, parallax, ref, ref1, results;
+      var i, l, len, len1, m, parallax, ref, ref1, results;
       ref = this.list;
       /* Structure is like this
          Root
@@ -2456,7 +2453,7 @@
               -> static-foreground
           - n Scale > Translate > Parallax layers with frontlayer="true"
          */
-      for (i = k = 0, len = ref.length; k < len; i = ++k) {
+      for (i = l = 0, len = ref.length; l < len; i = ++l) {
         parallax = ref[i];
         if (!parallax.frontlayer) {
           this.level.stage.addChild(this.parallax_scale_layers[i]);
@@ -2469,7 +2466,7 @@
       this.translate_layer.addChild(this.static_foreground);
       ref1 = this.list;
       results = [];
-      for (i = l = 0, len1 = ref1.length; l < len1; i = ++l) {
+      for (i = m = 0, len1 = ref1.length; m < len1; i = ++m) {
         parallax = ref1[i];
         if (parallax.frontlayer) {
           results.push(this.level.stage.addChild(this.parallax_scale_layers[i]));
@@ -2505,7 +2502,7 @@
     }
 
     parse(xml) {
-      var k, len, ref, wall, xml_limits;
+      var l, len, ref, wall, xml_limits;
       xml_limits = $(xml).find('limits');
       // CAREFUL ! The limits on files are not real, some polygons could be outside
       // => It seems to be the limits where the player can go
@@ -2526,7 +2523,7 @@
         y: this.screen.top - this.screen.bottom
       };
       // Each wall is a rectangle (in Y-up world coords) — its AABB, physics polygon,
-      // and TilingSprite are all derived from these four bounds.
+      // and Mesh are all derived from these four bounds.
       this.walls = [
         {
           name: 'left',
@@ -2559,8 +2556,8 @@
       ];
       ref = this.walls;
       // Compute AABB
-      for (k = 0, len = ref.length; k < len; k++) {
-        wall = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        wall = ref[l];
         wall.aabb = this.compute_aabb(wall);
       }
       this.texture = this.level.infos.border || 'dirt';
@@ -2574,17 +2571,17 @@
 
     init() {
       this.init_physics();
-      this.init_sprites();
+      this.init_graphics();
       return this.init_culling_debug();
     }
 
     init_physics() {
-      var ground, k, len, ref, results, vertices, wall;
+      var ground, l, len, ref, results, vertices, wall;
       ground = Constants.ground;
       ref = this.walls;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        wall = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        wall = ref[l];
         vertices = [
           {
             x: wall.left,
@@ -2608,25 +2605,54 @@
       return results;
     }
 
-    init_sprites() {
-      var k, len, ref, results, texture, wall;
+    init_graphics() {
+      var corner, corners, geometry, i, l, len, len1, m, positions, ref, results, texture, uv_scale, uvs, wall;
       texture = PIXI.Texture.from(this.assets.get_url(this.texture_name));
+      texture.source.addressMode = 'repeat';
       ref = this.walls;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        wall = ref[k];
-        wall.sprite = new PIXI.TilingSprite({
-          texture: texture,
-          width: wall.right - wall.left,
-          height: wall.top - wall.bottom
+      for (l = 0, len = ref.length; l < len; l++) {
+        wall = ref[l];
+        // Four corners in PIXI coords (y inverted): TL, TR, BR, BL.
+        corners = [
+          {
+            x: wall.left,
+            y: -wall.top
+          },
+          {
+            x: wall.right,
+            y: -wall.top
+          },
+          {
+            x: wall.right,
+            y: -wall.bottom
+          },
+          {
+            x: wall.left,
+            y: -wall.bottom
+          }
+        ];
+        positions = new Float32Array(8);
+        uvs = new Float32Array(8);
+        uv_scale = 64.0 / texture.source.width; // Same world-space UV formula as Blocks so the texture stays continuous
+        for (i = m = 0, len1 = corners.length; m < len1; i = ++m) {
+          corner = corners[i];
+          positions[i * 2] = corner.x;
+          positions[i * 2 + 1] = corner.y;
+          uvs[i * 2] = uv_scale * corner.x;
+          uvs[i * 2 + 1] = -uv_scale * corner.y;
+        }
+        geometry = new PIXI.MeshGeometry({
+          positions: positions,
+          uvs: uvs,
+          indices: new Uint32Array([0, 1, 2, 0, 2, 3])
         });
-        wall.sprite.x = wall.left;
-        wall.sprite.y = -wall.top;
-        wall.sprite.anchor.x = 0;
-        wall.sprite.anchor.y = 0;
-        wall.sprite.tileScale.x = 1.0 / 60.0;
-        wall.sprite.tileScale.y = 1.0 / 60.0;
-        results.push(this.level.layers.static_level.addChild(wall.sprite));
+        wall.graphic = new PIXI.Mesh({
+          geometry: geometry,
+          texture: texture
+        });
+        wall.graphic.label = `limit (${wall.name})`;
+        results.push(this.level.layers.static_level.addChild(wall.graphic));
       }
       return results;
     }
@@ -2640,12 +2666,12 @@
     }
 
     update() {
-      var k, len, ref, wall;
+      var l, len, ref, wall;
       if (!Constants.debug_physics) {
         ref = this.walls;
-        for (k = 0, len = ref.length; k < len; k++) {
-          wall = ref[k];
-          wall.sprite.visible = this.visible(wall);
+        for (l = 0, len = ref.length; l < len; l++) {
+          wall = ref[l];
+          wall.graphic.visible = this.visible(wall);
         }
       }
       if (Constants.debug_culling) {
@@ -2654,12 +2680,12 @@
     }
 
     draw_debug_culling() {
-      var k, len, line_width, ref, wall;
+      var l, len, line_width, ref, wall;
       this.culling_debug.clear();
       ref = this.walls;
-      for (k = 0, len = ref.length; k < len; k++) {
-        wall = ref[k];
-        if (wall.sprite.visible) {
+      for (l = 0, len = ref.length; l < len; l++) {
+        wall = ref[l];
+        if (wall.graphic.visible) {
           this.culling_debug.rect(wall.aabb.lowerBound.x, -wall.aabb.upperBound.y, wall.aabb.upperBound.x - wall.aabb.lowerBound.x, wall.aabb.upperBound.y - wall.aabb.lowerBound.y);
         }
       }
@@ -2694,19 +2720,19 @@
     }
 
     parse(xml) {
-      var k, l, len, len1, new_name, old_name, ref, ref1, results, sound_replacement, sprite_replacement, xml_replacements;
+      var l, len, len1, m, new_name, old_name, ref, ref1, results, sound_replacement, sprite_replacement, xml_replacements;
       xml_replacements = $(xml).find('theme_replacements');
       ref = xml_replacements.find('sprite_replacement');
-      for (k = 0, len = ref.length; k < len; k++) {
-        sprite_replacement = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        sprite_replacement = ref[l];
         old_name = $(sprite_replacement).attr('old_name');
         new_name = $(sprite_replacement).attr('new_name');
         this.sprites[old_name] = new_name;
       }
       ref1 = xml_replacements.find('sound_replacement');
       results = [];
-      for (l = 0, len1 = ref1.length; l < len1; l++) {
-        sound_replacement = ref1[l];
+      for (m = 0, len1 = ref1.length; m < len1; m++) {
+        sound_replacement = ref1[m];
         old_name = $(sound_replacement).attr('old_name');
         new_name = $(sound_replacement).attr('new_name');
         results.push(this.sounds[old_name] = new_name);
@@ -2764,10 +2790,10 @@
     }
 
     init() {
-      return this.init_sprites();
+      return this.init_graphics();
     }
 
-    init_sprites() {
+    init_graphics() {
       var texture;
       texture = PIXI.Texture.from(this.assets.get_url(this.filename));
       this.sprite = new PIXI.TilingSprite({
@@ -2848,18 +2874,18 @@
     }
 
     move_with_key_step() {
-      var k, key_step, l, len, len1, part, ref, ref1, results;
+      var key_step, l, len, len1, m, part, ref, ref1, results;
       key_step = this.replay.key_steps[this.level.physics.steps];
       if (key_step) {
         ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
-        for (k = 0, len = ref.length; k < len; k++) {
-          part = ref[k];
+        for (l = 0, len = ref.length; l < len; l++) {
+          part = ref[l];
           this.set_part_position(this.moto, part, key_step);
         }
         ref1 = ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
         results = [];
-        for (l = 0, len1 = ref1.length; l < len1; l++) {
-          part = ref1[l];
+        for (m = 0, len1 = ref1.length; m < len1; m++) {
+          part = ref1[m];
           results.push(this.set_part_position(this.moto.rider, part, key_step));
         }
         return results;
@@ -2896,12 +2922,12 @@
     }
 
     load_assets() {
-      var k, len, part, parts, results;
+      var l, len, part, parts, results;
       // Assets
       parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm, Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
       results = [];
-      for (k = 0, len = parts.length; k < len; k++) {
-        part = parts[k];
+      for (l = 0, len = parts.length; l < len; l++) {
+        part = parts[l];
         results.push(this.assets.moto.push(part.ghost_texture));
       }
       return results;
@@ -2918,11 +2944,11 @@
     }
 
     init() {
-      var ghost, k, len, ref, results;
+      var ghost, l, len, ref, results;
       ref = this.all_ghosts();
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        ghost = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        ghost = ref[l];
         if (ghost.replay) {
           results.push(ghost.init());
         } else {
@@ -2933,11 +2959,11 @@
     }
 
     reload() {
-      var ghost, k, len, ref, results;
+      var ghost, l, len, ref, results;
       ref = this.all_ghosts();
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        ghost = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        ghost = ref[l];
         if (ghost.replay) {
           results.push(ghost.reload());
         } else {
@@ -2948,11 +2974,11 @@
     }
 
     move() {
-      var ghost, k, len, ref, results;
+      var ghost, l, len, ref, results;
       ref = this.all_ghosts();
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        ghost = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        ghost = ref[l];
         if (ghost.replay) {
           results.push(ghost.move());
         } else {
@@ -2963,11 +2989,11 @@
     }
 
     update() {
-      var ghost, k, len, ref, results;
+      var ghost, l, len, ref, results;
       ref = this.all_ghosts();
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        ghost = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        ghost = ref[l];
         if (ghost.replay) {
           results.push(ghost.update());
         } else {
@@ -2978,11 +3004,11 @@
     }
 
     load_replays() {
-      var k, len, option_replay, ref, replay, results;
+      var l, len, option_replay, ref, replay, results;
       ref = this.options.replays;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        option_replay = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        option_replay = ref[l];
         replay = new Replay(this.level);
         replay.load(option_replay.replay);
         if (!this.options.playable && option_replay.follow) {
@@ -3042,10 +3068,10 @@
     }
 
     load_assets() {
-      var k, len, part, parts;
+      var l, len, part, parts;
       parts = [Constants.body, Constants.left_wheel, Constants.right_wheel, Constants.left_axle, Constants.right_axle];
-      for (k = 0, len = parts.length; k < len; k++) {
-        part = parts[k];
+      for (l = 0, len = parts.length; l < len; l++) {
+        part = parts[l];
         if (this.ghost) {
           this.assets.moto.push(part.ghost_texture);
         } else {
@@ -3057,7 +3083,7 @@
 
     init() {
       this.init_physics();
-      return this.init_sprites();
+      return this.init_graphics();
     }
 
     init_physics() {
@@ -3074,12 +3100,12 @@
       return this.rider.init_physics();
     }
 
-    init_sprites() {
-      var asset_name, axle_name, k, l, len, len1, len2, m, part, ref, ref1, ref2, wheel_name;
+    init_graphics() {
+      var asset_name, axle_name, l, len, len1, len2, m, o, part, ref, ref1, ref2, wheel_name;
       ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
       // Create and add sprites to the scene
-      for (k = 0, len = ref.length; k < len; k++) {
-        part = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        part = ref[l];
         if (this.ghost) {
           asset_name = Constants[part].ghost_texture;
         } else {
@@ -3096,8 +3122,8 @@
       this.body_sprite.anchor.y = 0.5;
       ref1 = ['left_wheel', 'right_wheel'];
       // Define wheels values
-      for (l = 0, len1 = ref1.length; l < len1; l++) {
-        wheel_name = ref1[l];
+      for (m = 0, len1 = ref1.length; m < len1; m++) {
+        wheel_name = ref1[m];
         this[`${wheel_name}_sprite`].width = 2 * Constants[wheel_name].radius;
         this[`${wheel_name}_sprite`].height = 2 * Constants[wheel_name].radius;
         this[`${wheel_name}_sprite`].anchor.x = 0.5;
@@ -3105,12 +3131,12 @@
       }
       ref2 = ['left_axle', 'right_axle'];
       // Define axles values
-      for (m = 0, len2 = ref2.length; m < len2; m++) {
-        axle_name = ref2[m];
+      for (o = 0, len2 = ref2.length; o < len2; o++) {
+        axle_name = ref2[o];
         this[`${axle_name}_sprite`].anchor.x = 0.0;
         this[`${axle_name}_sprite`].anchor.y = 0.5;
       }
-      return this.rider.init_sprites();
+      return this.rider.init_graphics();
     }
 
     move(input = this.level.input) {
@@ -3478,12 +3504,12 @@
     }
 
     update() {
-      var ctx, k, len, particle, position, ref, results;
+      var ctx, l, len, particle, position, ref, results;
       ctx = this.level.ctx;
       ref = this.list;
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        particle = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        particle = ref[l];
         position = particle.GetPosition();
         ctx.save();
         ctx.translate(position.x, position.y);
@@ -3519,14 +3545,14 @@
     }
 
     clone() {
-      var k, key, l, len, len1, new_replay, part, ref, ref1, ref2, value;
+      var key, l, len, len1, m, new_replay, part, ref, ref1, ref2, value;
       new_replay = new Replay(this.level);
       new_replay.success = this.success;
       new_replay.steps = this.steps;
       ref = ['up_down', 'up_up', 'down_down', 'down_up', 'left_down', 'left_up', 'right_down', 'right_up', 'space_pressed'];
       // Copy inputs
-      for (k = 0, len = ref.length; k < len; k++) {
-        key = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        key = ref[l];
         new_replay.inputs[key] = this.inputs[key].slice(); // copy array
       }
       ref1 = this.key_steps;
@@ -3536,8 +3562,8 @@
         value = ref1[key];
         new_replay.key_steps[key] = {};
         ref2 = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
-        for (l = 0, len1 = ref2.length; l < len1; l++) {
-          part = ref2[l];
+        for (m = 0, len1 = ref2.length; m < len1; m++) {
+          part = ref2[m];
           new_replay.key_steps[key][part] = {
             position: {
               x: value[part].position.x,
@@ -3562,11 +3588,11 @@
     }
 
     add_inputs() {
-      var input, k, key, len, ref;
+      var input, key, l, len, ref;
       input = this.level.input;
       ref = ['up', 'down', 'left', 'right'];
-      for (k = 0, len = ref.length; k < len; k++) {
-        key = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        key = ref[l];
         if (input[key] && this.is_up(key)) {
           this.inputs[`${key}_down`].push(this.steps);
         } else if (!input[key] && this.is_down(key)) {
@@ -3579,20 +3605,20 @@
     }
 
     add_key_steps() {
-      var k, key_step, l, len, len1, moto, part, ref, ref1, results, rider;
+      var key_step, l, len, len1, m, moto, part, ref, ref1, results, rider;
       moto = this.level.moto;
       rider = moto.rider;
       if (this.steps % Constants.replay_key_step === 0) {
         key_step = this.key_steps[this.steps.toString()] = {};
         ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle'];
-        for (k = 0, len = ref.length; k < len; k++) {
-          part = ref[k];
+        for (l = 0, len = ref.length; l < len; l++) {
+          part = ref[l];
           key_step[part] = this.physics_values(moto[part]);
         }
         ref1 = ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
         results = [];
-        for (l = 0, len1 = ref1.length; l < len1; l++) {
-          part = ref1[l];
+        for (m = 0, len1 = ref1.length; m < len1; m++) {
+          part = ref1[m];
           results.push(key_step[part] = this.physics_values(rider[part]));
         }
         return results;
@@ -3601,12 +3627,12 @@
 
     // TODO dichotomic search
     last(input) {
-      var element, i, input_length, k, last_element, len, ref, steps;
+      var element, i, input_length, l, last_element, len, ref, steps;
       last_element = null;
       input_length = this.inputs[input].length;
       steps = this.level.physics.steps;
       ref = this.inputs[input];
-      for (i = k = 0, len = ref.length; k < len; i = ++k) {
+      for (i = l = 0, len = ref.length; l < len; i = ++l) {
         element = ref[i];
         if (element <= steps && (i + 1 > input_length - 1 || this.inputs[input][i + 1] > steps)) {
           last_element = element;
@@ -3711,11 +3737,11 @@
     }
 
     load_assets() {
-      var k, len, part, parts, results;
+      var l, len, part, parts, results;
       parts = [Constants.torso, Constants.upper_leg, Constants.lower_leg, Constants.upper_arm, Constants.lower_arm];
       results = [];
-      for (k = 0, len = parts.length; k < len; k++) {
-        part = parts[k];
+      for (l = 0, len = parts.length; l < len; l++) {
+        part = parts[l];
         if (this.ghost) {
           results.push(this.assets.moto.push(part.ghost_texture));
         } else {
@@ -3742,12 +3768,12 @@
       return this.hip_joint = this.create_joint(Constants.hip, this.upper_leg, this.torso, true);
     }
 
-    init_sprites() {
-      var asset_name, k, len, part, ref, results;
+    init_graphics() {
+      var asset_name, l, len, part, ref, results;
       ref = ['torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
       results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        part = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        part = ref[l];
         if (this.ghost) {
           asset_name = Constants[part].ghost_texture;
         } else {
@@ -4044,15 +4070,15 @@
   ReplayConversionService = class ReplayConversionService {
     // String is like : "keyA:199,240,569|keyB:29,40,55..."
     static inputs_to_string(inputs) {
-      var k, key, l, len, len1, ref, ref1, step, string;
+      var key, l, len, len1, m, ref, ref1, step, string;
       string = '';
       ref = ['up_down', 'up_up', 'down_down', 'down_up', 'left_down', 'left_up', 'right_down', 'right_up', 'space_pressed'];
-      for (k = 0, len = ref.length; k < len; k++) {
-        key = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        key = ref[l];
         string += `${key}:`;
         ref1 = inputs[key];
-        for (l = 0, len1 = ref1.length; l < len1; l++) {
-          step = ref1[l];
+        for (m = 0, len1 = ref1.length; m < len1; m++) {
+          step = ref1[m];
           string += `${step},`;
         }
         if (string[string.length - 1] === ',') { // remove last ',' if any
@@ -4065,18 +4091,18 @@
     }
 
     static string_to_inputs(string) {
-      var i, inputs, k, key, keys, l, len, len1, name, splitted, step, values;
+      var i, inputs, key, keys, l, len, len1, m, name, splitted, step, values;
       inputs = {};
       string = LZString.decompressFromBase64(string);
       keys = string.split('|');
-      for (k = 0, len = keys.length; k < len; k++) {
-        key = keys[k];
+      for (l = 0, len = keys.length; l < len; l++) {
+        key = keys[l];
         splitted = key.split(':');
         name = splitted[0];
         values = splitted[1].split(',');
         inputs[name] = [];
         if (values[0] !== '') {
-          for (i = l = 0, len1 = values.length; l < len1; i = ++l) {
+          for (i = m = 0, len1 = values.length; m < len1; i = ++m) {
             step = values[i];
             inputs[name][i] = parseInt(step);
           }
@@ -4089,13 +4115,13 @@
     // step1 is like : "part1_positions|part2_positions|...|part10_positions"
     // part1_positions is like : "11.1234,22.1234,33.1234,44.1234,55.1234,66.1234" (each position and angle values)
     static key_steps_to_string(key_steps) {
-      var a, b, c, d, e, f, k, key, key_step, len, ref, step, string;
+      var a, b, c, d, e, f, key, key_step, l, len, ref, step, string;
       string = `${Constants.replay_key_step}@`;
       for (step in key_steps) {
         key_step = key_steps[step];
         ref = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
-        for (k = 0, len = ref.length; k < len; k++) {
-          key = ref[k];
+        for (l = 0, len = ref.length; l < len; l++) {
+          key = ref[l];
           a = key_step[key].position.x.toFixed(Constants.replay_key_step_precision);
           b = key_step[key].position.y.toFixed(Constants.replay_key_step_precision);
           c = key_step[key].angle.toFixed(Constants.replay_key_step_precision);
@@ -4114,7 +4140,7 @@
     }
 
     static string_to_key_steps(string) {
-      var current_interval, element, i, k, key_step, key_step_string, key_steps, key_steps_string, l, len, len1, part_string, ref, ref1, step_interval, value_string;
+      var current_interval, element, i, key_step, key_step_string, key_steps, key_steps_string, l, len, len1, m, part_string, ref, ref1, step_interval, value_string;
       key_steps = {};
       string = LZString.decompressFromBase64(string);
       key_steps_string = string.split('@')[1];
@@ -4125,12 +4151,12 @@
         return key_steps;
       }
       ref = key_steps_string.split('=');
-      for (k = 0, len = ref.length; k < len; k++) {
-        key_step_string = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        key_step_string = ref[l];
         key_step = {};
         part_string = key_step_string.split('|');
         ref1 = ['body', 'left_wheel', 'right_wheel', 'left_axle', 'right_axle', 'torso', 'upper_leg', 'lower_leg', 'upper_arm', 'lower_arm'];
-        for (i = l = 0, len1 = ref1.length; l < len1; i = ++l) {
+        for (i = m = 0, len1 = ref1.length; m < len1; i = ++m) {
           element = ref1[i];
           value_string = part_string[i].split(',');
           key_step[element] = {
@@ -4170,35 +4196,35 @@
     }
 
     load(callback) {
-      var item, items, k, l, len, len1, len2, len3, m, o, ref, ref1, ref2, ref3, urls;
+      var item, items, l, len, len1, len2, len3, m, o, p, ref, ref1, ref2, ref3, urls;
       items = [];
       ref = this.textures;
-      for (k = 0, len = ref.length; k < len; k++) {
-        item = ref[k];
+      for (l = 0, len = ref.length; l < len; l++) {
+        item = ref[l];
         items.push({
           id: item,
           src: `/data/Textures/Textures/${item.toLowerCase()}`
         });
       }
       ref1 = this.anims;
-      for (l = 0, len1 = ref1.length; l < len1; l++) {
-        item = ref1[l];
+      for (m = 0, len1 = ref1.length; m < len1; m++) {
+        item = ref1[m];
         items.push({
           id: item,
           src: `/data/Textures/Anims/${item.toLowerCase()}`
         });
       }
       ref2 = this.effects;
-      for (m = 0, len2 = ref2.length; m < len2; m++) {
-        item = ref2[m];
+      for (o = 0, len2 = ref2.length; o < len2; o++) {
+        item = ref2[o];
         items.push({
           id: item,
           src: `/data/Textures/Effects/${item.toLowerCase()}`
         });
       }
       ref3 = this.moto;
-      for (o = 0, len3 = ref3.length; o < len3; o++) {
-        item = ref3[o];
+      for (p = 0, len3 = ref3.length; p < len3; p++) {
+        item = ref3[p];
         items.push({
           id: item,
           src: `/data/Textures/Riders/${item.toLowerCase()}`
@@ -4209,9 +4235,9 @@
         return item.src;
       });
       return PIXI.Assets.load(urls).then(() => {
-        var len4, p;
-        for (p = 0, len4 = items.length; p < len4; p++) {
-          item = items[p];
+        var len4, q;
+        for (q = 0, len4 = items.length; q < len4; q++) {
+          item = items[q];
           this.resources[item.id] = {
             url: item.src
           };
@@ -4251,12 +4277,12 @@
   };
 
   override_constants_by_url_params = function(params) {
-    var array, array_key, array_keys, i, k, key, len, value;
+    var array, array_key, array_keys, i, key, l, len, value;
     for (key in params) {
       value = params[key];
       array_keys = key.split('.');
       array = Constants;
-      for (i = k = 0, len = array_keys.length; k < len; i = ++k) {
+      for (i = l = 0, len = array_keys.length; l < len; i = ++l) {
         array_key = array_keys[i];
         if (i === array_keys.length - 1) {
           if (value === '') {
@@ -4277,12 +4303,12 @@
   };
 
   display_constants = function() {
-    var html, k, key, len, ref, ref1, sub_key, sub_value, value;
+    var html, key, l, len, ref, ref1, sub_key, sub_value, value;
     // display all the keys with direct link
     html = '<ul>';
     ref = Object.keys(Constants);
-    for (k = 0, len = ref.length; k < len; k++) {
-      key = ref[k];
+    for (l = 0, len = ref.length; l < len; l++) {
+      key = ref[l];
       value = Constants[key];
       if (typeof value !== 'object' && typeof value !== 'function') {
         html += `<li><a href=\"${document.URL}&${key}=${value}\">${key}</a> (${value})</li>`;
@@ -4368,9 +4394,9 @@
 
     // If shape has 3 collinear vertices, move them around to avoid that
     static not_collinear_vertices(vertices) {
-      var i, k, len, size, vertex;
+      var i, l, len, size, vertex;
       size = vertices.length;
-      for (i = k = 0, len = vertices.length; k < len; i = ++k) {
+      for (i = l = 0, len = vertices.length; l < len; i = ++l) {
         vertex = vertices[i];
         if (vertex.x === vertices[(i + 1) % size].x && vertices[(i + 2) % size].x) {
           vertex.x = vertex.x + 0.001;
@@ -4403,10 +4429,10 @@
     }
 
     load_theme(xml) {
-      var k, len, name, xml_sprite, xml_sprites;
+      var l, len, name, xml_sprite, xml_sprites;
       xml_sprites = $(xml).find('sprite');
-      for (k = 0, len = xml_sprites.length; k < len; k++) {
-        xml_sprite = xml_sprites[k];
+      for (l = 0, len = xml_sprites.length; l < len; l++) {
+        xml_sprite = xml_sprites[l];
         name = $(xml_sprite).attr('name').toLowerCase();
         if ($(xml_sprite).attr('type') === 'Entity') {
           this.sprites[name] = {

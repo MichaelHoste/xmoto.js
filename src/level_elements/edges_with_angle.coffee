@@ -36,9 +36,9 @@ class EdgesWithAngle
       @assets.effects.push(edge.theme.file)
 
   init: ->
-    @init_sprites()
+    @init_graphics()
 
-  init_sprites: ->
+  init_graphics: ->
     for edge in @list
       # Build polygon in PIXI coordinates (y inverted)
       points = edge.vertices.map((vertex) ->

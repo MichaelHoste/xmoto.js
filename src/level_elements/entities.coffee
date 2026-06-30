@@ -107,7 +107,7 @@ class Entities
 
   init: ->
     @init_physics()
-    @init_sprites()
+    @init_graphics()
     @init_culling_debug()
 
   init_physics: ->
@@ -158,7 +158,7 @@ class Entities
 
     body
 
-  init_sprites: ->
+  init_graphics: ->
     for entity in @list
       if entity.z == 0
         @init_sprite(entity, @level.layers.static_level)
@@ -190,7 +190,7 @@ class Entities
       sprite.name     = entity.params.name || entity.typeid
       sprite.scale.x *= -1 if entity.position.reversed
 
-      entity.sprite = sprite # keep reference to the sprite
+      entity.graphics = sprite # keep reference to the sprite
       container.addChild(sprite)
 
   init_culling_debug: ->
@@ -202,8 +202,8 @@ class Entities
   update: (entity) ->
     if !Constants.debug_physics
       for entity in @list
-        if entity.sprite
-          entity.sprite.visible = @visible(entity)
+        if entity.graphics
+          entity.graphics.visible = @visible(entity)
 
     if Constants.debug_culling
       @draw_debug_culling()
@@ -212,7 +212,7 @@ class Entities
     @culling_debug.clear()
 
     for entity in @list
-      if entity.aabb && entity.sprite.visible
+      if entity.aabb && entity.graphics.visible
         @culling_debug.rect(
           entity.aabb.lowerBound.x,
           -entity.aabb.upperBound.y,

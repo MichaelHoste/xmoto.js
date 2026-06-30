@@ -63,7 +63,6 @@ class Edges
     for k in [0..span]
       v = vertices[i % n]
       surface.push({ x: v.absolute_x, y: v.absolute_y })
-      break if i == closing_idx
       i = (i + 1) % n
 
     surface_count = surface.length
@@ -108,9 +107,9 @@ class Edges
       @assets.effects.push(polygon.theme.file)
 
   init: ->
-    @init_sprites()
+    @init_graphics()
 
-  init_sprites: ->
+  init_graphics: ->
     for polygon in @polygons
       # Convert world coords (Y-up) to PIXI coords (Y-down)
       count = polygon.vertices.length
@@ -129,9 +128,9 @@ class Edges
       texture = PIXI.Texture.from(@assets.get_url(polygon.theme.file))
       texture.source.addressMode = 'repeat'
 
-      polygon.mesh       = new PIXI.Mesh({ geometry: geometry, texture: texture })
-      polygon.mesh.label = "Edge (#{@block.graphics.label})"
-      @level.layers.layer_for_block(@block).addChild(polygon.mesh)
+      polygon.graphics       = new PIXI.Mesh({ geometry: geometry, texture: texture })
+      polygon.graphics.label = "Edge (#{@block.graphics.label})"
+      @level.layers.layer_for_block(@block).addChild(polygon.graphics)
 
   # only display edges present on the screen zone
   update: ->
@@ -139,7 +138,7 @@ class Edges
       block_visible = @block.graphics.visible
 
       for polygon in @polygons
-        polygon.mesh.visible = block_visible && @visible(polygon)
+        polygon.graphics.visible = block_visible && @visible(polygon)
 
   visible: (polygon) ->
     if @block.position.islayer && @block.position.layerid != undefined
