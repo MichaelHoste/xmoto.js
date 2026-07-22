@@ -5,21 +5,61 @@
 
 class Edges
 
-  constructor: (level, block) ->
-    @level  = level
-    @block  = block
-    @assets = @level.assets
+  constructor: (level, block, xml_block) ->
+    @level     = level
+    @block     = block
+    @xml_block = xml_block
+    @assets    = @level.assets
 
-    @polygons = [] # Each polygon is an edge that was created using the contiguous vertices sharing the same edge texture
+    @polygons  = [] # Each polygon is an edge that was created using the contiguous vertices sharing the same edge texture
+    @materials = [] # Edges could use custom materials (with tint/alpha)
 
   parse: ->
+    xml_edges = $(@xml_block).find('edges')
+
+    @angle      = parseFloat(xml_edges.attr('angle')) # Not currently used!
+    @drawmethod = xml_edges.attr('drawmethod')        # Not currently used! Could be: 'angle' | 'in' | 'out'
+
+    for xml_material in xml_edges.find('material')
+      @materials.push(
+        name:  $(xml_material).attr('name') # Name of new material
+        edge:  $(xml_material).attr('edge') # Name of original texture
+        scale: parseFloat($(xml_material).attr('scale'))
+        depth: parseFloat($(xml_material).attr('depth'))
+        color:
+          r: @parse_color(xml_material, 'r')
+          g: @parse_color(xml_material, 'g')
+          b: @parse_color(xml_material, 'b')
+          a: @parse_color(xml_material, 'a')
+      )
+
+    # Create polygons for run of successive edge vertices (needed before load_assets)
     runs = @extract_runs(@block.vertices)
 
     for run in runs
-      theme        = @assets.theme.edge_params(run.texture)
+      theme        = @edge_params(run.texture)
       polygon      = @build_edge_polygon(@block.vertices, run, theme)
       polygon.aabb = @compute_aabb(polygon)
       @polygons.push(polygon)
+
+  # Find the correct params for the edge.
+  # 1. from <edges><material>..., override the theme with depth/scale/colors (tints)
+  # 2. from theme directly
+  edge_params: (name) ->
+    material = @materials.find((material) -> material.name == name)
+
+    if material
+      edge_params = @assets.theme.edge_params(material.edge) # base texture from material
+
+      # Override scale/depth from theme if needed
+      edge_params.scale = material.scale if !isNaN(material.scale)
+      edge_params.depth = material.depth if !isNaN(material.depth)
+
+      edge_params.color = material.color # Add rgba colors (not in theme)
+    else
+      edge_params = @assets.theme.edge_params(name) # base texture from theme
+
+    edge_params
 
   # Find maximal runs of consecutive vertices sharing the same edge texture.
   extract_runs: (vertices) ->
@@ -130,7 +170,17 @@ class Edges
 
       polygon.graphics       = new PIXI.Mesh({ geometry: geometry, texture: texture })
       polygon.graphics.label = "Edge (#{@block.graphics.label})"
+
+      # Add tint to mesh
+      color                  = polygon.theme.color
+      polygon.graphics.tint  = (color.r << 16) + (color.g << 8) + color.b
+      polygon.graphics.alpha = color.a / 255.0
+
       @level.layers.layer_for_block(@block).addChild(polygon.graphics)
+
+  parse_color: (xml_material, channel) ->
+    value = $(xml_material).attr("color_#{channel}")
+    if value? then parseInt(value) else 255 # to manage that if NaN => 255, but if 0 => 0
 
   # only display edges present on the screen zone
   update: ->

@@ -41,6 +41,11 @@ class Theme
           file:  $(xml_sprite).attr('file')
           scale: parseFloat($(xml_sprite).attr('scale'))
           depth: parseFloat($(xml_sprite).attr('depth'))
+          color: # default if not overriden by edge materials
+            r: 255
+            g: 255
+            b: 255
+            a: 255
 
       else if $(xml_sprite).attr('type') == 'Texture'
         # The same texture sometimes exists as both animated an non-animated (like "Lava", "Water1", "Water2", ...)

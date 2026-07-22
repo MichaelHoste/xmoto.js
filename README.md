@@ -66,7 +66,7 @@ You can copy-paste the generated URL to keep the custom physics.
 
 ### Working environnement
 
- * ```./node_modules/coffeescript/bin/coffee -j bin/xmoto.js -wc src/*.coffee src/*/*.coffee``` to compile
+ * ```./node_modules/.bin/coffee -j bin/xmoto.js -wc src/*.coffee src/*/*.coffee``` to compile
    to JavaScript in real-time.
  * ```node server.js``` to launch HTTP Server (http://localhost:3001).
 

@@ -22,13 +22,15 @@ class Blocks
                         attr = $(xml_block).find('position').attr('layerid')
                         if attr? then parseInt(attr) else undefined # integer or undefined if no attribute
         usetexture:
-          id:         $(xml_block).find('usetexture').attr('id')
-          scale:      parseFloat($(xml_block).find('usetexture').attr('scale')) || 1.0
+          id:    $(xml_block).find('usetexture').attr('id')
+          scale: parseFloat($(xml_block).find('usetexture').attr('scale')) || 1.0
+          color:
+            r: @parse_color(xml_block, 'r')
+            g: @parse_color(xml_block, 'g')
+            b: @parse_color(xml_block, 'b')
+            a: @parse_color(xml_block, 'a')
         physics:
           grip:       parseFloat($(xml_block).find('physics').attr('grip'))
-        edges:
-          angle:      parseFloat($(xml_block).find('edges').attr('angle'))
-          materials:  []
         vertices:     []
 
       block.no_collision  =  block.position.background                                     # background                   => no collision (old syntax)
@@ -45,20 +47,6 @@ class Blocks
       else
         block.texture_name = texture_params.file
 
-      xml_materials = $(xml_block).find('edges material')
-      for xml_material in xml_materials
-        material =
-          name:    $(xml_material).attr('name')
-          edge:    $(xml_material).attr('edge')
-          color_r: parseInt($(xml_material).attr('color_r'))
-          color_g: parseInt($(xml_material).attr('color_g'))
-          color_b: parseInt($(xml_material).attr('color_b'))
-          color_a: parseInt($(xml_material).attr('color_a'))
-          scale:   parseFloat($(xml_material).attr('scale'))
-          depth:   parseFloat($(xml_material).attr('depth'))
-
-        block.edges.materials.push(material)
-
       xml_vertices = $(xml_block).find('vertex')
       for xml_vertex in xml_vertices
         vertex =
@@ -70,11 +58,8 @@ class Blocks
 
         block.vertices.push(vertex)
 
-      block.edges_list = new Edges(@level, block)
-      #block.edges_list = new EdgesWithAngle(@level, block)
-      block.edges_list.parse()
-
-      block.aabb = @compute_aabb(block)
+      block.edges = new Edges(@level, block, xml_block)
+      block.edges.parse()
 
       @blocks.push(block)
 
@@ -89,7 +74,7 @@ class Blocks
       else
         @assets.textures.push(block.texture_name)
 
-      block.edges_list.load_assets()
+      block.edges.load_assets()
 
   init: ->
     @init_physics()
@@ -97,7 +82,7 @@ class Blocks
     @init_culling_debug()
 
     for block in @blocks
-      block.edges_list.init()
+      block.edges.init()
 
   init_physics: ->
     ground = Constants.ground
@@ -110,6 +95,8 @@ class Blocks
     now = performance.now()
 
     for block in @blocks
+      block.aabb = @compute_aabb(block)
+
       # Build polygon in world PIXI coordinates (y inverted)
       block.points = block.vertices.map((v) ->
         new PIXI.Point(v.absolute_x, -v.absolute_y)
@@ -156,10 +143,17 @@ class Blocks
       indices:   indices
     })
 
-    new PIXI.Mesh({
+    mesh = new PIXI.Mesh({
       geometry: geometry
       texture:  texture
     })
+
+    # Add tint to mesh
+    color      = block.usetexture.color
+    mesh.tint  = (color.r << 16) + (color.g << 8) + color.b
+    mesh.alpha = color.a / 255.0
+
+    mesh
 
   # One Graphic is created in each block layer (parallax or static)
   # for drawing culling rectangles. It's because parallax layers
@@ -185,7 +179,7 @@ class Blocks
 
       for block in @blocks
         block.graphics.visible = @visible(block)
-        block.edges_list.update()
+        block.edges.update()
 
         if block.frames_count && block.graphics.visible
           @update_animation(block, now)
@@ -246,6 +240,10 @@ class Blocks
   texture_names: (texture_params) ->
     for frame_i in [0..texture_params.frames_count - 1]
       "#{texture_params.file_base}#{(frame_i/100.0).toFixed(2).toString().substring(2)}.#{texture_params.file_extension}"
+
+  parse_color: (xml_block, channel) ->
+    value = $(xml_block).find('usetexture').attr("color_#{channel}")
+    if value? then parseInt(value) else 255 # to manage that if NaN => 255, but if 0 => 0
 
   # Blocks drawing is sorted by textures:
   # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
