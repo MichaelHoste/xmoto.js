@@ -9,6 +9,7 @@ $.xmoto = (level_filename, options = {}) ->
       background:            0xFFFFFF,
       clearBeforeRender:     false, # No need to clear, we paint the entire canvas
       textureGCActive:       false, # We manage texture GC manually (`renderer.gc.enabled` can be toggled)
+      powerPreference:       'high-performance' # Hint for GPU power preference (WebGL & WebGPU).
       #antialias:             true  # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
       #preserveDrawingBuffer: true  # Need to be true when capturing with "toDataUrl" (may have low performance impact)
       #transparent: true            # May be useful later (moto on website)
