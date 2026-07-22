@@ -4,9 +4,9 @@ class Theme
     @filename = filename
     @callback = callback
 
-    @sprites  = []
-    @edges    = []
-    @textures = []
+    @sprites  = {}
+    @edges    = {}
+    @textures = {}
 
     $.ajax({
       type:     "GET",

@@ -110,6 +110,7 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 * Manage sky better: 
   * `<sky color_r="150" color_g="100" color_b="50" zoom="3.0">sky1</sky>`
   * `<sky color_g="255" zoom="3.7" color_a="255" color_b="255" offset="0.16" drifted="false" use_params="true" color_r="255">Water1</sky>`
+  * `<sky driftColor_b="0" driftColor_a="0" driftColor_g="215" driftZoom="13.0" color_g="255" drifted="true" BlendTexture="WuTz_coolGrate" zoom="1.4" driftColor_r="255" color_a="255" offset="0.0" color_b="255" use_params="true" color_r="231">Lava</sky>`
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels
 * Adjust a bit the camera (player more on the borders of the camera, less zoom)
 * Sounds with PixiJS Sound and play on the left/right depending on position

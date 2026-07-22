@@ -4345,9 +4345,9 @@
     constructor(filename, callback) {
       this.filename = filename;
       this.callback = callback;
-      this.sprites = [];
-      this.edges = [];
-      this.textures = [];
+      this.sprites = {};
+      this.edges = {};
+      this.textures = {};
       $.ajax({
         type: "GET",
         url: `/data/Themes/${filename}`,
