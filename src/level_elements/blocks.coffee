@@ -107,7 +107,7 @@ class Blocks
         @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_graphics: ->
-    now = performance.now()
+    now = PIXI.Ticker.shared.lastTime
 
     for block in @blocks
       # Build polygon in world PIXI coordinates (y inverted)
@@ -181,7 +181,7 @@ class Blocks
 
   update: ->
     if !Constants.debug_physics
-      now = performance.now()
+      now = PIXI.Ticker.shared.lastTime
 
       for block in @blocks
         block.graphics.visible = @visible(block)

@@ -105,10 +105,10 @@ class Level
     @particles.update()
 
   init_timer: ->
-    @start_time = new Date().getTime() # in ms
+    @start_time = PIXI.Ticker.shared.lastTime # in ms
 
   update_timer: ->
-    new_time = new Date().getTime() - @start_time
+    new_time = PIXI.Ticker.shared.lastTime - @start_time
     elapsed  = Math.floor(new_time / 10)
     minutes  = Math.floor(elapsed / 6000)
     seconds  = Math.floor(elapsed / 100) % 60

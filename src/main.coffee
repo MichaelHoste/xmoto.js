@@ -14,7 +14,7 @@ $.xmoto = (level_filename, options = {}) ->
       #transparent: true            # May be useful later (moto on website)
     })
 
-    window.cancelAnimationFrame(window.game_loop)
+    PIXI.Ticker.shared.remove(window.xmoto_update) if window.xmoto_update
 
     bind_render_to_dom(renderer, options)
     main_loop(level_filename, renderer, options)
@@ -94,12 +94,12 @@ $.xmoto = (level_filename, options = {}) ->
 
         level.update()
         renderer.render(level.stage, { clear: false }) if !Constants.debug_physics
-        window.game_loop = requestAnimationFrame(update)
 
         stats_fps.end() if Constants.debug
         stats_ms.end()  if Constants.debug
 
-      update()
+      window.xmoto_update = update
+      PIXI.Ticker.shared.add(update)
     )
 
   initialize()

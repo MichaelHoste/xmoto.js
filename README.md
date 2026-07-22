@@ -103,6 +103,7 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
+* Test existing replay with new Ticker code! (+show replays in console)
 * Shouldn't `assets.get_url(texture_name)` be `assets.get_url(texture_file)`?
 * Attach texture_params directly to blocks, entities etc? Instead of adding the params one by one?
 * Animated textures for blocks/edges? (l8682/l7388) 

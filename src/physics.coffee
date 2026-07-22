@@ -40,9 +40,9 @@ class Physics
     @world
 
   init: ->
-    @last_step = new Date().getTime()
-    @step      = 1000.0/Constants.fps
-    @steps     = 0
+    @accumulator = 0
+    @step        = 1000.0/Constants.fps
+    @steps       = 0
 
   restart: ->
     replay       = @level.replay
@@ -73,9 +73,11 @@ class Physics
       @level.ghosts.player.init()
 
   update: ->
-    while (new Date()).getTime() - @last_step > @step
-      @steps = @steps + 1
-      @last_step += @step
+    @accumulator += PIXI.Ticker.shared.deltaMS
+
+    while @accumulator >= @step
+      @steps        = @steps + 1
+      @accumulator -= @step
 
       @level.moto.move()
       @level.ghosts.move()

@@ -723,12 +723,12 @@
     }
 
     init_timer() {
-      return this.start_time = new Date().getTime(); // in ms
+      return this.start_time = PIXI.Ticker.shared.lastTime; // in ms
     }
 
     update_timer() {
       var cents, elapsed, minutes, new_time, seconds, text;
-      new_time = new Date().getTime() - this.start_time;
+      new_time = PIXI.Ticker.shared.lastTime - this.start_time;
       elapsed = Math.floor(new_time / 10);
       minutes = Math.floor(elapsed / 6000);
       seconds = Math.floor(elapsed / 100) % 60;
@@ -972,10 +972,12 @@
         clearBeforeRender: false, // No need to clear, we paint the entire canvas
         textureGCActive: false // We manage texture GC manually (`renderer.gc.enabled` can be toggled)
       }));
-      //antialias:             true  # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
-      //preserveDrawingBuffer: true  # Need to be true when capturing with "toDataUrl" (may have low performance impact)
-      //transparent: true            # May be useful later (moto on website)
-      window.cancelAnimationFrame(window.game_loop);
+      if (window.xmoto_update) {
+        //antialias:             true  # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
+        //preserveDrawingBuffer: true  # Need to be true when capturing with "toDataUrl" (may have low performance impact)
+        //transparent: true            # May be useful later (moto on website)
+        PIXI.Ticker.shared.remove(window.xmoto_update);
+      }
       bind_render_to_dom(renderer, options);
       return main_loop(level_filename, renderer, options);
     };
@@ -1063,7 +1065,6 @@
               clear: false
             });
           }
-          window.game_loop = requestAnimationFrame(update);
           if (Constants.debug) {
             stats_fps.end();
           }
@@ -1071,7 +1072,8 @@
             return stats_ms.end();
           }
         };
-        return update();
+        window.xmoto_update = update;
+        return PIXI.Ticker.shared.add(update);
       });
     };
     return initialize();
@@ -1129,7 +1131,7 @@
     }
 
     init() {
-      this.last_step = new Date().getTime();
+      this.accumulator = 0;
       this.step = 1000.0 / Constants.fps;
       return this.steps = 0;
     }
@@ -1167,10 +1169,11 @@
 
     update() {
       var results;
+      this.accumulator += PIXI.Ticker.shared.deltaMS;
       results = [];
-      while ((new Date()).getTime() - this.last_step > this.step) {
+      while (this.accumulator >= this.step) {
         this.steps = this.steps + 1;
-        this.last_step += this.step;
+        this.accumulator -= this.step;
         this.level.moto.move();
         this.level.ghosts.move();
         this.level.replay.add_step();
@@ -1411,7 +1414,7 @@
 
     init_graphics() {
       var block, l, len, len1, m, name, now, ref, ref1, results, texture;
-      now = performance.now();
+      now = PIXI.Ticker.shared.lastTime;
       ref = this.blocks;
       results = [];
       for (l = 0, len = ref.length; l < len; l++) {
@@ -1508,7 +1511,7 @@
     update() {
       var block, l, len, now, ref;
       if (!Constants.debug_physics) {
-        now = performance.now();
+        now = PIXI.Ticker.shared.lastTime;
         ref = this.blocks;
         for (l = 0, len = ref.length; l < len; l++) {
           block = ref[l];
