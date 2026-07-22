@@ -58,6 +58,7 @@ class Entities
           entity.file_extension = theme_sprite.file_extension
           entity.delay          = theme_sprite.delay
           entity.frames_count   = theme_sprite.frames_count
+          entity.blendmode      = theme_sprite.blendmode
           entity.display        = true # if an entity has a texture, it needs to be displayed
 
           # Default theme values if not defined in XML
@@ -180,15 +181,16 @@ class Entities
       sprite = PIXI.Sprite.from(@assets.get_url(entity.file))
 
     if sprite
-      sprite.width    = entity.size.width
-      sprite.height   = entity.size.height
-      sprite.anchor.x = entity.center.x / entity.size.width
-      sprite.anchor.y = 1 - (entity.center.y / entity.size.height)
-      sprite.x        =  entity.position.x
-      sprite.y        = -entity.position.y
-      sprite.rotation = -entity.position.angle
-      sprite.name     = entity.params.name || entity.typeid
-      sprite.scale.x *= -1 if entity.position.reversed
+      sprite.width     = entity.size.width
+      sprite.height    = entity.size.height
+      sprite.anchor.x  = entity.center.x / entity.size.width
+      sprite.anchor.y  = 1 - (entity.center.y / entity.size.height)
+      sprite.x         =  entity.position.x
+      sprite.y         = -entity.position.y
+      sprite.rotation  = -entity.position.angle
+      sprite.name      = entity.params.name || entity.typeid
+      sprite.blendMode = entity.blendmode
+      sprite.scale.x  *= -1 if entity.position.reversed
 
       entity.graphics = sprite # keep reference to the sprite
       container.addChild(sprite)

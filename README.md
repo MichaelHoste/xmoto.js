@@ -103,20 +103,21 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
-* Shouldn't `assets.get_url(texture_name)` be `assets.get_url(texture_file)`?
-* Attach texture_params directly to blocks, entities etc? Instead of adding the params one by one?
-* Animated textures for blocks/edges? (l8682/l7388) 
-  => performance.now(), Date.now() or Ticker?
-* Manage sky better: 
+* Reset assets to original assets (no more number/capizatlization issues) + orignal theme xml
+* Manage sky better:  
+  * Level 10181 to debug sky drifting
   * `<sky color_r="150" color_g="100" color_b="50" zoom="3.0">sky1</sky>`
   * `<sky color_g="255" zoom="3.7" color_a="255" color_b="255" offset="0.16" drifted="false" use_params="true" color_r="255">Water1</sky>`
   * `<sky driftColor_b="0" driftColor_a="0" driftColor_g="215" driftZoom="13.0" color_g="255" drifted="true" BlendTexture="WuTz_coolGrate" zoom="1.4" driftColor_r="255" color_a="255" offset="0.0" color_b="255" use_params="true" color_r="231">Lava</sky>`
+* Manage checkpoints
+  * http://wiki.xmoto.tuxfamily.org/index.php?title=Notes_on_Checkpoints
+* Shouldn't `assets.get_url(texture_name)` be `assets.get_url(texture_file)`?
+* Attach texture_params directly to blocks, entities etc? Instead of adding the params one by one?
+  => performance.now(), Date.now() or Ticker? (see PR)
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels
 * Adjust a bit the camera (player more on the borders of the camera, less zoom)
 * Sounds with PixiJS Sound and play on the left/right depending on position
 * Adjust the height of the driver (less bumpy!? Height of sprite? Compare values?)
-* Manage checkpoints
-  * http://wiki.xmoto.tuxfamily.org/index.php?title=Notes_on_Checkpoints
 * Parse maps from https://github.com/bjorn/tiled ?
 * Create alternative box2D physics using DIV elements on screen.
 * use color on image to create mesh of collisions: https://github.com/Tamersoul/magic-wand-js

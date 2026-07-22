@@ -35,6 +35,7 @@ class Theme
             y: parseFloat($(xml_sprite).attr('centerY'))
           frames_count: $(xml_sprite).find('frame').length
           delay: parseFloat($(xml_sprite).attr('delay'))
+          blendmode: $(xml_sprite).attr('blendmode') || 'normal' # YellowFlare has 'add' in theme
 
       else if $(xml_sprite).attr('type') == 'EdgeEffect'
         @edges[name] =
