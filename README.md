@@ -72,6 +72,12 @@ You can copy-paste the generated URL to keep the custom physics.
 
 Don't forget to restart the coffee command if you create new COFFEE files.
 
+### Tests
+
+This command load each level on a browser using Playwright and logs the failures.
+
+    yarn test:levels
+
 ### Technical informations
 
  * Implementation of replays is described [here](https://github.com/MichaelHoste/xmoto.js/issues/8)

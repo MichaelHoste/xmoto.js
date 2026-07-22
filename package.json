@@ -1,8 +1,12 @@
 {
   "name": "XMoto.js",
   "private": true,
+  "scripts": {
+    "test:levels": "node test/check_levels.js"
+  },
   "devDependencies": {
     "coffeescript": "^2.7",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "playwright": "^1.48"
   }
 }
