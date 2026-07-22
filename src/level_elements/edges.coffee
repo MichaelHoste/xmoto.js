@@ -42,25 +42,6 @@ class Edges
       polygon.aabb = @compute_aabb(polygon)
       @polygons.push(polygon)
 
-  # Find the correct params for the edge.
-  # 1. from <edges><material>..., override the theme with depth/scale/colors (tints)
-  # 2. from theme directly
-  edge_params: (name) ->
-    material = @materials.find((material) -> material.name == name)
-
-    if material
-      edge_params = @assets.theme.edge_params(material.edge) # base texture from material
-
-      # Override scale/depth from theme if needed
-      edge_params.scale = material.scale if !isNaN(material.scale)
-      edge_params.depth = material.depth if !isNaN(material.depth)
-
-      edge_params.color = material.color # Add rgba colors (not in theme)
-    else
-      edge_params = @assets.theme.edge_params(name) # base texture from theme
-
-    edge_params
-
   # Find maximal runs of consecutive vertices sharing the same edge texture.
   extract_runs: (vertices) ->
     n    = vertices.length
@@ -87,6 +68,23 @@ class Edges
         runs.pop()
 
     return runs
+
+  # Find the correct params for the edge.
+  # 1. from <edges><material>..., override the theme with depth/scale/colors (tints)
+  # 2. from theme directly
+  edge_params: (name) ->
+    material = @materials.find((material) -> material.name == name)
+
+    if material
+      edge_params = @assets.theme.edge_params(material.edge) # base texture from material
+
+      edge_params.scale = material.scale if !isNaN(material.scale) # | Override scale/depth from theme if param exists in material
+      edge_params.depth = material.depth if !isNaN(material.depth) # /
+      edge_params.color = material.color # Always override rgba colors
+    else
+      edge_params = @assets.theme.edge_params(name) # base texture from theme
+
+    edge_params
 
   # Build the geometry for a single edge polygon run.
   # Collects the surface vertices from run.start through (run.end + 1),
@@ -178,10 +176,6 @@ class Edges
 
       @level.layers.layer_for_block(@block).addChild(polygon.graphics)
 
-  parse_color: (xml_material, channel) ->
-    value = $(xml_material).attr("color_#{channel}")
-    if value? then parseInt(value) else 255 # to manage that if NaN => 255, but if 0 => 0
-
   # only display edges present on the screen zone
   update: ->
     if !Constants.debug_physics
@@ -189,6 +183,10 @@ class Edges
 
       for polygon in @polygons
         polygon.graphics.visible = block_visible && @visible(polygon)
+
+  parse_color: (xml_material, channel) ->
+    value = $(xml_material).attr("color_#{channel}")
+    if value? then parseInt(value) else 255 # to manage that if NaN => 255, but if 0 => 0
 
   visible: (polygon) ->
     if @block.position.islayer && @block.position.layerid != undefined

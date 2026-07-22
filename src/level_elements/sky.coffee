@@ -6,12 +6,13 @@ class Sky
     @options = level.options
 
   parse: (xml) ->
-    xml_sky  = $(xml).find('level info sky')
-    @name    = xml_sky.text()
-    @color_r = parseInt(xml_sky.attr('color_r'))
-    @color_g = parseInt(xml_sky.attr('color_g'))
-    @color_b = parseInt(xml_sky.attr('color_b'))
-    @color_a = parseInt(xml_sky.attr('color_a'))
+    xml_sky = $(xml).find('level info sky')
+    @name   = xml_sky.text()
+    @color  =
+      r: @parse_color(xml_sky, 'r')
+      g: @parse_color(xml_sky, 'g')
+      b: @parse_color(xml_sky, 'b')
+      a: @parse_color(xml_sky, 'a')
     @zoom    = parseFloat(xml_sky.attr('zoom'))
     @offset  = parseFloat(xml_sky.attr('offset'))
 
@@ -63,3 +64,7 @@ class Sky
 
       @sprite.tilePosition.x = -@level.camera.target().x * parallax_x
       @sprite.tilePosition.y =  @level.camera.target().y * parallax_y
+
+  parse_color: (xml_sky, channel) ->
+    value = $(xml_sky).attr("color_#{channel}")
+    if value? then parseInt(value) else 255 # to manage that if NaN => 255, but if 0 => 0

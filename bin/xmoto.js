@@ -1671,31 +1671,6 @@
       return results;
     }
 
-    // Find the correct params for the edge.
-    // 1. from <edges><material>..., override the theme with depth/scale/colors (tints)
-    // 2. from theme directly
-    edge_params(name) {
-      var edge_params, material;
-      material = this.materials.find(function(material) {
-        return material.name === name;
-      });
-      if (material) {
-        edge_params = this.assets.theme.edge_params(material.edge); // base texture from material
-        if (!isNaN(material.scale)) {
-          
-          // Override scale/depth from theme if needed
-          edge_params.scale = material.scale;
-        }
-        if (!isNaN(material.depth)) {
-          edge_params.depth = material.depth;
-        }
-        edge_params.color = material.color; // Add rgba colors (not in theme)
-      } else {
-        edge_params = this.assets.theme.edge_params(name); // base texture from theme
-      }
-      return edge_params;
-    }
-
     // Find maximal runs of consecutive vertices sharing the same edge texture.
     extract_runs(vertices) {
       var first, i, j, last, n, runs, texture;
@@ -1729,6 +1704,29 @@
         }
       }
       return runs;
+    }
+
+    // Find the correct params for the edge.
+    // 1. from <edges><material>..., override the theme with depth/scale/colors (tints)
+    // 2. from theme directly
+    edge_params(name) {
+      var edge_params, material;
+      material = this.materials.find(function(material) {
+        return material.name === name;
+      });
+      if (material) {
+        edge_params = this.assets.theme.edge_params(material.edge); // base texture from material
+        if (!isNaN(material.scale)) { // | Override scale/depth from theme if param exists in material
+          edge_params.scale = material.scale;
+        }
+        if (!isNaN(material.depth)) { // /
+          edge_params.depth = material.depth;
+        }
+        edge_params.color = material.color; // Always override rgba colors
+      } else {
+        edge_params = this.assets.theme.edge_params(name); // base texture from theme
+      }
+      return edge_params;
     }
 
     // Build the geometry for a single edge polygon run.
@@ -1846,18 +1844,7 @@
       return results;
     }
 
-    parse_color(xml_material, channel) {
-      var value;
-      value = $(xml_material).attr(`color_${channel}`);
-      if (value != null) {
-        return parseInt(value);
-      } else {
-        return 255; // to manage that if NaN => 255, but if 0 => 0
-      }
-    }
-
-    
-      // only display edges present on the screen zone
+    // only display edges present on the screen zone
     update() {
       var block_visible, l, len, polygon, ref, results;
       if (!Constants.debug_physics) {
@@ -1869,6 +1856,16 @@
           results.push(polygon.graphics.visible = block_visible && this.visible(polygon));
         }
         return results;
+      }
+    }
+
+    parse_color(xml_material, channel) {
+      var value;
+      value = $(xml_material).attr(`color_${channel}`);
+      if (value != null) {
+        return parseInt(value);
+      } else {
+        return 255; // to manage that if NaN => 255, but if 0 => 0
       }
     }
 
@@ -2701,10 +2698,12 @@
       var xml_sky;
       xml_sky = $(xml).find('level info sky');
       this.name = xml_sky.text();
-      this.color_r = parseInt(xml_sky.attr('color_r'));
-      this.color_g = parseInt(xml_sky.attr('color_g'));
-      this.color_b = parseInt(xml_sky.attr('color_b'));
-      this.color_a = parseInt(xml_sky.attr('color_a'));
+      this.color = {
+        r: this.parse_color(xml_sky, 'r'),
+        g: this.parse_color(xml_sky, 'g'),
+        b: this.parse_color(xml_sky, 'b'),
+        a: this.parse_color(xml_sky, 'a')
+      };
       this.zoom = parseFloat(xml_sky.attr('zoom'));
       this.offset = parseFloat(xml_sky.attr('offset'));
       if (this.name === '') {
@@ -2762,6 +2761,16 @@
         parallax_y = 7; // sky parallax on y axis
         this.sprite.tilePosition.x = -this.level.camera.target().x * parallax_x;
         return this.sprite.tilePosition.y = this.level.camera.target().y * parallax_y;
+      }
+    }
+
+    parse_color(xml_sky, channel) {
+      var value;
+      value = $(xml_sky).attr(`color_${channel}`);
+      if (value != null) {
+        return parseInt(value);
+      } else {
+        return 255; // to manage that if NaN => 255, but if 0 => 0
       }
     }
 
