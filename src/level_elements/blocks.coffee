@@ -30,8 +30,8 @@ class Blocks
             b: @parse_color(xml_block, 'b')
             a: @parse_color(xml_block, 'a')
         physics:
-          grip:       parseFloat($(xml_block).find('physics').attr('grip'))
-        vertices:     []
+          grip:   parseFloat($(xml_block).find('physics').attr('grip'))
+        vertices: []
 
       block.no_collision  =  block.position.background                                     # background                   => no collision (old syntax)
       block.no_collision ||= block.position.islayer && block.position.layerid != undefined # layer with specific layerid  => no collision

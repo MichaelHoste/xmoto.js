@@ -1609,13 +1609,13 @@
     }
 
     
-      // Blocks drawing is sorted by textures:
+      // Blocks drawing is sorted by textures + order in XML (if same texture)
     // http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
     sort_blocks_by_texture(a, b) {
       if (a.usetexture.id > b.usetexture.id) {
         return 1;
       }
-      if (a.usetexture.id <= b.usetexture.id) {
+      if (a.usetexture.id < b.usetexture.id) {
         return -1;
       }
       return 0;
@@ -1972,6 +1972,7 @@
             entity.file_extension = theme_sprite.file_extension;
             entity.delay = theme_sprite.delay;
             entity.frames_count = theme_sprite.frames_count;
+            entity.blendmode = theme_sprite.blendmode;
             entity.display = true; // if an entity has a texture, it needs to be displayed
             
             // Default theme values if not defined in XML
@@ -2140,6 +2141,7 @@
         sprite.y = -entity.position.y;
         sprite.rotation = -entity.position.angle;
         sprite.name = entity.params.name || entity.typeid;
+        sprite.blendMode = entity.blendmode;
         if (entity.position.reversed) {
           sprite.scale.x *= -1;
         }
@@ -2687,69 +2689,148 @@
 
   };
 
-  Sky = class Sky {
-    constructor(level) {
-      this.level = level;
-      this.assets = level.assets;
-      this.options = level.options;
-    }
-
-    parse(xml) {
-      var xml_sky;
-      xml_sky = $(xml).find('level info sky');
-      this.name = xml_sky.text();
-      this.color = {
-        r: this.parse_color(xml_sky, 'r'),
-        g: this.parse_color(xml_sky, 'g'),
-        b: this.parse_color(xml_sky, 'b'),
-        a: this.parse_color(xml_sky, 'a')
-      };
-      this.zoom = parseFloat(xml_sky.attr('zoom'));
-      this.offset = parseFloat(xml_sky.attr('offset'));
-      if (this.name === '') {
-        this.name = 'sky1';
+  Sky = (function() {
+    class Sky {
+      constructor(level) {
+        this.level = level;
+        this.assets = level.assets;
+        this.options = level.options;
       }
-      this.filename = this.assets.theme.texture_params(this.name).file;
-      return this;
-    }
 
-    load_assets() {
-      return this.assets.textures.push(this.filename);
-    }
+      parse(xml) {
+        var drifted_sky_params, sky_params, xml_sky;
+        xml_sky = $(xml).find('level info sky');
+        this.name = xml_sky.text() || 'sky1';
+        this.color = {
+          r: this.parse_color(xml_sky, 'color_r'),
+          g: this.parse_color(xml_sky, 'color_g'),
+          b: this.parse_color(xml_sky, 'color_b'),
+          a: this.parse_color(xml_sky, 'color_a')
+        };
+        this.drift_color = {
+          r: this.parse_color(xml_sky, 'driftColor_r'),
+          g: this.parse_color(xml_sky, 'driftColor_g'),
+          b: this.parse_color(xml_sky, 'driftColor_b'),
+          a: this.parse_color(xml_sky, 'driftColor_a')
+        };
+        this.zoom = this.parse_float(xml_sky.attr('zoom'), 1.0);
+        this.drift_zoom = this.parse_float(xml_sky.attr('driftZoom'), 1.0);
+        this.offset = this.parse_float(xml_sky.attr('offset'), 0.0);
+        this.drifted = xml_sky.attr('drifted') === 'true'; // enable the secondary scrolling drift layer
+        this.blend_name = xml_sky.attr('BlendTexture') || this.name; // empty => the drift layer reuses the sky texture
+        this.use_params = xml_sky.attr('use_params') === 'true'; // Not found in C++ code, can be ignored
+        
+        // Get texture filenames from theme (can be animated!)
+        // => For sky
+        sky_params = this.assets.theme.texture_params(this.name);
+        if (sky_params.frames_count) {
+          this.sky_frames_count = sky_params.frames_count;
+          this.sky_delay = sky_params.delay;
+          this.sky_filenames = this.texture_names(sky_params);
+        } else {
+          this.sky_filenames = [sky_params.file];
+        }
+        // => For drifted sky
+        drifted_sky_params = this.assets.theme.texture_params(this.blend_name);
+        if (drifted_sky_params.frames_count) {
+          this.drifted_sky_frames_count = drifted_sky_params.frames_count;
+          this.drifted_sky_delay = drifted_sky_params.delay;
+          this.drifted_sky_filenames = this.texture_names(drifted_sky_params);
+        } else {
+          this.drifted_sky_filenames = [drifted_sky_params.file];
+        }
+        return this;
+      }
 
-    init() {
-      return this.init_graphics();
-    }
+      load_assets() {
+        var l, len, ref, results, sky_filename;
+        ref = this.sky_filenames.concat(this.drifted_sky_filenames);
+        // static/animated files for both skies
+        results = [];
+        for (l = 0, len = ref.length; l < len; l++) {
+          sky_filename = ref[l];
+          results.push(this.assets.textures.push(sky_filename));
+        }
+        return results;
+      }
 
-    init_graphics() {
-      var texture;
-      texture = PIXI.Texture.from(this.assets.get_url(this.filename));
-      this.sprite = new PIXI.TilingSprite({
-        texture: texture,
-        width: this.options.width,
-        height: this.options.height
-      });
-      this.sprite.label = "sky";
-      this.sprite.position.x = 0;
-      this.sprite.position.y = 0;
-      this.sprite.tileScale.x = 4;
-      this.sprite.tileScale.y = 4;
-      return this.level.stage.addChildAt(this.sprite, 0); // Fixed on the root level of stage (not influenced by scale/translation, only adapt tilePosition)
-    }
+      init() {
+        return this.init_graphics();
+      }
 
-    update() {
-      var ctx, parallax_x, parallax_y;
-      ctx = this.level.debug_ctx;
-      if (Constants.debug_physics) {
-        ctx.beginPath();
-        ctx.moveTo(this.options.width, this.options.height);
-        ctx.lineTo(0, this.options.height);
-        ctx.lineTo(0, 0);
-        ctx.lineTo(this.options.width, 0);
-        ctx.closePath();
-        ctx.fillStyle = "#222228";
-        return ctx.fill();
-      } else {
+      init_graphics() {
+        this.init_sky();
+        if (this.drifted) {
+          return this.init_drifting_sky();
+        }
+      }
+
+      init_sky() {
+        var texture;
+        texture = PIXI.Texture.from(this.assets.get_url(this.sky_filenames[0]));
+        this.sprite = new PIXI.TilingSprite({
+          texture: texture,
+          width: this.options.width,
+          height: this.options.height
+        });
+        this.sprite.label = "sky";
+        this.sprite.position.x = 0;
+        this.sprite.position.y = 0;
+        // color / zoom apply whenever present (defaults white + zoom 1.0 => historical look).
+        // Only the RGB tints the sky: the base sky is opaque, so color_a is NOT an opacity
+        // (many levels set color_a="0" yet clearly want a visible sky).
+        this.sprite.tileScale.x = this.zoom * Sky.TILE_SCALE_BASE;
+        this.sprite.tileScale.y = this.zoom * Sky.TILE_SCALE_BASE;
+        // Add tint to sprite (alpha is ignored in original code)
+        this.sprite.tint = (this.color.r << 16) + (this.color.g << 8) + this.color.b;
+        return this.level.stage.addChildAt(this.sprite, 0); // Fixed on the root level of stage (not influenced by scale/translation, only adapt tilePosition)
+      }
+
+      
+        // Second tiling texture drifting over the sky (moving clouds / atmosphere).
+      init_drifting_sky() {
+        var texture;
+        texture = PIXI.Texture.from(this.assets.get_url(this.drifted_sky_filenames[0]));
+        this.drift_sprite = new PIXI.TilingSprite({
+          texture: texture,
+          width: this.options.width,
+          height: this.options.height
+        });
+        this.drift_sprite.label = "sky drift";
+        this.drift_sprite.position.x = 0;
+        this.drift_sprite.position.y = 0;
+        this.drift_sprite.tileScale.x = this.drift_zoom * Sky.TILE_SCALE_BASE;
+        this.drift_sprite.tileScale.y = this.drift_zoom * Sky.TILE_SCALE_BASE;
+        // Add tint to sprite (alpha is ignored in original code)
+        this.drift_sprite.tint = (this.drift_color.r << 16) + (this.drift_color.g << 8) + this.drift_color.b;
+        // Additive so the drift combines with the sky instead of hiding it (matches XMoto,
+        // and explains the very dark driftColors seen in some levels). Switch to 'normal' to compare.
+        this.drift_sprite.blendMode = 'add';
+        return this.level.stage.addChildAt(this.drift_sprite, 1); // Just above the sky, below the game world
+      }
+
+      update() {
+        var ctx;
+        ctx = this.level.debug_ctx;
+        if (Constants.debug_physics) {
+          ctx.beginPath();
+          ctx.moveTo(this.options.width, this.options.height);
+          ctx.lineTo(0, this.options.height);
+          ctx.lineTo(0, 0);
+          ctx.lineTo(this.options.width, 0);
+          ctx.closePath();
+          ctx.fillStyle = "#222228";
+          return ctx.fill();
+        } else {
+          this.update_sky();
+          if (this.drifted) {
+            return this.update_drifting_sky();
+          }
+        }
+      }
+
+      update_sky() {
+        var target;
         if (this.sprite.width !== this.options.width) {
           // Only when going in/out fullscreen (avoid some internal computations)
           this.sprite.width = this.options.width;
@@ -2757,24 +2838,68 @@
         if (this.sprite.height !== this.options.height) {
           this.sprite.height = this.options.height;
         }
-        parallax_x = 15; // sky parallax on x axix
-        parallax_y = 7; // sky parallax on y axis
-        this.sprite.tilePosition.x = -this.level.camera.target().x * parallax_x;
-        return this.sprite.tilePosition.y = this.level.camera.target().y * parallax_y;
+        target = this.level.camera.target();
+        this.sprite.tilePosition.x = -target.x * Sky.PARALLAX_X;
+        return this.sprite.tilePosition.y = target.y * Sky.PARALLAX_Y + this.offset * this.options.height; // offset shifts the sky vertically
       }
-    }
 
-    parse_color(xml_sky, channel) {
-      var value;
-      value = $(xml_sky).attr(`color_${channel}`);
-      if (value != null) {
-        return parseInt(value);
-      } else {
-        return 255; // to manage that if NaN => 255, but if 0 => 0
+      
+        // The drift layer follows the same parallax but slowly scrolls on its own over time.
+      update_drifting_sky() {
+        var drift, target;
+        if (this.drift_sprite.width !== this.options.width) {
+          this.drift_sprite.width = this.options.width;
+        }
+        if (this.drift_sprite.height !== this.options.height) {
+          this.drift_sprite.height = this.options.height;
+        }
+        target = this.level.camera.target();
+        drift = performance.now() / 1000.0 * Sky.DRIFT_SPEED;
+        this.drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X + drift;
+        return this.drift_sprite.tilePosition.y = target.y * Sky.PARALLAX_Y;
       }
-    }
 
-  };
+      texture_names(texture_params) {
+        var frame_i, l, ref, results;
+        results = [];
+        for (frame_i = l = 0, ref = texture_params.frames_count - 1; (0 <= ref ? l <= ref : l >= ref); frame_i = 0 <= ref ? ++l : --l) {
+          results.push(`${texture_params.file_base}${(frame_i / 100.0).toFixed(2).toString().substring(2)}.${texture_params.file_extension}`);
+        }
+        return results;
+      }
+
+      parse_color(xml_sky, name) {
+        var value;
+        value = $(xml_sky).attr(name);
+        if (value != null) {
+          return parseInt(value);
+        } else {
+          return 255; // to manage that if NaN => 255, but if 0 => 0
+        }
+      }
+
+      parse_float(value, fallback) {
+        if (typeof parsed !== "undefined" && parsed !== null) {
+          return parseFloat(value);
+        } else {
+          return fallback;
+        }
+      }
+
+    };
+
+    // Visual tuning constants (reverse-engineered to look nice)
+    Sky.PARALLAX_X = 15; // sky parallax on the x axis
+
+    Sky.PARALLAX_Y = 7; // sky parallax on the y axis
+
+    Sky.DRIFT_SPEED = 8; // px/s the drift layer scrolls horizontally on its own
+
+    Sky.TILE_SCALE_BASE = 4; // tile scale at zoom 1.0 (historical value); zoom multiplies it
+
+    return Sky;
+
+  }).call(this);
 
   Ghost = class Ghost {
     constructor(level, replay, transparent = true) {
@@ -4354,9 +4479,9 @@
     constructor(filename, callback) {
       this.filename = filename;
       this.callback = callback;
-      this.sprites = {};
-      this.edges = {};
-      this.textures = {};
+      this.sprites = {}; // in /Anims/    folder
+      this.edges = {}; // in /Effects/  folder
+      this.textures = {}; // in /Textures/ folder
       $.ajax({
         type: "GET",
         url: `/data/Themes/${filename}`,
@@ -4367,12 +4492,13 @@
     }
 
     load_theme(xml) {
-      var l, len, name, xml_sprite, xml_sprites;
+      var animated, l, len, name, texture, xml_sprite, xml_sprites;
       xml_sprites = $(xml).find('sprite');
       for (l = 0, len = xml_sprites.length; l < len; l++) {
         xml_sprite = xml_sprites[l];
         name = $(xml_sprite).attr('name').toLowerCase();
         if ($(xml_sprite).attr('type') === 'Entity') {
+          // No collision between animated and non-animated entities (see Textures below)
           this.sprites[name] = {
             file: $(xml_sprite).attr('file'),
             file_base: $(xml_sprite).attr('fileBase'),
@@ -4386,7 +4512,8 @@
               y: parseFloat($(xml_sprite).attr('centerY'))
             },
             frames_count: $(xml_sprite).find('frame').length,
-            delay: parseFloat($(xml_sprite).attr('delay'))
+            delay: parseFloat($(xml_sprite).attr('delay')),
+            blendmode: $(xml_sprite).attr('blendmode') || 'normal' // YellowFlare has 'add' in theme
           };
         } else if ($(xml_sprite).attr('type') === 'EdgeEffect') {
           this.edges[name] = {
@@ -4401,14 +4528,20 @@
             }
           };
         } else if ($(xml_sprite).attr('type') === 'Texture') {
-          if (!this.textures[name] || this.textures[name].frames_count === 0) {
-            this.textures[name] = {
-              file: $(xml_sprite).attr('file'),
-              file_base: $(xml_sprite).attr('fileBase'),
-              file_extension: $(xml_sprite).attr('fileExtension'),
-              frames_count: $(xml_sprite).find('frame').length,
-              delay: parseFloat($(xml_sprite).attr('delay'))
-            };
+          // The same texture sometimes exists as both animated an non-animated (like "Lava", "Water1", "Water2", ...)
+          // => We load both and prefix with the animated with "animated_"
+          animated = $(xml_sprite).find('frame').length > 1;
+          texture = {
+            file: $(xml_sprite).attr('file'),
+            file_base: $(xml_sprite).attr('fileBase'),
+            file_extension: $(xml_sprite).attr('fileExtension'),
+            frames_count: $(xml_sprite).find('frame').length,
+            delay: parseFloat($(xml_sprite).attr('delay'))
+          };
+          if (animated) {
+            this.textures[`animated_${name}`] = texture;
+          } else {
+            this.textures[name] = texture;
           }
         }
       }
@@ -4423,8 +4556,9 @@
       return this.edges[name.toLowerCase()];
     }
 
+    // We always return the animated first
     texture_params(name) {
-      return this.textures[name.toLowerCase()];
+      return this.textures[`animated_${name.toLowerCase()}`] || this.textures[name.toLowerCase()];
     }
 
   };

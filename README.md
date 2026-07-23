@@ -125,8 +125,9 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 * Adjust a bit the camera (player more on the borders of the camera, less zoom)
 * Sounds with PixiJS Sound and play on the left/right depending on position
 * Adjust the height of the driver (less bumpy!? Height of sprite? Compare values?)
+* Use [Planck.js](https://piqnt.com/planck.js/) version of Box2D (or matter-js) instead of old Box2D 2.1a.3 that was cross-compiled from ActionScript 3?
 * Parse maps from https://github.com/bjorn/tiled ?
-* Create alternative box2D physics using DIV elements on screen.
+* Create alternative box2D physics using DIV elements on screen to make the moto moves on websites.
 * use color on image to create mesh of collisions: https://github.com/Tamersoul/magic-wand-js
 
 [and other stuffs](https://github.com/MichaelHoste/xmoto.js/issues)
