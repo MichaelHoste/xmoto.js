@@ -4,9 +4,9 @@ class Theme
     @filename = filename
     @callback = callback
 
-    @sprites  = {}
-    @edges    = {}
-    @textures = {}
+    @sprites  = {} # in /Anims/    folder
+    @edges    = {} # in /Effects/  folder
+    @textures = {} # in /Textures/ folder
 
     $.ajax({
       type:     "GET",
@@ -23,6 +23,7 @@ class Theme
       name = $(xml_sprite).attr('name').toLowerCase()
 
       if $(xml_sprite).attr('type') == 'Entity'
+        # No collision between animated and non-animated entities (see Textures below)
         @sprites[name] =
           file:           $(xml_sprite).attr('file')
           file_base:      $(xml_sprite).attr('fileBase')
@@ -50,14 +51,20 @@ class Theme
 
       else if $(xml_sprite).attr('type') == 'Texture'
         # The same texture sometimes exists as both animated an non-animated (like "Lava", "Water1", "Water2", ...)
-        # => Always keep the animated one
-        if !@textures[name] || @textures[name].frames_count == 0
-          @textures[name] =
-            file:           $(xml_sprite).attr('file')
-            file_base:      $(xml_sprite).attr('fileBase')
-            file_extension: $(xml_sprite).attr('fileExtension')
-            frames_count:   $(xml_sprite).find('frame').length
-            delay:          parseFloat($(xml_sprite).attr('delay'))
+        # => We load both and prefix with the animated with "animated_"
+        animated = $(xml_sprite).find('frame').length > 1
+
+        texture =
+          file:           $(xml_sprite).attr('file')
+          file_base:      $(xml_sprite).attr('fileBase')
+          file_extension: $(xml_sprite).attr('fileExtension')
+          frames_count:   $(xml_sprite).find('frame').length
+          delay:          parseFloat($(xml_sprite).attr('delay'))
+
+        if animated
+          @textures["animated_#{name}"] = texture
+        else
+          @textures[name] = texture
 
     @callback()
 
@@ -67,5 +74,6 @@ class Theme
   edge_params: (name) ->
     @edges[name.toLowerCase()]
 
+  # We always return the animated first
   texture_params: (name) ->
-    @textures[name.toLowerCase()]
+    @textures["animated_#{name.toLowerCase()}"] || @textures[name.toLowerCase()]
