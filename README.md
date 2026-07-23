@@ -121,6 +121,7 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 * Attach texture_params directly to blocks, entities etc? Instead of adding the params one by one?
   => performance.now(), Date.now() or Ticker? (see PR)
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels
+* Create selector of levels by name
 * Adjust a bit the camera (player more on the borders of the camera, less zoom)
 * Sounds with PixiJS Sound and play on the left/right depending on position
 * Adjust the height of the driver (less bumpy!? Height of sprite? Compare values?)
