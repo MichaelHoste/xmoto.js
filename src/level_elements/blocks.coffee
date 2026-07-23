@@ -245,9 +245,9 @@ class Blocks
     value = $(xml_block).find('usetexture').attr("color_#{channel}")
     if value? then parseInt(value) else 255 # to manage that if NaN => 255, but if 0 => 0
 
-  # Blocks drawing is sorted by textures:
+  # Blocks drawing is sorted by textures + order in XML (if same texture)
   # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
   sort_blocks_by_texture: (a, b) ->
     return 1  if a.usetexture.id > b.usetexture.id
-    return -1 if a.usetexture.id <= b.usetexture.id
+    return -1 if a.usetexture.id < b.usetexture.id
     return 0
