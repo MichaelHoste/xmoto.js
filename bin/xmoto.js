@@ -2766,13 +2766,29 @@
       }
 
       init_sky() {
-        var texture;
-        texture = PIXI.Texture.from(this.assets.get_url(this.sky_filenames[0]));
+        var name, textures;
+        textures = (function() {
+          var l, len, ref, results;
+          ref = this.sky_filenames;
+          results = [];
+          for (l = 0, len = ref.length; l < len; l++) {
+            name = ref[l];
+            results.push(PIXI.Texture.from(this.assets.get_url(name)));
+          }
+          return results;
+        }).call(this);
         this.sprite = new PIXI.TilingSprite({
-          texture: texture,
+          texture: textures[0],
           width: this.options.width,
           height: this.options.height
         });
+        if (this.sky_frames_count) {
+          this.sprite.textures = textures;
+          this.sprite.frames_count = this.sky_frames_count;
+          this.sprite.delay = this.sky_delay;
+          this.sprite.current_frame = 0;
+          this.sprite.animation_start = performance.now();
+        }
         this.sprite.label = "sky";
         this.sprite.position.x = 0;
         this.sprite.position.y = 0;
@@ -2789,13 +2805,29 @@
       
         // Second tiling texture drifting over the sky (moving clouds / atmosphere).
       init_drifting_sky() {
-        var texture;
-        texture = PIXI.Texture.from(this.assets.get_url(this.drifted_sky_filenames[0]));
+        var name, textures;
+        textures = (function() {
+          var l, len, ref, results;
+          ref = this.drifted_sky_filenames;
+          results = [];
+          for (l = 0, len = ref.length; l < len; l++) {
+            name = ref[l];
+            results.push(PIXI.Texture.from(this.assets.get_url(name)));
+          }
+          return results;
+        }).call(this);
         this.drift_sprite = new PIXI.TilingSprite({
-          texture: texture,
+          texture: textures[0],
           width: this.options.width,
           height: this.options.height
         });
+        if (this.drifted_sky_frames_count) {
+          this.drift_sprite.textures = textures;
+          this.drift_sprite.frames_count = this.drifted_sky_frames_count;
+          this.drift_sprite.delay = this.drifted_sky_delay;
+          this.drift_sprite.current_frame = 0;
+          this.drift_sprite.animation_start = performance.now();
+        }
         this.drift_sprite.label = "sky drift";
         this.drift_sprite.position.x = 0;
         this.drift_sprite.position.y = 0;
@@ -2840,11 +2872,13 @@
         }
         target = this.level.camera.target();
         this.sprite.tilePosition.x = -target.x * Sky.PARALLAX_X;
-        return this.sprite.tilePosition.y = target.y * Sky.PARALLAX_Y + this.offset * this.options.height; // offset shifts the sky vertically
+        this.sprite.tilePosition.y = target.y * Sky.PARALLAX_Y + this.offset * this.options.height; // offset shifts the sky vertically
+        if (this.sprite.frames_count) {
+          return this.update_animation(this.sprite);
+        }
       }
 
-      
-        // The drift layer follows the same parallax but slowly scrolls on its own over time.
+      // The drift layer follows the same parallax but slowly scrolls on its own over time.
       update_drifting_sky() {
         var drift, target;
         if (this.drift_sprite.width !== this.options.width) {
@@ -2856,7 +2890,23 @@
         target = this.level.camera.target();
         drift = performance.now() / 1000.0 * Sky.DRIFT_SPEED;
         this.drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X + drift;
-        return this.drift_sprite.tilePosition.y = target.y * Sky.PARALLAX_Y;
+        this.drift_sprite.tilePosition.y = target.y * Sky.PARALLAX_Y;
+        if (this.drift_sprite.frames_count) {
+          return this.update_animation(this.drift_sprite);
+        }
+      }
+
+      // Swap an animated sky layer to its current time-based frame (see init_sky). The
+      // animation state (textures/frames_count/delay/current_frame/animation_start) lives
+      // on the sprite, mirroring how animated Blocks store it on the block.
+      update_animation(sprite) {
+        var elapsed, frame;
+        elapsed = (performance.now() - sprite.animation_start) / 1000.0;
+        frame = Math.floor(elapsed / sprite.delay) % sprite.frames_count;
+        if (frame !== sprite.current_frame) {
+          sprite.current_frame = frame;
+          return sprite.texture = sprite.textures[frame];
+        }
       }
 
       texture_names(texture_params) {

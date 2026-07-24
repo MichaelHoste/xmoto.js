@@ -71,8 +71,15 @@ class Sky
     @init_drifting_sky() if @drifted
 
   init_sky: ->
-    texture = PIXI.Texture.from(@assets.get_url(@sky_filenames[0]))
-    @sprite = new PIXI.TilingSprite({ texture: texture, width: @options.width, height: @options.height })
+    textures = (PIXI.Texture.from(@assets.get_url(name)) for name in @sky_filenames)
+    @sprite  = new PIXI.TilingSprite({ texture: textures[0], width: @options.width, height: @options.height })
+
+    if @sky_frames_count
+      @sprite.textures        = textures
+      @sprite.frames_count    = @sky_frames_count
+      @sprite.delay           = @sky_delay
+      @sprite.current_frame   = 0
+      @sprite.animation_start = performance.now()
 
     @sprite.label = "sky"
 
@@ -92,8 +99,15 @@ class Sky
 
   # Second tiling texture drifting over the sky (moving clouds / atmosphere).
   init_drifting_sky: ->
-    texture       = PIXI.Texture.from(@assets.get_url(@drifted_sky_filenames[0]))
-    @drift_sprite = new PIXI.TilingSprite({ texture: texture, width: @options.width, height: @options.height })
+    textures      = (PIXI.Texture.from(@assets.get_url(name)) for name in @drifted_sky_filenames)
+    @drift_sprite = new PIXI.TilingSprite({ texture: textures[0], width: @options.width, height: @options.height })
+
+    if @drifted_sky_frames_count
+      @drift_sprite.textures        = textures
+      @drift_sprite.frames_count    = @drifted_sky_frames_count
+      @drift_sprite.delay           = @drifted_sky_delay
+      @drift_sprite.current_frame   = 0
+      @drift_sprite.animation_start = performance.now()
 
     @drift_sprite.label = "sky drift"
 
@@ -139,6 +153,8 @@ class Sky
     @sprite.tilePosition.x = -target.x * Sky.PARALLAX_X
     @sprite.tilePosition.y =  target.y * Sky.PARALLAX_Y + @offset * @options.height # offset shifts the sky vertically
 
+    @update_animation(@sprite) if @sprite.frames_count
+
   # The drift layer follows the same parallax but slowly scrolls on its own over time.
   update_drifting_sky: ->
     @drift_sprite.width  = @options.width  if @drift_sprite.width  != @options.width
@@ -149,6 +165,19 @@ class Sky
 
     @drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X + drift
     @drift_sprite.tilePosition.y =  target.y * Sky.PARALLAX_Y
+
+    @update_animation(@drift_sprite) if @drift_sprite.frames_count
+
+  # Swap an animated sky layer to its current time-based frame (see init_sky). The
+  # animation state (textures/frames_count/delay/current_frame/animation_start) lives
+  # on the sprite, mirroring how animated Blocks store it on the block.
+  update_animation: (sprite) ->
+    elapsed = (performance.now() - sprite.animation_start) / 1000.0
+    frame   = Math.floor(elapsed / sprite.delay) % sprite.frames_count
+
+    if frame != sprite.current_frame
+      sprite.current_frame = frame
+      sprite.texture       = sprite.textures[frame]
 
   texture_names: (texture_params) ->
     for frame_i in [0..texture_params.frames_count - 1]
