@@ -2929,7 +2929,7 @@
       }
 
       parse_float(value, fallback) {
-        if (typeof parsed !== "undefined" && parsed !== null) {
+        if (value != null) {
           return parseFloat(value);
         } else {
           return fallback;

@@ -188,4 +188,4 @@ class Sky
     if value? then parseInt(value) else 255 # to manage that if NaN => 255, but if 0 => 0
 
   parse_float: (value, fallback) ->
-    if parsed? then  parseFloat(value) else fallback
+    if value? then parseFloat(value) else fallback
