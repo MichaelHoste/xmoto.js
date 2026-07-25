@@ -3,7 +3,8 @@ class Sky
   # Visual tuning constants (reverse-engineered to look nice)
   @PARALLAX_X       = 15 # sky parallax on the x axis
   @PARALLAX_Y       = 7  # sky parallax on the y axis
-  @DRIFT_SPEED      = 8  # px/s the drift layer scrolls horizontally on its own
+  @SKY_WIND_SPEED   = 70   # px/s the base sky scrolls on its own (constant "wind", right → left)
+  @DRIFT_WIND_SPEED = 100  # px/s the drift layer scrolls on its own (faster wind, right → left)
   @TILE_SCALE_BASE  = 4  # tile scale at zoom 1.0 (historical value); zoom multiplies it
 
   constructor: (level) ->
@@ -149,8 +150,9 @@ class Sky
     @sprite.height = @options.height if @sprite.height != @options.height
 
     target = @level.camera.target()
+    wind   = performance.now() / 1000.0 * Sky.SKY_WIND_SPEED # constant scroll even when standing still ("wind")
 
-    @sprite.tilePosition.x = -target.x * Sky.PARALLAX_X
+    @sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind # -wind => scrolls right → left
     @sprite.tilePosition.y =  target.y * Sky.PARALLAX_Y + @offset * @options.height # offset shifts the sky vertically
 
     @update_animation(@sprite) if @sprite.frames_count
@@ -161,9 +163,9 @@ class Sky
     @drift_sprite.height = @options.height if @drift_sprite.height != @options.height
 
     target = @level.camera.target()
-    drift  = performance.now() / 1000.0 * Sky.DRIFT_SPEED
+    wind   = performance.now() / 1000.0 * Sky.DRIFT_WIND_SPEED # faster than the base sky (like XMoto's /15 vs /25)
 
-    @drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X + drift
+    @drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind # -wind => scrolls right → left
     @drift_sprite.tilePosition.y =  target.y * Sky.PARALLAX_Y
 
     @update_animation(@drift_sprite) if @drift_sprite.frames_count

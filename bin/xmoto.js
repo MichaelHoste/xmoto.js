@@ -2862,7 +2862,7 @@
       }
 
       update_sky() {
-        var target;
+        var target, wind;
         if (this.sprite.width !== this.options.width) {
           // Only when going in/out fullscreen (avoid some internal computations)
           this.sprite.width = this.options.width;
@@ -2871,7 +2871,8 @@
           this.sprite.height = this.options.height;
         }
         target = this.level.camera.target();
-        this.sprite.tilePosition.x = -target.x * Sky.PARALLAX_X;
+        wind = performance.now() / 1000.0 * Sky.SKY_WIND_SPEED; // constant scroll even when standing still ("wind")
+        this.sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind; // -wind => scrolls right → left
         this.sprite.tilePosition.y = target.y * Sky.PARALLAX_Y + this.offset * this.options.height; // offset shifts the sky vertically
         if (this.sprite.frames_count) {
           return this.update_animation(this.sprite);
@@ -2880,7 +2881,7 @@
 
       // The drift layer follows the same parallax but slowly scrolls on its own over time.
       update_drifting_sky() {
-        var drift, target;
+        var target, wind;
         if (this.drift_sprite.width !== this.options.width) {
           this.drift_sprite.width = this.options.width;
         }
@@ -2888,8 +2889,8 @@
           this.drift_sprite.height = this.options.height;
         }
         target = this.level.camera.target();
-        drift = performance.now() / 1000.0 * Sky.DRIFT_SPEED;
-        this.drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X + drift;
+        wind = performance.now() / 1000.0 * Sky.DRIFT_WIND_SPEED; // faster than the base sky (like XMoto's /15 vs /25)
+        this.drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind; // -wind => scrolls right → left
         this.drift_sprite.tilePosition.y = target.y * Sky.PARALLAX_Y;
         if (this.drift_sprite.frames_count) {
           return this.update_animation(this.drift_sprite);
@@ -2943,7 +2944,9 @@
 
     Sky.PARALLAX_Y = 7; // sky parallax on the y axis
 
-    Sky.DRIFT_SPEED = 8; // px/s the drift layer scrolls horizontally on its own
+    Sky.SKY_WIND_SPEED = 70; // px/s the base sky scrolls on its own (constant "wind", right → left)
+
+    Sky.DRIFT_WIND_SPEED = 100; // px/s the drift layer scrolls on its own (faster wind, right → left)
 
     Sky.TILE_SCALE_BASE = 4; // tile scale at zoom 1.0 (historical value); zoom multiplies it
 
