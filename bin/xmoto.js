@@ -2862,7 +2862,7 @@
       }
 
       update_sky() {
-        var target, wind;
+        var target, tile_px, wind;
         if (this.sprite.width !== this.options.width) {
           // Only when going in/out fullscreen (avoid some internal computations)
           this.sprite.width = this.options.width;
@@ -2872,8 +2872,14 @@
         }
         target = this.level.camera.target();
         // Only drifted skies get the constant "wind"; plain skies just track the camera.
-        // (XMoto: fDrift stays 0 unless the sky is drifted.)
-        wind = this.drifted ? performance.now() / 1000.0 * Sky.SKY_WIND_SPEED : 0;
+        // (XMoto: fDrift stays 0 unless the sky is drifted.) Scroll one tile every
+        // SKY_WIND_PERIOD seconds, sized from the on-screen tile (tileScale × texture width)
+        // so it is resolution-agnostic and scales with zoom, like XMoto's fDrift = time / 25.
+        wind = 0;
+        if (this.drifted) {
+          tile_px = this.sprite.tileScale.x * this.sprite.texture.width;
+          wind = performance.now() / 1000.0 * tile_px / Sky.SKY_WIND_PERIOD;
+        }
         this.sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind; // -wind => scrolls right → left
         this.sprite.tilePosition.y = target.y * Sky.PARALLAX_Y + this.offset * this.options.height; // offset shifts the sky vertically
         if (this.sprite.frames_count) {
@@ -2883,7 +2889,7 @@
 
       // The drift layer follows the same parallax but slowly scrolls on its own over time.
       update_drifting_sky() {
-        var target, wind;
+        var target, tile_px, wind;
         if (this.drift_sprite.width !== this.options.width) {
           this.drift_sprite.width = this.options.width;
         }
@@ -2891,7 +2897,8 @@
           this.drift_sprite.height = this.options.height;
         }
         target = this.level.camera.target();
-        wind = performance.now() / 1000.0 * Sky.DRIFT_WIND_SPEED; // faster than the base sky (like XMoto's /15 vs /25)
+        tile_px = this.drift_sprite.tileScale.x * this.drift_sprite.texture.width;
+        wind = performance.now() / 1000.0 * tile_px / Sky.DRIFT_WIND_PERIOD; // faster than base (15 vs 25)
         this.drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind; // -wind => scrolls right → left
         this.drift_sprite.tilePosition.y = target.y * Sky.PARALLAX_Y;
         if (this.drift_sprite.frames_count) {
@@ -2946,9 +2953,12 @@
 
     Sky.PARALLAX_Y = 7; // sky parallax on the y axis
 
-    Sky.SKY_WIND_SPEED = 70; // px/s the base sky scrolls on its own (constant "wind", right → left)
+    // XMoto scrolls each sky layer by one texture tile every N seconds, independent of
+    // resolution. Keep the 25:15 base:drift ratio to match the original; scale both up
+    // together for a gentler wind.
+    Sky.SKY_WIND_PERIOD = 25; // seconds per tile — base sky   (XMoto: fDrift = time / 25)
 
-    Sky.DRIFT_WIND_SPEED = 100; // px/s the drift layer scrolls on its own (faster wind, right → left)
+    Sky.DRIFT_WIND_PERIOD = 15; // seconds per tile — drift layer (XMoto: fDrift = time / 15)
 
     Sky.TILE_SCALE_BASE = 4; // tile scale at zoom 1.0 (historical value); zoom multiplies it
 

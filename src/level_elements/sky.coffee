@@ -3,8 +3,11 @@ class Sky
   # Visual tuning constants (reverse-engineered to look nice)
   @PARALLAX_X       = 15 # sky parallax on the x axis
   @PARALLAX_Y       = 7  # sky parallax on the y axis
-  @SKY_WIND_SPEED   = 70   # px/s the base sky scrolls on its own (constant "wind", right → left)
-  @DRIFT_WIND_SPEED = 100  # px/s the drift layer scrolls on its own (faster wind, right → left)
+  # XMoto scrolls each sky layer by one texture tile every N seconds, independent of
+  # resolution. Keep the 25:15 base:drift ratio to match the original; scale both up
+  # together for a gentler wind.
+  @SKY_WIND_PERIOD   = 25 # seconds per tile — base sky   (XMoto: fDrift = time / 25)
+  @DRIFT_WIND_PERIOD = 15 # seconds per tile — drift layer (XMoto: fDrift = time / 15)
   @TILE_SCALE_BASE  = 4  # tile scale at zoom 1.0 (historical value); zoom multiplies it
 
   constructor: (level) ->
@@ -151,8 +154,13 @@ class Sky
 
     target = @level.camera.target()
     # Only drifted skies get the constant "wind"; plain skies just track the camera.
-    # (XMoto: fDrift stays 0 unless the sky is drifted.)
-    wind = if @drifted then performance.now() / 1000.0 * Sky.SKY_WIND_SPEED else 0
+    # (XMoto: fDrift stays 0 unless the sky is drifted.) Scroll one tile every
+    # SKY_WIND_PERIOD seconds, sized from the on-screen tile (tileScale × texture width)
+    # so it is resolution-agnostic and scales with zoom, like XMoto's fDrift = time / 25.
+    wind = 0
+    if @drifted
+      tile_px = @sprite.tileScale.x * @sprite.texture.width
+      wind    = performance.now() / 1000.0 * tile_px / Sky.SKY_WIND_PERIOD
 
     @sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind # -wind => scrolls right → left
     @sprite.tilePosition.y =  target.y * Sky.PARALLAX_Y + @offset * @options.height # offset shifts the sky vertically
@@ -164,8 +172,9 @@ class Sky
     @drift_sprite.width  = @options.width  if @drift_sprite.width  != @options.width
     @drift_sprite.height = @options.height if @drift_sprite.height != @options.height
 
-    target = @level.camera.target()
-    wind   = performance.now() / 1000.0 * Sky.DRIFT_WIND_SPEED # faster than the base sky (like XMoto's /15 vs /25)
+    target  = @level.camera.target()
+    tile_px = @drift_sprite.tileScale.x * @drift_sprite.texture.width
+    wind    = performance.now() / 1000.0 * tile_px / Sky.DRIFT_WIND_PERIOD # faster than base (15 vs 25)
 
     @drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind # -wind => scrolls right → left
     @drift_sprite.tilePosition.y =  target.y * Sky.PARALLAX_Y
