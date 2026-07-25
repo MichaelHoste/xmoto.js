@@ -2715,11 +2715,13 @@
         };
         this.zoom = this.parse_float(xml_sky.attr('zoom'), 1.0);
         this.drift_zoom = this.parse_float(xml_sky.attr('driftZoom'), 1.0);
-        this.offset = this.parse_float(xml_sky.attr('offset'), 0.0);
+        this.offset = this.parse_float(xml_sky.attr('offset'), 0.015);
         this.drifted = xml_sky.attr('drifted') === 'true'; // enable the secondary scrolling drift layer
         this.blend_name = xml_sky.attr('BlendTexture') || this.name; // empty => the drift layer reuses the sky texture
         this.use_params = xml_sky.attr('use_params') === 'true'; // Not found in C++ code, can be ignored
-        
+        if (!this.has_advanced_options(xml_sky)) {
+          this.apply_old_xmoto_values();
+        }
         // Get texture filenames from theme (can be animated!)
         // => For sky
         sky_params = this.assets.theme.texture_params(this.name);
@@ -2740,6 +2742,47 @@
           this.drifted_sky_filenames = [drifted_sky_params.file];
         }
         return this;
+      }
+
+      // XMoto uses the legacy per-texture presets unless the <sky> element carries at least
+      // one advanced attribute (XMoto Level.cpp: v_useAdvancedOptions). use_params is NOT one.
+      has_advanced_options(xml_sky) {
+        var attr, attrs, l, len;
+        attrs = ['zoom', 'offset', 'drifted', 'driftZoom', 'BlendTexture', 'color_r', 'color_g', 'color_b', 'color_a', 'driftColor_r', 'driftColor_g', 'driftColor_b', 'driftColor_a'];
+        for (l = 0, len = attrs.length; l < len; l++) {
+          attr = attrs[l];
+          if (xml_sky.attr(attr) != null) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      // XMoto SkyApparence::setOldXmotoValuesFromTextureName — presets for old-format skies.
+      // Unlisted textures keep the reInit defaults (zoom 1.0, offset 0.015, not drifted).
+      apply_old_xmoto_values() {
+        switch (this.name) {
+          case 'sky1':
+            return this.zoom = 2.0;
+          case 'sky2':
+            return this.zoom = 1.53;
+          case 'Sky2Drift':
+            this.zoom = 1.53;
+            this.drift_zoom = 1.17;
+            this.drifted = true;
+            this.color = {
+              r: 128,
+              g: 128,
+              b: 128,
+              a: 128
+            };
+            return this.drift_color = {
+              r: 255,
+              g: 128,
+              b: 128,
+              a: 128
+            };
+        }
       }
 
       load_assets() {
@@ -2766,7 +2809,7 @@
       }
 
       init_sky() {
-        var name, textures;
+        var name, textures, tile_scale;
         textures = (function() {
           var l, len, ref, results;
           ref = this.sky_filenames;
@@ -2792,12 +2835,14 @@
         this.sprite.label = "sky";
         this.sprite.position.x = 0;
         this.sprite.position.y = 0;
-        // color / zoom apply whenever present (defaults white + zoom 1.0 => historical look).
-        // Only the RGB tints the sky: the base sky is opaque, so color_a is NOT an opacity
-        // (many levels set color_a="0" yet clearly want a visible sky).
-        this.sprite.tileScale.x = this.zoom * Sky.TILE_SCALE_BASE;
-        this.sprite.tileScale.y = this.zoom * Sky.TILE_SCALE_BASE;
-        // Add tint to sprite (alpha is ignored in original code)
+        // XMoto maps 1/zoom tiles across the canvas WIDTH, so the tile scale is tied to the
+        // canvas width — this makes the zoom appearance AND the on-screen parallax/wind speed
+        // match the original at any window size (a fixed base would bake in one resolution).
+        tile_scale = this.zoom * this.options.width / this.sprite.texture.width;
+        this.sprite.tileScale.x = tile_scale;
+        this.sprite.tileScale.y = tile_scale;
+        // Add tint to sprite (alpha is ignored in original code; color_a is NOT an opacity —
+        // many levels set color_a="0" yet clearly want a visible sky).
         this.sprite.tint = (this.color.r << 16) + (this.color.g << 8) + this.color.b;
         return this.level.stage.addChildAt(this.sprite, 0); // Fixed on the root level of stage (not influenced by scale/translation, only adapt tilePosition)
       }
@@ -2805,7 +2850,7 @@
       
         // Second tiling texture drifting over the sky (moving clouds / atmosphere).
       init_drifting_sky() {
-        var name, textures;
+        var name, textures, tile_scale;
         textures = (function() {
           var l, len, ref, results;
           ref = this.drifted_sky_filenames;
@@ -2831,8 +2876,9 @@
         this.drift_sprite.label = "sky drift";
         this.drift_sprite.position.x = 0;
         this.drift_sprite.position.y = 0;
-        this.drift_sprite.tileScale.x = this.drift_zoom * Sky.TILE_SCALE_BASE;
-        this.drift_sprite.tileScale.y = this.drift_zoom * Sky.TILE_SCALE_BASE;
+        tile_scale = this.drift_zoom * this.options.width / this.drift_sprite.texture.width;
+        this.drift_sprite.tileScale.x = tile_scale;
+        this.drift_sprite.tileScale.y = tile_scale;
         // Add tint to sprite (alpha is ignored in original code)
         this.drift_sprite.tint = (this.drift_color.r << 16) + (this.drift_color.g << 8) + this.drift_color.b;
         // Additive so the drift combines with the sky instead of hiding it (matches XMoto,
@@ -2862,7 +2908,7 @@
       }
 
       update_sky() {
-        var target, tile_px, wind;
+        var parallax, target, tile_px, wind;
         if (this.sprite.width !== this.options.width) {
           // Only when going in/out fullscreen (avoid some internal computations)
           this.sprite.width = this.options.width;
@@ -2871,17 +2917,18 @@
           this.sprite.height = this.options.height;
         }
         target = this.level.camera.target();
+        tile_px = this.sprite.tileScale.x * this.sprite.texture.width; // on-screen size of one texture tile
+        parallax = this.offset * tile_px; // camera parallax factor (XMoto: camX * offset)
+        
         // Only drifted skies get the constant "wind"; plain skies just track the camera.
-        // (XMoto: fDrift stays 0 unless the sky is drifted.) Scroll one tile every
-        // SKY_WIND_PERIOD seconds, sized from the on-screen tile (tileScale × texture width)
-        // so it is resolution-agnostic and scales with zoom, like XMoto's fDrift = time / 25.
+        // (XMoto: fDrift stays 0 unless the sky is drifted.) One tile every SKY_WIND_PERIOD
+        // seconds, resolution-agnostic and scaling with zoom, like XMoto's fDrift = time / 25.
         wind = 0;
         if (this.drifted) {
-          tile_px = this.sprite.tileScale.x * this.sprite.texture.width;
           wind = performance.now() / 1000.0 * tile_px / Sky.SKY_WIND_PERIOD;
         }
-        this.sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind; // -wind => scrolls right → left
-        this.sprite.tilePosition.y = target.y * Sky.PARALLAX_Y + this.offset * this.options.height; // offset shifts the sky vertically
+        this.sprite.tilePosition.x = -target.x * parallax - wind; // camera parallax + wind (right → left)
+        this.sprite.tilePosition.y = target.y * parallax; // vertical parallax (Y is inverted vs world)
         if (this.sprite.frames_count) {
           return this.update_animation(this.sprite);
         }
@@ -2889,7 +2936,7 @@
 
       // The drift layer follows the same parallax but slowly scrolls on its own over time.
       update_drifting_sky() {
-        var target, tile_px, wind;
+        var parallax, target, tile_px, wind;
         if (this.drift_sprite.width !== this.options.width) {
           this.drift_sprite.width = this.options.width;
         }
@@ -2898,9 +2945,10 @@
         }
         target = this.level.camera.target();
         tile_px = this.drift_sprite.tileScale.x * this.drift_sprite.texture.width;
+        parallax = this.offset * tile_px; // same offset as the base sky
         wind = performance.now() / 1000.0 * tile_px / Sky.DRIFT_WIND_PERIOD; // faster than base (15 vs 25)
-        this.drift_sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind; // -wind => scrolls right → left
-        this.drift_sprite.tilePosition.y = target.y * Sky.PARALLAX_Y;
+        this.drift_sprite.tilePosition.x = -target.x * parallax - wind; // camera parallax + wind (right → left)
+        this.drift_sprite.tilePosition.y = target.y * parallax;
         if (this.drift_sprite.frames_count) {
           return this.update_animation(this.drift_sprite);
         }
@@ -2948,19 +2996,12 @@
 
     };
 
-    // Visual tuning constants (reverse-engineered to look nice)
-    Sky.PARALLAX_X = 15; // sky parallax on the x axis
-
-    Sky.PARALLAX_Y = 7; // sky parallax on the y axis
-
     // XMoto scrolls each sky layer by one texture tile every N seconds, independent of
     // resolution. Keep the 25:15 base:drift ratio to match the original; scale both up
     // together for a gentler wind.
     Sky.SKY_WIND_PERIOD = 25; // seconds per tile — base sky   (XMoto: fDrift = time / 25)
 
     Sky.DRIFT_WIND_PERIOD = 15; // seconds per tile — drift layer (XMoto: fDrift = time / 15)
-
-    Sky.TILE_SCALE_BASE = 4; // tile scale at zoom 1.0 (historical value); zoom multiplies it
 
     return Sky;
 
