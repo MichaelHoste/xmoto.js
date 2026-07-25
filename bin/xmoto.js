@@ -2871,7 +2871,9 @@
           this.sprite.height = this.options.height;
         }
         target = this.level.camera.target();
-        wind = performance.now() / 1000.0 * Sky.SKY_WIND_SPEED; // constant scroll even when standing still ("wind")
+        // Only drifted skies get the constant "wind"; plain skies just track the camera.
+        // (XMoto: fDrift stays 0 unless the sky is drifted.)
+        wind = this.drifted ? performance.now() / 1000.0 * Sky.SKY_WIND_SPEED : 0;
         this.sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind; // -wind => scrolls right → left
         this.sprite.tilePosition.y = target.y * Sky.PARALLAX_Y + this.offset * this.options.height; // offset shifts the sky vertically
         if (this.sprite.frames_count) {

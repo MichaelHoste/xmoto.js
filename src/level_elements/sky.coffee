@@ -150,7 +150,9 @@ class Sky
     @sprite.height = @options.height if @sprite.height != @options.height
 
     target = @level.camera.target()
-    wind   = performance.now() / 1000.0 * Sky.SKY_WIND_SPEED # constant scroll even when standing still ("wind")
+    # Only drifted skies get the constant "wind"; plain skies just track the camera.
+    # (XMoto: fDrift stays 0 unless the sky is drifted.)
+    wind = if @drifted then performance.now() / 1000.0 * Sky.SKY_WIND_SPEED else 0
 
     @sprite.tilePosition.x = -target.x * Sky.PARALLAX_X - wind # -wind => scrolls right → left
     @sprite.tilePosition.y =  target.y * Sky.PARALLAX_Y + @offset * @options.height # offset shifts the sky vertically
