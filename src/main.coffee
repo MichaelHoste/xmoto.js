@@ -7,8 +7,8 @@ $.xmoto = (level_filename, options = {}) ->
       width:                 options.width,
       height:                options.height,
       background:            0xFFFFFF,
-      clearBeforeRender:     false, # No need to clear, we paint the entire canvas
-      textureGCActive:       false, # We manage texture GC manually (`renderer.gc.enabled` can be toggled)
+      #clearBeforeRender:     false, # No need to clear, we paint the entire canvas
+      #textureGCActive:       false, # We manage texture GC manually (`renderer.gc.enabled` can be toggled)
       powerPreference:       'high-performance' # Hint for GPU power preference (WebGL & WebGPU).
       #antialias:             true  # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
       #preserveDrawingBuffer: true  # Need to be true when capturing with "toDataUrl" (may have low performance impact)
@@ -24,9 +24,10 @@ $.xmoto = (level_filename, options = {}) ->
     defaults =
 
       # Selectors
-      container: '#xmoto'   # empty div where the game will be created
-      loading:   '#loading' # loading selector
-      chrono:    '#chrono'  # chrono selector
+      container:  '#xmoto'      # empty div where the game will be created
+      loading:    '#loading'    # loading selector
+      chrono:     '#chrono'     # chrono selector
+      level_name: '#level-name' # level name selector
 
       # Size
       width:  800
@@ -56,7 +57,6 @@ $.xmoto = (level_filename, options = {}) ->
     container = $(options.container)
 
     container.find('canvas').remove()         # Remove old canvas
-    $(options.loading).show()                 # Start loading
     container.css('height', options.height)   # Force height of parent
     container[0].appendChild(renderer.canvas) # Add PixiJS canvas to container
     debug_canvas_html = '<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>'
@@ -87,7 +87,6 @@ $.xmoto = (level_filename, options = {}) ->
 
     level.load_from_file(level_filename, =>
       level.init(renderer)
-      $(options.loading).hide()
 
       update = =>
         stats_fps.begin() if Constants.debug

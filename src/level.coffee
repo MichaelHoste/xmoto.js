@@ -4,6 +4,8 @@ class Level
     @renderer = renderer
     @options  = options
 
+    @show_loading()
+
     # Context
     @debug_ctx   = $('#xmoto-debug')[0].getContext('2d')
     @stage       = new PIXI.Container()
@@ -84,6 +86,8 @@ class Level
     @camera   .init()
     @listeners.init()
 
+    @hide_loading()
+    @show_level_name()
     @init_timer()
 
   update: ->
@@ -103,6 +107,21 @@ class Level
     @moto     .update() if @options.playable
     @ghosts   .update()
     @particles.update()
+
+  show_loading: ->
+    $(@options.loading).show()
+
+  hide_loading: ->
+    $(@options.loading).hide()
+
+  show_level_name: ->
+    selector = $(@options.level_name)
+    selector.text(@infos.name)
+
+    # Force animation refresh
+    selector.removeClass('fade-out')
+    selector[0].offsetWidth;
+    selector.addClass('fade-out')
 
   init_timer: ->
     @start_time = new Date().getTime() # in ms

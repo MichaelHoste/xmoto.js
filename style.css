@@ -79,7 +79,7 @@ body {
   color:#999999;
 }
 
-#loading {
+#loading, #level-name {
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 19px;
   margin-left: 100px;
@@ -89,9 +89,27 @@ body {
   text-align: center;
   padding-top: 50px;
   padding-bottom: 50px;
-  background-color:black;
+  background-color: black;
   opacity: 0.6;
   color: white;
+}
+
+#level-name {
+  opacity: 0.0;
+}
+
+#level-name.fade-out {
+  animation: fadeOut 2.5s ease-in-out forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden; /* prevents it from blocking clicks after fading */
+  }
 }
 
 #chrono {
@@ -109,7 +127,7 @@ body {
   padding-bottom: 8px;
 }
 
-#levels_block {
+#levels-block {
   width: 1000px;
   float: left;
   padding-top: 7px;
@@ -120,7 +138,7 @@ body {
   color: #333;
 }
 
-#levels_block select {
+#levels-block select {
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 19px;
   vertical-align: 1px;
@@ -266,11 +284,11 @@ body.debug div#debug {
   overflow: auto;
 }
 
-body.debug #loading {
+body.debug #loading, body.debug #level-name {
   margin-left: 0px;
 }
 
-body.debug #levels_block {
+body.debug #levels-block {
   margin-left: 0px;
 }
 
