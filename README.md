@@ -74,9 +74,17 @@ Don't forget to restart the coffee command if you create new COFFEE files.
 
 ### Tests
 
-This command load each level on a browser using Playwright and logs the failures.
+#### Parsing & Loading of original levels
+
+Load each level on a browser using Playwright and logs the failures.
 
     yarn test:levels
+
+#### Comparison with original X-Moto
+
+Use this link to compare screen 1/1 with original X-Moto (same zoom/resolution):
+
+    http://localhost:3001/?level=943&debug=true&automatic_scale=false&manual_scale=false&default_scale.x=90&default_scale.y=-90&width=1024&height=768
 
 ### Technical informations
 
@@ -122,6 +130,7 @@ Please visit his personal website for other cool projects: https://jamesfator.co
   => performance.now(), Date.now() or Ticker? (see PR)
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels
 * Create selector of levels by name
+* Make the game playable on mobile (4 buttons or device rotation or volume buttons?)
 * Adjust a bit the camera (player more on the borders of the camera, less zoom)
 * Sounds with PixiJS Sound and play on the left/right depending on position
 * Adjust the height of the driver (less bumpy!? Height of sprite? Compare values?)

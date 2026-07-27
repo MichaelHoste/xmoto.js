@@ -6,6 +6,12 @@ class Sky
   @SKY_WIND_PERIOD   = 25 # seconds per tile — base sky   (XMoto: fDrift = time / 25)
   @DRIFT_WIND_PERIOD = 15 # seconds per tile — drift layer (XMoto: fDrift = time / 15)
 
+  # The port shows a wider view than XMoto (its camera is ~2x more zoomed out), so the
+  # camera-driven parallax reads too fast relative to the world. Scale just the parallax
+  # down to compensate — brings l1 back near the original's ~15 px/m. (The wind is an
+  # absolute, camera-independent scroll and already matches XMoto, so it is NOT touched.)
+  @FOV_COMPENSATION  = 0.5
+
   constructor: (level) ->
     @level   = level
     @assets  = level.assets
@@ -182,7 +188,7 @@ class Sky
 
     target   = @level.camera.target()
     tile_px  = @sprite.tileScale.x * @sprite.texture.width # on-screen size of one texture tile
-    parallax = @offset * tile_px                           # camera parallax factor (XMoto: camX * offset)
+    parallax = @offset * tile_px * Sky.FOV_COMPENSATION    # camera parallax factor (XMoto: camX * offset)
 
     # Only drifted skies get the constant "wind"; plain skies just track the camera.
     # (XMoto: fDrift stays 0 unless the sky is drifted.) One tile every SKY_WIND_PERIOD
@@ -202,7 +208,7 @@ class Sky
 
     target   = @level.camera.target()
     tile_px  = @drift_sprite.tileScale.x * @drift_sprite.texture.width
-    parallax = @offset * tile_px                                          # same offset as the base sky
+    parallax = @offset * tile_px * Sky.FOV_COMPENSATION                     # same offset as the base sky
     wind     = performance.now() / 1000.0 * tile_px / Sky.DRIFT_WIND_PERIOD # faster than base (15 vs 25)
 
     @drift_sprite.tilePosition.x = -target.x * parallax - wind # camera parallax + wind (right → left)

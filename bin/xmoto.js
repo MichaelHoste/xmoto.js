@@ -621,6 +621,7 @@
     constructor(renderer, options) {
       this.renderer = renderer;
       this.options = options;
+      this.show_loading();
       // Context
       this.debug_ctx = $('#xmoto-debug')[0].getContext('2d');
       this.stage = new PIXI.Container();
@@ -698,6 +699,8 @@
       this.input.init();
       this.camera.init();
       this.listeners.init();
+      this.hide_loading();
+      this.show_level_name();
       return this.init_timer();
     }
 
@@ -720,6 +723,24 @@
       }
       this.ghosts.update();
       return this.particles.update();
+    }
+
+    show_loading() {
+      return $(this.options.loading).show();
+    }
+
+    hide_loading() {
+      return $(this.options.loading).hide();
+    }
+
+    show_level_name() {
+      var selector;
+      selector = $(this.options.level_name);
+      selector.text(this.infos.name);
+      // Force animation refresh
+      selector.removeClass('fade-out');
+      selector[0].offsetWidth;
+      return selector.addClass('fade-out');
     }
 
     init_timer() {
@@ -969,8 +990,8 @@
         width: options.width,
         height: options.height,
         background: 0xFFFFFF,
-        clearBeforeRender: false, // No need to clear, we paint the entire canvas
-        textureGCActive: false, // We manage texture GC manually (`renderer.gc.enabled` can be toggled)
+        //clearBeforeRender:     false, # No need to clear, we paint the entire canvas
+        //textureGCActive:       false, # We manage texture GC manually (`renderer.gc.enabled` can be toggled)
         powerPreference: 'high-performance' // Hint for GPU power preference (WebGL & WebGPU).
       }));
       //antialias:             true  # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
@@ -987,6 +1008,7 @@
         container: '#xmoto', // empty div where the game will be created
         loading: '#loading', // loading selector
         chrono: '#chrono', // chrono selector
+        level_name: '#level-name', // level name selector
         
         // Size
         width: 800,
@@ -1014,7 +1036,6 @@
       var container, debug_canvas_html;
       container = $(options.container);
       container.find('canvas').remove(); // Remove old canvas
-      $(options.loading).show(); // Start loading
       container.css('height', options.height); // Force height of parent
       container[0].appendChild(renderer.canvas); // Add PixiJS canvas to container
       debug_canvas_html = '<canvas id="xmoto-debug" width="' + options.width + '" height="' + options.height + '"></canvas>';
@@ -1050,7 +1071,6 @@
       return level.load_from_file(level_filename, () => {
         var update;
         level.init(renderer);
-        $(options.loading).hide();
         update = () => {
           if (Constants.debug) {
             stats_fps.begin();
@@ -2918,7 +2938,7 @@
         }
         target = this.level.camera.target();
         tile_px = this.sprite.tileScale.x * this.sprite.texture.width; // on-screen size of one texture tile
-        parallax = this.offset * tile_px; // camera parallax factor (XMoto: camX * offset)
+        parallax = this.offset * tile_px * Sky.FOV_COMPENSATION; // camera parallax factor (XMoto: camX * offset)
         
         // Only drifted skies get the constant "wind"; plain skies just track the camera.
         // (XMoto: fDrift stays 0 unless the sky is drifted.) One tile every SKY_WIND_PERIOD
@@ -2945,7 +2965,7 @@
         }
         target = this.level.camera.target();
         tile_px = this.drift_sprite.tileScale.x * this.drift_sprite.texture.width;
-        parallax = this.offset * tile_px; // same offset as the base sky
+        parallax = this.offset * tile_px * Sky.FOV_COMPENSATION; // same offset as the base sky
         wind = performance.now() / 1000.0 * tile_px / Sky.DRIFT_WIND_PERIOD; // faster than base (15 vs 25)
         this.drift_sprite.tilePosition.x = -target.x * parallax - wind; // camera parallax + wind (right → left)
         this.drift_sprite.tilePosition.y = target.y * parallax;
@@ -3002,6 +3022,13 @@
     Sky.SKY_WIND_PERIOD = 25; // seconds per tile — base sky   (XMoto: fDrift = time / 25)
 
     Sky.DRIFT_WIND_PERIOD = 15; // seconds per tile — drift layer (XMoto: fDrift = time / 15)
+
+    
+    // The port shows a wider view than XMoto (its camera is ~2x more zoomed out), so the
+    // camera-driven parallax reads too fast relative to the world. Scale just the parallax
+    // down to compensate — brings l1 back near the original's ~15 px/m. (The wind is an
+    // absolute, camera-independent scroll and already matches XMoto, so it is NOT touched.)
+    Sky.FOV_COMPENSATION = 0.5;
 
     return Sky;
 
