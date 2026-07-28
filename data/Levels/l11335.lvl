@@ -3624,7 +3624,7 @@
 		<size r="0.4"/>
 	</entity>
 	<entity id="path10456" typeid="Checkpoint">
-		<position y="2.7503262" x="-21.8271935"/>
+		<position y="2.3" x="-21.8271935"/>
 		<size r="0.4"/>
 	</entity>
 	<entity id="path10458" typeid="EndOfLevel">

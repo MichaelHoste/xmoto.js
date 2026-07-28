@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="cirpachasbeerfear2" rversion="0.5.2">
+	<info>
+		<name>Cirpacha's beer fear</name>
+		<description>after a long night partying and barely getting any sleep, you cant decide whether to never touch another drink or to start the day with a pick-me-up. from 2018</description>
+		<author>Cirpacha</author>
+		<date>2018-03-01</date>
+		<sky>white</sky>
+		<border texture="Black"/>
+		<music name="SpeedItUp" />
+	</info>
+	<theme_replacements>
+		<sprite_replacement old_name="Flower" new_name="beerleft"/>
+	</theme_replacements>
+	<layeroffsets>
+		<layeroffset x="1.0" y="1.0" frontlayer="false"/>
+		<layeroffset x="1.0" y="1.0" frontlayer="false"/>
+	</layeroffsets>
+	<limits left="-5.000000" right="5.000000" top="3.000000" bottom="-3.000000"/>
+	<script>
+-- Cirpacha's beer fear --
+
+-- stones &lt;size width="3.66" r="1.4" height="4.9"/&gt;
+--        &lt;size width="2.5" r="1" height="4.9"/&gt;
+
+-- entities --
+wreck1 = {}
+wreck2 = {}
+wreck3 = {}
+wreck4 = {}
+tappo1 = {}
+tappo2 = {}
+tappo3 = {}
+tappo4 = {}
+tappo5 = {}
+tappo6 = {}
+sprite1 = {}
+sprite2 = {}
+sprite3 = {}
+sprite4 = {}
+sprite5 = {}
+sprite6 = {}
+sprite7 = {}
+kaljaa = {}
+beerflare = {}
+
+-- blocks --
+-- kaljab --
+-- keski --
+-- ylapala --
+
+-- timers --
+blok1 = {}
+tappotimer = {}
+alkuviestit = {}
+viestidiffic = {}
+ohje = {}
+normalvoitto = {}
+hardvoitto = {}
+
+-- variables --
+valinta = 2
+muisti = 2
+saavalita = 0
+normal = 0
+hard = 0
+laskuri = 0
+
+
+function OnLoad()
+	Game.StartTimer("alkuviestit", 50, 1)
+	Game.CameraZoom(-0.03)
+	Game.SetBlockCenter("ylapala", 0, 0)
+	Game.SetBlockCenter("keski", 0, 0)
+	Game.SetBlockCenter("kaljab", 0, 0)
+	Game.SetBlockPos("kaljab", 5, 1.5)
+	Game.SetKeyHook("N", "normalinit")
+	Game.SetKeyHook("H", "hardinit")
+	return true
+end
+
+function normalinit()
+	if hard == 0 and normal == 0 and saavalita == 1
+	then
+		normal = 1
+		Game.SetBlockPos("ylapala", 5, 8.9)
+		Game.Message("you chose normal")
+		Game.StartTimer("blok1",500,10)
+		Game.StartTimer("ohje", 150, 1)
+	end
+	return true
+end
+
+function hardinit()
+	if normal == 0 and hard == 0 and saavalita == 1
+	then
+		hard = 1
+		Game.Message("you chose hard")
+		Game.SetBlockPos("keski", 5, 8.6)
+		Game.StartTimer("ohje", 100, 1)
+		Game.StartTimer("blok1", 430, 11)
+		Game.SetEntityPos("wreck1", 2, 0)
+		Game.SetEntityPos("wreck2", 1.7, 0)
+		Game.SetEntityPos("wreck3", -1.7, 0)
+		Game.SetEntityPos("wreck4", -2, 0)
+	end
+	return true
+end
+
+function blok1.Tick()
+	while(valinta == muisti)
+	do
+		valinta = math.random(1, 6)
+	end
+	muisti = valinta
+	paikka = "sprite" .. valinta
+	sx, sy = Game.GetEntityPos(paikka)
+	bx, by = Game.GetEntityPos("beerflare")
+	kx, ky = Game.GetBlockPos("kaljab")
+	aika = Game.GetTime()
+	Game.SetDynamicBlockTranslation("kaljab", sx-kx+5, sy-ky, 500, aika, aika+250)
+	Game.SetDynamicEntityTranslation("beerflare", sx-bx, sy-by, 500, aika, aika+250)
+	if normal == 1
+	then
+		Game.StartTimer("tappotimer", 250, 1)
+	else
+		Game.StartTimer("tappotimer", 250, 1)
+	end
+	laskuri = laskuri + 1
+	if laskuri == 10 and normal == 1
+	then
+		Game.StartTimer("normalvoitto", 600, 1)
+	end
+	if laskuri == 11 and hard == 1
+	then
+		Game.StartTimer("hardvoitto", 600, 1)
+	end
+	return true
+end
+
+function tappotimer.Tick()
+	i = 1
+	taika = Game.GetTime()
+	turva = 7 - valinta
+	while(i &lt; turva)
+	do
+		if(i &lt; 4)
+		then
+			Game.SetDynamicEntityTranslation("tappo" .. i, 0, -3, 200, taika, taika+100)
+			Game.SetDynamicEntityTranslation("tappo" .. i, 0, 3, 200, taika+200, taika+300)
+		else
+			Game.SetDynamicEntityTranslation("tappo" .. i, 0, 3, 200, taika, taika+100)
+			Game.SetDynamicEntityTranslation("tappo" .. i, 0, -3, 200, taika+200, taika+300)
+		end
+		i = i + 1
+	end
+	if(turva &lt; 6)
+	then
+		i = 1
+		while(turva+i &lt; 7)
+		do
+			if(turva+i &lt; 4)
+			then
+				Game.SetDynamicEntityTranslation("tappo" .. turva+i, 0, -3, 200, taika, taika+100)
+				Game.SetDynamicEntityTranslation("tappo" .. turva+i, 0, 3, 200, taika+200, taika+300)
+			else
+				Game.SetDynamicEntityTranslation("tappo" .. turva+i, 0, 3, 200, taika, taika+100)
+				Game.SetDynamicEntityTranslation("tappo" .. turva+i, 0, -3, 200, taika+200, taika+300)
+			end
+			i = i + 1
+		end
+	end
+	return true
+end
+
+function normalvoitto.Tick()
+	Game.Message("go get your beer!")
+	Game.SetEntityPos("kaljaa", sx, sy)
+	Game.SetBlockPos("kaljab", -10, -10)
+	return true
+end
+
+function hardvoitto.Tick()
+	Game.Message("congratulations! go get your beer!")
+	Game.SetEntityPos("kaljaa", sx, sy)
+	Game.SetBlockPos("kaljab", -10, -10)
+	return true
+end
+
+function alkuviestit.Tick()
+	Game.Message("welcome to my minigame")
+	Game.StartTimer("viestidiffic", 150, 1)
+	return true
+end
+
+function viestidiffic.Tick()
+	Game.Message("select the difficulty by pressing either N=normal or H=hard")
+	saavalita = 1
+	return true
+end
+
+function ohje.Tick()
+	Game.Message("go to the square opposite to the beer glass")
+	return true
+end
+
+-- stones --
+	function tappo1.Touch()
+		Game.KillPlayer()
+		return true
+	end
+
+	function tappo2.Touch()
+		Game.KillPlayer()
+		return true
+	end
+
+	function tappo3.Touch()
+		Game.KillPlayer()
+		return true
+	end
+
+	function tappo4.Touch()
+		Game.KillPlayer()
+		return true
+	end
+
+	function tappo5.Touch()
+		Game.KillPlayer()
+		return true
+	end
+
+	function tappo6.Touch()
+		Game.KillPlayer()
+		return true
+	end
+----
+	</script>
+	<block id="rect4725">
+		<position y="3.0" x="5.0" islayer="true" layerid="1"/>
+		<usetexture color_g="255" color_b="255" id="Black" color_a="90" color_r="255"/>
+		<vertex x="-10.600000" y="-2.950000"/>
+		<vertex x="0.600000" y="-2.950000"/>
+		<vertex x="0.600000" y="-3.050000"/>
+		<vertex x="-10.600000" y="-3.050000"/>
+	</block>
+	<block id="rect4749">
+		<position y="2.2" x="3.325" islayer="true" layerid="1"/>
+		<usetexture color_g="255" color_b="255" id="Black" color_a="90" color_r="255"/>
+		<vertex x="-5.050000" y="3.200000"/>
+		<vertex x="-4.950000" y="3.200000"/>
+		<vertex x="-4.950000" y="-6.000000"/>
+		<vertex x="-5.050000" y="-6.000000"/>
+	</block>
+	<block id="rect4749-7">
+		<position y="2.2" x="6.675" islayer="true" layerid="1"/>
+		<usetexture color_g="255" color_b="255" id="Black" color_a="90" color_r="255"/>
+		<vertex x="-5.050000" y="3.200000"/>
+		<vertex x="-4.950000" y="3.200000"/>
+		<vertex x="-4.950000" y="-6.000000"/>
+		<vertex x="-5.050000" y="-6.000000"/>
+	</block>
+	<block id="rect4635">
+		<position y="3.0" x="5.0"/>
+		<usetexture scale="0.3" id="Black"/>
+		<vertex x="-10.600000" y="0.600000"/>
+		<vertex x="-5.050000" y="0.600000"/>
+		<vertex x="-5.050000" y="0.000000"/>
+		<vertex x="-7.502677" y="-0.001973"/>
+		<vertex x="-7.654742" y="-0.012216"/>
+		<vertex x="-7.804248" y="-0.030984"/>
+		<vertex x="-7.950952" y="-0.058034"/>
+		<vertex x="-8.094611" y="-0.093122"/>
+		<vertex x="-8.234980" y="-0.136005"/>
+		<vertex x="-8.371818" y="-0.186439"/>
+		<vertex x="-8.504879" y="-0.244182"/>
+		<vertex x="-8.633921" y="-0.308989"/>
+		<vertex x="-8.758699" y="-0.380617"/>
+		<vertex x="-8.878972" y="-0.458824"/>
+		<vertex x="-8.994494" y="-0.543365"/>
+		<vertex x="-9.068750" y="-0.603125"/>
+		<vertex x="-9.120313" y="-0.560937"/>
+		<vertex x="-9.120313" y="-0.559375"/>
+		<vertex x="-9.015128" y="-0.475305"/>
+		<vertex x="-8.903100" y="-0.395161"/>
+		<vertex x="-8.784057" y="-0.319469"/>
+		<vertex x="-8.657829" y="-0.248755"/>
+		<vertex x="-8.524245" y="-0.183543"/>
+		<vertex x="-8.383135" y="-0.124359"/>
+		<vertex x="-8.234328" y="-0.071728"/>
+		<vertex x="-8.077654" y="-0.026176"/>
+		<vertex x="-7.968750" y="0.000000"/>
+		<vertex x="-10.000000" y="0.000000"/>
+		<vertex x="-10.000000" y="-2.000000"/>
+		<vertex x="-9.974736" y="-1.895845"/>
+		<vertex x="-9.941359" y="-1.783829"/>
+		<vertex x="-9.899471" y="-1.665276"/>
+		<vertex x="-9.848670" y="-1.541508"/>
+		<vertex x="-9.788557" y="-1.413847"/>
+		<vertex x="-9.718732" y="-1.283617"/>
+		<vertex x="-9.638796" y="-1.152138"/>
+		<vertex x="-9.548348" y="-1.020735"/>
+		<vertex x="-9.446989" y="-0.890730"/>
+		<vertex x="-9.334318" y="-0.763444"/>
+		<vertex x="-9.209937" y="-0.640201"/>
+		<vertex x="-9.120313" y="-0.560937"/>
+		<vertex x="-9.070313" y="-0.604688"/>
+		<vertex x="-9.178940" y="-0.700871"/>
+		<vertex x="-9.281997" y="-0.802914"/>
+		<vertex x="-9.379231" y="-0.910564"/>
+		<vertex x="-9.470387" y="-1.023569"/>
+		<vertex x="-9.555212" y="-1.141675"/>
+		<vertex x="-9.633453" y="-1.264630"/>
+		<vertex x="-9.704857" y="-1.392181"/>
+		<vertex x="-9.769168" y="-1.524076"/>
+		<vertex x="-9.826135" y="-1.660061"/>
+		<vertex x="-9.875503" y="-1.799885"/>
+		<vertex x="-9.917019" y="-1.943294"/>
+		<vertex x="-9.950429" y="-2.090036"/>
+		<vertex x="-9.975480" y="-2.239857"/>
+		<vertex x="-9.991918" y="-2.392507"/>
+		<vertex x="-9.999490" y="-2.547730"/>
+		<vertex x="-9.997967" y="-3.504281"/>
+		<vertex x="-9.987412" y="-3.658675"/>
+		<vertex x="-9.968074" y="-3.810410"/>
+		<vertex x="-9.940209" y="-3.959233"/>
+		<vertex x="-9.904069" y="-4.104892"/>
+		<vertex x="-9.859907" y="-4.247134"/>
+		<vertex x="-9.807978" y="-4.385706"/>
+		<vertex x="-9.748535" y="-4.520356"/>
+		<vertex x="-9.681831" y="-4.650831"/>
+		<vertex x="-9.608120" y="-4.776878"/>
+		<vertex x="-9.527656" y="-4.898245"/>
+		<vertex x="-9.440692" y="-5.014679"/>
+		<vertex x="-9.347482" y="-5.125926"/>
+		<vertex x="-9.248279" y="-5.231736"/>
+		<vertex x="-9.143337" y="-5.331854"/>
+		<vertex x="-9.070313" y="-5.395313"/>
+		<vertex x="-9.120313" y="-5.439063"/>
+		<vertex x="-9.252723" y="-5.319248"/>
+		<vertex x="-9.373157" y="-5.194510"/>
+		<vertex x="-9.482012" y="-5.066171"/>
+		<vertex x="-9.579690" y="-4.935552"/>
+		<vertex x="-9.666589" y="-4.803977"/>
+		<vertex x="-9.743111" y="-4.672768"/>
+		<vertex x="-9.809654" y="-4.543247"/>
+		<vertex x="-9.866618" y="-4.416737"/>
+		<vertex x="-9.914404" y="-4.294561"/>
+		<vertex x="-9.953411" y="-4.178040"/>
+		<vertex x="-9.984039" y="-4.068498"/>
+		<vertex x="-10.000000" y="-4.000000"/>
+		<vertex x="-10.000000" y="-6.000000"/>
+		<vertex x="-7.968750" y="-6.000000"/>
+		<vertex x="-8.130764" y="-5.959459"/>
+		<vertex x="-8.284796" y="-5.911490"/>
+		<vertex x="-8.431019" y="-5.856616"/>
+		<vertex x="-8.569601" y="-5.795364"/>
+		<vertex x="-8.700714" y="-5.728260"/>
+		<vertex x="-8.824528" y="-5.655827"/>
+		<vertex x="-8.941214" y="-5.578593"/>
+		<vertex x="-9.050942" y="-5.497082"/>
+		<vertex x="-9.120313" y="-5.440625"/>
+		<vertex x="-9.120313" y="-5.439063"/>
+		<vertex x="-9.068750" y="-5.396875"/>
+		<vertex x="-8.956530" y="-5.485504"/>
+		<vertex x="-8.839397" y="-5.567961"/>
+		<vertex x="-8.717595" y="-5.644002"/>
+		<vertex x="-8.591368" y="-5.713383"/>
+		<vertex x="-8.460960" y="-5.775863"/>
+		<vertex x="-8.326613" y="-5.831196"/>
+		<vertex x="-8.188571" y="-5.879141"/>
+		<vertex x="-8.047078" y="-5.919452"/>
+		<vertex x="-7.902377" y="-5.951888"/>
+		<vertex x="-7.754712" y="-5.976204"/>
+		<vertex x="-7.604326" y="-5.992158"/>
+		<vertex x="-7.451463" y="-5.999505"/>
+		<vertex x="-2.497323" y="-5.998027"/>
+		<vertex x="-2.345258" y="-5.987784"/>
+		<vertex x="-2.195752" y="-5.969016"/>
+		<vertex x="-2.049048" y="-5.941966"/>
+		<vertex x="-1.905389" y="-5.906878"/>
+		<vertex x="-1.765020" y="-5.863995"/>
+		<vertex x="-1.628182" y="-5.813561"/>
+		<vertex x="-1.495121" y="-5.755818"/>
+		<vertex x="-1.366079" y="-5.691011"/>
+		<vertex x="-1.241301" y="-5.619383"/>
+		<vertex x="-1.121028" y="-5.541176"/>
+		<vertex x="-1.005506" y="-5.456635"/>
+		<vertex x="-0.931250" y="-5.396875"/>
+		<vertex x="-0.879687" y="-5.439063"/>
+		<vertex x="-0.879687" y="-5.440625"/>
+		<vertex x="-0.984872" y="-5.524695"/>
+		<vertex x="-1.096900" y="-5.604838"/>
+		<vertex x="-1.215943" y="-5.680530"/>
+		<vertex x="-1.342171" y="-5.751244"/>
+		<vertex x="-1.475755" y="-5.816456"/>
+		<vertex x="-1.616865" y="-5.875640"/>
+		<vertex x="-1.765672" y="-5.928271"/>
+		<vertex x="-1.922346" y="-5.973823"/>
+		<vertex x="-2.031250" y="-6.000000"/>
+		<vertex x="0.000000" y="-6.000000"/>
+		<vertex x="0.000000" y="-4.000000"/>
+		<vertex x="-0.025264" y="-4.104155"/>
+		<vertex x="-0.058641" y="-4.216170"/>
+		<vertex x="-0.100529" y="-4.334723"/>
+		<vertex x="-0.151330" y="-4.458491"/>
+		<vertex x="-0.211443" y="-4.586151"/>
+		<vertex x="-0.281268" y="-4.716382"/>
+		<vertex x="-0.361204" y="-4.847860"/>
+		<vertex x="-0.451652" y="-4.979263"/>
+		<vertex x="-0.553011" y="-5.109269"/>
+		<vertex x="-0.665682" y="-5.236555"/>
+		<vertex x="-0.790063" y="-5.359799"/>
+		<vertex x="-0.879687" y="-5.439063"/>
+		<vertex x="-0.929688" y="-5.395313"/>
+		<vertex x="-0.821060" y="-5.299129"/>
+		<vertex x="-0.718003" y="-5.197086"/>
+		<vertex x="-0.620769" y="-5.089436"/>
+		<vertex x="-0.529613" y="-4.976431"/>
+		<vertex x="-0.444788" y="-4.858325"/>
+		<vertex x="-0.366546" y="-4.735370"/>
+		<vertex x="-0.295143" y="-4.607819"/>
+		<vertex x="-0.230832" y="-4.475924"/>
+		<vertex x="-0.173865" y="-4.339939"/>
+		<vertex x="-0.124497" y="-4.200115"/>
+		<vertex x="-0.082981" y="-4.056706"/>
+		<vertex x="-0.049571" y="-3.909964"/>
+		<vertex x="-0.024520" y="-3.760143"/>
+		<vertex x="-0.008082" y="-3.607493"/>
+		<vertex x="-0.000510" y="-3.452270"/>
+		<vertex x="-0.002033" y="-2.495719"/>
+		<vertex x="-0.012588" y="-2.341325"/>
+		<vertex x="-0.031926" y="-2.189590"/>
+		<vertex x="-0.059791" y="-2.040767"/>
+		<vertex x="-0.095931" y="-1.895108"/>
+		<vertex x="-0.140093" y="-1.752866"/>
+		<vertex x="-0.192022" y="-1.614294"/>
+		<vertex x="-0.251465" y="-1.479644"/>
+		<vertex x="-0.318169" y="-1.349169"/>
+		<vertex x="-0.391880" y="-1.223122"/>
+		<vertex x="-0.472344" y="-1.101755"/>
+		<vertex x="-0.559308" y="-0.985321"/>
+		<vertex x="-0.652518" y="-0.874074"/>
+		<vertex x="-0.751721" y="-0.768264"/>
+		<vertex x="-0.856663" y="-0.668146"/>
+		<vertex x="-0.929688" y="-0.604688"/>
+		<vertex x="-0.879687" y="-0.560937"/>
+		<vertex x="-0.747277" y="-0.680751"/>
+		<vertex x="-0.626843" y="-0.805489"/>
+		<vertex x="-0.517988" y="-0.933828"/>
+		<vertex x="-0.420310" y="-1.064446"/>
+		<vertex x="-0.333411" y="-1.196022"/>
+		<vertex x="-0.256889" y="-1.327231"/>
+		<vertex x="-0.190346" y="-1.456752"/>
+		<vertex x="-0.133382" y="-1.583262"/>
+		<vertex x="-0.085596" y="-1.705438"/>
+		<vertex x="-0.046589" y="-1.821959"/>
+		<vertex x="-0.015961" y="-1.931502"/>
+		<vertex x="0.000000" y="-2.000000"/>
+		<vertex x="0.000000" y="0.000000"/>
+		<vertex x="-2.031250" y="0.000000"/>
+		<vertex x="-1.869237" y="-0.040541"/>
+		<vertex x="-1.715204" y="-0.088511"/>
+		<vertex x="-1.568982" y="-0.143385"/>
+		<vertex x="-1.430399" y="-0.204636"/>
+		<vertex x="-1.299286" y="-0.271741"/>
+		<vertex x="-1.175472" y="-0.344173"/>
+		<vertex x="-1.058786" y="-0.421407"/>
+		<vertex x="-0.949058" y="-0.502918"/>
+		<vertex x="-0.879687" y="-0.559375"/>
+		<vertex x="-0.879687" y="-0.560937"/>
+		<vertex x="-0.931250" y="-0.603125"/>
+		<vertex x="-1.043470" y="-0.514496"/>
+		<vertex x="-1.160603" y="-0.432039"/>
+		<vertex x="-1.282405" y="-0.355998"/>
+		<vertex x="-1.408632" y="-0.286617"/>
+		<vertex x="-1.539040" y="-0.224137"/>
+		<vertex x="-1.673387" y="-0.168804"/>
+		<vertex x="-1.811429" y="-0.120859"/>
+		<vertex x="-1.952922" y="-0.080548"/>
+		<vertex x="-2.097623" y="-0.048112"/>
+		<vertex x="-2.245288" y="-0.023796"/>
+		<vertex x="-2.395674" y="-0.007842"/>
+		<vertex x="-2.548537" y="-0.000495"/>
+		<vertex x="-2.600000" y="0.000000"/>
+		<vertex x="-5.045312" y="0.000000"/>
+		<vertex x="-5.045312" y="0.600000"/>
+		<vertex x="0.600000" y="0.600000"/>
+		<vertex x="0.600000" y="-6.600000"/>
+		<vertex x="-10.600000" y="-6.600000"/>
+	</block>
+	<block id="kaljab">
+		<position y="1.4997765" x="5.00633282513" dynamic="true"/>
+		<usetexture scale="0.3" color_g="179" color_b="179" color_a="255" color_r="179" id="Wallpaper2"/>
+		<vertex x="-5.066801" y="0.315177"/>
+		<vertex x="-5.066798" y="0.315187"/>
+		<vertex x="-4.960581" y="0.294988"/>
+		<vertex x="-4.921076" y="0.272416"/>
+		<vertex x="-4.897262" y="0.241332"/>
+		<vertex x="-4.900632" y="0.201047"/>
+		<vertex x="-4.862023" y="0.207757"/>
+		<vertex x="-4.862023" y="0.149012"/>
+		<vertex x="-4.867063" y="0.150662"/>
+		<vertex x="-4.900634" y="0.140587"/>
+		<vertex x="-4.900634" y="-0.107838"/>
+		<vertex x="-4.867063" y="-0.127983"/>
+		<vertex x="-4.822557" y="-0.096373"/>
+		<vertex x="-4.797013" y="-0.052417"/>
+		<vertex x="-4.792140" y="0.049266"/>
+		<vertex x="-4.831100" y="0.130540"/>
+		<vertex x="-4.860347" y="0.148982"/>
+		<vertex x="-4.860347" y="0.207732"/>
+		<vertex x="-4.821496" y="0.197845"/>
+		<vertex x="-4.790510" y="0.171971"/>
+		<vertex x="-4.746867" y="0.034097"/>
+		<vertex x="-4.760994" y="-0.072360"/>
+		<vertex x="-4.811683" y="-0.157160"/>
+		<vertex x="-4.851270" y="-0.182522"/>
+		<vertex x="-4.900634" y="-0.191768"/>
+		<vertex x="-4.900634" y="-0.268983"/>
+		<vertex x="-5.020102" y="-0.308657"/>
+		<vertex x="-5.063668" y="-0.314293"/>
+		<vertex x="-5.203751" y="-0.289206"/>
+		<vertex x="-5.253133" y="-0.262268"/>
+		<vertex x="-5.253133" y="-0.193443"/>
+		<vertex x="-5.112145" y="-0.223855"/>
+		<vertex x="-4.971106" y="-0.212679"/>
+		<vertex x="-4.924134" y="-0.193443"/>
+		<vertex x="-4.924134" y="-0.171623"/>
+		<vertex x="-5.055773" y="-0.199752"/>
+		<vertex x="-5.200342" y="-0.182426"/>
+		<vertex x="-5.251455" y="-0.166583"/>
+		<vertex x="-5.248085" y="0.201022"/>
+		<vertex x="-5.226872" y="0.201022"/>
+		<vertex x="-5.226872" y="0.189272"/>
+		<vertex x="-5.095931" y="0.160569"/>
+		<vertex x="-4.967177" y="0.172201"/>
+		<vertex x="-4.922443" y="0.190922"/>
+		<vertex x="-4.918635" y="0.222768"/>
+		<vertex x="-4.932422" y="0.258067"/>
+		<vertex x="-5.050434" y="0.297595"/>
+		<vertex x="-5.172231" y="0.279725"/>
+		<vertex x="-5.214572" y="0.268137"/>
+		<vertex x="-5.226872" y="0.202672"/>
+		<vertex x="-5.248085" y="0.202672"/>
+		<vertex x="-5.239694" y="0.266457"/>
+		<vertex x="-5.168557" y="0.304783"/>
+		<vertex x="-5.066801" y="0.315137"/>
+	</block>
+	<block id="ylapala">
+		<position y="5.250001" x="-16.2" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-9.100000" y="-8.250002"/>
+		<vertex x="-9.096015" y="-8.126946"/>
+		<vertex x="-9.084280" y="-8.010458"/>
+		<vertex x="-9.065127" y="-7.900375"/>
+		<vertex x="-9.038888" y="-7.796533"/>
+		<vertex x="-8.986968" y="-7.652115"/>
+		<vertex x="-8.920970" y="-7.520818"/>
+		<vertex x="-8.842013" y="-7.402090"/>
+		<vertex x="-8.751217" y="-7.295379"/>
+		<vertex x="-8.649699" y="-7.200131"/>
+		<vertex x="-8.538581" y="-7.115796"/>
+		<vertex x="-8.418982" y="-7.041820"/>
+		<vertex x="-8.292020" y="-6.977650"/>
+		<vertex x="-8.158815" y="-6.922734"/>
+		<vertex x="-8.020486" y="-6.876519"/>
+		<vertex x="-7.878154" y="-6.838454"/>
+		<vertex x="-7.732936" y="-6.807984"/>
+		<vertex x="-7.536760" y="-6.778221"/>
+		<vertex x="-7.340098" y="-6.759670"/>
+		<vertex x="-7.097631" y="-6.750253"/>
+		<vertex x="-2.795025" y="-6.752860"/>
+		<vertex x="-2.588298" y="-6.766018"/>
+		<vertex x="-2.383532" y="-6.790681"/>
+		<vertex x="-2.232603" y="-6.817268"/>
+		<vertex x="-2.085002" y="-6.851209"/>
+		<vertex x="-1.941681" y="-6.892881"/>
+		<vertex x="-1.803593" y="-6.942664"/>
+		<vertex x="-1.671691" y="-7.000936"/>
+		<vertex x="-1.546928" y="-7.068073"/>
+		<vertex x="-1.430257" y="-7.144456"/>
+		<vertex x="-1.322631" y="-7.230461"/>
+		<vertex x="-1.194846" y="-7.360756"/>
+		<vertex x="-1.112030" y="-7.470685"/>
+		<vertex x="-1.041436" y="-7.591497"/>
+		<vertex x="-0.984016" y="-7.723570"/>
+		<vertex x="-0.940724" y="-7.867283"/>
+		<vertex x="-0.920181" y="-7.969745"/>
+		<vertex x="-0.906623" y="-8.077660"/>
+		<vertex x="-0.900332" y="-8.191140"/>
+		<vertex x="-0.900000" y="-8.250002"/>
+		<vertex x="-1.000000" y="-8.250002"/>
+		<vertex x="-1.007710" y="-8.120333"/>
+		<vertex x="-1.024709" y="-7.998909"/>
+		<vertex x="-1.050484" y="-7.885460"/>
+		<vertex x="-1.084517" y="-7.779716"/>
+		<vertex x="-1.149923" y="-7.634952"/>
+		<vertex x="-1.231012" y="-7.505999"/>
+		<vertex x="-1.326041" y="-7.391944"/>
+		<vertex x="-1.433272" y="-7.291872"/>
+		<vertex x="-1.550963" y="-7.204871"/>
+		<vertex x="-1.677375" y="-7.130025"/>
+		<vertex x="-1.810766" y="-7.066421"/>
+		<vertex x="-1.949397" y="-7.013145"/>
+		<vertex x="-2.091527" y="-6.969284"/>
+		<vertex x="-2.235416" y="-6.933923"/>
+		<vertex x="-2.426996" y="-6.898420"/>
+		<vertex x="-2.660233" y="-6.869707"/>
+		<vertex x="-2.960680" y="-6.851173"/>
+		<vertex x="-3.000000" y="-6.850002"/>
+		<vertex x="-7.000000" y="-6.850002"/>
+		<vertex x="-7.058711" y="-6.849493"/>
+		<vertex x="-7.288843" y="-6.855464"/>
+		<vertex x="-7.455894" y="-6.868558"/>
+		<vertex x="-7.617545" y="-6.889263"/>
+		<vertex x="-7.773217" y="-6.917778"/>
+		<vertex x="-7.922328" y="-6.954305"/>
+		<vertex x="-8.064300" y="-6.999047"/>
+		<vertex x="-8.198553" y="-7.052205"/>
+		<vertex x="-8.324506" y="-7.113979"/>
+		<vertex x="-8.441580" y="-7.184572"/>
+		<vertex x="-8.549195" y="-7.264186"/>
+		<vertex x="-8.676965" y="-7.384716"/>
+		<vertex x="-8.760253" y="-7.486161"/>
+		<vertex x="-8.832150" y="-7.597297"/>
+		<vertex x="-8.892074" y="-7.718326"/>
+		<vertex x="-8.939447" y="-7.849451"/>
+		<vertex x="-8.973688" y="-7.990872"/>
+		<vertex x="-8.988934" y="-8.090972"/>
+		<vertex x="-8.997913" y="-8.195798"/>
+		<vertex x="-9.000000" y="-8.250002"/>
+	</block>
+	<block id="keski">
+		<position y="5.800001" x="-16.30636" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-7.300000" y="-8.25"/>
+		<vertex x="-2.700000" y="-8.25"/>
+		<vertex x="-2.611895" y="-8.320270"/>
+		<vertex x="-2.543830" y="-8.374768"/>
+		<vertex x="-2.505264" y="-8.654036"/>
+		<vertex x="-2.500000" y="-8.700002"/>
+		<vertex x="-2.531134" y="-8.807167"/>
+		<vertex x="-2.614844" y="-8.880967"/>
+		<vertex x="-7.300000" y="-8.900002"/>
+		<vertex x="-7.407165" y="-8.868868"/>
+		<vertex x="-7.480965" y="-8.785158"/>
+		<vertex x="-7.500000" y="-8.700002"/>
+		<vertex x="-7.468866" y="-8.392837"/>
+		<vertex x="-7.385156" y="-8.319037"/>
+	</block>
+	<entity id="path3830" typeid="PlayerStart">
+		<position y="-2.875" x="-0.1"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="kaljaa" typeid="EndOfLevel">
+		<position y="1.3266875" x="-24.3"/>
+		<size width="0.55" r="0.55" height="0.66"/>
+	</entity>
+	<entity id="tappo2" typeid="Sprite">
+		<position y="4.6000005" x="0.03"/>
+		<param name="z" value="1.0"/>
+		<param name="name" value="HStones"/>
+		<size width="2.5" r="1" height="4.9"/>
+	</entity>
+	<entity id="tappo1" typeid="Sprite">
+		<position y="4.6000005" x="-3.36"/>
+		<param name="z" value="1.0"/>
+		<param name="name" value="HStones"/>
+		<size width="2.5" r="1" height="4.9"/>
+	</entity>
+	<entity id="tappo3" typeid="Sprite">
+		<position y="4.6000005" x="3.38"/>
+		<param name="z" value="1.0"/>
+		<param name="name" value="HStones"/>
+		<size width="2.5" r="1" height="4.9"/>
+	</entity>
+	<entity id="tappo6" typeid="Sprite">
+		<position y="-4.580001" x="3.38" angle="3.14159265359"/>
+		<size width="2.5" r="1" height="4.9"/>
+		<param name="z" value="1.0"/>
+		<param name="name" value="HStones"/>
+	</entity>
+	<entity id="tappo5" typeid="Sprite">
+		<position y="-4.580001" x="0.03" angle="3.14159265359"/>
+		<size width="2.5" r="1" height="4.9"/>
+		<param name="z" value="1.0"/>
+		<param name="name" value="HStones"/>
+	</entity>
+	<entity id="tappo4" typeid="Sprite">
+		<position y="-4.580001" x="-3.36" angle="3.14159265359"/>
+		<size width="2.5" r="1" height="4.9"/>
+		<param name="z" value="1.0"/>
+		<param name="name" value="HStones"/>
+	</entity>
+	<entity id="sprite1" typeid="Sprite">
+		<position y="1.45" x="-3.35"/>
+		<param name="name" value="YellowFlare"/>
+		<size width="0.20000000298" r="0.040000000596" height="0.20000000298"/>
+	</entity>
+	<entity id="sprite2" typeid="Sprite">
+		<position y="1.45" x="-0.076769"/>
+		<param name="name" value="YellowFlare"/>
+		<size width="0.20000000298" r="0.040000000596" height="0.20000000298"/>
+	</entity>
+	<entity id="sprite3" typeid="Sprite">
+		<position y="1.45" x="3.2"/>
+		<param name="name" value="YellowFlare"/>
+		<size width="0.20000000298" r="0.040000000596" height="0.20000000298"/>
+	</entity>
+	<entity id="sprite6" typeid="Sprite">
+		<position y="-1.45" x="3.2"/>
+		<param name="name" value="YellowFlare"/>
+		<size width="0.20000000298" r="0.040000000596" height="0.20000000298"/>
+	</entity>
+	<entity id="sprite5" typeid="Sprite">
+		<position y="-1.45" x="-0.07675"/>
+		<param name="name" value="YellowFlare"/>
+		<size width="0.20000000298" r="0.040000000596" height="0.20000000298"/>
+	</entity>
+	<entity id="sprite4" typeid="Sprite">
+		<position y="-1.45" x="-3.35"/>
+		<param name="name" value="YellowFlare"/>
+		<size width="0.20000000298" r="0.040000000596" height="0.20000000298"/>
+	</entity>
+	<entity id="beerflare" typeid="Sprite">
+		<position y="1.4422914" x="-0.090000225"/>
+		<param name="z" value="1.0"/>
+		<param name="name" value="YellowFlare"/>
+		<size width="0.8" r="0.16" height="0.8"/>
+	</entity>
+	<entity id="wreck1" typeid="Wrecker">
+		<position y="3" x="30"/>
+		<size width="0.3" r="0.12" height="0.3"/>
+	</entity>
+	<entity id="wreck2" typeid="Wrecker">
+		<position y="3" x="30"/>
+		<size width="0.3" r="0.12" height="0.3"/>
+	</entity>
+	<entity id="wreck3" typeid="Wrecker">
+		<position y="3" x="30"/>
+		<size width="0.3" r="0.12" height="0.3"/>
+	</entity>
+	<entity id="wreck4" typeid="Wrecker">
+		<position y="3" x="30"/>
+		<size width="0.3" r="0.12" height="0.3"/>
+	</entity>
+</level>

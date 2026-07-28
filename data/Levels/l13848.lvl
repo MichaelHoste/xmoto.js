@@ -1,0 +1,2520 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="enigmaticfeling" rversion="0.5.2">
+	<info>
+		<name>Enigmatic Feeling</name>
+		<description>What's your colour?</description>
+		<author>tumo</author>
+		<date>2015-04-01</date>
+		<sky>white</sky>
+		<border texture="invisible"/>
+	</info>
+	<layeroffsets>
+		<layeroffset x="1.0" y="1.0" frontlayer="false"/>
+		<layeroffset x="1.0" y="1.0" frontlayer="false"/>
+	</layeroffsets>
+	<limits left="-50.000000" right="50.000000" top="25.000000" bottom="-25.000000"/>
+	<block id="rect3178">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="11.96731" x="13.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="1.565380" edge="u"/>
+		<vertex x="-49.500000" y="1.565380" edge="d"/>
+		<vertex x="-49.500000" y="0.565380" edge="d"/>
+		<vertex x="-50.500000" y="0.565380" edge="d"/>
+	</block>
+	<block id="rect4535">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="11.96731" x="13.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="1.565380" edge="u"/>
+		<vertex x="-49.500000" y="1.565380" edge="d"/>
+		<vertex x="-49.500000" y="0.565380" edge="d"/>
+		<vertex x="-50.500000" y="0.565380" edge="u"/>
+	</block>
+	<block id="rect3180">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="12.96731" x="13.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-0.434620" edge="u"/>
+		<vertex x="-49.500000" y="-0.434620" edge="d"/>
+		<vertex x="-49.500000" y="-1.434620" edge="d"/>
+		<vertex x="-50.500000" y="-1.434620" edge="d"/>
+	</block>
+	<block id="rect4537">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="12.96731" x="13.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-0.434620" edge="u"/>
+		<vertex x="-49.500000" y="-0.434620" edge="d"/>
+		<vertex x="-49.500000" y="-1.434620" edge="d"/>
+		<vertex x="-50.500000" y="-1.434620" edge="u"/>
+	</block>
+	<block id="rect3182">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="13.96731" x="13.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-2.434620" edge="u"/>
+		<vertex x="-49.500000" y="-2.434620" edge="d"/>
+		<vertex x="-49.500000" y="-3.434620" edge="d"/>
+		<vertex x="-50.500000" y="-3.434620" edge="d"/>
+	</block>
+	<block id="rect4539">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="13.96731" x="13.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-2.434620" edge="u"/>
+		<vertex x="-49.500000" y="-2.434620" edge="d"/>
+		<vertex x="-49.500000" y="-3.434620" edge="d"/>
+		<vertex x="-50.500000" y="-3.434620" edge="u"/>
+	</block>
+	<block id="rect3184">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="14.96731" x="13.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-4.434620" edge="u"/>
+		<vertex x="-49.500000" y="-4.434620" edge="d"/>
+		<vertex x="-49.500000" y="-5.434620" edge="d"/>
+		<vertex x="-50.500000" y="-5.434620" edge="d"/>
+	</block>
+	<block id="rect4541">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="14.96731" x="13.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-4.434620" edge="u"/>
+		<vertex x="-49.500000" y="-4.434620" edge="d"/>
+		<vertex x="-49.500000" y="-5.434620" edge="d"/>
+		<vertex x="-50.500000" y="-5.434620" edge="u"/>
+	</block>
+	<block id="rect3186">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="14.96731" x="16.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-4.434620" edge="u"/>
+		<vertex x="-49.500000" y="-4.434620" edge="d"/>
+		<vertex x="-49.500000" y="-5.434620" edge="d"/>
+		<vertex x="-50.500000" y="-5.434620" edge="d"/>
+	</block>
+	<block id="rect4543">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="14.96731" x="16.8160455"/>
+		<usetexture id="green_shadow"/>
+		<vertex x="-50.500000" y="-4.434620" edge="u"/>
+		<vertex x="-49.500000" y="-4.434620" edge="d"/>
+		<vertex x="-49.500000" y="-5.434620" edge="d"/>
+		<vertex x="-50.500000" y="-5.434620" edge="u"/>
+	</block>
+	<block id="rect3188">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="13.96731" x="16.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-2.434620" edge="u"/>
+		<vertex x="-49.500000" y="-2.434620" edge="d"/>
+		<vertex x="-49.500000" y="-3.434620" edge="d"/>
+		<vertex x="-50.500000" y="-3.434620" edge="d"/>
+	</block>
+	<block id="rect4545">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="13.96731" x="16.8160455"/>
+		<usetexture id="yellow_shadow"/>
+		<vertex x="-50.500000" y="-2.434620" edge="u"/>
+		<vertex x="-49.500000" y="-2.434620" edge="d"/>
+		<vertex x="-49.500000" y="-3.434620" edge="d"/>
+		<vertex x="-50.500000" y="-3.434620" edge="u"/>
+	</block>
+	<block id="rect3196">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="11.96731" x="12.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="1.565380" edge="u"/>
+		<vertex x="-49.500000" y="1.565380" edge="d"/>
+		<vertex x="-49.500000" y="0.565380" edge="d"/>
+		<vertex x="-50.500000" y="0.565380" edge="d"/>
+	</block>
+	<block id="rect4553">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="11.96731" x="12.8160455"/>
+		<usetexture id="purple_shadow"/>
+		<vertex x="-50.500000" y="1.565380" edge="u"/>
+		<vertex x="-49.500000" y="1.565380" edge="d"/>
+		<vertex x="-49.500000" y="0.565380" edge="d"/>
+		<vertex x="-50.500000" y="0.565380" edge="u"/>
+	</block>
+	<block id="rect9113">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="11.96731" x="16.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="1.565380" edge="u"/>
+		<vertex x="-49.500000" y="1.565380" edge="d"/>
+		<vertex x="-49.500000" y="0.565380" edge="d"/>
+		<vertex x="-50.500000" y="0.565380" edge="d"/>
+	</block>
+	<block id="rect9115">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="11.96731" x="16.8160455"/>
+		<usetexture id="green_shadow"/>
+		<vertex x="-50.500000" y="1.565380" edge="u"/>
+		<vertex x="-49.500000" y="1.565380" edge="d"/>
+		<vertex x="-49.500000" y="0.565380" edge="d"/>
+		<vertex x="-50.500000" y="0.565380" edge="u"/>
+	</block>
+	<block id="rect9123">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="12.96731" x="18.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-0.434620" edge="u"/>
+		<vertex x="-49.500000" y="-0.434620" edge="d"/>
+		<vertex x="-49.500000" y="-1.434620" edge="d"/>
+		<vertex x="-50.500000" y="-1.434620" edge="d"/>
+	</block>
+	<block id="rect9125">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="12.96731" x="18.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-0.434620" edge="u"/>
+		<vertex x="-49.500000" y="-0.434620" edge="d"/>
+		<vertex x="-49.500000" y="-1.434620" edge="d"/>
+		<vertex x="-50.500000" y="-1.434620" edge="u"/>
+	</block>
+	<block id="rect9133">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="10.96731" x="11.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="3.565380" edge="u"/>
+		<vertex x="-49.500000" y="3.565380" edge="d"/>
+		<vertex x="-49.500000" y="2.565380" edge="d"/>
+		<vertex x="-50.500000" y="2.565380" edge="d"/>
+	</block>
+	<block id="rect9135">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="10.96731" x="11.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="3.565380" edge="u"/>
+		<vertex x="-49.500000" y="3.565380" edge="d"/>
+		<vertex x="-49.500000" y="2.565380" edge="d"/>
+		<vertex x="-50.500000" y="2.565380" edge="u"/>
+	</block>
+	<block id="rect9143">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="9.96731" x="17.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="5.565380" edge="u"/>
+		<vertex x="-49.500000" y="5.565380" edge="d"/>
+		<vertex x="-49.500000" y="4.565380" edge="d"/>
+		<vertex x="-50.500000" y="4.565380" edge="d"/>
+	</block>
+	<block id="rect9145">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="9.96731" x="17.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="5.565380" edge="u"/>
+		<vertex x="-49.500000" y="5.565380" edge="d"/>
+		<vertex x="-49.500000" y="4.565380" edge="d"/>
+		<vertex x="-50.500000" y="4.565380" edge="u"/>
+	</block>
+	<block id="rect9153">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="15.96731" x="9.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-6.434620" edge="u"/>
+		<vertex x="-49.500000" y="-6.434620" edge="d"/>
+		<vertex x="-49.500000" y="-7.434620" edge="d"/>
+		<vertex x="-50.500000" y="-7.434620" edge="d"/>
+	</block>
+	<block id="rect9155">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="15.96731" x="9.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-6.434620" edge="u"/>
+		<vertex x="-49.500000" y="-6.434620" edge="d"/>
+		<vertex x="-49.500000" y="-7.434620" edge="d"/>
+		<vertex x="-50.500000" y="-7.434620" edge="u"/>
+	</block>
+	<block id="rect9163">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="16.96731" x="9.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-8.434620" edge="u"/>
+		<vertex x="-49.500000" y="-8.434620" edge="d"/>
+		<vertex x="-49.500000" y="-9.434620" edge="d"/>
+		<vertex x="-50.500000" y="-9.434620" edge="d"/>
+	</block>
+	<block id="rect9165">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="16.96731" x="9.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-8.434620" edge="u"/>
+		<vertex x="-49.500000" y="-8.434620" edge="d"/>
+		<vertex x="-49.500000" y="-9.434620" edge="d"/>
+		<vertex x="-50.500000" y="-9.434620" edge="u"/>
+	</block>
+	<block id="rect9173">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="14.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="d"/>
+	</block>
+	<block id="rect9175">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="14.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="u"/>
+	</block>
+	<block id="rect9183">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="15.96731" x="18.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-6.434620" edge="u"/>
+		<vertex x="-49.500000" y="-6.434620" edge="d"/>
+		<vertex x="-49.500000" y="-7.434620" edge="d"/>
+		<vertex x="-50.500000" y="-7.434620" edge="d"/>
+	</block>
+	<block id="rect9185">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="15.96731" x="18.8160455"/>
+		<usetexture id="yellow_shadow"/>
+		<vertex x="-50.500000" y="-6.434620" edge="u"/>
+		<vertex x="-49.500000" y="-6.434620" edge="d"/>
+		<vertex x="-49.500000" y="-7.434620" edge="d"/>
+		<vertex x="-50.500000" y="-7.434620" edge="u"/>
+	</block>
+	<block id="rect9193">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="19.96731" x="13.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-14.434620" edge="u"/>
+		<vertex x="-49.500000" y="-14.434620" edge="d"/>
+		<vertex x="-49.500000" y="-15.434620" edge="d"/>
+		<vertex x="-50.500000" y="-15.434620" edge="d"/>
+	</block>
+	<block id="rect9195">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="19.96731" x="13.8160455"/>
+		<usetexture id="purple_shadow"/>
+		<vertex x="-50.500000" y="-14.434620" edge="u"/>
+		<vertex x="-49.500000" y="-14.434620" edge="d"/>
+		<vertex x="-49.500000" y="-15.434620" edge="d"/>
+		<vertex x="-50.500000" y="-15.434620" edge="u"/>
+	</block>
+	<block id="rect9203">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="19.96731" x="10.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-14.434620" edge="u"/>
+		<vertex x="-49.500000" y="-14.434620" edge="d"/>
+		<vertex x="-49.500000" y="-15.434620" edge="d"/>
+		<vertex x="-50.500000" y="-15.434620" edge="d"/>
+	</block>
+	<block id="rect9205">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="19.96731" x="10.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-14.434620" edge="u"/>
+		<vertex x="-49.500000" y="-14.434620" edge="d"/>
+		<vertex x="-49.500000" y="-15.434620" edge="d"/>
+		<vertex x="-50.500000" y="-15.434620" edge="u"/>
+	</block>
+	<block id="rect9213">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="15.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="d"/>
+	</block>
+	<block id="rect9215">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="15.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="u"/>
+	</block>
+	<block id="rect9223">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="21.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="d"/>
+	</block>
+	<block id="rect9225">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="21.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="u"/>
+	</block>
+	<block id="rect9229">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="18.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="d"/>
+	</block>
+	<block id="rect9231">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="18.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="u"/>
+	</block>
+	<block id="rect9235">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="20.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="d"/>
+	</block>
+	<block id="rect9237">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="20.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="u"/>
+	</block>
+	<block id="rect9271">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="23.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="d"/>
+	</block>
+	<block id="rect9273">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="23.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="u"/>
+	</block>
+	<block id="rect9281">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.96731" x="18.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-32.434620" edge="u"/>
+		<vertex x="-49.500000" y="-32.434620" edge="d"/>
+		<vertex x="-49.500000" y="-33.434620" edge="d"/>
+		<vertex x="-50.500000" y="-33.434620" edge="d"/>
+	</block>
+	<block id="rect9283">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.96731" x="18.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-32.434620" edge="u"/>
+		<vertex x="-49.500000" y="-32.434620" edge="d"/>
+		<vertex x="-49.500000" y="-33.434620" edge="d"/>
+		<vertex x="-50.500000" y="-33.434620" edge="u"/>
+	</block>
+	<block id="rect9291">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.96731" x="17.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-30.434620" edge="u"/>
+		<vertex x="-49.500000" y="-30.434620" edge="d"/>
+		<vertex x="-49.500000" y="-31.434620" edge="d"/>
+		<vertex x="-50.500000" y="-31.434620" edge="d"/>
+	</block>
+	<block id="rect9293">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.96731" x="17.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-30.434620" edge="u"/>
+		<vertex x="-49.500000" y="-30.434620" edge="d"/>
+		<vertex x="-49.500000" y="-31.434620" edge="d"/>
+		<vertex x="-50.500000" y="-31.434620" edge="u"/>
+	</block>
+	<block id="rect9301">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.96731" x="23.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-30.434620" edge="u"/>
+		<vertex x="-49.500000" y="-30.434620" edge="d"/>
+		<vertex x="-49.500000" y="-31.434620" edge="d"/>
+		<vertex x="-50.500000" y="-31.434620" edge="d"/>
+	</block>
+	<block id="rect9303">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.96731" x="23.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-30.434620" edge="u"/>
+		<vertex x="-49.500000" y="-30.434620" edge="d"/>
+		<vertex x="-49.500000" y="-31.434620" edge="d"/>
+		<vertex x="-50.500000" y="-31.434620" edge="u"/>
+	</block>
+	<block id="rect9311">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.96731" x="21.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-30.434620" edge="u"/>
+		<vertex x="-49.500000" y="-30.434620" edge="d"/>
+		<vertex x="-49.500000" y="-31.434620" edge="d"/>
+		<vertex x="-50.500000" y="-31.434620" edge="d"/>
+	</block>
+	<block id="rect9313">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.96731" x="21.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-30.434620" edge="u"/>
+		<vertex x="-49.500000" y="-30.434620" edge="d"/>
+		<vertex x="-49.500000" y="-31.434620" edge="d"/>
+		<vertex x="-50.500000" y="-31.434620" edge="u"/>
+	</block>
+	<block id="rect9321">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="24.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="d"/>
+	</block>
+	<block id="rect9323">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="24.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="u"/>
+	</block>
+	<block id="rect9339">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="32.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="d"/>
+	</block>
+	<block id="rect9341">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="32.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="u"/>
+	</block>
+	<block id="rect9345">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="31.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="d"/>
+	</block>
+	<block id="rect9347">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="31.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="u"/>
+	</block>
+	<block id="rect9351">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="34.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="d"/>
+	</block>
+	<block id="rect9353">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="34.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="u"/>
+	</block>
+	<block id="rect9385">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="36.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="d"/>
+	</block>
+	<block id="rect9387">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="36.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="u"/>
+	</block>
+	<block id="rect9395">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="37.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="d"/>
+	</block>
+	<block id="rect9397">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="37.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="u"/>
+	</block>
+	<block id="rect9411">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="38.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="d"/>
+	</block>
+	<block id="rect9413">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="38.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="u"/>
+	</block>
+	<block id="rect9421">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="39.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="d"/>
+	</block>
+	<block id="rect9423">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="39.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="u"/>
+	</block>
+	<block id="rect9431">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="40.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="d"/>
+	</block>
+	<block id="rect9433">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="40.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="u"/>
+	</block>
+	<block id="rect9441">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="41.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="d"/>
+	</block>
+	<block id="rect9443">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="41.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="u"/>
+	</block>
+	<block id="rect9451">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="26.96731" x="26.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-28.434620" edge="u"/>
+		<vertex x="-49.500000" y="-28.434620" edge="d"/>
+		<vertex x="-49.500000" y="-29.434620" edge="d"/>
+		<vertex x="-50.500000" y="-29.434620" edge="d"/>
+	</block>
+	<block id="rect9453">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="26.96731" x="26.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-28.434620" edge="u"/>
+		<vertex x="-49.500000" y="-28.434620" edge="d"/>
+		<vertex x="-49.500000" y="-29.434620" edge="d"/>
+		<vertex x="-50.500000" y="-29.434620" edge="u"/>
+	</block>
+	<block id="rect9461">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="29.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="d"/>
+	</block>
+	<block id="rect9463">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.96731" x="29.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-22.434620" edge="u"/>
+		<vertex x="-49.500000" y="-22.434620" edge="d"/>
+		<vertex x="-49.500000" y="-23.434620" edge="d"/>
+		<vertex x="-50.500000" y="-23.434620" edge="u"/>
+	</block>
+	<block id="rect9471">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="35.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="d"/>
+	</block>
+	<block id="rect9473">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="35.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="u"/>
+	</block>
+	<block id="rect9481">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="32.96731" x="68.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-40.434620" edge="u"/>
+		<vertex x="-49.500000" y="-40.434620" edge="d"/>
+		<vertex x="-49.500000" y="-41.434620" edge="d"/>
+		<vertex x="-50.500000" y="-41.434620" edge="d"/>
+	</block>
+	<block id="rect9483">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="32.96731" x="68.816046"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-40.434620" edge="u"/>
+		<vertex x="-49.500000" y="-40.434620" edge="d"/>
+		<vertex x="-49.500000" y="-41.434620" edge="d"/>
+		<vertex x="-50.500000" y="-41.434620" edge="u"/>
+	</block>
+	<block id="rect9487">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="33.96731" x="68.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-42.434620" edge="u"/>
+		<vertex x="-49.500000" y="-42.434620" edge="d"/>
+		<vertex x="-49.500000" y="-43.434620" edge="d"/>
+		<vertex x="-50.500000" y="-43.434620" edge="d"/>
+	</block>
+	<block id="rect9489">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="33.96731" x="68.816046"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-42.434620" edge="u"/>
+		<vertex x="-49.500000" y="-42.434620" edge="d"/>
+		<vertex x="-49.500000" y="-43.434620" edge="d"/>
+		<vertex x="-50.500000" y="-43.434620" edge="u"/>
+	</block>
+	<block id="rect9493">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="34.96731" x="68.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-44.434620" edge="u"/>
+		<vertex x="-49.500000" y="-44.434620" edge="d"/>
+		<vertex x="-49.500000" y="-45.434620" edge="d"/>
+		<vertex x="-50.500000" y="-45.434620" edge="d"/>
+	</block>
+	<block id="rect9495">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="34.96731" x="68.816046"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-44.434620" edge="u"/>
+		<vertex x="-49.500000" y="-44.434620" edge="d"/>
+		<vertex x="-49.500000" y="-45.434620" edge="d"/>
+		<vertex x="-50.500000" y="-45.434620" edge="u"/>
+	</block>
+	<block id="rect9499">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.96731" x="64.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434620" edge="u"/>
+		<vertex x="-49.500000" y="-34.434620" edge="d"/>
+		<vertex x="-49.500000" y="-35.434620" edge="d"/>
+		<vertex x="-50.500000" y="-35.434620" edge="d"/>
+	</block>
+	<block id="rect9501">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.96731" x="64.816046"/>
+		<usetexture id="yellow_shadow"/>
+		<vertex x="-50.500000" y="-34.434620" edge="u"/>
+		<vertex x="-49.500000" y="-34.434620" edge="d"/>
+		<vertex x="-49.500000" y="-35.434620" edge="d"/>
+		<vertex x="-50.500000" y="-35.434620" edge="u"/>
+	</block>
+	<block id="rect9505">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="32.96731" x="67.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-40.434620" edge="u"/>
+		<vertex x="-49.500000" y="-40.434620" edge="d"/>
+		<vertex x="-49.500000" y="-41.434620" edge="d"/>
+		<vertex x="-50.500000" y="-41.434620" edge="d"/>
+	</block>
+	<block id="rect9507">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="32.96731" x="67.816046"/>
+		<usetexture id="purple_shadow"/>
+		<vertex x="-50.500000" y="-40.434620" edge="u"/>
+		<vertex x="-49.500000" y="-40.434620" edge="d"/>
+		<vertex x="-49.500000" y="-41.434620" edge="d"/>
+		<vertex x="-50.500000" y="-41.434620" edge="u"/>
+	</block>
+	<block id="rect9531">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="31.96731" x="53.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-38.434620" edge="u"/>
+		<vertex x="-49.500000" y="-38.434620" edge="d"/>
+		<vertex x="-49.500000" y="-39.434620" edge="d"/>
+		<vertex x="-50.500000" y="-39.434620" edge="d"/>
+	</block>
+	<block id="rect9533">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="31.96731" x="53.8160455"/>
+		<usetexture id="yellow_shadow"/>
+		<vertex x="-50.500000" y="-38.434620" edge="u"/>
+		<vertex x="-49.500000" y="-38.434620" edge="d"/>
+		<vertex x="-49.500000" y="-39.434620" edge="d"/>
+		<vertex x="-50.500000" y="-39.434620" edge="u"/>
+	</block>
+	<block id="rect9541">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="32.96731" x="53.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-40.434620" edge="u"/>
+		<vertex x="-49.500000" y="-40.434620" edge="d"/>
+		<vertex x="-49.500000" y="-41.434620" edge="d"/>
+		<vertex x="-50.500000" y="-41.434620" edge="d"/>
+	</block>
+	<block id="rect9543">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="32.96731" x="53.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-40.434620" edge="u"/>
+		<vertex x="-49.500000" y="-40.434620" edge="d"/>
+		<vertex x="-49.500000" y="-41.434620" edge="d"/>
+		<vertex x="-50.500000" y="-41.434620" edge="u"/>
+	</block>
+	<block id="rect9551">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="51.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="d"/>
+	</block>
+	<block id="rect9553">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="51.8160455"/>
+		<usetexture id="pink_shadow"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="u"/>
+	</block>
+	<block id="rect9557">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="50.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="d"/>
+	</block>
+	<block id="rect9559">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="50.8160455"/>
+		<usetexture id="purple_shadow"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="u"/>
+	</block>
+	<block id="rect9571">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="53.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="d"/>
+	</block>
+	<block id="rect9573">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="53.8160455"/>
+		<usetexture id="orange_shadow"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="u"/>
+	</block>
+	<block id="rect9577">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="52.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="d"/>
+	</block>
+	<block id="rect9579">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="52.8160455"/>
+		<usetexture id="yellow_shadow"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="u"/>
+	</block>
+	<block id="rect9591">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="54.8160475"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="d"/>
+	</block>
+	<block id="rect9593">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.96731" x="54.8160475"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-48.434620" edge="u"/>
+		<vertex x="-49.500000" y="-48.434620" edge="d"/>
+		<vertex x="-49.500000" y="-49.434620" edge="d"/>
+		<vertex x="-50.500000" y="-49.434620" edge="u"/>
+	</block>
+	<block id="rect9601">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.96731" x="63.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434620" edge="u"/>
+		<vertex x="-49.500000" y="-34.434620" edge="d"/>
+		<vertex x="-49.500000" y="-35.434620" edge="d"/>
+		<vertex x="-50.500000" y="-35.434620" edge="d"/>
+	</block>
+	<block id="rect9603">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.96731" x="63.816046"/>
+		<usetexture id="purple_shadow"/>
+		<vertex x="-50.500000" y="-34.434620" edge="u"/>
+		<vertex x="-49.500000" y="-34.434620" edge="d"/>
+		<vertex x="-49.500000" y="-35.434620" edge="d"/>
+		<vertex x="-50.500000" y="-35.434620" edge="u"/>
+	</block>
+	<block id="rect9611">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="33.96731" x="67.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-42.434620" edge="u"/>
+		<vertex x="-49.500000" y="-42.434620" edge="d"/>
+		<vertex x="-49.500000" y="-43.434620" edge="d"/>
+		<vertex x="-50.500000" y="-43.434620" edge="d"/>
+	</block>
+	<block id="rect9613">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="33.96731" x="67.816046"/>
+		<usetexture id="yellow_shadow"/>
+		<vertex x="-50.500000" y="-42.434620" edge="u"/>
+		<vertex x="-49.500000" y="-42.434620" edge="d"/>
+		<vertex x="-49.500000" y="-43.434620" edge="d"/>
+		<vertex x="-50.500000" y="-43.434620" edge="u"/>
+	</block>
+	<block id="rect9621">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="38.8160455"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="d"/>
+	</block>
+	<block id="rect9623">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="38.8160455"/>
+		<usetexture id="blue_shadow"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="u"/>
+	</block>
+	<block id="rect3190">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="12.967312" x="16.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-0.434624" edge="u"/>
+		<vertex x="-49.500000" y="-0.434624" edge="d"/>
+		<vertex x="-49.500000" y="-1.434624" edge="d"/>
+		<vertex x="-50.500000" y="-1.434624" edge="d"/>
+	</block>
+	<block id="rect3194">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="11.967312" x="17.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="1.565376" edge="u"/>
+		<vertex x="-49.500000" y="1.565376" edge="d"/>
+		<vertex x="-49.500000" y="0.565376" edge="d"/>
+		<vertex x="-50.500000" y="0.565376" edge="d"/>
+	</block>
+	<block id="rect3204">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="9.967305" x="12.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="5.565390" edge="u"/>
+		<vertex x="-49.500000" y="5.565390" edge="d"/>
+		<vertex x="-49.500000" y="4.565390" edge="d"/>
+		<vertex x="-50.500000" y="4.565390" edge="d"/>
+	</block>
+	<block id="rect3260">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="19.96731" x="14.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-14.434620" edge="u"/>
+		<vertex x="-49.500000" y="-14.434620" edge="d"/>
+		<vertex x="-49.500000" y="-15.434620" edge="d"/>
+		<vertex x="-50.500000" y="-15.434620" edge="d"/>
+	</block>
+	<block id="rect3262">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="20.96731" x="14.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.434620" edge="u"/>
+		<vertex x="-49.500000" y="-16.434620" edge="d"/>
+		<vertex x="-49.500000" y="-17.434620" edge="d"/>
+		<vertex x="-50.500000" y="-17.434620" edge="d"/>
+	</block>
+	<block id="rect3264">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="15.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="d"/>
+	</block>
+	<block id="rect3266">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="22.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="d"/>
+	</block>
+	<block id="rect3268">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="19.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="d"/>
+	</block>
+	<block id="rect3278">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="12.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="d"/>
+	</block>
+	<block id="rect3280">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.96731" x="12.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-18.434620" edge="u"/>
+		<vertex x="-49.500000" y="-18.434620" edge="d"/>
+		<vertex x="-49.500000" y="-19.434620" edge="d"/>
+		<vertex x="-50.500000" y="-19.434620" edge="d"/>
+	</block>
+	<block id="rect3284">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="15.967312" x="11.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-6.434624" edge="u"/>
+		<vertex x="-49.500000" y="-6.434624" edge="d"/>
+		<vertex x="-49.500000" y="-7.434624" edge="d"/>
+		<vertex x="-50.500000" y="-7.434624" edge="d"/>
+	</block>
+	<block id="rect3286">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="24.9673085" x="19.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-24.434617" edge="u"/>
+		<vertex x="-49.500000" y="-24.434617" edge="d"/>
+		<vertex x="-49.500000" y="-25.434617" edge="d"/>
+		<vertex x="-50.500000" y="-25.434617" edge="d"/>
+	</block>
+	<block id="rect3288">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="16.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="d"/>
+	</block>
+	<block id="rect3292">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="24.9673085" x="14.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-24.434617" edge="u"/>
+		<vertex x="-49.500000" y="-24.434617" edge="d"/>
+		<vertex x="-49.500000" y="-25.434617" edge="d"/>
+		<vertex x="-50.500000" y="-25.434617" edge="d"/>
+	</block>
+	<block id="rect3294">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="28.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="d"/>
+	</block>
+	<block id="rect3300">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="17.96731" x="23.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-10.434620" edge="u"/>
+		<vertex x="-49.500000" y="-10.434620" edge="d"/>
+		<vertex x="-49.500000" y="-11.434620" edge="d"/>
+		<vertex x="-50.500000" y="-11.434620" edge="d"/>
+	</block>
+	<block id="rect3302">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="16.967312" x="26.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-8.434624" edge="u"/>
+		<vertex x="-49.500000" y="-8.434624" edge="d"/>
+		<vertex x="-49.500000" y="-9.434624" edge="d"/>
+		<vertex x="-50.500000" y="-9.434624" edge="d"/>
+	</block>
+	<block id="rect3304">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="30.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="d"/>
+	</block>
+	<block id="rect3316">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="35.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="d"/>
+	</block>
+	<block id="rect3320">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="37.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="d"/>
+	</block>
+	<block id="rect3326">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="40.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="d"/>
+	</block>
+	<block id="rect3328">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="41.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="d"/>
+	</block>
+	<block id="rect3334">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="39.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="d"/>
+	</block>
+	<block id="rect3340">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="36.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="d"/>
+	</block>
+	<block id="rect3344">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="34.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="d"/>
+	</block>
+	<block id="rect3346">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="19.06731" x="33.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.634620" edge="u"/>
+		<vertex x="-49.500000" y="-12.634620" edge="d"/>
+		<vertex x="-49.500000" y="-13.634620" edge="d"/>
+		<vertex x="-50.500000" y="-13.634620" edge="d"/>
+	</block>
+	<block id="rect3348">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.06731" x="30.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-10.634620" edge="u"/>
+		<vertex x="-49.500000" y="-10.634620" edge="d"/>
+		<vertex x="-49.500000" y="-11.634620" edge="d"/>
+		<vertex x="-50.500000" y="-11.634620" edge="d"/>
+	</block>
+	<block id="rect3350">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="24.9673085" x="29.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-24.434617" edge="u"/>
+		<vertex x="-49.500000" y="-24.434617" edge="d"/>
+		<vertex x="-49.500000" y="-25.434617" edge="d"/>
+		<vertex x="-50.500000" y="-25.434617" edge="d"/>
+	</block>
+	<block id="rect3352">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="25.9673085" x="27.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-26.434617" edge="u"/>
+		<vertex x="-49.500000" y="-26.434617" edge="d"/>
+		<vertex x="-49.500000" y="-27.434617" edge="d"/>
+		<vertex x="-50.500000" y="-27.434617" edge="d"/>
+	</block>
+	<block id="rect3354">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="26.9673085" x="34.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-28.434617" edge="u"/>
+		<vertex x="-49.500000" y="-28.434617" edge="d"/>
+		<vertex x="-49.500000" y="-29.434617" edge="d"/>
+		<vertex x="-50.500000" y="-29.434617" edge="d"/>
+	</block>
+	<block id="rect3356">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="25.9673085" x="35.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-26.434617" edge="u"/>
+		<vertex x="-49.500000" y="-26.434617" edge="d"/>
+		<vertex x="-49.500000" y="-27.434617" edge="d"/>
+		<vertex x="-50.500000" y="-27.434617" edge="d"/>
+	</block>
+	<block id="rect3362">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.9673085" x="25.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-30.434617" edge="u"/>
+		<vertex x="-49.500000" y="-30.434617" edge="d"/>
+		<vertex x="-49.500000" y="-31.434617" edge="d"/>
+		<vertex x="-50.500000" y="-31.434617" edge="d"/>
+	</block>
+	<block id="rect3364">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.9673085" x="25.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-32.434617" edge="u"/>
+		<vertex x="-49.500000" y="-32.434617" edge="d"/>
+		<vertex x="-49.500000" y="-33.434617" edge="d"/>
+		<vertex x="-50.500000" y="-33.434617" edge="d"/>
+	</block>
+	<block id="rect3366">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.9673085" x="25.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434617" edge="u"/>
+		<vertex x="-49.500000" y="-34.434617" edge="d"/>
+		<vertex x="-49.500000" y="-35.434617" edge="d"/>
+		<vertex x="-50.500000" y="-35.434617" edge="d"/>
+	</block>
+	<block id="rect3368">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.9673085" x="24.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434617" edge="u"/>
+		<vertex x="-49.500000" y="-34.434617" edge="d"/>
+		<vertex x="-49.500000" y="-35.434617" edge="d"/>
+		<vertex x="-50.500000" y="-35.434617" edge="d"/>
+	</block>
+	<block id="rect3370">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.9673085" x="22.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-30.434617" edge="u"/>
+		<vertex x="-49.500000" y="-30.434617" edge="d"/>
+		<vertex x="-49.500000" y="-31.434617" edge="d"/>
+		<vertex x="-50.500000" y="-31.434617" edge="d"/>
+	</block>
+	<block id="rect3374">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.9673085" x="19.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-32.434617" edge="u"/>
+		<vertex x="-49.500000" y="-32.434617" edge="d"/>
+		<vertex x="-49.500000" y="-33.434617" edge="d"/>
+		<vertex x="-50.500000" y="-33.434617" edge="d"/>
+	</block>
+	<block id="rect3378">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.9673085" x="17.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-32.434617" edge="u"/>
+		<vertex x="-49.500000" y="-32.434617" edge="d"/>
+		<vertex x="-49.500000" y="-33.434617" edge="d"/>
+		<vertex x="-50.500000" y="-33.434617" edge="d"/>
+	</block>
+	<block id="rect3382">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="24.9673085" x="13.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-24.434617" edge="u"/>
+		<vertex x="-49.500000" y="-24.434617" edge="d"/>
+		<vertex x="-49.500000" y="-25.434617" edge="d"/>
+		<vertex x="-50.500000" y="-25.434617" edge="d"/>
+	</block>
+	<block id="rect3384">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="25.9673085" x="12.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-26.434617" edge="u"/>
+		<vertex x="-49.500000" y="-26.434617" edge="d"/>
+		<vertex x="-49.500000" y="-27.434617" edge="d"/>
+		<vertex x="-50.500000" y="-27.434617" edge="d"/>
+	</block>
+	<block id="rect3388">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="8.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="d"/>
+	</block>
+	<block id="rect3394">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="20.96731" x="9.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.434620" edge="u"/>
+		<vertex x="-49.500000" y="-16.434620" edge="d"/>
+		<vertex x="-49.500000" y="-17.434620" edge="d"/>
+		<vertex x="-50.500000" y="-17.434620" edge="d"/>
+	</block>
+	<block id="rect3396">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="10.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="d"/>
+	</block>
+	<block id="rect3398">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.9673085" x="56.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-32.434617" edge="u"/>
+		<vertex x="-49.500000" y="-32.434617" edge="d"/>
+		<vertex x="-49.500000" y="-33.434617" edge="d"/>
+		<vertex x="-50.500000" y="-33.434617" edge="d"/>
+	</block>
+	<block id="rect3400">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.9673085" x="62.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434617" edge="u"/>
+		<vertex x="-49.500000" y="-34.434617" edge="d"/>
+		<vertex x="-49.500000" y="-35.434617" edge="d"/>
+		<vertex x="-50.500000" y="-35.434617" edge="d"/>
+	</block>
+	<block id="rect3406">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.9673085" x="65.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434617" edge="u"/>
+		<vertex x="-49.500000" y="-34.434617" edge="d"/>
+		<vertex x="-49.500000" y="-35.434617" edge="d"/>
+		<vertex x="-50.500000" y="-35.434617" edge="d"/>
+	</block>
+	<block id="rect3408">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="30.9673085" x="53.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-36.434617" edge="u"/>
+		<vertex x="-49.500000" y="-36.434617" edge="d"/>
+		<vertex x="-49.500000" y="-37.434617" edge="d"/>
+		<vertex x="-50.500000" y="-37.434617" edge="d"/>
+	</block>
+	<block id="rect3414">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.9673085" x="49.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-48.434617" edge="u"/>
+		<vertex x="-49.500000" y="-48.434617" edge="d"/>
+		<vertex x="-49.500000" y="-49.434617" edge="d"/>
+		<vertex x="-50.500000" y="-49.434617" edge="d"/>
+	</block>
+	<block id="rect3426">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.9673085" x="55.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-48.434617" edge="u"/>
+		<vertex x="-49.500000" y="-48.434617" edge="d"/>
+		<vertex x="-49.500000" y="-49.434617" edge="d"/>
+		<vertex x="-50.500000" y="-49.434617" edge="d"/>
+	</block>
+	<block id="rect4547">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="12.967312" x="16.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-0.434624" edge="u"/>
+		<vertex x="-49.500000" y="-0.434624" edge="d"/>
+		<vertex x="-49.500000" y="-1.434624" edge="d"/>
+		<vertex x="-50.500000" y="-1.434624" edge="u"/>
+	</block>
+	<block id="rect4551">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="11.967312" x="17.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="1.565376" edge="u"/>
+		<vertex x="-49.500000" y="1.565376" edge="d"/>
+		<vertex x="-49.500000" y="0.565376" edge="d"/>
+		<vertex x="-50.500000" y="0.565376" edge="u"/>
+	</block>
+	<block id="rect4561">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="9.967305" x="12.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="5.565390" edge="u"/>
+		<vertex x="-49.500000" y="5.565390" edge="d"/>
+		<vertex x="-49.500000" y="4.565390" edge="d"/>
+		<vertex x="-50.500000" y="4.565390" edge="u"/>
+	</block>
+	<block id="rect4565">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="19.96731" x="14.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-14.434620" edge="u"/>
+		<vertex x="-49.500000" y="-14.434620" edge="d"/>
+		<vertex x="-49.500000" y="-15.434620" edge="d"/>
+		<vertex x="-50.500000" y="-15.434620" edge="u"/>
+	</block>
+	<block id="rect4567">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="20.96731" x="14.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.434620" edge="u"/>
+		<vertex x="-49.500000" y="-16.434620" edge="d"/>
+		<vertex x="-49.500000" y="-17.434620" edge="d"/>
+		<vertex x="-50.500000" y="-17.434620" edge="u"/>
+	</block>
+	<block id="rect4569">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="15.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="u"/>
+	</block>
+	<block id="rect4571">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="22.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="u"/>
+	</block>
+	<block id="rect4573">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="19.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="u"/>
+	</block>
+	<block id="rect4583">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="12.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="u"/>
+	</block>
+	<block id="rect4585">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.96731" x="12.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-18.434620" edge="u"/>
+		<vertex x="-49.500000" y="-18.434620" edge="d"/>
+		<vertex x="-49.500000" y="-19.434620" edge="d"/>
+		<vertex x="-50.500000" y="-19.434620" edge="u"/>
+	</block>
+	<block id="rect4589">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="15.967312" x="11.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-6.434624" edge="u"/>
+		<vertex x="-49.500000" y="-6.434624" edge="d"/>
+		<vertex x="-49.500000" y="-7.434624" edge="d"/>
+		<vertex x="-50.500000" y="-7.434624" edge="u"/>
+	</block>
+	<block id="rect4591">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="24.9673085" x="19.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-24.434617" edge="u"/>
+		<vertex x="-49.500000" y="-24.434617" edge="d"/>
+		<vertex x="-49.500000" y="-25.434617" edge="d"/>
+		<vertex x="-50.500000" y="-25.434617" edge="u"/>
+	</block>
+	<block id="rect4593">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="16.816046"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="u"/>
+	</block>
+	<block id="rect4597">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="24.9673085" x="14.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-24.434617" edge="u"/>
+		<vertex x="-49.500000" y="-24.434617" edge="d"/>
+		<vertex x="-49.500000" y="-25.434617" edge="d"/>
+		<vertex x="-50.500000" y="-25.434617" edge="u"/>
+	</block>
+	<block id="rect4599">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="28.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="u"/>
+	</block>
+	<block id="rect4605">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="17.96731" x="23.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-10.434620" edge="u"/>
+		<vertex x="-49.500000" y="-10.434620" edge="d"/>
+		<vertex x="-49.500000" y="-11.434620" edge="d"/>
+		<vertex x="-50.500000" y="-11.434620" edge="u"/>
+	</block>
+	<block id="rect4607">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="16.967312" x="26.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-8.434624" edge="u"/>
+		<vertex x="-49.500000" y="-8.434624" edge="d"/>
+		<vertex x="-49.500000" y="-9.434624" edge="d"/>
+		<vertex x="-50.500000" y="-9.434624" edge="u"/>
+	</block>
+	<block id="rect4609">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="30.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="u"/>
+	</block>
+	<block id="rect4619">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="35.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="u"/>
+	</block>
+	<block id="rect4623">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="37.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="u"/>
+	</block>
+	<block id="rect4629">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="40.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="u"/>
+	</block>
+	<block id="rect4631">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="41.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="u"/>
+	</block>
+	<block id="rect4637">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="39.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="u"/>
+	</block>
+	<block id="rect4643">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="36.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="u"/>
+	</block>
+	<block id="rect4647">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="21.06731" x="34.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.634620" edge="u"/>
+		<vertex x="-49.500000" y="-16.634620" edge="d"/>
+		<vertex x="-49.500000" y="-17.634620" edge="d"/>
+		<vertex x="-50.500000" y="-17.634620" edge="u"/>
+	</block>
+	<block id="rect4649">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="19.06731" x="33.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.634620" edge="u"/>
+		<vertex x="-49.500000" y="-12.634620" edge="d"/>
+		<vertex x="-49.500000" y="-13.634620" edge="d"/>
+		<vertex x="-50.500000" y="-13.634620" edge="u"/>
+	</block>
+	<block id="rect4651">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.06731" x="30.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-10.634620" edge="u"/>
+		<vertex x="-49.500000" y="-10.634620" edge="d"/>
+		<vertex x="-49.500000" y="-11.634620" edge="d"/>
+		<vertex x="-50.500000" y="-11.634620" edge="u"/>
+	</block>
+	<block id="rect4653">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="24.9673085" x="29.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-24.434617" edge="u"/>
+		<vertex x="-49.500000" y="-24.434617" edge="d"/>
+		<vertex x="-49.500000" y="-25.434617" edge="d"/>
+		<vertex x="-50.500000" y="-25.434617" edge="u"/>
+	</block>
+	<block id="rect4655">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="25.9673085" x="27.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-26.434617" edge="u"/>
+		<vertex x="-49.500000" y="-26.434617" edge="d"/>
+		<vertex x="-49.500000" y="-27.434617" edge="d"/>
+		<vertex x="-50.500000" y="-27.434617" edge="u"/>
+	</block>
+	<block id="rect4657">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="26.9673085" x="34.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-28.434617" edge="u"/>
+		<vertex x="-49.500000" y="-28.434617" edge="d"/>
+		<vertex x="-49.500000" y="-29.434617" edge="d"/>
+		<vertex x="-50.500000" y="-29.434617" edge="u"/>
+	</block>
+	<block id="rect4659">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="25.9673085" x="35.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-26.434617" edge="u"/>
+		<vertex x="-49.500000" y="-26.434617" edge="d"/>
+		<vertex x="-49.500000" y="-27.434617" edge="d"/>
+		<vertex x="-50.500000" y="-27.434617" edge="u"/>
+	</block>
+	<block id="rect4665">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.9673085" x="25.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-30.434617" edge="u"/>
+		<vertex x="-49.500000" y="-30.434617" edge="d"/>
+		<vertex x="-49.500000" y="-31.434617" edge="d"/>
+		<vertex x="-50.500000" y="-31.434617" edge="u"/>
+	</block>
+	<block id="rect4667">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.9673085" x="25.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-32.434617" edge="u"/>
+		<vertex x="-49.500000" y="-32.434617" edge="d"/>
+		<vertex x="-49.500000" y="-33.434617" edge="d"/>
+		<vertex x="-50.500000" y="-33.434617" edge="u"/>
+	</block>
+	<block id="rect4669">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.9673085" x="25.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434617" edge="u"/>
+		<vertex x="-49.500000" y="-34.434617" edge="d"/>
+		<vertex x="-49.500000" y="-35.434617" edge="d"/>
+		<vertex x="-50.500000" y="-35.434617" edge="u"/>
+	</block>
+	<block id="rect4671">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.9673085" x="24.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434617" edge="u"/>
+		<vertex x="-49.500000" y="-34.434617" edge="d"/>
+		<vertex x="-49.500000" y="-35.434617" edge="d"/>
+		<vertex x="-50.500000" y="-35.434617" edge="u"/>
+	</block>
+	<block id="rect4673">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="27.9673085" x="22.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-30.434617" edge="u"/>
+		<vertex x="-49.500000" y="-30.434617" edge="d"/>
+		<vertex x="-49.500000" y="-31.434617" edge="d"/>
+		<vertex x="-50.500000" y="-31.434617" edge="u"/>
+	</block>
+	<block id="rect4677">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.9673085" x="19.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-32.434617" edge="u"/>
+		<vertex x="-49.500000" y="-32.434617" edge="d"/>
+		<vertex x="-49.500000" y="-33.434617" edge="d"/>
+		<vertex x="-50.500000" y="-33.434617" edge="u"/>
+	</block>
+	<block id="rect4681">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.9673085" x="17.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-32.434617" edge="u"/>
+		<vertex x="-49.500000" y="-32.434617" edge="d"/>
+		<vertex x="-49.500000" y="-33.434617" edge="d"/>
+		<vertex x="-50.500000" y="-33.434617" edge="u"/>
+	</block>
+	<block id="rect4685">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="24.9673085" x="13.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-24.434617" edge="u"/>
+		<vertex x="-49.500000" y="-24.434617" edge="d"/>
+		<vertex x="-49.500000" y="-25.434617" edge="d"/>
+		<vertex x="-50.500000" y="-25.434617" edge="u"/>
+	</block>
+	<block id="rect4687">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="25.9673085" x="12.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-26.434617" edge="u"/>
+		<vertex x="-49.500000" y="-26.434617" edge="d"/>
+		<vertex x="-49.500000" y="-27.434617" edge="d"/>
+		<vertex x="-50.500000" y="-27.434617" edge="u"/>
+	</block>
+	<block id="rect4691">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="18.96731" x="8.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-12.434620" edge="u"/>
+		<vertex x="-49.500000" y="-12.434620" edge="d"/>
+		<vertex x="-49.500000" y="-13.434620" edge="d"/>
+		<vertex x="-50.500000" y="-13.434620" edge="u"/>
+	</block>
+	<block id="rect4697">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="20.96731" x="9.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-16.434620" edge="u"/>
+		<vertex x="-49.500000" y="-16.434620" edge="d"/>
+		<vertex x="-49.500000" y="-17.434620" edge="d"/>
+		<vertex x="-50.500000" y="-17.434620" edge="u"/>
+	</block>
+	<block id="rect4699">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="22.96731" x="10.8160445"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-20.434620" edge="u"/>
+		<vertex x="-49.500000" y="-20.434620" edge="d"/>
+		<vertex x="-49.500000" y="-21.434620" edge="d"/>
+		<vertex x="-50.500000" y="-21.434620" edge="u"/>
+	</block>
+	<block id="rect4701">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="28.9673085" x="56.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-32.434617" edge="u"/>
+		<vertex x="-49.500000" y="-32.434617" edge="d"/>
+		<vertex x="-49.500000" y="-33.434617" edge="d"/>
+		<vertex x="-50.500000" y="-33.434617" edge="u"/>
+	</block>
+	<block id="rect4703">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.9673085" x="62.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434617" edge="u"/>
+		<vertex x="-49.500000" y="-34.434617" edge="d"/>
+		<vertex x="-49.500000" y="-35.434617" edge="d"/>
+		<vertex x="-50.500000" y="-35.434617" edge="u"/>
+	</block>
+	<block id="rect4709">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="29.9673085" x="65.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-34.434617" edge="u"/>
+		<vertex x="-49.500000" y="-34.434617" edge="d"/>
+		<vertex x="-49.500000" y="-35.434617" edge="d"/>
+		<vertex x="-50.500000" y="-35.434617" edge="u"/>
+	</block>
+	<block id="rect4711">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="30.9673085" x="53.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-36.434617" edge="u"/>
+		<vertex x="-49.500000" y="-36.434617" edge="d"/>
+		<vertex x="-49.500000" y="-37.434617" edge="d"/>
+		<vertex x="-50.500000" y="-37.434617" edge="u"/>
+	</block>
+	<block id="rect4717">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.9673085" x="49.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-48.434617" edge="u"/>
+		<vertex x="-49.500000" y="-48.434617" edge="d"/>
+		<vertex x="-49.500000" y="-49.434617" edge="d"/>
+		<vertex x="-50.500000" y="-49.434617" edge="u"/>
+	</block>
+	<block id="rect4729">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="36.9673085" x="55.81604"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-48.434617" edge="u"/>
+		<vertex x="-49.500000" y="-48.434617" edge="d"/>
+		<vertex x="-49.500000" y="-49.434617" edge="d"/>
+		<vertex x="-50.500000" y="-49.434617" edge="u"/>
+	</block>
+	<block id="rect9329">
+		<edges>
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="33.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="d"/>
+	</block>
+	<block id="rect9333">
+		<edges angle="360.000000">
+			<material name="u" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="0.500000" />
+			<material name="d" edge="darken" color_r="255" color_g="255" color_b="255" color_a="255" depth="-0.500000" />
+		</edges>
+		<position y="23.9673085" x="33.816043"/>
+		<usetexture id="shadow1"/>
+		<vertex x="-50.500000" y="-22.434617" edge="u"/>
+		<vertex x="-49.500000" y="-22.434617" edge="d"/>
+		<vertex x="-49.500000" y="-23.434617" edge="d"/>
+		<vertex x="-50.500000" y="-23.434617" edge="u"/>
+	</block>
+	<entity id="path3114" typeid="PlayerStart">
+		<position y="14.026084" x="-34.6767685"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="path3229" typeid="EndOfLevel">
+		<position y="-5.5158065" x="20.6941095"/>
+		<size r="0.5"/>
+	</entity>
+</level>

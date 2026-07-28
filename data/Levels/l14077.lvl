@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="ycttlbluelevel" rversion="0.2.5">
+	<info>
+		<name>YCTTL-Blue</name>
+		<description>is not hard,for jinnai</description>
+		<author>Ry$Py_00</author>
+		<date>2022-06-25</date>
+		<sky>Wallpaper2</sky>
+		<border texture="Marble"/>
+		<music name="madeirastew" />
+	</info>
+	<theme_replacements>
+		<sprite_replacement old_name="Flower" new_name="ring"/>
+		<sprite_replacement old_name="Strawberry" new_name="cog2"/>
+		<sprite_replacement old_name="Wrecker" new_name="deathstar"/>
+	</theme_replacements>
+	<limits left="-9.000000" right="9.000000" top="5.009000" bottom="-5.009000"/>
+	<block id="rect2836">
+		<position y="9.2046875" x="5.0171875"/>
+		<usetexture id="Marble"/>
+		<vertex x="-7.175000" y="-12.397250"/>
+		<vertex x="-3.906250" y="-12.397250"/>
+		<vertex x="-3.906250" y="-14.403500"/>
+		<vertex x="-7.175000" y="-14.403500"/>
+		<vertex x="-7.175000" y="-14.306625"/>
+		<vertex x="-14.093750" y="-14.306625"/>
+		<vertex x="-14.093750" y="-13.250375"/>
+		<vertex x="-7.175000" y="-13.250375"/>
+	</block>
+	<block id="path2838">
+		<position y="8.62109375" x="6.053125"/>
+		<usetexture id="green_shadow"/>
+		<vertex x="-8.184375" y="-11.799594"/>
+		<vertex x="-8.182813" y="-11.813656"/>
+		<vertex x="-8.210938" y="-11.813656"/>
+	</block>
+	<block id="path28381">
+		<position y="8.62109375" x="6.053125"/>
+		<usetexture id="green_shadow"/>
+		<vertex x="-8.210938" y="-11.813656"/>
+		<vertex x="-8.210938" y="-12.666781"/>
+		<vertex x="-9.817188" y="-12.666781"/>
+	</block>
+	<block id="rect2840">
+		<position y="8.5868305" x="14.06060275"/>
+		<usetexture id="Marble"/>
+		<vertex x="-10.169978" y="-10.680956"/>
+		<vertex x="-7.830022" y="-10.680956"/>
+		<vertex x="-7.830022" y="-11.210517"/>
+		<vertex x="-9.689088" y="-11.210517"/>
+		<vertex x="-9.689088" y="-13.118802"/>
+		<vertex x="-7.830022" y="-13.118802"/>
+		<vertex x="-7.830022" y="-13.648367"/>
+		<vertex x="-10.169978" y="-13.648367"/>
+	</block>
+	<block id="rect3556">
+		<position y="1.293265" x="1.5014871145"/>
+		<usetexture id="Marble"/>
+		<vertex x="-10.500781" y="3.721592"/>
+		<vertex x="-10.216406" y="3.721592"/>
+		<vertex x="-10.216406" y="1.369511"/>
+		<vertex x="-7.783594" y="1.369511"/>
+		<vertex x="-7.783594" y="3.721592"/>
+		<vertex x="-7.499219" y="3.721592"/>
+		<vertex x="-7.499219" y="1.123347"/>
+		<vertex x="-10.500781" y="1.123347"/>
+	</block>
+	<block id="path3577">
+		<position y="1.50755075" x="5.24434445"/>
+		<usetexture id="Marble"/>
+		<vertex x="-10.643639" y="3.507307"/>
+		<vertex x="-10.332194" y="3.507307"/>
+		<vertex x="-10.332194" y="0.767258"/>
+		<vertex x="-7.667806" y="0.767258"/>
+		<vertex x="-7.667806" y="3.507307"/>
+		<vertex x="-7.356361" y="3.507307"/>
+		<vertex x="-7.356361" y="0.480490"/>
+		<vertex x="-10.643639" y="0.480490"/>
+	</block>
+	<block id="path3581">
+		<position y="1.650408" x="9.422916"/>
+		<usetexture id="Marble"/>
+		<vertex x="-10.822210" y="3.364449"/>
+		<vertex x="-10.476930" y="3.364449"/>
+		<vertex x="-10.476930" y="0.365756"/>
+		<vertex x="-7.523071" y="0.365756"/>
+		<vertex x="-7.523071" y="3.364449"/>
+		<vertex x="-7.177790" y="3.364449"/>
+		<vertex x="-7.177790" y="0.051918"/>
+		<vertex x="-10.822210" y="0.051918"/>
+	</block>
+	<block id="path3585">
+		<position y="1.93612225" x="14.25863025"/>
+		<usetexture id="Marble"/>
+		<vertex x="-11.357924" y="3.078735"/>
+		<vertex x="-10.911134" y="3.078735"/>
+		<vertex x="-10.911134" y="-0.437248"/>
+		<vertex x="-7.088866" y="-0.437248"/>
+		<vertex x="-7.088866" y="3.078735"/>
+		<vertex x="-6.642076" y="3.078735"/>
+		<vertex x="-6.642076" y="-0.805224"/>
+		<vertex x="-11.357924" y="-0.805224"/>
+	</block>
+	<block id="path3761">
+		<position y="7.79326425" x="1.50148710375" background="true"/>
+		<usetexture id="Blue1InRainbows"/>
+		<vertex x="-7.499219" y="-11.876650"/>
+		<vertex x="-7.783594" y="-11.876650"/>
+		<vertex x="-7.783594" y="-9.524571"/>
+		<vertex x="-10.216406" y="-9.524571"/>
+		<vertex x="-10.216406" y="-11.876650"/>
+		<vertex x="-10.500781" y="-11.876650"/>
+		<vertex x="-10.500781" y="-9.278407"/>
+		<vertex x="-7.499219" y="-9.278407"/>
+	</block>
+	<block id="path3769">
+		<position y="6.5682665" x="8.4765625" background="true"/>
+		<usetexture id="Blue1InRainbows"/>
+		<vertex x="-7.365625" y="-9.765943"/>
+		<vertex x="-7.675314" y="-9.765943"/>
+		<vertex x="-7.675314" y="-6.799577"/>
+		<vertex x="-10.324686" y="-6.799577"/>
+		<vertex x="-10.324686" y="-9.765943"/>
+		<vertex x="-10.634375" y="-9.765943"/>
+		<vertex x="-10.634375" y="-6.489124"/>
+		<vertex x="-7.365625" y="-6.489124"/>
+	</block>
+	<block id="path4487">
+		<position y="9.1369135" x="11.48511025" background="true"/>
+		<usetexture id="Blue1InRainbows"/>
+		<vertex x="-7.963839" y="-14.197880"/>
+		<vertex x="-8.160176" y="-14.197880"/>
+		<vertex x="-8.160176" y="-12.508570"/>
+		<vertex x="-9.839824" y="-12.508570"/>
+		<vertex x="-9.839824" y="-14.197880"/>
+		<vertex x="-10.036161" y="-14.197880"/>
+		<vertex x="-10.036161" y="-12.331775"/>
+		<vertex x="-7.963839" y="-12.331775"/>
+	</block>
+	<block id="path4495">
+		<position y="4.553979" x="1.21934423825" background="true"/>
+		<usetexture id="Blue1InRainbows"/>
+		<vertex x="-10.245550" y="-5.439025"/>
+		<vertex x="-10.245550" y="-5.185103"/>
+		<vertex x="-7.990463" y="-5.185103"/>
+		<vertex x="-7.990463" y="-3.012813"/>
+		<vertex x="-10.245550" y="-3.012813"/>
+		<vertex x="-10.245550" y="-2.758891"/>
+		<vertex x="-7.754450" y="-2.758891"/>
+		<vertex x="-7.754450" y="-5.439025"/>
+	</block>
+	<block id="path4503">
+		<position y="9.2083435" x="16.73511025" background="true"/>
+		<usetexture id="Blue1InRainbows"/>
+		<vertex x="-7.963839" y="-14.340739"/>
+		<vertex x="-8.160176" y="-14.340739"/>
+		<vertex x="-8.160176" y="-12.651429"/>
+		<vertex x="-9.839824" y="-12.651429"/>
+		<vertex x="-9.839824" y="-14.340739"/>
+		<vertex x="-10.036161" y="-14.340739"/>
+		<vertex x="-10.036161" y="-12.474634"/>
+		<vertex x="-7.963839" y="-12.474634"/>
+	</block>
+	<block id="path4511">
+		<position y="5.978979" x="16.90863" background="true"/>
+		<usetexture id="Blue1InRainbows"/>
+		<vertex x="-7.843736" y="-8.164025"/>
+		<vertex x="-10.156265" y="-8.164025"/>
+		<vertex x="-10.156265" y="-5.733891"/>
+		<vertex x="-7.843736" y="-5.733891"/>
+		<vertex x="-7.843736" y="-5.964128"/>
+		<vertex x="-9.937170" y="-5.964128"/>
+		<vertex x="-9.937170" y="-7.933789"/>
+		<vertex x="-7.843736" y="-7.933789"/>
+	</block>
+	<block id="path4519">
+		<position y="6.44326475" x="14.1550585" background="true"/>
+		<usetexture id="Blue1InRainbows"/>
+		<vertex x="-9.786496" y="-8.569508"/>
+		<vertex x="-9.786496" y="-7.185551"/>
+		<vertex x="-8.213505" y="-7.185551"/>
+		<vertex x="-8.213505" y="-8.569508"/>
+		<vertex x="-8.362533" y="-8.569508"/>
+		<vertex x="-8.362533" y="-7.316670"/>
+		<vertex x="-9.637467" y="-7.316670"/>
+		<vertex x="-9.637467" y="-8.569508"/>
+	</block>
+	<block id="rect3599">
+		<position y="1.747757125" x="14.2571184"/>
+		<usetexture id="glass_green"/>
+		<vertex x="-10.366965" y="2.764788"/>
+		<vertex x="-7.633035" y="2.764788"/>
+		<vertex x="-7.633035" y="0.262183"/>
+		<vertex x="-10.366965" y="0.262183"/>
+	</block>
+	<block id="rect3603">
+		<position y="1.51918455" x="9.430333"/>
+		<usetexture id="glass_green"/>
+		<vertex x="-10.125894" y="3.150505"/>
+		<vertex x="-7.874106" y="3.150505"/>
+		<vertex x="-7.874106" y="0.790757"/>
+		<vertex x="-10.125894" y="0.790757"/>
+	</block>
+	<block id="rect3607">
+		<position y="1.362042375" x="5.23033325"/>
+		<usetexture id="glass_green"/>
+		<vertex x="-10.054465" y="3.321932"/>
+		<vertex x="-7.945535" y="3.321932"/>
+		<vertex x="-7.945535" y="1.247898"/>
+		<vertex x="-10.054465" y="1.247898"/>
+	</block>
+	<block id="rect3611">
+		<position y="1.144183525" x="1.494619075"/>
+		<usetexture id="glass_green"/>
+		<vertex x="-9.911608" y="3.596935"/>
+		<vertex x="-8.088392" y="3.596935"/>
+		<vertex x="-8.088392" y="1.844330"/>
+		<vertex x="-9.911608" y="1.844330"/>
+	</block>
+	<block id="rect3763">
+		<position y="7.844183475" x="1.494619175" background="true"/>
+		<usetexture id="glass_red"/>
+		<vertex x="-8.088392" y="-11.555669"/>
+		<vertex x="-9.911608" y="-11.555669"/>
+		<vertex x="-9.911608" y="-9.803064"/>
+		<vertex x="-8.088392" y="-9.803064"/>
+	</block>
+	<block id="rect3771">
+		<position y="6.6999472" x="8.48321535" background="true"/>
+		<usetexture id="glass_red"/>
+		<vertex x="-7.990165" y="-9.490003"/>
+		<vertex x="-10.009835" y="-9.490003"/>
+		<vertex x="-10.009835" y="-7.291786"/>
+		<vertex x="-7.990165" y="-7.291786"/>
+	</block>
+	<block id="rect4489">
+		<position y="9.211903075" x="11.489328425" background="true"/>
+		<usetexture id="glass_red"/>
+		<vertex x="-8.359785" y="-14.040734"/>
+		<vertex x="-9.640215" y="-14.040734"/>
+		<vertex x="-9.640215" y="-12.788878"/>
+		<vertex x="-8.359785" y="-12.788878"/>
+	</block>
+	<block id="rect4497">
+		<position y="4.599442" x="1.11275955" background="true"/>
+		<usetexture id="glass_red"/>
+		<vertex x="-9.840167" y="-5.003871"/>
+		<vertex x="-9.840167" y="-3.375898"/>
+		<vertex x="-8.159833" y="-3.375898"/>
+		<vertex x="-8.159833" y="-5.003871"/>
+	</block>
+	<block id="rect4505">
+		<position y="9.283333075" x="16.739328925" background="true"/>
+		<usetexture id="glass_red"/>
+		<vertex x="-8.359785" y="-14.183594"/>
+		<vertex x="-9.640215" y="-14.183594"/>
+		<vertex x="-9.640215" y="-12.931738"/>
+		<vertex x="-8.359785" y="-12.931738"/>
+	</block>
+	<block id="rect4513">
+		<position y="6.0202003" x="17.00757505" background="true"/>
+		<usetexture id="glass_red"/>
+		<vertex x="-8.220060" y="-7.769459"/>
+		<vertex x="-9.779940" y="-7.769459"/>
+		<vertex x="-9.779940" y="-6.293342"/>
+		<vertex x="-8.220060" y="-6.293342"/>
+	</block>
+	<block id="rect4521">
+		<position y="6.47495275" x="14.1548187" background="true"/>
+		<usetexture id="glass_red"/>
+		<vertex x="-9.513449" y="-8.416176"/>
+		<vertex x="-9.513449" y="-7.465635"/>
+		<vertex x="-8.486551" y="-7.465635"/>
+		<vertex x="-8.486551" y="-8.416176"/>
+	</block>
+	<entity id="rect2842" typeid="EndOfLevel">
+		<position y="-3.4894021" x="5.1822535"/>
+		<size width="1.6" r="1.0" height="1.6"/>
+	</entity>
+	<entity id="path2880" typeid="Wrecker">
+		<position y="0.1054011" x="4.2990835"/>
+		<size width="0.475" r="0.2" height="0.475"/>
+	</entity>
+	<entity id="path2926" typeid="Wrecker">
+		<position y="0.1054011" x="4.6990835"/>
+		<size width="0.475" r="0.2" height="0.475"/>
+	</entity>
+	<entity id="path2932" typeid="Wrecker">
+		<position y="0.1054011" x="5.0990835"/>
+		<size width="0.475" r="0.2" height="0.475"/>
+	</entity>
+	<entity id="path3246" typeid="Wrecker">
+		<position y="0.1054011" x="5.4990835"/>
+		<size width="0.475" r="0.2" height="0.475"/>
+	</entity>
+	<entity id="path3252" typeid="Wrecker">
+		<position y="0.1054011" x="5.8990835"/>
+		<size width="0.475" r="0.2" height="0.475"/>
+	</entity>
+	<entity id="path3258" typeid="Wrecker">
+		<position y="0.1054011" x="6.2990835"/>
+		<size width="0.475" r="0.2" height="0.475"/>
+	</entity>
+	<entity id="path3279" typeid="Wrecker">
+		<position y="0.1054011" x="3.8990835"/>
+		<size width="0.475" r="0.2" height="0.475"/>
+	</entity>
+	<entity id="path3285" typeid="Wrecker">
+		<position y="0.1054011" x="6.6990835"/>
+		<size width="0.475" r="0.2" height="0.475"/>
+	</entity>
+	<entity id="rect2816" typeid="PlayerStart">
+		<position y="-0.43858345" x="-6.5408988"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="rect5393" typeid="Strawberry">
+		<position y="-3.824334" x="-8.7035284"/>
+		<size width="0.5" r="0.25" height="0.5"/>
+	</entity>
+	<entity id="path5871" typeid="Sprite">
+		<position y="0.361381" x="-7.9178139"/>
+		<size r="0.4"/>
+		<param name="name" value="TheX"/>
+	</entity>
+	<entity id="path6127" typeid="Sprite">
+		<position y="-2.838619" x="-7.5178139"/>
+		<size r="0.4"/>
+		<param name="name" value="TheX"/>
+	</entity>
+	<entity id="path6133" typeid="Sprite">
+		<position y="-1.738619" x="-0.5178139"/>
+		<size r="0.4"/>
+		<param name="name" value="TheX"/>
+	</entity>
+	<entity id="path6139" typeid="Sprite">
+		<position y="-4.138619" x="2.4821861"/>
+		<size r="0.4"/>
+		<param name="name" value="TheX"/>
+	</entity>
+	<entity id="path6145" typeid="Sprite">
+		<position y="-4.238619" x="7.7821861"/>
+		<size r="0.4"/>
+		<param name="name" value="TheX"/>
+	</entity>
+	<entity id="path6151" typeid="Sprite">
+		<position y="-1.038619" x="7.9821861"/>
+		<size r="0.4"/>
+		<param name="name" value="TheX"/>
+	</entity>
+	<entity id="path6157" typeid="Sprite">
+		<position y="-1.438619" x="5.1821861"/>
+		<size r="0.4"/>
+		<param name="name" value="TheX"/>
+	</entity>
+	<entity id="path6745" typeid="Strawberry">
+		<position y="-2.824334" x="2.4036146"/>
+		<size width="0.5" r="0.25" height="0.5"/>
+	</entity>
+	<entity id="path43576" typeid="Strawberry">
+		<position y="0.354236" x="-7.9178139"/>
+		<size width="0.5" r="0.25" height="0.5"/>
+	</entity>
+	<entity id="path43582" typeid="Strawberry">
+		<position y="-1.745764" x="-0.5178139"/>
+		<size width="0.5" r="0.25" height="0.5"/>
+	</entity>
+	<entity id="path43588" typeid="Strawberry">
+		<position y="-1.445764" x="5.1821861"/>
+		<size width="0.5" r="0.25" height="0.5"/>
+	</entity>
+	<entity id="path43594" typeid="Strawberry">
+		<position y="-1.045764" x="7.9821861"/>
+		<size width="0.5" r="0.25" height="0.5"/>
+	</entity>
+	<entity id="path43600" typeid="Strawberry">
+		<position y="-4.245764" x="7.7821861"/>
+		<size width="0.5" r="0.25" height="0.5"/>
+	</entity>
+</level>

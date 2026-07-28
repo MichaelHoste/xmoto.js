@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="crwreckerchallengethree" rversion="0.5.2">
+	<info>
+		<name>CR - Wrecker Challenge 3</name>
+		<description></description>
+		<author>CR</author>
+		<date>2025-05-22</date>
+		<sky>sky1</sky>
+		<border texture="invisible"/>
+	</info>
+	<theme_replacements>
+		<sprite_replacement old_name="Wrecker" new_name="laser"/>
+	</theme_replacements>
+	<layeroffsets>
+		<layeroffset x="1.0" y="1.0" frontlayer="false"/>
+		<layeroffset x="1.0" y="1.0" frontlayer="false"/>
+	</layeroffsets>
+	<limits left="-4.750000" right="4.750000" top="3.000000" bottom="-3.000000"/>
+	<block id="path5436">
+		<edges>
+			<material name="u" edge="Grass" color_r="179" color_g="179" color_b="179" color_a="255" depth="0.200000" />
+		</edges>
+		<position y="4.371129125" x="3.2998115" islayer="true" layerid="0"/>
+		<usetexture scale="1.6" color_g="140" color_b="140" color_a="255" color_r="140" id="Bricks"/>
+		<physics grip="50.0"/>
+		<vertex x="-14.020594" y="-9.346886"/>
+		<vertex x="-14.020594" y="-2.971129" edge="u"/>
+		<vertex x="-9.720594" y="-2.971129"/>
+		<vertex x="-9.720594" y="-2.092056" edge="u"/>
+		<vertex x="-8.299811" y="-2.092056"/>
+		<vertex x="-8.299811" y="-2.592056" edge="u"/>
+		<vertex x="-7.399811" y="-2.592056"/>
+		<vertex x="-7.399811" y="-2.392056" edge="u"/>
+		<vertex x="-6.392861" y="-2.392056"/>
+		<vertex x="-6.392861" y="-3.622415" edge="u"/>
+		<vertex x="-4.749811" y="-3.622415"/>
+		<vertex x="-4.749811" y="-3.522415" edge="u"/>
+		<vertex x="-4.033195" y="-3.522415"/>
+		<vertex x="-4.033195" y="-4.069639" edge="u"/>
+		<vertex x="-0.934976" y="-4.069639"/>
+		<vertex x="-0.934976" y="-2.835300" edge="u"/>
+		<vertex x="1.283617" y="-2.835300"/>
+		<vertex x="1.283617" y="-3.157728" edge="u"/>
+		<vertex x="2.846643" y="-3.157728"/>
+		<vertex x="2.846643" y="-2.012408" edge="u"/>
+		<vertex x="4.520594" y="-2.012408"/>
+		<vertex x="4.520594" y="-9.472109"/>
+	</block>
+	<block id="rect9448">
+		<position y="1.86153125232" x="6.27241653057" islayer="true" layerid="0"/>
+		<usetexture scale="1.4" color_g="179" color_b="179" color_a="255" color_r="179" id="WuTz_wood"/>
+		<vertex x="-6.436170" y="-1.500898"/>
+		<vertex x="-3.095700" y="0.134728"/>
+		<vertex x="-3.063830" y="0.054773"/>
+		<vertex x="-6.404300" y="-1.580853"/>
+	</block>
+	<block id="rect9448-9">
+		<position y="1.15758149851" x="2.51275438551" islayer="true" layerid="0"/>
+		<usetexture scale="1.4" color_g="179" color_b="179" color_a="255" color_r="179" id="WuTz_wood"/>
+		<vertex x="-3.968395" y="-0.390094"/>
+		<vertex x="-4.039567" y="-0.427573"/>
+		<vertex x="-5.531605" y="1.759768"/>
+		<vertex x="-5.460433" y="1.797247"/>
+	</block>
+	<block id="rect3656">
+		<position y="0.91451343522" x="0.921763972326" islayer="true" layerid="0"/>
+		<usetexture scale="1.4" color_g="179" color_b="179" color_a="255" color_r="179" id="WuTz_wood"/>
+		<vertex x="-5.939506" y="0.934021"/>
+		<vertex x="-3.582708" y="1.492324"/>
+		<vertex x="-3.560494" y="1.407926"/>
+		<vertex x="-5.917292" y="0.849622"/>
+	</block>
+	<entity id="rect3296" typeid="Sprite">
+		<position y="3.8437835" x="4.3034923"/>
+		<param name="z" value="0.0"/>
+		<param name="name" value="laser"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="rect3454" typeid="Sprite">
+		<size r="0.4"/>
+		<position y="2.972844144" x="3.74159512" angle="0.959931088597"/>
+		<param name="z" value="0.0"/>
+		<param name="name" value="Biker"/>
+	</entity>
+	<entity id="path3630" typeid="Sprite">
+		<position y="3.8437835" x="4.0034923"/>
+		<param name="z" value="0.0"/>
+		<param name="name" value="laser"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="path3636" typeid="Sprite">
+		<position y="3.8437835" x="3.7034923"/>
+		<param name="z" value="0.0"/>
+		<param name="name" value="laser"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<block id="path6682">
+		<edges>
+			<material name="u" edge="Grass" color_r="179" color_g="179" color_b="179" color_a="255" depth="0.200000" />
+		</edges>
+		<position y="6.6639322" x="3.3708177" islayer="true" layerid="1"/>
+		<usetexture scale="1.5" color_g="179" color_b="179" color_a="255" color_r="179" id="BlueBricks"/>
+		<physics grip="50.0"/>
+		<vertex x="-8.964226" y="-14.018598"/>
+		<vertex x="-8.964226" y="-6.743492" edge="u"/>
+		<vertex x="-7.178643" y="-6.743492"/>
+		<vertex x="-7.178643" y="-7.232754" edge="u"/>
+		<vertex x="-6.679179" y="-7.232754"/>
+		<vertex x="-6.679179" y="-6.424409" edge="u"/>
+		<vertex x="-5.005975" y="-6.424409"/>
+		<vertex x="-5.005975" y="-8.381455" edge="u"/>
+		<vertex x="-3.207905" y="-8.381455"/>
+		<vertex x="-3.207905" y="-7.807104" edge="u"/>
+		<vertex x="-2.433736" y="-7.807104"/>
+		<vertex x="-2.433736" y="-9.753514" edge="u"/>
+		<vertex x="-0.535774" y="-9.753514"/>
+		<vertex x="-0.535774" y="-14.231320"/>
+	</block>
+	<block id="path6682-7">
+		<edges>
+			<material name="u" edge="Grass" color_r="179" color_g="179" color_b="179" color_a="255" depth="0.200000" />
+		</edges>
+		<position y="3.68477125" x="11.72505325" islayer="true" layerid="1"/>
+		<usetexture scale="1.5" color_g="179" color_b="179" color_a="255" color_r="179" id="BlueBricks"/>
+		<physics grip="50.0"/>
+		<vertex x="-8.964227" y="-6.869030"/>
+		<vertex x="-8.964227" y="-4.239782" edge="u"/>
+		<vertex x="-7.528268" y="-4.239782"/>
+		<vertex x="-7.528268" y="-4.431232" edge="u"/>
+		<vertex x="-6.679179" y="-4.431232"/>
+		<vertex x="-6.679179" y="-2.018973" edge="u"/>
+		<vertex x="-6.259615" y="-2.018973"/>
+		<vertex x="-6.259615" y="-1.657332" edge="u"/>
+		<vertex x="-5.705225" y="-1.657332"/>
+		<vertex x="-5.705225" y="-2.514378" edge="u"/>
+		<vertex x="-4.326704" y="-2.514378"/>
+		<vertex x="-4.326704" y="-1.908345" edge="u"/>
+		<vertex x="-2.433736" y="-1.908345"/>
+		<vertex x="-2.433736" y="-4.986437" edge="u"/>
+		<vertex x="-0.535773" y="-4.986437"/>
+		<vertex x="-0.535773" y="-7.081753"/>
+	</block>
+	<entity id="path10440" typeid="Sprite">
+		<position y="4.5202962" x="5.145144"/>
+		<size r="0.4"/>
+		<param name="name" value="cloud"/>
+	</entity>
+	<entity id="path10440-6" typeid="Sprite">
+		<position y="4.8154192" x="0.55839245"/>
+		<param name="name" value="cloud"/>
+		<size width="3.9" r="0.52" height="3.9"/>
+	</entity>
+	<entity id="path10440-6-2" typeid="Sprite">
+		<position y="4.3774382" x="-4.04657255"/>
+		<param name="name" value="cloud"/>
+		<size width="2.4" r="0.32" height="2.4"/>
+	</entity>
+	<block id="path2836">
+		<position y="7.6219075" x="5.0674785"/>
+		<usetexture scale="1.2" id="Bricks"/>
+		<physics grip="50.0"/>
+		<vertex x="10.102505" y="-4.508582" edge="EdgeGrass2"/>
+		<vertex x="10.131764" y="-19.979049"/>
+		<vertex x="-19.631764" y="-19.979049"/>
+		<vertex x="-19.631764" y="-6.884343" edge="EdgeGrass2"/>
+		<vertex x="-11.842105" y="-6.884343"/>
+		<vertex x="-11.842105" y="-6.467655" edge="EdgeGrass2"/>
+		<vertex x="-9.094516" y="-6.467655"/>
+		<vertex x="-9.094516" y="-8.421909" edge="EdgeGrass2"/>
+		<vertex x="-8.539672" y="-8.421909"/>
+		<vertex x="-8.539672" y="-9.812944"/>
+		<vertex x="-9.439672" y="-9.812944"/>
+		<vertex x="-9.439672" y="-10.621909" edge="EdgeGrass2"/>
+		<vertex x="-6.282522" y="-10.621909"/>
+		<vertex x="-6.282522" y="-10.021909" edge="EdgeGrass2"/>
+		<vertex x="-5.967479" y="-10.021909"/>
+		<vertex x="-5.967479" y="-9.821909" edge="EdgeGrass2"/>
+		<vertex x="-3.782522" y="-9.821909"/>
+		<vertex x="-3.782522" y="-10.621909" edge="EdgeGrass2"/>
+		<vertex x="-1.058283" y="-10.621909"/>
+		<vertex x="-1.058283" y="-8.921909" edge="EdgeGrass2"/>
+		<vertex x="-0.658283" y="-8.921909"/>
+		<vertex x="-0.658283" y="-6.808558" edge="EdgeGrass2"/>
+		<vertex x="3.682521" y="-6.808558"/>
+		<vertex x="3.682521" y="-4.508582" edge="EdgeGrass2"/>
+	</block>
+	<entity id="rect2816" typeid="PlayerStart">
+		<position y="-2.96161175" x="2.43939105"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="rect3022" typeid="Wrecker">
+		<position y="-2.0116072" x="1.18839285"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="path3096" typeid="Wrecker">
+		<position y="-1.7116072" x="1.18839285"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="rect3022-3" typeid="Wrecker">
+		<position y="-0.3339287" x="-1.062500005"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="path3096-5" typeid="Wrecker">
+		<position y="-0.0339287" x="-1.062500005"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="rect3022-3-3" typeid="Wrecker">
+		<position y="-2.0398477" x="-3.2473981"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="path3096-5-6" typeid="Wrecker">
+		<position y="-1.7398477" x="-3.2473981"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="path3250" typeid="Wrecker">
+		<position y="-2.8146588" x="-2.01790815"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="path3256" typeid="Wrecker">
+		<position y="-2.8146588" x="-1.71790815"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="path3262" typeid="Wrecker">
+		<position y="-2.8146588" x="-1.41790815"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="rect12655" typeid="EndOfLevel">
+		<position y="-2.5899501" x="-3.98035"/>
+		<size width="0.6" r="0.3" height="0.6"/>
+	</entity>
+	<entity id="path2929" typeid="Wrecker">
+		<position y="-2.8146588" x="-3.54740015"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+	<entity id="path2941" typeid="Wrecker">
+		<position y="-0.3339287" x="-1.3625"/>
+		<size width="0.16" r="0.08" height="0.16"/>
+	</entity>
+</level>

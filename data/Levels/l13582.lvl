@@ -1,0 +1,3490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="seremodernsquares" rversion="0.5.2">
+	<info>
+		<name>SeRe - Modern #03 - Squares</name>
+		<description>Enjoy the third level of my modern series. Made by SeRe. Have fun! :D</description>
+		<author>SeRe</author>
+		<date>2014-06-09</date>
+		<sky>Black</sky>
+		<border texture="white"/>
+		<music name="blockolando" />
+	</info>
+	<theme_replacements>
+		<sprite_replacement old_name="Flower" new_name="ring"/>
+		<sprite_replacement old_name="Strawberry" new_name="YellowFlare"/>
+	</theme_replacements>
+	<layeroffsets>
+		<layeroffset x="1.0" y="1.0" frontlayer="false"/>
+	</layeroffsets>
+	<limits left="-40.000000" right="40.000000" top="12.500000" bottom="-12.500000"/>
+	<script>
+zone = {}
+check = 0
+
+function zone.OnEnter()
+if check == 0 then
+Game.Message("No secret available, sorry.")
+check = 1
+end
+end
+	</script>
+	<block id="rect3525">
+		<position y="2.084444425" x="1.915555675" islayer="true" layerid="0"/>
+		<usetexture color_g="224" color_b="224" id="white" color_a="255" color_r="224"/>
+		<vertex x="-42.084444" y="10.415556"/>
+		<vertex x="-37.915556" y="10.415556"/>
+		<vertex x="-37.915556" y="6.246667"/>
+		<vertex x="-42.084444" y="6.246667"/>
+	</block>
+	<block id="rect3562">
+		<position y="6.253334925" x="6.084444425" islayer="true" layerid="0"/>
+		<usetexture color_g="208" color_b="208" id="white" color_a="255" color_r="208"/>
+		<vertex x="-42.084444" y="2.077775"/>
+		<vertex x="-37.915556" y="2.077775"/>
+		<vertex x="-37.915556" y="-2.091114"/>
+		<vertex x="-42.084444" y="-2.091114"/>
+	</block>
+	<block id="rect3564">
+		<position y="10.422222425" x="6.084444425" islayer="true" layerid="0"/>
+		<usetexture color_g="208" color_b="208" id="white" color_a="255" color_r="208"/>
+		<vertex x="-42.084444" y="-6.260000"/>
+		<vertex x="-37.915556" y="-6.260000"/>
+		<vertex x="-37.915556" y="-10.428889"/>
+		<vertex x="-42.084444" y="-10.428889"/>
+	</block>
+	<block id="rect3566">
+		<position y="14.591109425" x="10.253333425" islayer="true" layerid="0"/>
+		<usetexture color_g="200" color_b="200" id="white" color_a="255" color_r="200"/>
+		<vertex x="-42.084444" y="-14.597774"/>
+		<vertex x="-37.915556" y="-14.597774"/>
+		<vertex x="-37.915556" y="-18.766663"/>
+		<vertex x="-42.084444" y="-18.766663"/>
+	</block>
+	<block id="rect3568">
+		<position y="10.422222425" x="14.422222925" islayer="true" layerid="0"/>
+		<usetexture color_g="189" color_b="189" id="white" color_a="255" color_r="189"/>
+		<vertex x="-42.084444" y="-6.260000"/>
+		<vertex x="-37.915556" y="-6.260000"/>
+		<vertex x="-37.915556" y="-10.428889"/>
+		<vertex x="-42.084444" y="-10.428889"/>
+	</block>
+	<block id="rect3570">
+		<position y="18.759999925" x="14.422222925" islayer="true" layerid="0"/>
+		<usetexture color_g="189" color_b="189" id="white" color_a="255" color_r="189"/>
+		<vertex x="-42.084444" y="-22.935555"/>
+		<vertex x="-37.915556" y="-22.935555"/>
+		<vertex x="-37.915556" y="-27.104444"/>
+		<vertex x="-42.084444" y="-27.104444"/>
+	</block>
+	<block id="rect3572">
+		<position y="22.928890425" x="18.591110925" islayer="true" layerid="0"/>
+		<usetexture color_g="175" color_b="175" id="white" color_a="255" color_r="175"/>
+		<vertex x="-42.084444" y="-31.273336"/>
+		<vertex x="-37.915556" y="-31.273336"/>
+		<vertex x="-37.915556" y="-35.442225"/>
+		<vertex x="-42.084444" y="-35.442225"/>
+	</block>
+	<block id="rect3574">
+		<position y="18.759999925" x="22.759999925" islayer="true" layerid="0"/>
+		<usetexture color_g="163" color_b="163" id="white" color_a="255" color_r="163"/>
+		<vertex x="-42.084444" y="-22.935555"/>
+		<vertex x="-37.915556" y="-22.935555"/>
+		<vertex x="-37.915556" y="-27.104444"/>
+		<vertex x="-42.084444" y="-27.104444"/>
+	</block>
+	<block id="rect3576">
+		<position y="6.253334925" x="18.591110925" islayer="true" layerid="0"/>
+		<usetexture color_g="175" color_b="175" id="white" color_a="255" color_r="175"/>
+		<vertex x="-42.084444" y="2.077775"/>
+		<vertex x="-37.915556" y="2.077775"/>
+		<vertex x="-37.915556" y="-2.091114"/>
+		<vertex x="-42.084444" y="-2.091114"/>
+	</block>
+	<block id="rect3578">
+		<position y="2.084444425" x="22.759999925" islayer="true" layerid="0"/>
+		<usetexture color_g="163" color_b="163" id="white" color_a="255" color_r="163"/>
+		<vertex x="-42.084444" y="10.415556"/>
+		<vertex x="-37.915556" y="10.415556"/>
+		<vertex x="-37.915556" y="6.246667"/>
+		<vertex x="-42.084444" y="6.246667"/>
+	</block>
+	<block id="rect3580">
+		<position y="2.084444425" x="26.928890425" islayer="true" layerid="0"/>
+		<usetexture color_g="152" color_b="152" id="white" color_a="255" color_r="152"/>
+		<vertex x="-42.084444" y="10.415556"/>
+		<vertex x="-37.915556" y="10.415556"/>
+		<vertex x="-37.915556" y="6.246667"/>
+		<vertex x="-42.084444" y="6.246667"/>
+	</block>
+	<block id="rect3582">
+		<position y="6.253334925" x="31.097780425" islayer="true" layerid="0"/>
+		<usetexture color_g="142" color_b="142" id="white" color_a="255" color_r="142"/>
+		<vertex x="-42.084444" y="2.077775"/>
+		<vertex x="-37.915556" y="2.077775"/>
+		<vertex x="-37.915556" y="-2.091114"/>
+		<vertex x="-42.084444" y="-2.091114"/>
+	</block>
+	<block id="rect3584">
+		<position y="6.253334925" x="35.266664925" islayer="true" layerid="0"/>
+		<usetexture color_g="132" color_b="132" id="white" color_a="255" color_r="132"/>
+		<vertex x="-42.084444" y="2.077775"/>
+		<vertex x="-37.915556" y="2.077775"/>
+		<vertex x="-37.915556" y="-2.091114"/>
+		<vertex x="-42.084444" y="-2.091114"/>
+	</block>
+	<block id="rect3586">
+		<position y="10.422222425" x="39.435555425" islayer="true" layerid="0"/>
+		<usetexture color_g="115" color_b="115" id="white" color_a="255" color_r="115"/>
+		<vertex x="-42.084444" y="-6.260000"/>
+		<vertex x="-37.915556" y="-6.260000"/>
+		<vertex x="-37.915556" y="-10.428889"/>
+		<vertex x="-42.084444" y="-10.428889"/>
+	</block>
+	<block id="rect3588">
+		<position y="14.591109425" x="26.928890425" islayer="true" layerid="0"/>
+		<usetexture color_g="152" color_b="152" id="white" color_a="255" color_r="152"/>
+		<vertex x="-42.084444" y="-14.597774"/>
+		<vertex x="-37.915556" y="-14.597774"/>
+		<vertex x="-37.915556" y="-18.766663"/>
+		<vertex x="-42.084444" y="-18.766663"/>
+	</block>
+	<block id="rect3590">
+		<position y="18.759999925" x="31.097780425" islayer="true" layerid="0"/>
+		<usetexture color_g="142" color_b="142" id="white" color_a="255" color_r="142"/>
+		<vertex x="-42.084444" y="-22.935555"/>
+		<vertex x="-37.915556" y="-22.935555"/>
+		<vertex x="-37.915556" y="-27.104444"/>
+		<vertex x="-42.084444" y="-27.104444"/>
+	</block>
+	<block id="rect3592">
+		<position y="22.928890425" x="35.266664925" islayer="true" layerid="0"/>
+		<usetexture color_g="132" color_b="132" id="white" color_a="255" color_r="132"/>
+		<vertex x="-42.084444" y="-31.273336"/>
+		<vertex x="-37.915556" y="-31.273336"/>
+		<vertex x="-37.915556" y="-35.442225"/>
+		<vertex x="-42.084444" y="-35.442225"/>
+	</block>
+	<block id="rect3594">
+		<position y="18.759999925" x="39.435555425" islayer="true" layerid="0"/>
+		<usetexture color_g="115" color_b="115" id="white" color_a="255" color_r="115"/>
+		<vertex x="-42.084444" y="-22.935555"/>
+		<vertex x="-37.915556" y="-22.935555"/>
+		<vertex x="-37.915556" y="-27.104444"/>
+		<vertex x="-42.084444" y="-27.104444"/>
+	</block>
+	<block id="rect3597">
+		<position y="14.591109425" x="43.604445425" islayer="true" layerid="0"/>
+		<usetexture color_g="99" color_b="99" id="white" color_a="255" color_r="99"/>
+		<vertex x="-42.084444" y="-14.597774"/>
+		<vertex x="-37.915556" y="-14.597774"/>
+		<vertex x="-37.915556" y="-18.766663"/>
+		<vertex x="-42.084444" y="-18.766663"/>
+	</block>
+	<block id="rect3599">
+		<position y="10.422222425" x="47.773332925" islayer="true" layerid="0"/>
+		<usetexture color_g="88" color_b="88" id="white" color_a="255" color_r="88"/>
+		<vertex x="-42.084444" y="-6.260000"/>
+		<vertex x="-37.915556" y="-6.260000"/>
+		<vertex x="-37.915556" y="-10.428889"/>
+		<vertex x="-42.084444" y="-10.428889"/>
+	</block>
+	<block id="rect3601">
+		<position y="10.422222425" x="51.942223425" islayer="true" layerid="0"/>
+		<usetexture color_g="74" color_b="74" id="white" color_a="255" color_r="74"/>
+		<vertex x="-42.084444" y="-6.260000"/>
+		<vertex x="-37.915556" y="-6.260000"/>
+		<vertex x="-37.915556" y="-10.428889"/>
+		<vertex x="-42.084444" y="-10.428889"/>
+	</block>
+	<block id="rect3603">
+		<position y="14.591109425" x="56.111109425" islayer="true" layerid="0"/>
+		<usetexture color_g="68" color_b="68" id="white" color_a="255" color_r="68"/>
+		<vertex x="-42.084444" y="-14.597774"/>
+		<vertex x="-37.915556" y="-14.597774"/>
+		<vertex x="-37.915556" y="-18.766663"/>
+		<vertex x="-42.084444" y="-18.766663"/>
+	</block>
+	<block id="rect3605">
+		<position y="18.759999925" x="45.688887925" islayer="true" layerid="0"/>
+		<usetexture color_g="99" color_b="99" id="white" color_a="255" color_r="99"/>
+		<vertex x="-42.084444" y="-22.935555"/>
+		<vertex x="-37.915556" y="-22.935555"/>
+		<vertex x="-37.915556" y="-27.104444"/>
+		<vertex x="-42.084444" y="-27.104444"/>
+	</block>
+	<block id="rect3607">
+		<position y="22.928890425" x="49.857777925" islayer="true" layerid="0"/>
+		<usetexture color_g="88" color_b="88" id="white" color_a="255" color_r="88"/>
+		<vertex x="-42.084444" y="-31.273336"/>
+		<vertex x="-37.915556" y="-31.273336"/>
+		<vertex x="-37.915556" y="-35.442225"/>
+		<vertex x="-42.084444" y="-35.442225"/>
+	</block>
+	<block id="rect3609">
+		<position y="18.759999925" x="54.026669425" islayer="true" layerid="0"/>
+		<usetexture color_g="74" color_b="74" id="white" color_a="255" color_r="74"/>
+		<vertex x="-42.084444" y="-22.935555"/>
+		<vertex x="-37.915556" y="-22.935555"/>
+		<vertex x="-37.915556" y="-27.104444"/>
+		<vertex x="-42.084444" y="-27.104444"/>
+	</block>
+	<block id="rect3611">
+		<position y="10.422222425" x="60.279999425" islayer="true" layerid="0"/>
+		<usetexture color_g="60" color_b="60" id="white" color_a="255" color_r="60"/>
+		<vertex x="-42.084444" y="-6.260000"/>
+		<vertex x="-37.915556" y="-6.260000"/>
+		<vertex x="-37.915556" y="-10.428889"/>
+		<vertex x="-42.084444" y="-10.428889"/>
+	</block>
+	<block id="rect3613">
+		<position y="6.253334925" x="64.448889425" islayer="true" layerid="0"/>
+		<usetexture color_g="47" color_b="47" id="white" color_a="255" color_r="47"/>
+		<vertex x="-42.084444" y="2.077775"/>
+		<vertex x="-37.915556" y="2.077775"/>
+		<vertex x="-37.915556" y="-2.091114"/>
+		<vertex x="-42.084444" y="-2.091114"/>
+	</block>
+	<block id="rect3615">
+		<position y="2.084444425" x="68.617774425" islayer="true" layerid="0"/>
+		<usetexture color_g="39" color_b="39" id="white" color_a="255" color_r="39"/>
+		<vertex x="-42.084444" y="10.415556"/>
+		<vertex x="-37.915556" y="10.415556"/>
+		<vertex x="-37.915556" y="6.246667"/>
+		<vertex x="-42.084444" y="6.246667"/>
+	</block>
+	<block id="rect3617">
+		<position y="2.084444425" x="72.786664425" islayer="true" layerid="0"/>
+		<usetexture color_g="31" color_b="31" id="white" color_a="255" color_r="31"/>
+		<vertex x="-42.084444" y="10.415556"/>
+		<vertex x="-37.915556" y="10.415556"/>
+		<vertex x="-37.915556" y="6.246667"/>
+		<vertex x="-42.084444" y="6.246667"/>
+	</block>
+	<block id="rect3619">
+		<position y="6.253334925" x="76.955554425" islayer="true" layerid="0"/>
+		<usetexture color_g="18" color_b="18" id="white" color_a="255" color_r="18"/>
+		<vertex x="-42.084444" y="2.077775"/>
+		<vertex x="-37.915556" y="2.077775"/>
+		<vertex x="-37.915556" y="-2.091114"/>
+		<vertex x="-42.084444" y="-2.091114"/>
+	</block>
+	<block id="rect3621">
+		<position y="10.422222425" x="72.786664425" islayer="true" layerid="0"/>
+		<usetexture color_g="31" color_b="31" id="white" color_a="255" color_r="31"/>
+		<vertex x="-42.084444" y="-6.260000"/>
+		<vertex x="-37.915556" y="-6.260000"/>
+		<vertex x="-37.915556" y="-10.428889"/>
+		<vertex x="-42.084444" y="-10.428889"/>
+	</block>
+	<block id="rect3623">
+		<position y="14.591109425" x="72.786664425" islayer="true" layerid="0"/>
+		<usetexture color_g="31" color_b="31" id="white" color_a="255" color_r="31"/>
+		<vertex x="-42.084444" y="-14.597774"/>
+		<vertex x="-37.915556" y="-14.597774"/>
+		<vertex x="-37.915556" y="-18.766663"/>
+		<vertex x="-42.084444" y="-18.766663"/>
+	</block>
+	<block id="rect3625">
+		<position y="18.759999925" x="68.617774425" islayer="true" layerid="0"/>
+		<usetexture color_g="39" color_b="39" id="white" color_a="255" color_r="39"/>
+		<vertex x="-42.084444" y="-22.935555"/>
+		<vertex x="-37.915556" y="-22.935555"/>
+		<vertex x="-37.915556" y="-27.104444"/>
+		<vertex x="-42.084444" y="-27.104444"/>
+	</block>
+	<block id="rect3627">
+		<position y="14.591109425" x="64.448889425" islayer="true" layerid="0"/>
+		<usetexture color_g="47" color_b="47" id="white" color_a="255" color_r="47"/>
+		<vertex x="-42.084444" y="-14.597774"/>
+		<vertex x="-37.915556" y="-14.597774"/>
+		<vertex x="-37.915556" y="-18.766663"/>
+		<vertex x="-42.084444" y="-18.766663"/>
+	</block>
+	<block id="rect3629">
+		<position y="22.928890425" x="72.786664425" islayer="true" layerid="0"/>
+		<usetexture color_g="31" color_b="31" id="white" color_a="255" color_r="31"/>
+		<vertex x="-42.084444" y="-31.273336"/>
+		<vertex x="-37.915556" y="-31.273336"/>
+		<vertex x="-37.915556" y="-35.442225"/>
+		<vertex x="-42.084444" y="-35.442225"/>
+	</block>
+	<block id="rect3631">
+		<position y="18.759999925" x="76.955554425" islayer="true" layerid="0"/>
+		<usetexture color_g="18" color_b="18" id="white" color_a="255" color_r="18"/>
+		<vertex x="-42.084444" y="-22.935555"/>
+		<vertex x="-37.915556" y="-22.935555"/>
+		<vertex x="-37.915556" y="-27.104444"/>
+		<vertex x="-42.084444" y="-27.104444"/>
+	</block>
+	<block id="rect5079">
+		<position y="18.759999925" x="6.084444425" islayer="true" layerid="0"/>
+		<usetexture color_g="208" color_b="208" id="white" color_a="255" color_r="208"/>
+		<vertex x="-42.084444" y="-22.935555"/>
+		<vertex x="-37.915556" y="-22.935555"/>
+		<vertex x="-37.915556" y="-27.104444"/>
+		<vertex x="-42.084444" y="-27.104444"/>
+	</block>
+	<block id="rect5081">
+		<position y="22.928890425" x="10.253333425" islayer="true" layerid="0"/>
+		<usetexture color_g="200" color_b="200" id="white" color_a="255" color_r="200"/>
+		<vertex x="-42.084444" y="-31.273336"/>
+		<vertex x="-37.915556" y="-31.273336"/>
+		<vertex x="-37.915556" y="-35.442225"/>
+		<vertex x="-42.084444" y="-35.442225"/>
+	</block>
+	<block id="rect5083">
+		<position y="6.253334925" x="43.604445425" islayer="true" layerid="0"/>
+		<usetexture color_g="99" color_b="99" id="white" color_a="255" color_r="99"/>
+		<vertex x="-42.084444" y="2.077775"/>
+		<vertex x="-37.915556" y="2.077775"/>
+		<vertex x="-37.915556" y="-2.091114"/>
+		<vertex x="-42.084444" y="-2.091114"/>
+	</block>
+	<block id="rect5085">
+		<position y="2.084444425" x="47.773332925" islayer="true" layerid="0"/>
+		<usetexture color_g="88" color_b="88" id="white" color_a="255" color_r="88"/>
+		<vertex x="-42.084444" y="10.415556"/>
+		<vertex x="-37.915556" y="10.415556"/>
+		<vertex x="-37.915556" y="6.246667"/>
+		<vertex x="-42.084444" y="6.246667"/>
+	</block>
+	<block id="rect5087">
+		<position y="2.084444425" x="51.942223425" islayer="true" layerid="0"/>
+		<usetexture color_g="74" color_b="74" id="white" color_a="255" color_r="74"/>
+		<vertex x="-42.084444" y="10.415556"/>
+		<vertex x="-37.915556" y="10.415556"/>
+		<vertex x="-37.915556" y="6.246667"/>
+		<vertex x="-42.084444" y="6.246667"/>
+	</block>
+	<block id="rect5089">
+		<position y="6.253334925" x="56.111109425" islayer="true" layerid="0"/>
+		<usetexture color_g="68" color_b="68" id="white" color_a="255" color_r="68"/>
+		<vertex x="-42.084444" y="2.077775"/>
+		<vertex x="-37.915556" y="2.077775"/>
+		<vertex x="-37.915556" y="-2.091114"/>
+		<vertex x="-42.084444" y="-2.091114"/>
+	</block>
+	<block id="rect5091">
+		<position y="2.084444425" x="60.279999425" islayer="true" layerid="0"/>
+		<usetexture color_g="60" color_b="60" id="white" color_a="255" color_r="60"/>
+		<vertex x="-42.084444" y="10.415556"/>
+		<vertex x="-37.915556" y="10.415556"/>
+		<vertex x="-37.915556" y="6.246667"/>
+		<vertex x="-42.084444" y="6.246667"/>
+	</block>
+	<block id="rect2967">
+		<position y="17.8887652933" x="4.01975628044"/>
+		<usetexture color_g="249" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.337082" y="-23.157713"/>
+		<vertex x="-39.880183" y="-22.940449"/>
+		<vertex x="-39.662918" y="-23.397348"/>
+		<vertex x="-40.119817" y="-23.614612"/>
+	</block>
+	<block id="rect2969">
+		<position y="17.6719405063" x="4.47466587919"/>
+		<usetexture color_g="226" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.337082" y="-22.724064"/>
+		<vertex x="-39.880183" y="-22.506799"/>
+		<vertex x="-39.662918" y="-22.963698"/>
+		<vertex x="-40.119817" y="-23.180963"/>
+	</block>
+	<block id="rect2997">
+		<position y="17.665579125" x="4.74891735"/>
+		<usetexture color_g="211" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.189191" y="-22.641968"/>
+		<vertex x="-39.810809" y="-22.641968"/>
+		<vertex x="-39.810809" y="-23.020349"/>
+		<vertex x="-40.189191" y="-23.020349"/>
+	</block>
+	<block id="rect2967-1">
+		<position y="18.35722325" x="8.18602025"/>
+		<usetexture color_g="189" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3049">
+		<position y="18.35722325" x="8.68602025"/>
+		<usetexture color_g="173" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3051">
+		<position y="18.35722325" x="9.18602025"/>
+		<usetexture color_g="143" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3053">
+		<position y="18.35722325" x="9.68602025"/>
+		<usetexture color_g="111" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3055">
+		<position y="18.35722325" x="10.18602025"/>
+		<usetexture color_g="89" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3057">
+		<position y="18.35722325" x="10.68602025"/>
+		<usetexture color_g="70" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3059">
+		<position y="18.35722325" x="11.18602025"/>
+		<usetexture color_g="50" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3061">
+		<position y="18.35722325" x="11.68602025"/>
+		<usetexture color_g="24" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3063">
+		<position y="18.35722325" x="12.18602025"/>
+		<usetexture color_g="0" color_b="9" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3065">
+		<position y="17.85722325" x="8.18602025"/>
+		<usetexture color_g="189" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-22.961484"/>
+		<vertex x="-39.747037" y="-22.961484"/>
+		<vertex x="-39.747037" y="-23.467409"/>
+		<vertex x="-40.252963" y="-23.467409"/>
+	</block>
+	<block id="rect3067">
+		<position y="18.35722325" x="12.68602025"/>
+		<usetexture color_g="0" color_b="36" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3069">
+		<position y="18.35722325" x="13.18601925"/>
+		<usetexture color_g="0" color_b="87" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3071">
+		<position y="18.35722325" x="13.68602075"/>
+		<usetexture color_g="0" color_b="101" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3073">
+		<position y="18.35722325" x="14.18602075"/>
+		<usetexture color_g="0" color_b="122" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3075">
+		<position y="18.35722325" x="14.68602075"/>
+		<usetexture color_g="0" color_b="148" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3077">
+		<position y="18.35722325" x="15.18602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3079">
+		<position y="18.35722325" x="15.68602075"/>
+		<usetexture color_g="0" color_b="207" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3081">
+		<position y="18.35722325" x="16.18602075"/>
+		<usetexture color_g="0" color_b="229" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3083">
+		<position y="18.35722325" x="16.68602075"/>
+		<usetexture color_g="0" color_b="251" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3085">
+		<position y="18.35722325" x="17.18602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="233"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3087">
+		<position y="18.35722325" x="17.68602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="207"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3089">
+		<position y="18.35722325" x="18.18602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="190"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3091">
+		<position y="18.35722325" x="18.68602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="166"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3093">
+		<position y="18.35722325" x="19.18602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="143"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3095">
+		<position y="18.35722325" x="19.68602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="118"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3097">
+		<position y="18.35722325" x="20.18602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="91"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3099">
+		<position y="18.35722325" x="20.68602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="51"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3101">
+		<position y="18.35722325" x="21.18602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="7"/>
+		<vertex x="-40.252963" y="-23.961484"/>
+		<vertex x="-39.747037" y="-23.961484"/>
+		<vertex x="-39.747037" y="-24.467409"/>
+		<vertex x="-40.252963" y="-24.467409"/>
+	</block>
+	<block id="rect3107">
+		<position y="17.85722325" x="21.18602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="7"/>
+		<vertex x="-40.252963" y="-22.961484"/>
+		<vertex x="-39.747037" y="-22.961484"/>
+		<vertex x="-39.747037" y="-23.467409"/>
+		<vertex x="-40.252963" y="-23.467409"/>
+	</block>
+	<block id="rect3127">
+		<position y="14.45722325" x="11.48602025"/>
+		<usetexture color_g="50" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.667409"/>
+		<vertex x="-40.252963" y="-16.667409"/>
+	</block>
+	<block id="rect3129">
+		<position y="14.45722325" x="11.98602025"/>
+		<usetexture color_g="24" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.667409"/>
+		<vertex x="-40.252963" y="-16.667409"/>
+	</block>
+	<block id="rect3131">
+		<position y="14.45722325" x="12.48602025"/>
+		<usetexture color_g="0" color_b="9" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.667409"/>
+		<vertex x="-40.252963" y="-16.667409"/>
+	</block>
+	<block id="rect3133">
+		<position y="14.45722325" x="12.98602025"/>
+		<usetexture color_g="0" color_b="36" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.667409"/>
+		<vertex x="-40.252963" y="-16.667409"/>
+	</block>
+	<block id="rect3135">
+		<position y="14.45722325" x="13.48602075"/>
+		<usetexture color_g="0" color_b="87" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.667409"/>
+		<vertex x="-40.252963" y="-16.667409"/>
+	</block>
+	<block id="rect3137">
+		<position y="14.45722325" x="13.98602075"/>
+		<usetexture color_g="0" color_b="101" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.667409"/>
+		<vertex x="-40.252963" y="-16.667409"/>
+	</block>
+	<block id="rect3147">
+		<position y="17.35722325" x="21.18602075"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="7"/>
+		<vertex x="-40.252963" y="-21.961484"/>
+		<vertex x="-39.747037" y="-21.961484"/>
+		<vertex x="-39.747037" y="-22.467409"/>
+		<vertex x="-40.252963" y="-22.467409"/>
+	</block>
+	<block id="rect3217">
+		<position y="7.95723825" x="17.46110775"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="233"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3219">
+		<position y="7.95723825" x="17.96110775"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="207"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3221">
+		<position y="7.95723825" x="18.46110625"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="190"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3223">
+		<position y="7.95723825" x="18.96110625"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="166"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3225">
+		<position y="7.95723825" x="19.46110625"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="143"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3227">
+		<position y="7.95723825" x="19.96110625"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="118"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3229">
+		<position y="7.95723825" x="20.46110625"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="91"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3231">
+		<position y="7.95723825" x="20.96110625"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="51"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3233">
+		<position y="7.95723825" x="21.46110625"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="7"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3235">
+		<position y="7.95723825" x="21.96110625"/>
+		<usetexture color_g="78" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3237">
+		<position y="7.95723825" x="22.46110625"/>
+		<usetexture color_g="109" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3239">
+		<position y="7.95723825" x="22.96110625"/>
+		<usetexture color_g="132" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3241">
+		<position y="7.95723825" x="23.46110625"/>
+		<usetexture color_g="159" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3243">
+		<position y="7.87369865392" x="24.0270158574"/>
+		<usetexture color_g="188" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.314044" y="-3.076060"/>
+		<vertex x="-39.828662" y="-2.933353"/>
+		<vertex x="-39.685956" y="-3.418735"/>
+		<vertex x="-40.171338" y="-3.561442"/>
+	</block>
+	<block id="rect3245">
+		<position y="7.73266365099" x="24.506711728"/>
+		<usetexture color_g="214" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.314044" y="-2.793990"/>
+		<vertex x="-39.828662" y="-2.651283"/>
+		<vertex x="-39.685956" y="-3.136665"/>
+		<vertex x="-40.171338" y="-3.279372"/>
+	</block>
+	<block id="rect3247">
+		<position y="7.59162836599" x="24.986408558"/>
+		<usetexture color_g="231" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.314044" y="-2.511919"/>
+		<vertex x="-39.828662" y="-2.369213"/>
+		<vertex x="-39.685956" y="-2.854594"/>
+		<vertex x="-40.171338" y="-2.997301"/>
+	</block>
+	<block id="rect3249">
+		<position y="7.45059308099" x="25.466105388"/>
+		<usetexture color_g="253" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.314044" y="-2.229849"/>
+		<vertex x="-39.828662" y="-2.087142"/>
+		<vertex x="-39.685956" y="-2.572524"/>
+		<vertex x="-40.171338" y="-2.715230"/>
+	</block>
+	<block id="rect2929">
+		<position y="14.45722325" x="14.48602075"/>
+		<usetexture color_g="0" color_b="122" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.667409"/>
+		<vertex x="-40.252963" y="-16.667409"/>
+	</block>
+	<block id="rect2931">
+		<position y="14.45722325" x="14.98602075"/>
+		<usetexture color_g="0" color_b="148" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.667409"/>
+		<vertex x="-40.252963" y="-16.667409"/>
+	</block>
+	<block id="rect2933">
+		<position y="14.45722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.161484"/>
+		<vertex x="-39.747037" y="-16.667409"/>
+		<vertex x="-40.252963" y="-16.667409"/>
+	</block>
+	<block id="rect2941">
+		<position y="13.95722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-15.161484"/>
+		<vertex x="-39.747037" y="-15.161484"/>
+		<vertex x="-39.747037" y="-15.667409"/>
+		<vertex x="-40.252963" y="-15.667409"/>
+	</block>
+	<block id="rect2943">
+		<position y="13.45722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-14.161484"/>
+		<vertex x="-39.747037" y="-14.161484"/>
+		<vertex x="-39.747037" y="-14.667409"/>
+		<vertex x="-40.252963" y="-14.667409"/>
+	</block>
+	<block id="rect2945">
+		<position y="12.95722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-13.161484"/>
+		<vertex x="-39.747037" y="-13.161484"/>
+		<vertex x="-39.747037" y="-13.667409"/>
+		<vertex x="-40.252963" y="-13.667409"/>
+	</block>
+	<block id="rect2947">
+		<position y="12.45722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-12.161484"/>
+		<vertex x="-39.747037" y="-12.161484"/>
+		<vertex x="-39.747037" y="-12.667409"/>
+		<vertex x="-40.252963" y="-12.667409"/>
+	</block>
+	<block id="rect2949">
+		<position y="11.95722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-11.161484"/>
+		<vertex x="-39.747037" y="-11.161484"/>
+		<vertex x="-39.747037" y="-11.667409"/>
+		<vertex x="-40.252963" y="-11.667409"/>
+	</block>
+	<block id="rect2951">
+		<position y="11.45722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-10.161484"/>
+		<vertex x="-39.747037" y="-10.161484"/>
+		<vertex x="-39.747037" y="-10.667409"/>
+		<vertex x="-40.252963" y="-10.667409"/>
+	</block>
+	<block id="rect2953">
+		<position y="10.95722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-9.161484"/>
+		<vertex x="-39.747037" y="-9.161484"/>
+		<vertex x="-39.747037" y="-9.667409"/>
+		<vertex x="-40.252963" y="-9.667409"/>
+	</block>
+	<block id="rect2955">
+		<position y="10.45722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-8.161484"/>
+		<vertex x="-39.747037" y="-8.161484"/>
+		<vertex x="-39.747037" y="-8.667409"/>
+		<vertex x="-40.252963" y="-8.667409"/>
+	</block>
+	<block id="rect2957">
+		<position y="9.95722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-7.161484"/>
+		<vertex x="-39.747037" y="-7.161484"/>
+		<vertex x="-39.747037" y="-7.667409"/>
+		<vertex x="-40.252963" y="-7.667409"/>
+	</block>
+	<block id="rect2959">
+		<position y="9.45722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-6.161484"/>
+		<vertex x="-39.747037" y="-6.161484"/>
+		<vertex x="-39.747037" y="-6.667409"/>
+		<vertex x="-40.252963" y="-6.667409"/>
+	</block>
+	<block id="rect2961">
+		<position y="8.95722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.161484"/>
+		<vertex x="-39.747037" y="-5.161484"/>
+		<vertex x="-39.747037" y="-5.667409"/>
+		<vertex x="-40.252963" y="-5.667409"/>
+	</block>
+	<block id="rect2963">
+		<position y="8.45722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-4.161484"/>
+		<vertex x="-39.747037" y="-4.161484"/>
+		<vertex x="-39.747037" y="-4.667409"/>
+		<vertex x="-40.252963" y="-4.667409"/>
+	</block>
+	<block id="rect2965">
+		<position y="7.95722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-3.161484"/>
+		<vertex x="-39.747037" y="-3.161484"/>
+		<vertex x="-39.747037" y="-3.667409"/>
+		<vertex x="-40.252963" y="-3.667409"/>
+	</block>
+	<block id="rect2968">
+		<position y="7.45722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-2.161484"/>
+		<vertex x="-39.747037" y="-2.161484"/>
+		<vertex x="-39.747037" y="-2.667409"/>
+		<vertex x="-40.252963" y="-2.667409"/>
+	</block>
+	<block id="rect2970">
+		<position y="6.95722325" x="15.48602075"/>
+		<usetexture color_g="0" color_b="187" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-1.161484"/>
+		<vertex x="-39.747037" y="-1.161484"/>
+		<vertex x="-39.747037" y="-1.667409"/>
+		<vertex x="-40.252963" y="-1.667409"/>
+	</block>
+	<block id="rect3596">
+		<position y="7.95723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3598">
+		<position y="7.95723825" x="32.76110475"/>
+		<usetexture color_g="255" color_b="126" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3600">
+		<position y="7.95723825" x="33.26110475"/>
+		<usetexture color_g="255" color_b="107" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3602">
+		<position y="7.95723825" x="33.76110475"/>
+		<usetexture color_g="255" color_b="76" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3604">
+		<position y="7.95723825" x="34.26110475"/>
+		<usetexture color_g="255" color_b="53" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3606">
+		<position y="7.95723825" x="34.76110475"/>
+		<usetexture color_g="255" color_b="20" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3608">
+		<position y="7.95723825" x="35.26110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="6"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3610">
+		<position y="7.95723825" x="35.76110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="38"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3612">
+		<position y="7.95723825" x="36.26110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="52"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3614">
+		<position y="7.95723825" x="36.76110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="92"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3616">
+		<position y="7.95723825" x="37.26110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="112"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3618">
+		<position y="7.95723825" x="37.76110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="137"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3620">
+		<position y="7.95723825" x="38.26110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="162"/>
+		<vertex x="-40.252963" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.161514"/>
+		<vertex x="-39.747037" y="-3.667439"/>
+		<vertex x="-40.252963" y="-3.667439"/>
+	</block>
+	<block id="rect3622">
+		<position y="7.45723825" x="38.26110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="162"/>
+		<vertex x="-40.252963" y="-2.161514"/>
+		<vertex x="-39.747037" y="-2.161514"/>
+		<vertex x="-39.747037" y="-2.667439"/>
+		<vertex x="-40.252963" y="-2.667439"/>
+	</block>
+	<block id="rect3624">
+		<position y="6.95723825" x="38.26110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="162"/>
+		<vertex x="-40.252963" y="-1.161514"/>
+		<vertex x="-39.747037" y="-1.161514"/>
+		<vertex x="-39.747037" y="-1.667439"/>
+		<vertex x="-40.252963" y="-1.667439"/>
+	</block>
+	<block id="rect4410">
+		<position y="5.65723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="1.438486"/>
+		<vertex x="-39.747037" y="1.438486"/>
+		<vertex x="-39.747037" y="0.932561"/>
+		<vertex x="-40.252963" y="0.932561"/>
+	</block>
+	<block id="rect4412">
+		<position y="5.65723825" x="32.76110475"/>
+		<usetexture color_g="255" color_b="126" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="1.438486"/>
+		<vertex x="-39.747037" y="1.438486"/>
+		<vertex x="-39.747037" y="0.932561"/>
+		<vertex x="-40.252963" y="0.932561"/>
+	</block>
+	<block id="rect4414">
+		<position y="5.65723825" x="33.26110475"/>
+		<usetexture color_g="255" color_b="107" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="1.438486"/>
+		<vertex x="-39.747037" y="1.438486"/>
+		<vertex x="-39.747037" y="0.932561"/>
+		<vertex x="-40.252963" y="0.932561"/>
+	</block>
+	<block id="rect4416">
+		<position y="5.65723825" x="33.76110475"/>
+		<usetexture color_g="255" color_b="76" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="1.438486"/>
+		<vertex x="-39.747037" y="1.438486"/>
+		<vertex x="-39.747037" y="0.932561"/>
+		<vertex x="-40.252963" y="0.932561"/>
+	</block>
+	<block id="rect4418">
+		<position y="5.65723825" x="34.26110475"/>
+		<usetexture color_g="255" color_b="53" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="1.438486"/>
+		<vertex x="-39.747037" y="1.438486"/>
+		<vertex x="-39.747037" y="0.932561"/>
+		<vertex x="-40.252963" y="0.932561"/>
+	</block>
+	<block id="rect4420">
+		<position y="5.65723825" x="34.76110475"/>
+		<usetexture color_g="255" color_b="20" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="1.438486"/>
+		<vertex x="-39.747037" y="1.438486"/>
+		<vertex x="-39.747037" y="0.932561"/>
+		<vertex x="-40.252963" y="0.932561"/>
+	</block>
+	<block id="rect4422">
+		<position y="5.65723825" x="35.26110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="6"/>
+		<vertex x="-40.252963" y="1.438486"/>
+		<vertex x="-39.747037" y="1.438486"/>
+		<vertex x="-39.747037" y="0.932561"/>
+		<vertex x="-40.252963" y="0.932561"/>
+	</block>
+	<block id="rect4424">
+		<position y="5.65723825" x="35.76110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="38"/>
+		<vertex x="-40.252963" y="1.438486"/>
+		<vertex x="-39.747037" y="1.438486"/>
+		<vertex x="-39.747037" y="0.932561"/>
+		<vertex x="-40.252963" y="0.932561"/>
+	</block>
+	<block id="rect4428">
+		<position y="5.15723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="2.438486"/>
+		<vertex x="-39.747037" y="2.438486"/>
+		<vertex x="-39.747037" y="1.932561"/>
+		<vertex x="-40.252963" y="1.932561"/>
+	</block>
+	<block id="rect4430">
+		<position y="4.65723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="3.438486"/>
+		<vertex x="-39.747037" y="3.438486"/>
+		<vertex x="-39.747037" y="2.932561"/>
+		<vertex x="-40.252963" y="2.932561"/>
+	</block>
+	<block id="rect4432">
+		<position y="4.15723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="4.438486"/>
+		<vertex x="-39.747037" y="4.438486"/>
+		<vertex x="-39.747037" y="3.932561"/>
+		<vertex x="-40.252963" y="3.932561"/>
+	</block>
+	<block id="rect4434">
+		<position y="3.65723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="5.438486"/>
+		<vertex x="-39.747037" y="5.438486"/>
+		<vertex x="-39.747037" y="4.932561"/>
+		<vertex x="-40.252963" y="4.932561"/>
+	</block>
+	<block id="rect4436">
+		<position y="9.25723825" x="44.76110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="219"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4438">
+		<position y="9.25723825" x="45.26110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="230"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4440">
+		<position y="9.25723825" x="45.76110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="245"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4442">
+		<position y="9.25723825" x="46.26110175"/>
+		<usetexture color_g="251" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4444">
+		<position y="9.25723825" x="46.76110175"/>
+		<usetexture color_g="236" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4446">
+		<position y="9.25723825" x="47.26110175"/>
+		<usetexture color_g="222" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4448">
+		<position y="9.25723825" x="47.76110175"/>
+		<usetexture color_g="200" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4450">
+		<position y="9.25723825" x="48.26110175"/>
+		<usetexture color_g="181" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4452">
+		<position y="9.25723825" x="48.76110175"/>
+		<usetexture color_g="163" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4454">
+		<position y="9.25723825" x="49.26110175"/>
+		<usetexture color_g="146" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4456">
+		<position y="9.25723825" x="49.76110175"/>
+		<usetexture color_g="129" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4458">
+		<position y="9.25723825" x="50.26110275"/>
+		<usetexture color_g="100" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4460">
+		<position y="9.25723825" x="50.76110275"/>
+		<usetexture color_g="57" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+	</block>
+	<block id="rect4462">
+		<position y="11.25723825" x="44.76110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="219"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+	</block>
+	<block id="rect4464">
+		<position y="11.25723825" x="45.26110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="230"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+	</block>
+	<block id="rect4466">
+		<position y="11.25723825" x="45.76110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="245"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+	</block>
+	<block id="rect4468">
+		<position y="11.25723825" x="46.26110175"/>
+		<usetexture color_g="251" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+	</block>
+	<block id="rect4470">
+		<position y="11.25723825" x="46.76110175"/>
+		<usetexture color_g="236" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+	</block>
+	<block id="rect4472">
+		<position y="11.25723825" x="47.26110175"/>
+		<usetexture color_g="222" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+	</block>
+	<block id="rect4474">
+		<position y="11.25723825" x="47.76110175"/>
+		<usetexture color_g="200" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+	</block>
+	<block id="rect4476">
+		<position y="11.25723825" x="48.26110175"/>
+		<usetexture color_g="181" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+	</block>
+	<block id="rect4478">
+		<position y="11.25723825" x="48.76110175"/>
+		<usetexture color_g="163" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+	</block>
+	<block id="rect4482">
+		<position y="11.75723825" x="49.76110175"/>
+		<usetexture color_g="129" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+	</block>
+	<block id="rect4484">
+		<position y="11.75723825" x="50.26110275"/>
+		<usetexture color_g="100" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+	</block>
+	<block id="rect4486">
+		<position y="11.75723825" x="50.76110275"/>
+		<usetexture color_g="57" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+	</block>
+	<block id="rect4488">
+		<position y="9.75723825" x="44.76110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="219"/>
+		<vertex x="-40.252963" y="-6.761514"/>
+		<vertex x="-39.747037" y="-6.761514"/>
+		<vertex x="-39.747037" y="-7.267439"/>
+		<vertex x="-40.252963" y="-7.267439"/>
+	</block>
+	<block id="rect4490">
+		<position y="10.25723825" x="44.76110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="219"/>
+		<vertex x="-40.252963" y="-7.761514"/>
+		<vertex x="-39.747037" y="-7.761514"/>
+		<vertex x="-39.747037" y="-8.267439"/>
+		<vertex x="-40.252963" y="-8.267439"/>
+	</block>
+	<block id="rect4492">
+		<position y="10.75723825" x="44.76110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="219"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+	</block>
+	<block id="rect4494">
+		<position y="9.25723825" x="58.26110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="137"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4496">
+		<position y="9.25723825" x="57.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="156"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4498">
+		<position y="9.25723825" x="57.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="175"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4500">
+		<position y="9.25723825" x="56.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="199"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4502">
+		<position y="9.25723825" x="56.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="211"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4504">
+		<position y="9.25723825" x="55.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="223"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4506">
+		<position y="9.25723825" x="55.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="237"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4508">
+		<position y="9.25723825" x="54.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="252"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4510">
+		<position y="9.25723825" x="54.26109725"/>
+		<usetexture color_g="0" color_b="234" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4512">
+		<position y="9.25723825" x="53.76109725"/>
+		<usetexture color_g="0" color_b="173" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4514">
+		<position y="9.25723825" x="53.26109725"/>
+		<usetexture color_g="0" color_b="140" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4516">
+		<position y="9.25723825" x="52.76109725"/>
+		<usetexture color_g="0" color_b="123" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4518">
+		<position y="9.25723825" x="52.26109725"/>
+		<usetexture color_g="0" color_b="103" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4520">
+		<position y="11.25723825" x="58.26110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="137"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4522">
+		<position y="11.25723825" x="57.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="156"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4524">
+		<position y="11.25723825" x="57.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="175"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4526">
+		<position y="11.25723825" x="56.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="199"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4528">
+		<position y="11.25723825" x="56.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="211"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4530">
+		<position y="11.25723825" x="55.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="223"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4532">
+		<position y="11.25723825" x="55.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="237"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4534">
+		<position y="11.25723825" x="54.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="252"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4536">
+		<position y="11.25723825" x="54.26109725"/>
+		<usetexture color_g="0" color_b="234" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4540">
+		<position y="11.75723825" x="53.26109725"/>
+		<usetexture color_g="0" color_b="140" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+	</block>
+	<block id="rect4542">
+		<position y="11.75723825" x="52.76109725"/>
+		<usetexture color_g="0" color_b="123" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+	</block>
+	<block id="rect4544">
+		<position y="11.75723825" x="52.26109725"/>
+		<usetexture color_g="0" color_b="103" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+	</block>
+	<block id="rect4546">
+		<position y="9.75723825" x="58.26110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="137"/>
+		<vertex x="-39.747037" y="-6.761514"/>
+		<vertex x="-39.747037" y="-7.267439"/>
+		<vertex x="-40.252963" y="-7.267439"/>
+		<vertex x="-40.252963" y="-6.761514"/>
+	</block>
+	<block id="rect4548">
+		<position y="10.25723825" x="58.26110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="137"/>
+		<vertex x="-39.747037" y="-7.761514"/>
+		<vertex x="-39.747037" y="-8.267439"/>
+		<vertex x="-40.252963" y="-8.267439"/>
+		<vertex x="-40.252963" y="-7.761514"/>
+	</block>
+	<block id="rect4550">
+		<position y="10.75723825" x="58.26110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="137"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+	</block>
+	<block id="rect4552">
+		<position y="11.75723825" x="51.26110275"/>
+		<usetexture color_g="15" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+	</block>
+	<block id="rect4554">
+		<position y="3.15723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="6.438486"/>
+		<vertex x="-39.747037" y="6.438486"/>
+		<vertex x="-39.747037" y="5.932561"/>
+		<vertex x="-40.252963" y="5.932561"/>
+	</block>
+	<block id="rect4556">
+		<position y="2.65723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="7.438486"/>
+		<vertex x="-39.747037" y="7.438486"/>
+		<vertex x="-39.747037" y="6.932561"/>
+		<vertex x="-40.252963" y="6.932561"/>
+	</block>
+	<block id="rect4558">
+		<position y="2.15723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="8.438486"/>
+		<vertex x="-39.747037" y="8.438486"/>
+		<vertex x="-39.747037" y="7.932561"/>
+		<vertex x="-40.252963" y="7.932561"/>
+	</block>
+	<block id="rect4560">
+		<position y="1.65723825" x="32.26110475"/>
+		<usetexture color_g="255" color_b="141" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="9.438486"/>
+		<vertex x="-39.747037" y="9.438486"/>
+		<vertex x="-39.747037" y="8.932561"/>
+		<vertex x="-40.252963" y="8.932561"/>
+	</block>
+	<block id="rect4562">
+		<position y="1.65723825" x="32.76110475"/>
+		<usetexture color_g="255" color_b="126" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="9.438486"/>
+		<vertex x="-39.747037" y="9.438486"/>
+		<vertex x="-39.747037" y="8.932561"/>
+		<vertex x="-40.252963" y="8.932561"/>
+	</block>
+	<block id="rect4564">
+		<position y="1.65723825" x="33.26110475"/>
+		<usetexture color_g="255" color_b="107" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="9.438486"/>
+		<vertex x="-39.747037" y="9.438486"/>
+		<vertex x="-39.747037" y="8.932561"/>
+		<vertex x="-40.252963" y="8.932561"/>
+	</block>
+	<block id="rect4566">
+		<position y="1.65723825" x="33.76110475"/>
+		<usetexture color_g="255" color_b="76" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="9.438486"/>
+		<vertex x="-39.747037" y="9.438486"/>
+		<vertex x="-39.747037" y="8.932561"/>
+		<vertex x="-40.252963" y="8.932561"/>
+	</block>
+	<block id="rect4568">
+		<position y="1.65723825" x="34.26110475"/>
+		<usetexture color_g="255" color_b="53" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="9.438486"/>
+		<vertex x="-39.747037" y="9.438486"/>
+		<vertex x="-39.747037" y="8.932561"/>
+		<vertex x="-40.252963" y="8.932561"/>
+	</block>
+	<block id="rect4570">
+		<position y="1.65723825" x="34.76110475"/>
+		<usetexture color_g="255" color_b="20" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="9.438486"/>
+		<vertex x="-39.747037" y="9.438486"/>
+		<vertex x="-39.747037" y="8.932561"/>
+		<vertex x="-40.252963" y="8.932561"/>
+	</block>
+	<block id="rect4572">
+		<position y="1.65723825" x="35.26110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="6"/>
+		<vertex x="-40.252963" y="9.438486"/>
+		<vertex x="-39.747037" y="9.438486"/>
+		<vertex x="-39.747037" y="8.932561"/>
+		<vertex x="-40.252963" y="8.932561"/>
+	</block>
+	<block id="rect4574">
+		<position y="1.65723825" x="35.76110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="38"/>
+		<vertex x="-40.252963" y="9.438486"/>
+		<vertex x="-39.747037" y="9.438486"/>
+		<vertex x="-39.747037" y="8.932561"/>
+		<vertex x="-40.252963" y="8.932561"/>
+	</block>
+	<block id="rect4576">
+		<position y="11.75723825" x="51.76109725"/>
+		<usetexture color_g="0" color_b="84" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+	</block>
+	<block id="rect4578">
+		<position y="9.25723825" x="61.76110725"/>
+		<usetexture color_g="133" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4580">
+		<position y="9.25723825" x="61.26109725"/>
+		<usetexture color_g="96" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4582">
+		<position y="9.25723825" x="60.76109725"/>
+		<usetexture color_g="61" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4584">
+		<position y="9.25723825" x="60.26109725"/>
+		<usetexture color_g="9" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4586">
+		<position y="9.25723825" x="59.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="50"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4588">
+		<position y="9.25723825" x="59.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="80"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4590">
+		<position y="9.25723825" x="58.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="112"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4592">
+		<position y="9.25723825" x="65.26110725"/>
+		<usetexture color_g="255" color_b="179" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4594">
+		<position y="9.25723825" x="64.76109725"/>
+		<usetexture color_g="255" color_b="198" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4596">
+		<position y="9.25723825" x="64.26109725"/>
+		<usetexture color_g="255" color_b="225" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4598">
+		<position y="9.25723825" x="63.76109725"/>
+		<usetexture color_g="250" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4600">
+		<position y="9.25723825" x="63.26109725"/>
+		<usetexture color_g="220" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4602">
+		<position y="9.25723825" x="62.76109725"/>
+		<usetexture color_g="191" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4604">
+		<position y="9.25723825" x="62.26109725"/>
+		<usetexture color_g="167" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.761514"/>
+		<vertex x="-39.747037" y="-6.267439"/>
+		<vertex x="-40.252963" y="-6.267439"/>
+		<vertex x="-40.252963" y="-5.761514"/>
+	</block>
+	<block id="rect4606">
+		<position y="7.00623725" x="58.26110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="137"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4608">
+		<position y="7.00623725" x="57.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="156"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4610">
+		<position y="7.00623725" x="57.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="175"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4612">
+		<position y="7.00623725" x="56.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="199"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4614">
+		<position y="7.00623725" x="56.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="211"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4616">
+		<position y="7.00623725" x="55.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="223"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4618">
+		<position y="7.00623725" x="61.76110725"/>
+		<usetexture color_g="133" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4620">
+		<position y="7.00623725" x="61.26109725"/>
+		<usetexture color_g="96" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4622">
+		<position y="7.00623725" x="60.76109725"/>
+		<usetexture color_g="61" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4624">
+		<position y="7.00623725" x="60.26109725"/>
+		<usetexture color_g="9" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4626">
+		<position y="7.00623725" x="59.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="50"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4628">
+		<position y="7.00623725" x="59.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="80"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4630">
+		<position y="7.00623725" x="58.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="112"/>
+		<vertex x="-39.747037" y="-1.259512"/>
+		<vertex x="-39.747037" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.765437"/>
+		<vertex x="-40.252963" y="-1.259512"/>
+	</block>
+	<block id="rect4632">
+		<position y="9.75723825" x="64.76110725"/>
+		<usetexture color_g="255" color_b="198" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-6.761514"/>
+		<vertex x="-39.747037" y="-7.267439"/>
+		<vertex x="-40.252963" y="-7.267439"/>
+		<vertex x="-40.252963" y="-6.761514"/>
+	</block>
+	<block id="rect4634">
+		<position y="10.25723825" x="64.26110725"/>
+		<usetexture color_g="255" color_b="225" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-7.761514"/>
+		<vertex x="-39.747037" y="-8.267439"/>
+		<vertex x="-40.252963" y="-8.267439"/>
+		<vertex x="-40.252963" y="-7.761514"/>
+	</block>
+	<block id="rect4636">
+		<position y="10.75723825" x="63.76110725"/>
+		<usetexture color_g="250" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+	</block>
+	<block id="rect4638">
+		<position y="11.25723825" x="63.26110725"/>
+		<usetexture color_g="220" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4640">
+		<position y="11.75723825" x="62.76110725"/>
+		<usetexture color_g="191" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+	</block>
+	<block id="rect4642">
+		<position y="12.25723825" x="62.26110725"/>
+		<usetexture color_g="167" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-11.761514"/>
+		<vertex x="-39.747037" y="-12.267439"/>
+		<vertex x="-40.252963" y="-12.267439"/>
+		<vertex x="-40.252963" y="-11.761514"/>
+	</block>
+	<block id="rect4644">
+		<position y="12.75723825" x="61.76110725"/>
+		<usetexture color_g="133" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-12.761514"/>
+		<vertex x="-39.747037" y="-13.267439"/>
+		<vertex x="-40.252963" y="-13.267439"/>
+		<vertex x="-40.252963" y="-12.761514"/>
+	</block>
+	<block id="rect4646">
+		<position y="13.25723825" x="61.26110725"/>
+		<usetexture color_g="96" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-13.761514"/>
+		<vertex x="-39.747037" y="-14.267439"/>
+		<vertex x="-40.252963" y="-14.267439"/>
+		<vertex x="-40.252963" y="-13.761514"/>
+	</block>
+	<block id="rect4648">
+		<position y="12.75723825" x="60.76110725"/>
+		<usetexture color_g="61" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-12.761514"/>
+		<vertex x="-39.747037" y="-13.267439"/>
+		<vertex x="-40.252963" y="-13.267439"/>
+		<vertex x="-40.252963" y="-12.761514"/>
+	</block>
+	<block id="rect4650">
+		<position y="12.25723825" x="60.26110725"/>
+		<usetexture color_g="9" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-11.761514"/>
+		<vertex x="-39.747037" y="-12.267439"/>
+		<vertex x="-40.252963" y="-12.267439"/>
+		<vertex x="-40.252963" y="-11.761514"/>
+	</block>
+	<block id="rect4652">
+		<position y="11.75723825" x="59.76110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="50"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+	</block>
+	<block id="rect4654">
+		<position y="11.25723825" x="59.26110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="80"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4656">
+		<position y="11.25723825" x="58.76110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="112"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4658">
+		<position y="10.75723825" x="59.76110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="50"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+	</block>
+	<block id="rect4660">
+		<position y="10.25723825" x="60.26110725"/>
+		<usetexture color_g="9" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-7.761514"/>
+		<vertex x="-39.747037" y="-8.267439"/>
+		<vertex x="-40.252963" y="-8.267439"/>
+		<vertex x="-40.252963" y="-7.761514"/>
+	</block>
+	<block id="rect4662">
+		<position y="9.75723825" x="60.76110725"/>
+		<usetexture color_g="61" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-6.761514"/>
+		<vertex x="-39.747037" y="-7.267439"/>
+		<vertex x="-40.252963" y="-7.267439"/>
+		<vertex x="-40.252963" y="-6.761514"/>
+	</block>
+	<block id="rect4664">
+		<position y="10.25723825" x="61.26110725"/>
+		<usetexture color_g="96" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-7.761514"/>
+		<vertex x="-39.747037" y="-8.267439"/>
+		<vertex x="-40.252963" y="-8.267439"/>
+		<vertex x="-40.252963" y="-7.761514"/>
+	</block>
+	<block id="rect4666">
+		<position y="10.75723825" x="61.76110725"/>
+		<usetexture color_g="133" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+	</block>
+	<block id="rect4668">
+		<position y="11.25723825" x="62.26110725"/>
+		<usetexture color_g="167" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-9.761514"/>
+		<vertex x="-39.747037" y="-10.267439"/>
+		<vertex x="-40.252963" y="-10.267439"/>
+		<vertex x="-40.252963" y="-9.761514"/>
+	</block>
+	<block id="rect4670">
+		<position y="3.75723825" x="30.26110475"/>
+		<usetexture color_g="255" color_b="204" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="5.238486"/>
+		<vertex x="-39.747037" y="5.238486"/>
+		<vertex x="-39.747037" y="4.732561"/>
+		<vertex x="-40.252963" y="4.732561"/>
+	</block>
+	<block id="rect4672">
+		<position y="2.25723825" x="31.76110475"/>
+		<usetexture color_g="255" color_b="160" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="8.238486"/>
+		<vertex x="-39.747037" y="8.238486"/>
+		<vertex x="-39.747037" y="7.732561"/>
+		<vertex x="-40.252963" y="7.732561"/>
+	</block>
+	<block id="rect4674">
+		<position y="2.75723825" x="31.26110475"/>
+		<usetexture color_g="255" color_b="174" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="7.238486"/>
+		<vertex x="-39.747037" y="7.238486"/>
+		<vertex x="-39.747037" y="6.732561"/>
+		<vertex x="-40.252963" y="6.732561"/>
+	</block>
+	<block id="rect4676">
+		<position y="3.25723825" x="30.76110475"/>
+		<usetexture color_g="255" color_b="191" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="6.238486"/>
+		<vertex x="-39.747037" y="6.238486"/>
+		<vertex x="-39.747037" y="5.732561"/>
+		<vertex x="-40.252963" y="5.732561"/>
+	</block>
+	<block id="rect4678">
+		<position y="4.25723825" x="30.76110475"/>
+		<usetexture color_g="255" color_b="191" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="4.238486"/>
+		<vertex x="-39.747037" y="4.238486"/>
+		<vertex x="-39.747037" y="3.732561"/>
+		<vertex x="-40.252963" y="3.732561"/>
+	</block>
+	<block id="rect4680">
+		<position y="4.75723825" x="31.26110475"/>
+		<usetexture color_g="255" color_b="174" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="3.238486"/>
+		<vertex x="-39.747037" y="3.238486"/>
+		<vertex x="-39.747037" y="2.732561"/>
+		<vertex x="-40.252963" y="2.732561"/>
+	</block>
+	<block id="rect4682">
+		<position y="5.25723825" x="31.76110475"/>
+		<usetexture color_g="255" color_b="160" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="2.238486"/>
+		<vertex x="-39.747037" y="2.238486"/>
+		<vertex x="-39.747037" y="1.732561"/>
+		<vertex x="-40.252963" y="1.732561"/>
+	</block>
+	<block id="rect4684">
+		<position y="4.00623725" x="58.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="112"/>
+		<vertex x="-39.747037" y="4.740488"/>
+		<vertex x="-39.747037" y="4.234563"/>
+		<vertex x="-40.252963" y="4.234563"/>
+		<vertex x="-40.252963" y="4.740488"/>
+	</block>
+	<block id="rect4686">
+		<position y="6.50623725" x="56.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="211"/>
+		<vertex x="-39.747037" y="-0.259512"/>
+		<vertex x="-39.747037" y="-0.765437"/>
+		<vertex x="-40.252963" y="-0.765437"/>
+		<vertex x="-40.252963" y="-0.259512"/>
+	</block>
+	<block id="rect4688">
+		<position y="6.00623725" x="56.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="199"/>
+		<vertex x="-39.747037" y="0.740488"/>
+		<vertex x="-39.747037" y="0.234563"/>
+		<vertex x="-40.252963" y="0.234563"/>
+		<vertex x="-40.252963" y="0.740488"/>
+	</block>
+	<block id="rect4690">
+		<position y="5.50623725" x="57.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="175"/>
+		<vertex x="-39.747037" y="1.740488"/>
+		<vertex x="-39.747037" y="1.234563"/>
+		<vertex x="-40.252963" y="1.234563"/>
+		<vertex x="-40.252963" y="1.740488"/>
+	</block>
+	<block id="rect4692">
+		<position y="5.00623725" x="57.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="156"/>
+		<vertex x="-39.747037" y="2.740488"/>
+		<vertex x="-39.747037" y="2.234563"/>
+		<vertex x="-40.252963" y="2.234563"/>
+		<vertex x="-40.252963" y="2.740488"/>
+	</block>
+	<block id="rect4694">
+		<position y="4.50623725" x="58.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="137"/>
+		<vertex x="-39.747037" y="3.740488"/>
+		<vertex x="-39.747037" y="3.234563"/>
+		<vertex x="-40.252963" y="3.234563"/>
+		<vertex x="-40.252963" y="3.740488"/>
+	</block>
+	<block id="rect4698">
+		<position y="6.50623725" x="61.26109775"/>
+		<usetexture color_g="96" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-0.259512"/>
+		<vertex x="-39.747037" y="-0.259512"/>
+		<vertex x="-39.747037" y="-0.765437"/>
+		<vertex x="-40.252963" y="-0.765437"/>
+	</block>
+	<block id="rect4700">
+		<position y="6.00623725" x="60.76109775"/>
+		<usetexture color_g="61" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="0.740488"/>
+		<vertex x="-39.747037" y="0.740488"/>
+		<vertex x="-39.747037" y="0.234563"/>
+		<vertex x="-40.252963" y="0.234563"/>
+	</block>
+	<block id="rect4702">
+		<position y="5.50623725" x="60.26109775"/>
+		<usetexture color_g="9" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="1.740488"/>
+		<vertex x="-39.747037" y="1.740488"/>
+		<vertex x="-39.747037" y="1.234563"/>
+		<vertex x="-40.252963" y="1.234563"/>
+	</block>
+	<block id="rect4704">
+		<position y="5.00623725" x="59.76109775"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="50"/>
+		<vertex x="-40.252963" y="2.740488"/>
+		<vertex x="-39.747037" y="2.740488"/>
+		<vertex x="-39.747037" y="2.234563"/>
+		<vertex x="-40.252963" y="2.234563"/>
+	</block>
+	<block id="rect4706">
+		<position y="4.50623725" x="59.26109775"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="80"/>
+		<vertex x="-40.252963" y="3.740488"/>
+		<vertex x="-39.747037" y="3.740488"/>
+		<vertex x="-39.747037" y="3.234563"/>
+		<vertex x="-40.252963" y="3.234563"/>
+	</block>
+	<block id="rect4708">
+		<position y="6.50623725" x="58.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="112"/>
+		<vertex x="-39.747037" y="-0.259512"/>
+		<vertex x="-39.747037" y="-0.765437"/>
+		<vertex x="-40.252963" y="-0.765437"/>
+		<vertex x="-40.252963" y="-0.259512"/>
+	</block>
+	<block id="rect4710">
+		<position y="6.00623725" x="58.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="137"/>
+		<vertex x="-39.747037" y="0.740488"/>
+		<vertex x="-39.747037" y="0.234563"/>
+		<vertex x="-40.252963" y="0.234563"/>
+		<vertex x="-40.252963" y="0.740488"/>
+	</block>
+	<block id="rect4714">
+		<position y="6.00623725" x="59.24088775"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="80"/>
+		<vertex x="-40.252963" y="0.740488"/>
+		<vertex x="-39.747037" y="0.740488"/>
+		<vertex x="-39.747037" y="0.234563"/>
+		<vertex x="-40.252963" y="0.234563"/>
+	</block>
+	<block id="rect4718">
+		<position y="6.50623725" x="59.74088775"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="50"/>
+		<vertex x="-40.252963" y="-0.259512"/>
+		<vertex x="-39.747037" y="-0.259512"/>
+		<vertex x="-39.747037" y="-0.765437"/>
+		<vertex x="-40.252963" y="-0.765437"/>
+	</block>
+	<block id="rect4720">
+		<position y="6.50623725" x="57.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="156"/>
+		<vertex x="-39.747037" y="-0.259512"/>
+		<vertex x="-39.747037" y="-0.765437"/>
+		<vertex x="-40.252963" y="-0.765437"/>
+		<vertex x="-40.252963" y="-0.259512"/>
+	</block>
+	<block id="rect4722">
+		<position y="10.25723825" x="43.76110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="187"/>
+		<vertex x="-40.252963" y="-7.761514"/>
+		<vertex x="-39.747037" y="-7.761514"/>
+		<vertex x="-39.747037" y="-8.267439"/>
+		<vertex x="-40.252963" y="-8.267439"/>
+	</block>
+	<block id="rect4726">
+		<position y="9.75723825" x="44.26110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="203"/>
+		<vertex x="-40.252963" y="-6.761514"/>
+		<vertex x="-39.747037" y="-6.761514"/>
+		<vertex x="-39.747037" y="-7.267439"/>
+		<vertex x="-40.252963" y="-7.267439"/>
+	</block>
+	<block id="rect4728">
+		<position y="10.75723825" x="44.26110175"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="203"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+	</block>
+	<block id="rect4730">
+		<position y="10.75723825" x="47.76110175"/>
+		<usetexture color_g="200" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+	</block>
+	<block id="rect4734">
+		<position y="10.75723825" x="55.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="237"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+	</block>
+	<block id="rect6474">
+		<position y="0.15723825" x="34.26110475"/>
+		<usetexture color_g="255" color_b="53" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="12.438486"/>
+		<vertex x="-39.747037" y="12.438486"/>
+		<vertex x="-39.747037" y="11.932561"/>
+		<vertex x="-40.252963" y="11.932561"/>
+	</block>
+	<block id="rect6476">
+		<position y="1.15723825" x="35.26110475"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="6"/>
+		<vertex x="-40.252963" y="10.438486"/>
+		<vertex x="-39.747037" y="10.438486"/>
+		<vertex x="-39.747037" y="9.932561"/>
+		<vertex x="-40.252963" y="9.932561"/>
+	</block>
+	<block id="rect6478">
+		<position y="0.65723825" x="34.76110475"/>
+		<usetexture color_g="255" color_b="20" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="11.438486"/>
+		<vertex x="-39.747037" y="11.438486"/>
+		<vertex x="-39.747037" y="10.932561"/>
+		<vertex x="-40.252963" y="10.932561"/>
+	</block>
+	<block id="rect6480">
+		<position y="0.15723825" x="33.76110575"/>
+		<usetexture color_g="255" color_b="76" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="12.438486"/>
+		<vertex x="-39.747037" y="11.932561"/>
+		<vertex x="-40.252963" y="11.932561"/>
+		<vertex x="-40.252963" y="12.438486"/>
+	</block>
+	<block id="rect6482">
+		<position y="1.15723825" x="32.76110575"/>
+		<usetexture color_g="255" color_b="126" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="10.438486"/>
+		<vertex x="-39.747037" y="9.932561"/>
+		<vertex x="-40.252963" y="9.932561"/>
+		<vertex x="-40.252963" y="10.438486"/>
+	</block>
+	<block id="rect6484">
+		<position y="0.65723825" x="33.26110575"/>
+		<usetexture color_g="255" color_b="107" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="11.438486"/>
+		<vertex x="-39.747037" y="10.932561"/>
+		<vertex x="-40.252963" y="10.932561"/>
+		<vertex x="-40.252963" y="11.438486"/>
+	</block>
+	<block id="rect6528">
+		<position y="14.74550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-16.738052"/>
+		<vertex x="-39.747037" y="-17.243977"/>
+		<vertex x="-40.252963" y="-17.243977"/>
+		<vertex x="-40.252963" y="-16.738052"/>
+	</block>
+	<block id="rect6530">
+		<position y="14.24550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-15.738052"/>
+		<vertex x="-39.747037" y="-16.243977"/>
+		<vertex x="-40.252963" y="-16.243977"/>
+		<vertex x="-40.252963" y="-15.738052"/>
+	</block>
+	<block id="rect6532">
+		<position y="13.74550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-14.738052"/>
+		<vertex x="-39.747037" y="-15.243977"/>
+		<vertex x="-40.252963" y="-15.243977"/>
+		<vertex x="-40.252963" y="-14.738052"/>
+	</block>
+	<block id="rect6534">
+		<position y="13.24550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-13.738052"/>
+		<vertex x="-39.747037" y="-14.243977"/>
+		<vertex x="-40.252963" y="-14.243977"/>
+		<vertex x="-40.252963" y="-13.738052"/>
+	</block>
+	<block id="rect6536">
+		<position y="12.74550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-12.738052"/>
+		<vertex x="-39.747037" y="-13.243977"/>
+		<vertex x="-40.252963" y="-13.243977"/>
+		<vertex x="-40.252963" y="-12.738052"/>
+	</block>
+	<block id="rect6538">
+		<position y="12.24550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-11.738052"/>
+		<vertex x="-39.747037" y="-12.243977"/>
+		<vertex x="-40.252963" y="-12.243977"/>
+		<vertex x="-40.252963" y="-11.738052"/>
+	</block>
+	<block id="rect6540">
+		<position y="11.74550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-10.738052"/>
+		<vertex x="-39.747037" y="-11.243977"/>
+		<vertex x="-40.252963" y="-11.243977"/>
+		<vertex x="-40.252963" y="-10.738052"/>
+	</block>
+	<block id="rect6542">
+		<position y="11.24550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-9.738052"/>
+		<vertex x="-39.747037" y="-10.243977"/>
+		<vertex x="-40.252963" y="-10.243977"/>
+		<vertex x="-40.252963" y="-9.738052"/>
+	</block>
+	<block id="rect6544">
+		<position y="10.74550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-8.738052"/>
+		<vertex x="-39.747037" y="-9.243977"/>
+		<vertex x="-40.252963" y="-9.243977"/>
+		<vertex x="-40.252963" y="-8.738052"/>
+	</block>
+	<block id="rect6546">
+		<position y="10.24550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-7.738052"/>
+		<vertex x="-39.747037" y="-8.243977"/>
+		<vertex x="-40.252963" y="-8.243977"/>
+		<vertex x="-40.252963" y="-7.738052"/>
+	</block>
+	<block id="rect6548">
+		<position y="9.74550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-6.738052"/>
+		<vertex x="-39.747037" y="-7.243977"/>
+		<vertex x="-40.252963" y="-7.243977"/>
+		<vertex x="-40.252963" y="-6.738052"/>
+	</block>
+	<block id="rect6550">
+		<position y="9.24550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-5.738052"/>
+		<vertex x="-39.747037" y="-6.243977"/>
+		<vertex x="-40.252963" y="-6.243977"/>
+		<vertex x="-40.252963" y="-5.738052"/>
+	</block>
+	<block id="rect6552">
+		<position y="8.74550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-4.738052"/>
+		<vertex x="-39.747037" y="-5.243977"/>
+		<vertex x="-40.252963" y="-5.243977"/>
+		<vertex x="-40.252963" y="-4.738052"/>
+	</block>
+	<block id="rect6554">
+		<position y="8.24550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-3.738052"/>
+		<vertex x="-39.747037" y="-4.243977"/>
+		<vertex x="-40.252963" y="-4.243977"/>
+		<vertex x="-40.252963" y="-3.738052"/>
+	</block>
+	<block id="rect6556">
+		<position y="7.74550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-2.738052"/>
+		<vertex x="-39.747037" y="-3.243977"/>
+		<vertex x="-40.252963" y="-3.243977"/>
+		<vertex x="-40.252963" y="-2.738052"/>
+	</block>
+	<block id="rect6558">
+		<position y="7.24550725" x="70.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-1.738052"/>
+		<vertex x="-39.747037" y="-2.243977"/>
+		<vertex x="-40.252963" y="-2.243977"/>
+		<vertex x="-40.252963" y="-1.738052"/>
+	</block>
+	<block id="rect6585">
+		<position y="15.25199225" x="70.76293775"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-40.252963" y="-17.751022"/>
+		<vertex x="-39.747037" y="-17.751022"/>
+		<vertex x="-39.747037" y="-18.256947"/>
+		<vertex x="-40.252963" y="-18.256947"/>
+	</block>
+	<block id="rect6599">
+		<position y="13.75723825" x="60.76110275"/>
+		<usetexture color_g="61" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-14.761514"/>
+		<vertex x="-39.747037" y="-14.761514"/>
+		<vertex x="-39.747037" y="-15.267439"/>
+		<vertex x="-40.252963" y="-15.267439"/>
+	</block>
+	<block id="rect6601">
+		<position y="14.75723825" x="61.76110275"/>
+		<usetexture color_g="133" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-16.761514"/>
+		<vertex x="-39.747037" y="-16.761514"/>
+		<vertex x="-39.747037" y="-17.267439"/>
+		<vertex x="-40.252963" y="-17.267439"/>
+	</block>
+	<block id="rect6603">
+		<position y="15.25723825" x="62.26110275"/>
+		<usetexture color_g="167" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-17.761514"/>
+		<vertex x="-39.747037" y="-17.761514"/>
+		<vertex x="-39.747037" y="-18.267439"/>
+		<vertex x="-40.252963" y="-18.267439"/>
+	</block>
+	<block id="rect6605">
+		<position y="15.75723825" x="62.76110275"/>
+		<usetexture color_g="191" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-18.761514"/>
+		<vertex x="-39.747037" y="-18.761514"/>
+		<vertex x="-39.747037" y="-19.267439"/>
+		<vertex x="-40.252963" y="-19.267439"/>
+	</block>
+	<block id="rect6607">
+		<position y="16.25723825" x="63.26110275"/>
+		<usetexture color_g="220" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-19.761514"/>
+		<vertex x="-39.747037" y="-19.761514"/>
+		<vertex x="-39.747037" y="-20.267439"/>
+		<vertex x="-40.252963" y="-20.267439"/>
+	</block>
+	<block id="rect6609">
+		<position y="16.75723825" x="63.76110275"/>
+		<usetexture color_g="250" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-20.761514"/>
+		<vertex x="-39.747037" y="-20.761514"/>
+		<vertex x="-39.747037" y="-21.267439"/>
+		<vertex x="-40.252963" y="-21.267439"/>
+	</block>
+	<block id="rect6611">
+		<position y="17.25723825" x="64.26110275"/>
+		<usetexture color_g="255" color_b="225" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-21.761514"/>
+		<vertex x="-39.747037" y="-21.761514"/>
+		<vertex x="-39.747037" y="-22.267439"/>
+		<vertex x="-40.252963" y="-22.267439"/>
+	</block>
+	<block id="rect6613">
+		<position y="17.75723825" x="64.76110275"/>
+		<usetexture color_g="255" color_b="198" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+	</block>
+	<block id="rect6615">
+		<position y="14.25723825" x="61.26110275"/>
+		<usetexture color_g="96" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-15.761514"/>
+		<vertex x="-39.747037" y="-15.761514"/>
+		<vertex x="-39.747037" y="-16.267439"/>
+		<vertex x="-40.252963" y="-16.267439"/>
+	</block>
+	<block id="rect6617">
+		<position y="17.75723825" x="67.26110725"/>
+		<usetexture color_g="255" color_b="85" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6619">
+		<position y="17.75723825" x="66.76109725"/>
+		<usetexture color_g="255" color_b="117" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6621">
+		<position y="17.75723825" x="66.26109725"/>
+		<usetexture color_g="255" color_b="134" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6623">
+		<position y="17.75723825" x="65.76109725"/>
+		<usetexture color_g="255" color_b="165" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6625">
+		<position y="17.75723825" x="65.26109725"/>
+		<usetexture color_g="255" color_b="179" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6629">
+		<position y="17.75723825" x="70.76110725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6631">
+		<position y="17.75723825" x="70.26109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="22"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6633">
+		<position y="17.75723825" x="69.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="5"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6635">
+		<position y="17.75723825" x="69.26109725"/>
+		<usetexture color_g="255" color_b="15" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6637">
+		<position y="17.75723825" x="68.76109725"/>
+		<usetexture color_g="255" color_b="34" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6639">
+		<position y="17.75723825" x="68.26109725"/>
+		<usetexture color_g="255" color_b="53" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect6641">
+		<position y="17.75723825" x="67.76109725"/>
+		<usetexture color_g="255" color_b="70" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7359">
+		<position y="17.75723825" x="74.26110725"/>
+		<usetexture color_g="209" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7361">
+		<position y="17.75723825" x="73.76109725"/>
+		<usetexture color_g="233" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7363">
+		<position y="17.75723825" x="73.26109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="251"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7365">
+		<position y="17.75723825" x="72.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="234"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7367">
+		<position y="17.75723825" x="72.26109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="217"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7369">
+		<position y="17.75723825" x="71.76109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="190"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7371">
+		<position y="17.75723825" x="71.26109725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="165"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7373">
+		<position y="17.75723825" x="75.76110725"/>
+		<usetexture color_g="88" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7375">
+		<position y="17.75723825" x="75.26109725"/>
+		<usetexture color_g="133" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7377">
+		<position y="17.75723825" x="74.76109725"/>
+		<usetexture color_g="174" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7381">
+		<position y="17.75723825" x="78.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="201"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7383">
+		<position y="17.75723825" x="78.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="247"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7385">
+		<position y="17.75723825" x="77.76109725"/>
+		<usetexture color_g="0" color_b="235" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7387">
+		<position y="17.75723825" x="77.26109725"/>
+		<usetexture color_g="0" color_b="191" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7389">
+		<position y="17.75723825" x="76.76109725"/>
+		<usetexture color_g="0" color_b="114" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7391">
+		<position y="17.75723825" x="76.26109725"/>
+		<usetexture color_g="18" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-22.761514"/>
+		<vertex x="-39.747037" y="-23.267439"/>
+		<vertex x="-40.252963" y="-23.267439"/>
+		<vertex x="-40.252963" y="-22.761514"/>
+	</block>
+	<block id="rect7393">
+		<position y="15.24783275" x="71.76526225"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="190"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7395">
+		<position y="15.24783275" x="72.26526225"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="217"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7397">
+		<position y="15.24783275" x="72.76526225"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="234"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7399">
+		<position y="15.24783275" x="73.26526225"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="251"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7401">
+		<position y="15.24783275" x="73.76526225"/>
+		<usetexture color_g="233" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7403">
+		<position y="15.24783275" x="74.26526225"/>
+		<usetexture color_g="209" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7405">
+		<position y="15.24783275" x="74.76526225"/>
+		<usetexture color_g="174" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7407">
+		<position y="15.24783275" x="75.26526225"/>
+		<usetexture color_g="133" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7409">
+		<position y="15.24783275" x="75.76526225"/>
+		<usetexture color_g="88" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7411">
+		<position y="15.24783275" x="76.26526225"/>
+		<usetexture color_g="18" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7413">
+		<position y="15.24783275" x="76.76526225"/>
+		<usetexture color_g="0" color_b="114" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7415">
+		<position y="15.24783275" x="77.26526225"/>
+		<usetexture color_g="0" color_b="191" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7417">
+		<position y="15.24783275" x="77.76526225"/>
+		<usetexture color_g="0" color_b="235" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7419">
+		<position y="15.24783275" x="78.26526225"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="247"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7421">
+		<position y="15.24783275" x="78.76526225"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="201"/>
+		<vertex x="-39.747037" y="-17.742703"/>
+		<vertex x="-39.747037" y="-18.248628"/>
+		<vertex x="-40.252963" y="-18.248628"/>
+		<vertex x="-40.252963" y="-17.742703"/>
+	</block>
+	<block id="rect7425">
+		<position y="15.24967025" x="71.25877275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="165"/>
+		<vertex x="-40.252963" y="-17.746378"/>
+		<vertex x="-39.747037" y="-17.746378"/>
+		<vertex x="-39.747037" y="-18.252303"/>
+		<vertex x="-40.252963" y="-18.252303"/>
+	</block>
+	<block id="rect7429">
+		<position y="17.25723825" x="79.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="163"/>
+		<vertex x="-39.747037" y="-21.761514"/>
+		<vertex x="-39.747037" y="-22.267439"/>
+		<vertex x="-40.252963" y="-22.267439"/>
+		<vertex x="-40.252963" y="-21.761514"/>
+	</block>
+	<block id="rect7431">
+		<position y="16.75723825" x="79.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="101"/>
+		<vertex x="-39.747037" y="-20.761514"/>
+		<vertex x="-39.747037" y="-21.267439"/>
+		<vertex x="-40.252963" y="-21.267439"/>
+		<vertex x="-40.252963" y="-20.761514"/>
+	</block>
+	<block id="rect7435">
+		<position y="15.75199325" x="79.26109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="163"/>
+		<vertex x="-39.747037" y="-19.256949"/>
+		<vertex x="-40.252963" y="-19.256949"/>
+		<vertex x="-40.252963" y="-18.751024"/>
+		<vertex x="-39.747037" y="-18.751024"/>
+	</block>
+	<block id="rect7437">
+		<position y="16.25199325" x="79.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="101"/>
+		<vertex x="-39.747037" y="-20.256949"/>
+		<vertex x="-40.252963" y="-20.256949"/>
+		<vertex x="-40.252963" y="-19.751024"/>
+		<vertex x="-39.747037" y="-19.751024"/>
+	</block>
+	<block id="rect9176">
+		<position y="10.76299425" x="74.26110275"/>
+		<usetexture color_g="209" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-8.773026"/>
+		<vertex x="-39.747037" y="-8.773026"/>
+		<vertex x="-39.747037" y="-9.278951"/>
+		<vertex x="-40.252963" y="-9.278951"/>
+	</block>
+	<block id="rect9178">
+		<position y="11.76299425" x="75.26110275"/>
+		<usetexture color_g="133" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-10.773026"/>
+		<vertex x="-39.747037" y="-10.773026"/>
+		<vertex x="-39.747037" y="-11.278951"/>
+		<vertex x="-40.252963" y="-11.278951"/>
+	</block>
+	<block id="rect9180">
+		<position y="12.26299425" x="75.76110275"/>
+		<usetexture color_g="88" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-11.773026"/>
+		<vertex x="-39.747037" y="-11.773026"/>
+		<vertex x="-39.747037" y="-12.278951"/>
+		<vertex x="-40.252963" y="-12.278951"/>
+	</block>
+	<block id="rect9182">
+		<position y="12.76299425" x="76.26110275"/>
+		<usetexture color_g="18" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-12.773026"/>
+		<vertex x="-39.747037" y="-12.773026"/>
+		<vertex x="-39.747037" y="-13.278951"/>
+		<vertex x="-40.252963" y="-13.278951"/>
+	</block>
+	<block id="rect9184">
+		<position y="13.26299425" x="76.76110275"/>
+		<usetexture color_g="0" color_b="114" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-13.773026"/>
+		<vertex x="-39.747037" y="-13.773026"/>
+		<vertex x="-39.747037" y="-14.278951"/>
+		<vertex x="-40.252963" y="-14.278951"/>
+	</block>
+	<block id="rect9186">
+		<position y="13.76299425" x="77.26110275"/>
+		<usetexture color_g="0" color_b="191" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-14.773026"/>
+		<vertex x="-39.747037" y="-14.773026"/>
+		<vertex x="-39.747037" y="-15.278951"/>
+		<vertex x="-40.252963" y="-15.278951"/>
+	</block>
+	<block id="rect9188">
+		<position y="14.26299425" x="77.76110275"/>
+		<usetexture color_g="0" color_b="235" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-15.773026"/>
+		<vertex x="-39.747037" y="-15.773026"/>
+		<vertex x="-39.747037" y="-16.278951"/>
+		<vertex x="-40.252963" y="-16.278951"/>
+	</block>
+	<block id="rect9190">
+		<position y="14.76299425" x="78.26110275"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="247"/>
+		<vertex x="-40.252963" y="-16.773026"/>
+		<vertex x="-39.747037" y="-16.773026"/>
+		<vertex x="-39.747037" y="-17.278951"/>
+		<vertex x="-40.252963" y="-17.278951"/>
+	</block>
+	<block id="rect9192">
+		<position y="11.26299425" x="74.76110275"/>
+		<usetexture color_g="174" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-9.773026"/>
+		<vertex x="-39.747037" y="-9.773026"/>
+		<vertex x="-39.747037" y="-10.278951"/>
+		<vertex x="-40.252963" y="-10.278951"/>
+	</block>
+	<block id="rect9194">
+		<position y="8.26299425" x="71.76110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="190"/>
+		<vertex x="-40.252963" y="-3.773026"/>
+		<vertex x="-39.747037" y="-3.773026"/>
+		<vertex x="-39.747037" y="-4.278951"/>
+		<vertex x="-40.252963" y="-4.278951"/>
+	</block>
+	<block id="rect9196">
+		<position y="9.26299425" x="72.76110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="234"/>
+		<vertex x="-40.252963" y="-5.773026"/>
+		<vertex x="-39.747037" y="-5.773026"/>
+		<vertex x="-39.747037" y="-6.278951"/>
+		<vertex x="-40.252963" y="-6.278951"/>
+	</block>
+	<block id="rect9198">
+		<position y="9.76299425" x="73.26110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="251"/>
+		<vertex x="-40.252963" y="-6.773026"/>
+		<vertex x="-39.747037" y="-6.773026"/>
+		<vertex x="-39.747037" y="-7.278951"/>
+		<vertex x="-40.252963" y="-7.278951"/>
+	</block>
+	<block id="rect9200">
+		<position y="10.26299425" x="73.76110275"/>
+		<usetexture color_g="233" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-7.773026"/>
+		<vertex x="-39.747037" y="-7.773026"/>
+		<vertex x="-39.747037" y="-8.278951"/>
+		<vertex x="-40.252963" y="-8.278951"/>
+	</block>
+	<block id="rect9202">
+		<position y="8.76299425" x="72.26110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="217"/>
+		<vertex x="-40.252963" y="-4.773026"/>
+		<vertex x="-39.747037" y="-4.773026"/>
+		<vertex x="-39.747037" y="-5.278951"/>
+		<vertex x="-40.252963" y="-5.278951"/>
+	</block>
+	<block id="rect9206">
+		<position y="7.76299425" x="71.26110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="165"/>
+		<vertex x="-40.252963" y="-2.773026"/>
+		<vertex x="-39.747037" y="-2.773026"/>
+		<vertex x="-39.747037" y="-3.278951"/>
+		<vertex x="-40.252963" y="-3.278951"/>
+	</block>
+	<block id="rect9208">
+		<position y="21.25723825" x="68.26110275"/>
+		<usetexture color_g="255" color_b="53" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-29.761514"/>
+		<vertex x="-39.747037" y="-29.761514"/>
+		<vertex x="-39.747037" y="-30.267439"/>
+		<vertex x="-40.252963" y="-30.267439"/>
+	</block>
+	<block id="rect9210">
+		<position y="22.25723825" x="69.26110275"/>
+		<usetexture color_g="255" color_b="15" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-31.761514"/>
+		<vertex x="-39.747037" y="-31.761514"/>
+		<vertex x="-39.747037" y="-32.267439"/>
+		<vertex x="-40.252963" y="-32.267439"/>
+	</block>
+	<block id="rect9212">
+		<position y="22.75723875" x="69.76110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="5"/>
+		<vertex x="-40.252963" y="-32.761515"/>
+		<vertex x="-39.747037" y="-32.761515"/>
+		<vertex x="-39.747037" y="-33.267440"/>
+		<vertex x="-40.252963" y="-33.267440"/>
+	</block>
+	<block id="rect9214">
+		<position y="23.25723875" x="70.26110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="22"/>
+		<vertex x="-40.252963" y="-33.761515"/>
+		<vertex x="-39.747037" y="-33.761515"/>
+		<vertex x="-39.747037" y="-34.267440"/>
+		<vertex x="-40.252963" y="-34.267440"/>
+	</block>
+	<block id="rect9216">
+		<position y="23.75723875" x="70.76110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="140"/>
+		<vertex x="-40.252963" y="-34.761515"/>
+		<vertex x="-39.747037" y="-34.761515"/>
+		<vertex x="-39.747037" y="-35.267440"/>
+		<vertex x="-40.252963" y="-35.267440"/>
+	</block>
+	<block id="rect9218">
+		<position y="24.25724375" x="71.26110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="165"/>
+		<vertex x="-40.252963" y="-35.761525"/>
+		<vertex x="-39.747037" y="-35.761525"/>
+		<vertex x="-39.747037" y="-36.267450"/>
+		<vertex x="-40.252963" y="-36.267450"/>
+	</block>
+	<block id="rect9220">
+		<position y="24.75724375" x="71.76110275"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="190"/>
+		<vertex x="-40.252963" y="-36.761525"/>
+		<vertex x="-39.747037" y="-36.761525"/>
+		<vertex x="-39.747037" y="-37.267450"/>
+		<vertex x="-40.252963" y="-37.267450"/>
+	</block>
+	<block id="rect9224">
+		<position y="21.75723825" x="68.76110275"/>
+		<usetexture color_g="255" color_b="34" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-30.761514"/>
+		<vertex x="-39.747037" y="-30.761514"/>
+		<vertex x="-39.747037" y="-31.267439"/>
+		<vertex x="-40.252963" y="-31.267439"/>
+	</block>
+	<block id="rect9226">
+		<position y="18.75723825" x="65.76110275"/>
+		<usetexture color_g="255" color_b="165" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-24.761514"/>
+		<vertex x="-39.747037" y="-24.761514"/>
+		<vertex x="-39.747037" y="-25.267439"/>
+		<vertex x="-40.252963" y="-25.267439"/>
+	</block>
+	<block id="rect9228">
+		<position y="19.75723825" x="66.76110275"/>
+		<usetexture color_g="255" color_b="117" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-26.761514"/>
+		<vertex x="-39.747037" y="-26.761514"/>
+		<vertex x="-39.747037" y="-27.267439"/>
+		<vertex x="-40.252963" y="-27.267439"/>
+	</block>
+	<block id="rect9230">
+		<position y="20.25723825" x="67.26110275"/>
+		<usetexture color_g="255" color_b="85" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-27.761514"/>
+		<vertex x="-39.747037" y="-27.761514"/>
+		<vertex x="-39.747037" y="-28.267439"/>
+		<vertex x="-40.252963" y="-28.267439"/>
+	</block>
+	<block id="rect9232">
+		<position y="20.75723825" x="67.76110275"/>
+		<usetexture color_g="255" color_b="70" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-28.761514"/>
+		<vertex x="-39.747037" y="-28.761514"/>
+		<vertex x="-39.747037" y="-29.267439"/>
+		<vertex x="-40.252963" y="-29.267439"/>
+	</block>
+	<block id="rect9234">
+		<position y="19.25723825" x="66.26110275"/>
+		<usetexture color_g="255" color_b="134" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-25.761514"/>
+		<vertex x="-39.747037" y="-25.761514"/>
+		<vertex x="-39.747037" y="-26.267439"/>
+		<vertex x="-40.252963" y="-26.267439"/>
+	</block>
+	<block id="rect9236">
+		<position y="18.25723825" x="65.26110275"/>
+		<usetexture color_g="255" color_b="179" id="white" color_a="255" color_r="0"/>
+		<vertex x="-40.252963" y="-23.761514"/>
+		<vertex x="-39.747037" y="-23.761514"/>
+		<vertex x="-39.747037" y="-24.267439"/>
+		<vertex x="-40.252963" y="-24.267439"/>
+	</block>
+	<block id="rect9238">
+		<position y="21.25723825" x="75.26110725"/>
+		<usetexture color_g="133" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-29.761514"/>
+		<vertex x="-39.747037" y="-30.267439"/>
+		<vertex x="-40.252963" y="-30.267439"/>
+		<vertex x="-40.252963" y="-29.761514"/>
+	</block>
+	<block id="rect9240">
+		<position y="22.25723825" x="74.26110725"/>
+		<usetexture color_g="209" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-31.761514"/>
+		<vertex x="-39.747037" y="-32.267439"/>
+		<vertex x="-40.252963" y="-32.267439"/>
+		<vertex x="-40.252963" y="-31.761514"/>
+	</block>
+	<block id="rect9242">
+		<position y="22.75723875" x="73.76110725"/>
+		<usetexture color_g="233" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-32.761515"/>
+		<vertex x="-39.747037" y="-33.267440"/>
+		<vertex x="-40.252963" y="-33.267440"/>
+		<vertex x="-40.252963" y="-32.761515"/>
+	</block>
+	<block id="rect9244">
+		<position y="23.25723875" x="73.26110725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="251"/>
+		<vertex x="-39.747037" y="-33.761515"/>
+		<vertex x="-39.747037" y="-34.267440"/>
+		<vertex x="-40.252963" y="-34.267440"/>
+		<vertex x="-40.252963" y="-33.761515"/>
+	</block>
+	<block id="rect9246">
+		<position y="23.75723875" x="72.76110725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="234"/>
+		<vertex x="-39.747037" y="-34.761515"/>
+		<vertex x="-39.747037" y="-35.267440"/>
+		<vertex x="-40.252963" y="-35.267440"/>
+		<vertex x="-40.252963" y="-34.761515"/>
+	</block>
+	<block id="rect9248">
+		<position y="24.25724375" x="72.26110725"/>
+		<usetexture color_g="255" color_b="0" id="white" color_a="255" color_r="217"/>
+		<vertex x="-39.747037" y="-35.761525"/>
+		<vertex x="-39.747037" y="-36.267450"/>
+		<vertex x="-40.252963" y="-36.267450"/>
+		<vertex x="-40.252963" y="-35.761525"/>
+	</block>
+	<block id="rect9254">
+		<position y="21.75723825" x="74.76110725"/>
+		<usetexture color_g="174" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-30.761514"/>
+		<vertex x="-39.747037" y="-31.267439"/>
+		<vertex x="-40.252963" y="-31.267439"/>
+		<vertex x="-40.252963" y="-30.761514"/>
+	</block>
+	<block id="rect9256">
+		<position y="18.75723825" x="77.76110725"/>
+		<usetexture color_g="0" color_b="235" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-24.761514"/>
+		<vertex x="-39.747037" y="-25.267439"/>
+		<vertex x="-40.252963" y="-25.267439"/>
+		<vertex x="-40.252963" y="-24.761514"/>
+	</block>
+	<block id="rect9258">
+		<position y="19.75723825" x="76.76110725"/>
+		<usetexture color_g="0" color_b="114" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-26.761514"/>
+		<vertex x="-39.747037" y="-27.267439"/>
+		<vertex x="-40.252963" y="-27.267439"/>
+		<vertex x="-40.252963" y="-26.761514"/>
+	</block>
+	<block id="rect9260">
+		<position y="20.25723825" x="76.26110725"/>
+		<usetexture color_g="18" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-27.761514"/>
+		<vertex x="-39.747037" y="-28.267439"/>
+		<vertex x="-40.252963" y="-28.267439"/>
+		<vertex x="-40.252963" y="-27.761514"/>
+	</block>
+	<block id="rect9262">
+		<position y="20.75723825" x="75.76110725"/>
+		<usetexture color_g="88" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-28.761514"/>
+		<vertex x="-39.747037" y="-29.267439"/>
+		<vertex x="-40.252963" y="-29.267439"/>
+		<vertex x="-40.252963" y="-28.761514"/>
+	</block>
+	<block id="rect9264">
+		<position y="19.25723825" x="77.26110725"/>
+		<usetexture color_g="0" color_b="191" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-25.761514"/>
+		<vertex x="-39.747037" y="-26.267439"/>
+		<vertex x="-40.252963" y="-26.267439"/>
+		<vertex x="-40.252963" y="-25.761514"/>
+	</block>
+	<block id="rect9266">
+		<position y="18.25723825" x="78.26110725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="247"/>
+		<vertex x="-39.747037" y="-23.761514"/>
+		<vertex x="-39.747037" y="-24.267439"/>
+		<vertex x="-40.252963" y="-24.267439"/>
+		<vertex x="-40.252963" y="-23.761514"/>
+	</block>
+	<block id="rect3303">
+		<position y="8.95382025" x="18.46112475"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="190"/>
+		<vertex x="-40.252963" y="-5.154678"/>
+		<vertex x="-39.747037" y="-5.154678"/>
+		<vertex x="-39.747037" y="-5.660603"/>
+		<vertex x="-40.252963" y="-5.660603"/>
+	</block>
+	<block id="rect3305">
+		<position y="9.45382025" x="18.96112475"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="166"/>
+		<vertex x="-40.252963" y="-6.154678"/>
+		<vertex x="-39.747037" y="-6.154678"/>
+		<vertex x="-39.747037" y="-6.660603"/>
+		<vertex x="-40.252963" y="-6.660603"/>
+	</block>
+	<block id="rect3307">
+		<position y="9.95382025" x="19.46112475"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="143"/>
+		<vertex x="-40.252963" y="-7.154678"/>
+		<vertex x="-39.747037" y="-7.154678"/>
+		<vertex x="-39.747037" y="-7.660603"/>
+		<vertex x="-40.252963" y="-7.660603"/>
+	</block>
+	<block id="rect3309">
+		<position y="10.45382025" x="19.96112475"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="118"/>
+		<vertex x="-40.252963" y="-8.154678"/>
+		<vertex x="-39.747037" y="-8.154678"/>
+		<vertex x="-39.747037" y="-8.660603"/>
+		<vertex x="-40.252963" y="-8.660603"/>
+	</block>
+	<block id="rect3311">
+		<position y="10.95382025" x="20.46112475"/>
+		<usetexture id="default"/>
+		<vertex x="-40.252963" y="-9.154678"/>
+		<vertex x="-39.747037" y="-9.154678"/>
+		<vertex x="-39.747037" y="-9.660603"/>
+		<vertex x="-40.252963" y="-9.660603"/>
+	</block>
+	<block id="rect3313">
+		<position y="8.95382025" x="22.46112575"/>
+		<usetexture color_g="109" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-5.154678"/>
+		<vertex x="-39.747037" y="-5.660603"/>
+		<vertex x="-40.252963" y="-5.660603"/>
+		<vertex x="-40.252963" y="-5.154678"/>
+	</block>
+	<block id="rect3315">
+		<position y="9.45382025" x="21.96112575"/>
+		<usetexture color_g="78" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-6.154678"/>
+		<vertex x="-39.747037" y="-6.660603"/>
+		<vertex x="-40.252963" y="-6.660603"/>
+		<vertex x="-40.252963" y="-6.154678"/>
+	</block>
+	<block id="rect3317">
+		<position y="9.95382025" x="21.46112575"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="7"/>
+		<vertex x="-39.747037" y="-7.154678"/>
+		<vertex x="-39.747037" y="-7.660603"/>
+		<vertex x="-40.252963" y="-7.660603"/>
+		<vertex x="-40.252963" y="-7.154678"/>
+	</block>
+	<block id="rect3319">
+		<position y="10.45382025" x="20.96112575"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="51"/>
+		<vertex x="-39.747037" y="-8.154678"/>
+		<vertex x="-39.747037" y="-8.660603"/>
+		<vertex x="-40.252963" y="-8.660603"/>
+		<vertex x="-40.252963" y="-8.154678"/>
+	</block>
+	<block id="rect3321">
+		<position y="10.95382025" x="20.46112575"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="91"/>
+		<vertex x="-39.747037" y="-9.154678"/>
+		<vertex x="-39.747037" y="-9.660603"/>
+		<vertex x="-40.252963" y="-9.660603"/>
+		<vertex x="-40.252963" y="-9.154678"/>
+	</block>
+	<block id="rect3323">
+		<position y="8.45382025" x="17.96112475"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="207"/>
+		<vertex x="-40.252963" y="-4.154678"/>
+		<vertex x="-39.747037" y="-4.154678"/>
+		<vertex x="-39.747037" y="-4.660603"/>
+		<vertex x="-40.252963" y="-4.660603"/>
+	</block>
+	<block id="rect3325">
+		<position y="8.45382025" x="22.96112575"/>
+		<usetexture color_g="132" color_b="255" id="white" color_a="255" color_r="0"/>
+		<vertex x="-39.747037" y="-4.154678"/>
+		<vertex x="-39.747037" y="-4.660603"/>
+		<vertex x="-40.252963" y="-4.660603"/>
+		<vertex x="-40.252963" y="-4.154678"/>
+	</block>
+	<block id="rect3304">
+		<position y="10.75723825" x="48.26110175"/>
+		<usetexture color_g="181" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+	</block>
+	<block id="rect3306">
+		<position y="10.75723825" x="54.76109725"/>
+		<usetexture color_g="0" color_b="255" id="white" color_a="255" color_r="252"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+	</block>
+	<zone id="zone">
+		<box left="21.008140" right="21.514066" top="-1.004276" bottom="-1.510201"/>
+	</zone>
+	<block id="rect3589">
+		<position y="11.75723825" x="53.76109725"/>
+		<usetexture color_g="0" color_b="173" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+	</block>
+	<block id="rect6735">
+		<position y="11.75723825" x="49.26110175"/>
+		<usetexture color_g="146" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+	</block>
+	<block id="rect11491">
+		<position y="11.75723825" x="48.76110175"/>
+		<usetexture color_g="163" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+	</block>
+	<block id="rect11493">
+		<position y="10.75723825" x="48.76110175"/>
+		<usetexture color_g="163" color_b="0" id="white" color_a="255" color_r="255"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+	</block>
+	<block id="rect11495">
+		<position y="10.75723825" x="54.26109725"/>
+		<usetexture color_g="0" color_b="234" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-8.761514"/>
+		<vertex x="-39.747037" y="-9.267439"/>
+		<vertex x="-40.252963" y="-9.267439"/>
+		<vertex x="-40.252963" y="-8.761514"/>
+	</block>
+	<block id="rect11497">
+		<position y="11.75723825" x="54.26109725"/>
+		<usetexture color_g="0" color_b="234" id="white" color_a="255" color_r="255"/>
+		<vertex x="-39.747037" y="-10.761514"/>
+		<vertex x="-39.747037" y="-11.267439"/>
+		<vertex x="-40.252963" y="-11.267439"/>
+		<vertex x="-40.252963" y="-10.761514"/>
+	</block>
+	<entity id="rect5864-4" typeid="Strawberry">
+		<position y="8.0215675" x="-6.5457005"/>
+		<size width="1.4" r="0.35" height="1.4"/>
+	</entity>
+	<entity id="rect5864" typeid="Strawberry">
+		<position y="2.297665" x="5.748676"/>
+		<size width="1.4" r="0.35" height="1.4"/>
+	</entity>
+	<entity id="rect3327" typeid="Checkpoint">
+		<position y="4.13822" x="9.1774046"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="path6442" typeid="Strawberry">
+		<position y="2.2976665" x="17.2652655"/>
+		<size width="1.4" r="0.35" height="1.4"/>
+	</entity>
+	<entity id="rect6643" typeid="EndOfLevel">
+		<position y="-3.937" x="37.32019865"/>
+		<size width="0.56" r="0.35" height="0.56"/>
+	</entity>
+	<entity id="g4319" typeid="PlayerStart">
+		<position y="-6.0399325" x="-35.8651352"/>
+		<size r="0.4"/>
+	</entity>
+</level>

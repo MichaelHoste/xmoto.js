@@ -1,0 +1,1758 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="Balancetrainer1_unusualterrain" rversion="0.5.0">
+	<info>
+		<name>Balance Trainer 1: Unusual Terrain</name>
+		<description></description>
+		<author>tumo</author>
+		<date>2015-04-01</date>
+		<sky>white</sky>
+		<border texture="invisible"/>
+	</info>
+	<limits left="-50.000000" right="50.000000" top="2.500000" bottom="-2.500000"/>
+	<block id="rect2836">
+		<position y="4.310651" x="0.87870155"/>
+		<usetexture scale="0.10000000149" id="Black"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect2838">
+		<position y="3.310651" x="1.8787016"/>
+		<usetexture scale="0.10000000149" id="Black"/>
+		<vertex x="-50.500000" y="-3.621302"/>
+		<vertex x="-49.500000" y="-3.621302"/>
+		<vertex x="-49.500000" y="-4.621302"/>
+		<vertex x="-50.500000" y="-4.621302"/>
+	</block>
+	<block id="rect2840">
+		<position y="2.310651" x="0.8787016"/>
+		<usetexture scale="0.10000000149" id="Black"/>
+		<vertex x="-50.500000" y="-1.621302"/>
+		<vertex x="-49.500000" y="-1.621302"/>
+		<vertex x="-49.500000" y="-2.621302"/>
+		<vertex x="-50.500000" y="-2.621302"/>
+	</block>
+	<block id="rect2842">
+		<position y="1.310651" x="0.8787016"/>
+		<usetexture scale="0.10000000149" id="Black"/>
+		<vertex x="-50.500000" y="0.378698"/>
+		<vertex x="-49.500000" y="0.378698"/>
+		<vertex x="-49.500000" y="-0.621302"/>
+		<vertex x="-50.500000" y="-0.621302"/>
+	</block>
+	<block id="rect2844">
+		<position y="4.310651" x="2.8787016"/>
+		<usetexture scale="0.10000000149" id="Black"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect2846">
+		<position y="4.310651" x="3.8787018"/>
+		<usetexture scale="0.10000000149" id="Black"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect2848">
+		<position y="4.310651" x="4.8787018"/>
+		<usetexture scale="0.10000000149" id="Black"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect2850">
+		<position y="4.310651" x="5.878702"/>
+		<usetexture scale="0.10000000149" id="Black"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect2852">
+		<position y="4.310651" x="6.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect2854">
+		<position y="1.410651" x="6.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3278">
+		<position y="1.410651" x="7.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3282">
+		<position y="4.310651" x="7.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3286">
+		<position y="4.310651" x="8.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3288">
+		<position y="1.410651" x="8.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3290">
+		<position y="1.410651" x="9.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3292">
+		<position y="4.310651" x="9.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3302">
+		<position y="4.310651" x="10.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3304">
+		<position y="1.410651" x="10.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3306">
+		<position y="1.410651" x="11.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3308">
+		<position y="4.310651" x="11.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3318">
+		<position y="4.310651" x="12.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3320">
+		<position y="1.410651" x="12.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3322">
+		<position y="1.410651" x="13.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3324">
+		<position y="4.310651" x="13.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3334">
+		<position y="4.310651" x="14.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3336">
+		<position y="1.410651" x="14.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3338">
+		<position y="1.410651" x="15.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3340">
+		<position y="4.310651" x="15.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3350">
+		<position y="4.310651" x="16.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3352">
+		<position y="1.410651" x="16.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3354">
+		<position y="1.410651" x="17.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3356">
+		<position y="4.310651" x="17.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3366">
+		<position y="4.310651" x="18.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3368">
+		<position y="1.410651" x="18.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3370">
+		<position y="1.410651" x="19.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3372">
+		<position y="4.310651" x="19.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3374">
+		<position y="4.310651" x="20.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3376">
+		<position y="1.410651" x="20.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3378">
+		<position y="1.410651" x="21.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3380">
+		<position y="4.310651" x="21.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3382">
+		<position y="4.310651" x="22.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3384">
+		<position y="1.410651" x="22.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3386">
+		<position y="1.410651" x="23.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3388">
+		<position y="4.310651" x="23.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3390">
+		<position y="4.310651" x="24.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3392">
+		<position y="1.410651" x="24.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3394">
+		<position y="1.410651" x="25.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3396">
+		<position y="4.310651" x="25.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3398">
+		<position y="4.310651" x="26.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3400">
+		<position y="1.410651" x="26.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3402">
+		<position y="1.410651" x="27.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3404">
+		<position y="4.310651" x="27.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3406">
+		<position y="4.310651" x="28.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3408">
+		<position y="1.410651" x="28.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3410">
+		<position y="1.410651" x="29.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3412">
+		<position y="4.310651" x="29.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3462">
+		<position y="4.310651" x="30.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3464">
+		<position y="1.410651" x="30.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3466">
+		<position y="1.410651" x="31.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3468">
+		<position y="4.310651" x="31.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3470">
+		<position y="4.310651" x="32.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3472">
+		<position y="1.410651" x="32.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3474">
+		<position y="1.410651" x="33.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3476">
+		<position y="4.310651" x="33.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3478">
+		<position y="4.310651" x="34.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3480">
+		<position y="1.410651" x="34.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3482">
+		<position y="1.410651" x="35.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3484">
+		<position y="4.310651" x="35.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3486">
+		<position y="4.310651" x="36.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3488">
+		<position y="1.410651" x="36.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3490">
+		<position y="1.410651" x="37.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3492">
+		<position y="4.310651" x="37.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3494">
+		<position y="4.310651" x="38.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3496">
+		<position y="1.410651" x="38.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3498">
+		<position y="1.410651" x="39.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3500">
+		<position y="4.310651" x="39.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3502">
+		<position y="4.310651" x="40.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3504">
+		<position y="1.410651" x="40.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3506">
+		<position y="1.410651" x="41.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3508">
+		<position y="4.310651" x="41.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3558">
+		<position y="4.310651" x="42.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3560">
+		<position y="1.410651" x="42.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3562">
+		<position y="1.410651" x="43.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3564">
+		<position y="4.310651" x="43.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3566">
+		<position y="4.310651" x="44.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3568">
+		<position y="1.410651" x="44.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3570">
+		<position y="1.410651" x="45.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3572">
+		<position y="4.310651" x="45.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3574">
+		<position y="4.310651" x="46.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3576">
+		<position y="1.410651" x="46.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3578">
+		<position y="1.410651" x="47.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3580">
+		<position y="4.310651" x="47.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3582">
+		<position y="4.310651" x="48.878702"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3584">
+		<position y="1.410651" x="48.878702"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3586">
+		<position y="1.410651" x="49.8786985"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3588">
+		<position y="4.310651" x="49.8786985"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3590">
+		<position y="4.310651" x="50.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3592">
+		<position y="1.410651" x="50.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3594">
+		<position y="1.410651" x="51.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3596">
+		<position y="4.310651" x="51.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3598">
+		<position y="4.310651" x="52.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3600">
+		<position y="1.410651" x="52.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3602">
+		<position y="1.410651" x="53.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3604">
+		<position y="4.310651" x="53.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3654">
+		<position y="4.310651" x="54.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3656">
+		<position y="1.410651" x="54.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3658">
+		<position y="1.410651" x="55.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3660">
+		<position y="4.310651" x="55.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3662">
+		<position y="4.310651" x="56.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3664">
+		<position y="1.410651" x="56.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3666">
+		<position y="1.410651" x="57.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3668">
+		<position y="4.310651" x="57.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3670">
+		<position y="4.310651" x="58.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3672">
+		<position y="1.410651" x="58.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3674">
+		<position y="1.410651" x="59.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3676">
+		<position y="4.310651" x="59.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3678">
+		<position y="4.310651" x="60.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3680">
+		<position y="1.410651" x="60.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3682">
+		<position y="1.410651" x="61.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3684">
+		<position y="4.310651" x="61.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3686">
+		<position y="4.310651" x="62.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3688">
+		<position y="1.410651" x="62.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3690">
+		<position y="1.410651" x="63.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3692">
+		<position y="4.310651" x="63.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3694">
+		<position y="4.310651" x="64.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3696">
+		<position y="1.410651" x="64.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3698">
+		<position y="1.410651" x="65.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3700">
+		<position y="4.310651" x="65.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3750">
+		<position y="4.310651" x="66.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3752">
+		<position y="1.410651" x="66.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3754">
+		<position y="1.410651" x="67.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3756">
+		<position y="4.310651" x="67.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3758">
+		<position y="4.310651" x="68.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3760">
+		<position y="1.410651" x="68.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3762">
+		<position y="1.410651" x="69.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3764">
+		<position y="4.310651" x="69.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3766">
+		<position y="4.310651" x="70.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3768">
+		<position y="1.410651" x="70.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3770">
+		<position y="1.410651" x="71.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3772">
+		<position y="4.310651" x="71.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3774">
+		<position y="4.310651" x="72.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3776">
+		<position y="1.410651" x="72.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3778">
+		<position y="1.410651" x="73.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3780">
+		<position y="4.310651" x="73.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3782">
+		<position y="4.310651" x="74.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3784">
+		<position y="1.410651" x="74.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3786">
+		<position y="1.410651" x="75.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3788">
+		<position y="4.310651" x="75.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3790">
+		<position y="4.310651" x="76.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3792">
+		<position y="1.410651" x="76.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3794">
+		<position y="1.410651" x="77.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3796">
+		<position y="4.310651" x="77.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3846">
+		<position y="4.310651" x="78.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3848">
+		<position y="1.410651" x="78.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3850">
+		<position y="1.410651" x="79.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3852">
+		<position y="4.310651" x="79.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3854">
+		<position y="4.310651" x="80.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3856">
+		<position y="1.410651" x="80.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3858">
+		<position y="1.410651" x="81.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3860">
+		<position y="4.310651" x="81.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3862">
+		<position y="4.310651" x="82.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3864">
+		<position y="1.410651" x="82.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3866">
+		<position y="1.410651" x="83.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3868">
+		<position y="4.310651" x="83.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3870">
+		<position y="4.310651" x="84.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3872">
+		<position y="1.410651" x="84.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3874">
+		<position y="1.410651" x="85.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3876">
+		<position y="4.310651" x="85.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3878">
+		<position y="4.310651" x="86.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3880">
+		<position y="1.410651" x="86.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3882">
+		<position y="1.410651" x="87.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3884">
+		<position y="4.310651" x="87.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3886">
+		<position y="4.310651" x="88.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3888">
+		<position y="1.410651" x="88.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3890">
+		<position y="1.410651" x="89.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3892">
+		<position y="4.310651" x="89.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3942">
+		<position y="4.310651" x="90.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3944">
+		<position y="1.410651" x="90.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3946">
+		<position y="1.410651" x="91.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3948">
+		<position y="4.310651" x="91.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3950">
+		<position y="4.310651" x="92.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3952">
+		<position y="1.410651" x="92.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3954">
+		<position y="1.410651" x="93.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3956">
+		<position y="4.310651" x="93.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3958">
+		<position y="4.310651" x="94.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3960">
+		<position y="1.410651" x="94.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3962">
+		<position y="1.410651" x="95.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3964">
+		<position y="4.310651" x="95.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3966">
+		<position y="4.310651" x="96.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3968">
+		<position y="1.410651" x="96.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3970">
+		<position y="1.410651" x="97.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<block id="rect3972">
+		<position y="4.310651" x="97.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3974">
+		<position y="4.310651" x="98.8787"/>
+		<usetexture scale="0.10000000149" id="Red1"/>
+		<physics grip="50.0"/>
+		<vertex x="-50.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-5.621302"/>
+		<vertex x="-49.500000" y="-6.621302"/>
+		<vertex x="-50.500000" y="-6.621302"/>
+	</block>
+	<block id="rect3976">
+		<position y="1.410651" x="98.8787"/>
+		<usetexture scale="0.10000000149" id="GreenInRainbows"/>
+		<physics grip="0.0"/>
+		<vertex x="-50.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="0.178698"/>
+		<vertex x="-49.500000" y="-0.821302"/>
+		<vertex x="-50.500000" y="-0.821302"/>
+	</block>
+	<entity id="path2816" typeid="PlayerStart">
+		<position y="-1.1897315" x="-46.43449305"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="path4038" typeid="EndOfLevel">
+		<position y="-0.40389115" x="49.8419538"/>
+		<size r="0.5"/>
+	</entity>
+</level>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="cirpachasfunfun2" rversion="0.5.2">
+	<info>
+		<name>Cirpacha's perplexity - Intuition</name>
+		<description>a forgotten level from 2012</description>
+		<author>Cirpacha</author>
+		<date>2012-01-22</date>
+		<sky>white</sky>
+		<border texture="Black"/>
+	</info>
+	<layeroffsets>
+		<layeroffset x="1.0" y="1.0" frontlayer="false"/>
+	</layeroffsets>
+	<limits left="-5.000000" right="5.000000" top="5.000000" bottom="-5.000000"/>
+	<block id="rect47643">
+		<position y="0.787703357312" x="1.36564200131" islayer="true" layerid="0"/>
+		<usetexture color_g="74" color_b="194" id="Blue1InRainbows" color_a="255" color_r="65"/>
+		<vertex x="-13.074119" y="0.250673"/>
+		<vertex x="0.650553" y="9.887241"/>
+		<vertex x="3.074119" y="6.598514"/>
+		<vertex x="-10.650553" y="-3.038055"/>
+	</block>
+	<block id="rect4766">
+		<position y="3.10235068896" x="5.11537063399" islayer="true" layerid="0"/>
+		<usetexture color_g="176" color_b="177" id="Blue2InRainbows" color_a="255" color_r="78"/>
+		<vertex x="-13.074119" y="-4.378622"/>
+		<vertex x="0.650553" y="5.257947"/>
+		<vertex x="3.074119" y="1.969219"/>
+		<vertex x="-10.650553" y="-7.667350"/>
+	</block>
+	<block id="rect4928">
+		<position y="6.52802908191" x="7.33743249388" islayer="true" layerid="0"/>
+		<usetexture color_g="172" color_b="81" id="GreenInRainbows" color_a="255" color_r="72"/>
+		<vertex x="-13.074119" y="-11.229979"/>
+		<vertex x="0.650553" y="-1.593410"/>
+		<vertex x="3.074119" y="-4.882137"/>
+		<vertex x="-10.650553" y="-14.518706"/>
+	</block>
+	<block id="rect4932">
+		<position y="9.49077771326" x="10.1613023605" islayer="true" layerid="0"/>
+		<usetexture color_g="193" color_b="62" id="YellowInRainbows" color_a="255" color_r="187"/>
+		<vertex x="-13.074119" y="-17.155476"/>
+		<vertex x="0.650553" y="-7.518907"/>
+		<vertex x="3.074119" y="-10.807635"/>
+		<vertex x="-10.650553" y="-20.444204"/>
+	</block>
+	<block id="path4190">
+		<position y="9.72426425" x="5.56215575"/>
+		<usetexture id="Black"/>
+		<vertex x="-5.710044" y="-14.907664"/>
+		<vertex x="-5.601000" y="-14.853788"/>
+		<vertex x="-5.143777" y="-14.654063"/>
+		<vertex x="-4.950174" y="-14.557024"/>
+		<vertex x="-4.805311" y="-14.473822"/>
+		<vertex x="-4.665456" y="-14.380793"/>
+		<vertex x="-4.534855" y="-14.277132"/>
+		<vertex x="-4.417753" y="-14.162036"/>
+		<vertex x="-4.318397" y="-14.034698"/>
+		<vertex x="-4.289956" y="-13.989393"/>
+		<vertex x="-4.289956" y="-14.907664"/>
+	</block>
+	<block id="rect2816">
+		<position y="3.8546105" x="7.10081375"/>
+		<usetexture id="Black"/>
+		<physics grip="50.0"/>
+		<vertex x="-5.208318" y="0.079929"/>
+		<vertex x="-4.791682" y="0.079929"/>
+		<vertex x="-4.791682" y="-5.498371"/>
+		<vertex x="-5.208318" y="-5.498371"/>
+	</block>
+	<block id="rect2878">
+		<position y="3.8546105" x="4.684719725"/>
+		<usetexture id="Black"/>
+		<physics grip="50.0"/>
+		<vertex x="-5.034720" y="0.079929"/>
+		<vertex x="-4.965280" y="0.079929"/>
+		<vertex x="-4.965280" y="-5.498371"/>
+		<vertex x="-5.034720" y="-5.498371"/>
+	</block>
+	<block id="rect3032">
+		<position y="3.8546105" x="2.2153182"/>
+		<usetexture id="Black"/>
+		<physics grip="50.0"/>
+		<vertex x="-5.208318" y="0.079929"/>
+		<vertex x="-4.791682" y="0.079929"/>
+		<vertex x="-4.791682" y="-5.498371"/>
+		<vertex x="-5.208318" y="-5.498371"/>
+	</block>
+	<entity id="path2796" typeid="PlayerStart">
+		<position y="2.536163" x="2.2386462"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="path3046" typeid="Strawberry">
+		<position y="-1.0651" x="-3.94041595"/>
+		<size width="0.4" r="0.2" height="0.4"/>
+	</entity>
+	<entity id="path3116" typeid="EndOfLevel">
+		<position y="-1.065099265" x="3.37387"/>
+		<size width="0.4" r="0.2" height="0.4"/>
+	</entity>
+	<entity id="path3622" typeid="Wrecker">
+		<position y="-4.67675007" x="-4.65"/>
+		<size width="0.6" r="0.24" height="0.6"/>
+	</entity>
+	<entity id="path3724" typeid="Wrecker">
+		<position y="-4.67675" x="-3.4"/>
+		<size width="0.6" r="0.24" height="0.6"/>
+	</entity>
+	<entity id="path3832" typeid="Wrecker">
+		<position y="-4.67675005396" x="-2.15"/>
+		<size width="0.6" r="0.24" height="0.6"/>
+	</entity>
+	<entity id="path3946" typeid="Wrecker">
+		<position y="-4.676750135" x="-0.899999925"/>
+		<size width="0.6" r="0.24" height="0.6"/>
+	</entity>
+	<entity id="path5654" typeid="Wrecker">
+		<position y="-4.676749885" x="4.6499998"/>
+		<size width="0.6" r="0.24" height="0.6"/>
+	</entity>
+	<entity id="path5848" typeid="Wrecker">
+		<position y="-4.676749915" x="3.40000015"/>
+		<size width="0.6" r="0.24" height="0.6"/>
+	</entity>
+	<entity id="path6052" typeid="Wrecker">
+		<position y="-4.676749915" x="2.15000015"/>
+		<size width="0.6" r="0.24" height="0.6"/>
+	</entity>
+</level>

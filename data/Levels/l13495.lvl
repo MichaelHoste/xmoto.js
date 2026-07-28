@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="Retroponglevel" rversion="0.2.5">
+	<info>
+		<name>Retro Pong</name>
+		<description>Scripted Pong level like 1972...</description>
+		<author>Unknow~</author>
+		<date>2014-04-13</date>
+		<sky>Black</sky>
+		<border texture="invisible"/>
+		<music name="blockolando" />
+	</info>
+	<limits left="-12.500000" right="12.500000" top="12.500000" bottom="-12.500000"/>
+	<script>
+player = {}
+bot = {}
+down = {}
+ball = {}
+gameloop = {}
+connected = true
+speed = 2
+val = 0.5
+richtung = 1
+ran = 0
+unten = 0
+botmove = {}
+check = 1
+botset = 0
+score = 0
+score2 = 0
+botspeed = 19
+sleepvar = 100
+sleeptimer = {}
+number0_1 = {}
+number0_2 = {}
+number1_1 = {}
+number1_2 = {}
+number2_1 = {}
+number2_2 = {}
+number3_1 = {}
+number3_2 = {}
+killed = false
+win = false
+diff = false
+var22 = 50
+hardtoggle = false
+easytoggle = false
+moveup = {}
+movedown = {}
+toggleup = 0
+toggledown = 0
+range = 12
+gameStarted = false
+hasMov = false
+co = 5
+
+function OnLoad()
+Game.CameraMove(8,15)
+Game.CameraZoom(-0.11)
+Game.SetKeyHook("W","toggleup")
+Game.SetKeyHook("S","toggledown")
+Game.SetKeyHook("G","start")
+Game.SetKeyHook("I","msg")
+Game.SetKeyHook("1","easy")
+Game.SetKeyHook("2","hard")
+Game.SetKeyHook("3","superki")
+Game.Message("I for help")
+ballposx,ballposy = Game.GetBlockPos("ball")
+botposx,botposy = Game.GetBlockPos("bot")
+playerposx,playerposy = Game.GetBlockPos("player")
+n1x,n1y = Game.GetBlockPos("number0_1")
+n2x,n2y = Game.GetBlockPos("number0_2")
+Game.Message("Difficulty: Normal")
+return true
+end
+
+
+function toggleup()
+if hasMov == false or gameStarted == false then
+hasMov = true
+Game.StartTimer("moveup",1,3.5)
+end
+end
+
+function toggledown()
+if hasMov == false or gameStarted == false then
+hasMov = true
+Game.StartTimer("movedown",1,3.5)
+end
+end
+
+function moveup.Tick()
+UP()
+end
+
+function movedown.Tick()
+DOWN()
+end
+
+function start()
+gameStarted = true
+connected = false
+Game.StartTimer("gameloop",speed,0)
+Game.StartTimer("botmove",botspeed,0)
+end
+
+function superki()
+var22 = var22 -1
+if var22 == 0 then
+Game.Message("Superbot activated")
+botspeed = 1
+end
+end
+
+function hard()
+if gameStarted == false then
+if diff == false then
+Game.Message("Difficulty: Hard")
+diff = true
+val = 0.85
+botspeed = 15
+hardtoggle = true
+range = 11.5
+end
+end
+end
+
+function easy()
+if gameStarted == false then
+if diff == false then
+Game.Message("Difficulty: Easy")
+diff = true
+val = 0.3
+easytoggle = true
+botspeed = 55
+range = 4
+end
+end
+end
+
+function msg()
+Game.Message("W/S: Up/Down")
+Game.Message("G: Start")
+Game.Message("Press '1' for the Easy mode and '2' for the Hard mode.")
+Game.Message("Reach 3 points to win!")
+Game.Message("Good luck, you will need it.")
+end
+
+
+function gameloop.Tick()
+
+co = co-1
+if co == 0 then
+hasMov = false
+co =5
+end
+
+bx, by = Game.GetBlockPos("ball")
+bx2, by2 = Game.GetBlockPos("bot")
+bx3, by3 = Game.GetBlockPos("player")
+
+if richtung == 1 then
+if ran == 0 then
+Game.MoveBlock("ball",val,0)
+end
+if ran == -1 then
+Game.MoveBlock("ball",val,-0.1)
+end
+if ran == 1 then
+Game.MoveBlock("ball",val,0.1)
+end
+if ran == -2 then
+Game.MoveBlock("ball",val,-0.2)
+end
+if ran == 2 then
+Game.MoveBlock("ball",val,0.2)
+end
+
+if by &gt;2 then
+ran = -1
+end
+
+if by &gt;= 15 then
+ran = -1
+end
+
+if by &lt;-13 then
+ran = 1
+end
+end
+
+if richtung == 0 then
+if ran == 0 then
+Game.MoveBlock("ball",-val,0)
+end
+if ran == -1 then
+Game.MoveBlock("ball",-val,-0.1)
+end
+if ran == 1 then
+Game.MoveBlock("ball",-val,0.1)
+end
+if ran == -2 then
+Game.MoveBlock("ball",-val,-0.2)
+end
+if ran == 2 then
+Game.MoveBlock("ball",-val,0.2)
+end
+
+if by &gt;2 then
+ran = -1
+end
+
+if by &lt;-13 then
+ran = 1
+end
+
+
+if bx &lt; bx3-1 then
+
+if score == 2 and score2 == 2 then
+Game.Message("Matchpoint! Try your best!")
+end
+
+Game.Message("G: Start")
+
+Game.StopTimer("botmove")
+Game.StopTimer("gameloop")
+gameStarted = false
+connected = true
+Game.SetBlockPos("bot",botposx,botposy)
+Game.SetBlockPos("ball",ballposx,ballposy)
+Game.SetBlockPos("player",playerposx,playerposy)
+
+score2 = score2+1
+val = 0.5
+
+if hardtoggle == true then
+val = 0.85
+end
+
+if easytoggle == true then
+val = 0.3
+end
+
+if score2 == 1 then
+Game.SetBlockPos("number1_2",n2x,n2y-17.5)
+Game.SetBlockPos("number0_2",100,100)
+end
+
+if score2 == 2 then
+Game.SetBlockPos("number2_2",n2x,n2y-17.5)
+Game.SetBlockPos("number1_2",100,100)
+end
+
+
+if score2 == 3 then
+Game.SetBlockPos("number3_2",n2x,n2y-17.5)
+Game.SetBlockPos("number2_2",100,100)
+Game.KillPlayer()
+Game.StopTimer("gameloop")
+Game.StopTimer("botmove")
+killed = true
+end
+
+connected = true
+
+end
+
+
+
+if bx &gt; bx2+1 then
+if score == 2 and score2 == 2 then
+Game.Message("Matchpoint! Try your best!")
+end
+Game.Message("G: Start")
+
+Game.StopTimer("botmove")
+gameStarted = false
+connected = true
+Game.StopTimer("gameloop")
+Game.SetBlockPos("bot",botposx,botposy)
+Game.SetBlockPos("ball",ballposx,ballposy)
+Game.SetBlockPos("player",playerposx,playerposy)
+
+score = score+1
+val = 0.5
+if hardtoggle == true then
+val = 1.0
+end
+
+if easytoggle == true then
+val = 0.30
+end
+
+
+if score == 1 then
+Game.SetBlockPos("number1_1",n1x,n1y-17.5)
+Game.SetBlockPos("number0_1",100,100)
+end
+
+if score == 2 then
+Game.SetBlockPos("number2_1",n1x,n1y-17.5)
+Game.SetBlockPos("number1_1",100,100)
+end
+
+if score == 3 then
+Game.SetBlockPos("number3_1",n1x,n1y-17.5)
+Game.SetBlockPos("number2_1",100,100)
+Game.WinPlayer()
+Game.StopTimer("gameloop")
+Game.StopTimer("botmove")
+win = true
+end
+
+
+connected = true
+
+
+end
+
+
+
+
+
+if bx &lt; bx3+1 and by &gt;by3-1 and by &lt; by3+1 then
+ran = math.random(-2,2)
+val = val +0.015
+richtung = 1
+end
+end
+
+
+
+
+
+
+if bx &gt; bx2-1 and by &gt;by2-1 and by &lt; by2+1 then
+ran = math.random(-2,2)
+botset = math.random(-0.5,0.5)
+richtung = 0
+end
+
+if check == 1  then
+Game.StartTimer("botmove",botspeed,0)
+check = 0
+end
+
+end
+
+function botmove.Tick()
+bx, by = Game.GetBlockPos("ball")
+if bx &gt; range then
+Game.SetBlockPos("bot",22.8,by+botset)
+if by &gt;= 1 then
+Game.MoveBlock("bot",0,-0.5)
+end
+if by &lt;= -12 then
+Game.MoveBlock("bot",0,0.5)
+end
+end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+function UP()
+ bx, by = Game.GetBlockPos("player")
+Game.MoveBlock("player",0,0.5)
+if connected == true then
+Game.MoveBlock("ball",0,0.5)
+end
+if by &gt;= 1 then
+Game.MoveBlock("player",0,-0.5)
+if connected == true then
+Game.MoveBlock("ball",0,-0.5)
+end
+end
+end
+
+function DOWN()
+ bx, by = Game.GetBlockPos("player")
+if by &lt;= -12 then
+Game.MoveBlock("player",0,0.5)
+if connected == true then
+Game.MoveBlock("ball",0,0.5)
+end
+end
+Game.MoveBlock("player",0,-0.5)
+if connected == true then
+Game.MoveBlock("ball",0,-0.5)
+end
+end
+	</script>
+	<block id="rect4659-1">
+		<position y="8.0" x="23.75"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="4.500000"/>
+		<vertex x="-12.250000" y="4.500000"/>
+		<vertex x="-12.250000" y="-11.500000"/>
+		<vertex x="-12.750000" y="-11.500000"/>
+	</block>
+	<block id="number1_1">
+		<position dynamic="true" background="true" y="-6.625" x="9.75"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="27.375000"/>
+		<vertex x="-12.250000" y="27.375000"/>
+		<vertex x="-12.250000" y="24.125000"/>
+		<vertex x="-12.500000" y="24.125000"/>
+		<vertex x="-12.500000" y="27.125000"/>
+		<vertex x="-12.750000" y="27.125000"/>
+	</block>
+	<block id="number1_2">
+		<position dynamic="true" background="true" y="-6.625" x="15.0"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="27.375000"/>
+		<vertex x="-12.250000" y="27.375000"/>
+		<vertex x="-12.250000" y="24.125000"/>
+		<vertex x="-12.500000" y="24.125000"/>
+		<vertex x="-12.500000" y="27.125000"/>
+		<vertex x="-12.750000" y="27.125000"/>
+	</block>
+	<block id="number2_1">
+		<position dynamic="true" background="true" y="-6.625" x="9.125"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="27.375000"/>
+		<vertex x="-11.625000" y="27.375000"/>
+		<vertex x="-11.625000" y="25.625000"/>
+		<vertex x="-13.125000" y="25.625000"/>
+		<vertex x="-13.125000" y="24.375000"/>
+		<vertex x="-11.625000" y="24.375000"/>
+		<vertex x="-11.625000" y="24.125000"/>
+		<vertex x="-13.375000" y="24.125000"/>
+		<vertex x="-13.375000" y="25.875000"/>
+		<vertex x="-11.875000" y="25.875000"/>
+		<vertex x="-11.875000" y="27.125000"/>
+		<vertex x="-13.375000" y="27.125000"/>
+	</block>
+	<block id="number2_2">
+		<position dynamic="true" background="true" y="-6.625" x="14.375"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="27.375000"/>
+		<vertex x="-11.625000" y="27.375000"/>
+		<vertex x="-11.625000" y="25.625000"/>
+		<vertex x="-13.125000" y="25.625000"/>
+		<vertex x="-13.125000" y="24.375000"/>
+		<vertex x="-11.625000" y="24.375000"/>
+		<vertex x="-11.625000" y="24.125000"/>
+		<vertex x="-13.375000" y="24.125000"/>
+		<vertex x="-13.375000" y="25.875000"/>
+		<vertex x="-11.875000" y="25.875000"/>
+		<vertex x="-11.875000" y="27.125000"/>
+		<vertex x="-13.375000" y="27.125000"/>
+	</block>
+	<block id="number3_1">
+		<position dynamic="true" background="true" y="-6.625" x="14.375"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="27.375000"/>
+		<vertex x="-11.625000" y="27.375000"/>
+		<vertex x="-11.625000" y="24.125000"/>
+		<vertex x="-13.375000" y="24.125000"/>
+		<vertex x="-13.375000" y="24.375000"/>
+		<vertex x="-11.875000" y="24.375000"/>
+		<vertex x="-11.875000" y="25.625000"/>
+		<vertex x="-13.375000" y="25.625000"/>
+		<vertex x="-13.375000" y="25.875000"/>
+		<vertex x="-11.875000" y="25.875000"/>
+		<vertex x="-11.875000" y="27.125000"/>
+		<vertex x="-13.375000" y="27.125000"/>
+	</block>
+	<block id="number3_2">
+		<position dynamic="true" background="true" y="-6.625" x="9.125"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="27.375000"/>
+		<vertex x="-11.625000" y="27.375000"/>
+		<vertex x="-11.625000" y="24.125000"/>
+		<vertex x="-13.375000" y="24.125000"/>
+		<vertex x="-13.375000" y="24.375000"/>
+		<vertex x="-11.875000" y="24.375000"/>
+		<vertex x="-11.875000" y="25.625000"/>
+		<vertex x="-13.375000" y="25.625000"/>
+		<vertex x="-13.375000" y="25.875000"/>
+		<vertex x="-11.875000" y="25.875000"/>
+		<vertex x="-11.875000" y="27.125000"/>
+		<vertex x="-13.375000" y="27.125000"/>
+	</block>
+	<block id="number0_1">
+		<position dynamic="true" background="true" y="2.125" x="9.125"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="9.875000"/>
+		<vertex x="-11.625000" y="9.875000"/>
+		<vertex x="-11.625000" y="6.625000"/>
+		<vertex x="-13.375000" y="6.625000"/>
+		<vertex x="-13.375000" y="7.871875"/>
+		<vertex x="-13.125000" y="7.871875"/>
+		<vertex x="-13.125000" y="6.875000"/>
+		<vertex x="-11.875000" y="6.875000"/>
+		<vertex x="-11.875000" y="9.625000"/>
+		<vertex x="-13.125000" y="9.625000"/>
+		<vertex x="-13.125000" y="7.878125"/>
+		<vertex x="-13.375000" y="7.878125"/>
+	</block>
+	<block id="number0_2">
+		<position dynamic="true" background="true" y="2.125" x="14.375"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="9.875000"/>
+		<vertex x="-11.625000" y="9.875000"/>
+		<vertex x="-11.625000" y="6.625000"/>
+		<vertex x="-13.375000" y="6.625000"/>
+		<vertex x="-13.375000" y="7.871875"/>
+		<vertex x="-13.125000" y="7.871875"/>
+		<vertex x="-13.125000" y="6.875000"/>
+		<vertex x="-11.875000" y="6.875000"/>
+		<vertex x="-11.875000" y="9.625000"/>
+		<vertex x="-13.125000" y="9.625000"/>
+		<vertex x="-13.125000" y="7.878125"/>
+		<vertex x="-13.375000" y="7.878125"/>
+	</block>
+	<block id="player">
+		<position y="1.24999995" x="0.501269075" dynamic="true"/>
+		<usetexture id="white"/>
+		<physics grip="50.0"/>
+		<vertex x="-12.751269" y="10.750000"/>
+		<vertex x="-12.248731" y="10.750000"/>
+		<vertex x="-12.248731" y="9.250000"/>
+		<vertex x="-12.751269" y="9.250000"/>
+	</block>
+	<block id="rect3373">
+		<position y="24.517853875" x="2.1875"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-36.053565"/>
+		<vertex x="-12.375000" y="-36.053565"/>
+		<vertex x="-12.375000" y="-37.017851"/>
+		<vertex x="-12.625000" y="-37.017851"/>
+	</block>
+	<block id="rect3373-1">
+		<position y="24.16964105" x="1.111607125"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.638393" y="-35.714282"/>
+		<vertex x="-11.361607" y="-35.714282"/>
+		<vertex x="-11.361607" y="-35.964282"/>
+		<vertex x="-13.638393" y="-35.964282"/>
+	</block>
+	<block id="rect3397">
+		<position y="20.7399105" x="13.44765575"/>
+		<usetexture id="Black"/>
+		<vertex x="-27.765930" y="-24.239911"/>
+		<vertex x="2.765930" y="-24.239911"/>
+		<vertex x="2.765930" y="-33.719732"/>
+		<vertex x="-27.765930" y="-33.719732"/>
+	</block>
+	<block id="bot">
+		<position y="1.251269475" x="22.748731575" dynamic="true"/>
+		<usetexture id="white"/>
+		<physics grip="50.0"/>
+		<vertex x="-12.751269" y="10.748731"/>
+		<vertex x="-12.248731" y="10.748731"/>
+		<vertex x="-12.248731" y="9.246192"/>
+		<vertex x="-12.751269" y="9.246192"/>
+	</block>
+	<block id="ball">
+		<position y="1.25" x="1.0" dynamic="true"/>
+		<usetexture id="white"/>
+		<physics grip="50.0"/>
+		<vertex x="-12.750000" y="10.250000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.250000" y="9.750000"/>
+		<vertex x="-12.750000" y="9.750000"/>
+	</block>
+	<block id="rect4659">
+		<position y="-0.249999925" x="11.75"/>
+		<usetexture id="white"/>
+		<vertex x="-24.750000" y="13.250000"/>
+		<vertex x="-0.250000" y="13.250000"/>
+		<vertex x="-0.250000" y="12.750000"/>
+		<vertex x="-24.750000" y="12.750000"/>
+	</block>
+	<block id="rect4659-9">
+		<position y="8.0" x="-0.25"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="4.500000"/>
+		<vertex x="-12.250000" y="4.500000"/>
+		<vertex x="-12.250000" y="-11.500000"/>
+		<vertex x="-12.750000" y="-11.500000"/>
+	</block>
+	<block id="rect4659-2">
+		<position y="16.249999925" x="11.75"/>
+		<usetexture id="white"/>
+		<vertex x="-24.750000" y="-19.750000"/>
+		<vertex x="-0.250000" y="-19.750000"/>
+		<vertex x="-0.250000" y="-20.250000"/>
+		<vertex x="-24.750000" y="-20.250000"/>
+	</block>
+	<block id="rect5588">
+		<position y="0.49999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="12.000000"/>
+		<vertex x="-12.250000" y="12.000000"/>
+		<vertex x="-12.250000" y="11.000000"/>
+		<vertex x="-12.750000" y="11.000000"/>
+	</block>
+	<block id="rect25081">
+		<position y="18.33125" x="8.125"/>
+		<usetexture id="white"/>
+		<vertex x="-12.625000" y="-22.743750"/>
+		<vertex x="-12.375000" y="-22.743750"/>
+		<vertex x="-12.375000" y="-25.581250"/>
+		<vertex x="-12.625000" y="-25.581250"/>
+	</block>
+	<block id="rect25083">
+		<position y="16.875" x="8.875"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="-21.125000"/>
+		<vertex x="-11.625000" y="-21.125000"/>
+		<vertex x="-11.625000" y="-21.375000"/>
+		<vertex x="-13.375000" y="-21.375000"/>
+	</block>
+	<block id="rect25081-3">
+		<position y="17.46249995" x="9.625"/>
+		<usetexture id="white"/>
+		<vertex x="-12.625000" y="-21.887500"/>
+		<vertex x="-12.375000" y="-21.887500"/>
+		<vertex x="-12.375000" y="-22.962500"/>
+		<vertex x="-12.625000" y="-22.962500"/>
+	</block>
+	<block id="rect25083-2">
+		<position y="18.125" x="8.875"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="-23.625000"/>
+		<vertex x="-11.625000" y="-23.625000"/>
+		<vertex x="-11.625000" y="-23.875000"/>
+		<vertex x="-13.375000" y="-23.875000"/>
+	</block>
+	<block id="rect25081-3-2">
+		<position y="18.90625" x="10.125"/>
+		<usetexture id="white"/>
+		<vertex x="-12.625000" y="-24.581250"/>
+		<vertex x="-12.375000" y="-24.581250"/>
+		<vertex x="-12.375000" y="-26.043750"/>
+		<vertex x="-12.625000" y="-26.043750"/>
+	</block>
+	<block id="rect25081-3-2-1">
+		<position y="18.875" x="11.625"/>
+		<usetexture id="white"/>
+		<vertex x="-12.625000" y="-24.475000"/>
+		<vertex x="-12.375000" y="-24.475000"/>
+		<vertex x="-12.375000" y="-26.025000"/>
+		<vertex x="-12.625000" y="-26.025000"/>
+	</block>
+	<block id="rect25083-6">
+		<position y="18.125" x="10.875"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="-23.625000"/>
+		<vertex x="-11.625000" y="-23.625000"/>
+		<vertex x="-11.625000" y="-23.875000"/>
+		<vertex x="-13.375000" y="-23.875000"/>
+	</block>
+	<block id="rect25083-5">
+		<position y="19.625" x="10.875"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="-26.625000"/>
+		<vertex x="-11.625000" y="-26.625000"/>
+		<vertex x="-11.625000" y="-26.875000"/>
+		<vertex x="-13.375000" y="-26.875000"/>
+	</block>
+	<block id="rect25081-3-2-7">
+		<position y="18.7500001" x="12.125"/>
+		<usetexture id="white"/>
+		<vertex x="-12.625000" y="-24.000000"/>
+		<vertex x="-12.375000" y="-24.000000"/>
+		<vertex x="-12.375000" y="-26.000000"/>
+		<vertex x="-12.625000" y="-26.000000"/>
+	</block>
+	<block id="rect25083-6-6">
+		<position y="18.125" x="12.9"/>
+		<usetexture id="white"/>
+		<vertex x="-13.350000" y="-23.625000"/>
+		<vertex x="-11.650000" y="-23.625000"/>
+		<vertex x="-11.650000" y="-23.875000"/>
+		<vertex x="-13.350000" y="-23.875000"/>
+	</block>
+	<block id="rect25081-3-2-7-1">
+		<position y="18.9437502" x="13.625"/>
+		<usetexture id="white"/>
+		<vertex x="-12.625000" y="-24.581250"/>
+		<vertex x="-12.375000" y="-24.581250"/>
+		<vertex x="-12.375000" y="-26.193751"/>
+		<vertex x="-12.625000" y="-26.193751"/>
+	</block>
+	<block id="rect25081-3-2-8">
+		<position y="18.8749999" x="14.125"/>
+		<usetexture id="white"/>
+		<vertex x="-12.625000" y="-24.375000"/>
+		<vertex x="-12.375000" y="-24.375000"/>
+		<vertex x="-12.375000" y="-26.125000"/>
+		<vertex x="-12.625000" y="-26.125000"/>
+	</block>
+	<block id="rect25081-3-2-1-9">
+		<position y="18.875" x="15.625"/>
+		<usetexture id="white"/>
+		<vertex x="-12.625000" y="-24.375000"/>
+		<vertex x="-12.375000" y="-24.375000"/>
+		<vertex x="-12.375000" y="-26.125000"/>
+		<vertex x="-12.625000" y="-26.125000"/>
+	</block>
+	<block id="rect25083-6-2">
+		<position y="18.125" x="14.8875"/>
+		<usetexture id="white"/>
+		<vertex x="-13.262500" y="-23.625000"/>
+		<vertex x="-11.737500" y="-23.625000"/>
+		<vertex x="-11.737500" y="-23.875000"/>
+		<vertex x="-13.262500" y="-23.875000"/>
+	</block>
+	<block id="rect25083-5-7">
+		<position y="19.625" x="14.88125"/>
+		<usetexture id="white"/>
+		<vertex x="-13.306250" y="-26.625000"/>
+		<vertex x="-11.693750" y="-26.625000"/>
+		<vertex x="-11.693750" y="-26.875000"/>
+		<vertex x="-13.306250" y="-26.875000"/>
+	</block>
+	<block id="rect25081-3-2-7-9">
+		<position y="19.2499999" x="15.625"/>
+		<usetexture id="white"/>
+		<vertex x="-12.625000" y="-24.500000"/>
+		<vertex x="-12.375000" y="-24.500000"/>
+		<vertex x="-12.375000" y="-27.500000"/>
+		<vertex x="-12.625000" y="-27.500000"/>
+	</block>
+	<block id="rect25083-5-7-5">
+		<position y="20.625" x="14.875"/>
+		<usetexture id="white"/>
+		<vertex x="-13.375000" y="-28.625000"/>
+		<vertex x="-11.625000" y="-28.625000"/>
+		<vertex x="-11.625000" y="-28.875000"/>
+		<vertex x="-13.375000" y="-28.875000"/>
+	</block>
+	<block id="rect5588-1">
+		<position y="1.99999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="9.000000"/>
+		<vertex x="-12.250000" y="9.000000"/>
+		<vertex x="-12.250000" y="8.000000"/>
+		<vertex x="-12.750000" y="8.000000"/>
+	</block>
+	<block id="rect5588-4">
+		<position y="3.49999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="6.000000"/>
+		<vertex x="-12.250000" y="6.000000"/>
+		<vertex x="-12.250000" y="5.000000"/>
+		<vertex x="-12.750000" y="5.000000"/>
+	</block>
+	<block id="rect5588-9">
+		<position y="4.99999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="3.000000"/>
+		<vertex x="-12.250000" y="3.000000"/>
+		<vertex x="-12.250000" y="2.000000"/>
+		<vertex x="-12.750000" y="2.000000"/>
+	</block>
+	<block id="rect5588-8">
+		<position y="6.49999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="0.000000"/>
+		<vertex x="-12.250000" y="0.000000"/>
+		<vertex x="-12.250000" y="-1.000000"/>
+		<vertex x="-12.750000" y="-1.000000"/>
+	</block>
+	<block id="rect5588-2">
+		<position y="7.99999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="-3.000000"/>
+		<vertex x="-12.250000" y="-3.000000"/>
+		<vertex x="-12.250000" y="-4.000000"/>
+		<vertex x="-12.750000" y="-4.000000"/>
+	</block>
+	<block id="rect5588-5">
+		<position y="9.49999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="-6.000000"/>
+		<vertex x="-12.250000" y="-6.000000"/>
+		<vertex x="-12.250000" y="-7.000000"/>
+		<vertex x="-12.750000" y="-7.000000"/>
+	</block>
+	<block id="rect5588-7">
+		<position y="10.99999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="-9.000000"/>
+		<vertex x="-12.250000" y="-9.000000"/>
+		<vertex x="-12.250000" y="-10.000000"/>
+		<vertex x="-12.750000" y="-10.000000"/>
+	</block>
+	<block id="rect5588-52">
+		<position y="13.99999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="-15.000000"/>
+		<vertex x="-12.250000" y="-15.000000"/>
+		<vertex x="-12.250000" y="-16.000000"/>
+		<vertex x="-12.750000" y="-16.000000"/>
+	</block>
+	<block id="rect5588-14">
+		<position y="15.49999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="-18.000000"/>
+		<vertex x="-12.250000" y="-18.000000"/>
+		<vertex x="-12.250000" y="-19.000000"/>
+		<vertex x="-12.750000" y="-19.000000"/>
+	</block>
+	<block id="rect5588-3">
+		<position y="12.49999995" x="11.75" background="true"/>
+		<usetexture id="white"/>
+		<vertex x="-12.750000" y="-12.000000"/>
+		<vertex x="-12.250000" y="-12.000000"/>
+		<vertex x="-12.250000" y="-13.000000"/>
+		<vertex x="-12.750000" y="-13.000000"/>
+	</block>
+	<entity id="path2816" typeid="PlayerStart">
+		<position y="-12.49999995" x="-11.47142857"/>
+		<size r="0.4"/>
+	</entity>
+</level>

@@ -7,7 +7,7 @@
 		<date>17/06/06</date>
 		<sky>sky1</sky>
 	</info>
-	<script source="mi chipilin">
+	<script>
 		g = -9.81
 function OnLoad()
   Game.SetKeyHook("G", "GravityChange")

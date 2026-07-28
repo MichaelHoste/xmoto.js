@@ -82,11 +82,11 @@
 		function StartMessages(_msgs,_delay)
 			msga = 1
 			msgs =_msgs
-			Game.StartTimer("msgt",_delay,table.getn(msgs))
+			Game.StartTimer("msgt",_delay,#msgs)
 		end
 
 		function ToggleMessages()
-			if not(table.getn(msgs) == 0)
+			if not(#msgs == 0)
 				then
 					if msga==1
 					then
@@ -100,10 +100,10 @@
 		end
 
 		function msgt.Tick(n)
-			if table.getn(msgs) >= n
+			if #msgs >= n
 				then
 					Game.Message(msgs[n])
-					if table.getn(msgs) == n
+					if #msgs == n
 					then msga = 0
 					Game.SetGravity(0.00, -9.81)
 					save = 1

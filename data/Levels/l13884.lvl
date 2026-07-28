@@ -1,0 +1,1645 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="Rinbospeeder" rversion="0.2.5">
+	<info>
+		<name>Rinbo - Speeder</name>
+		<description>WRrrrr...</description>
+		<author>Rinbo</author>
+		<date>2017-10-25</date>
+		<sky>Black</sky>
+		<border texture="Black"/>
+	</info>
+	<limits left="-12.500000" right="12.500000" top="7.500000" bottom="-7.500000"/>
+	<entity id="path2816" typeid="PlayerStart">
+		<position y="1.0764145" x="-11.43750001"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="path6827" typeid="EndOfLevel">
+		<position y="-2.11556485" x="7.594796875"/>
+		<size r="0.5"/>
+	</entity>
+	<entity id="path6827-6" typeid="EndOfLevel">
+		<position y="-0.98214285" x="1.214286"/>
+		<size r="0.5"/>
+	</entity>
+	<block id="path2817">
+		<position y="7.9794398" x="4.26789449175" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-16.732143" y="-7.633925" edge="bluen"/>
+		<vertex x="-11.357143" y="-7.633925" edge="bluen"/>
+		<vertex x="-9.884741" y="-6.783834" edge="bluen"/>
+		<vertex x="-8.267857" y="-6.783834" edge="bluen"/>
+		<vertex x="-8.267857" y="-10.133925" edge="bluen"/>
+		<vertex x="-9.839285" y="-10.133925" edge="bluen"/>
+		<vertex x="-11.237545" y="-9.326640" edge="bluen"/>
+		<vertex x="-16.732143" y="-9.326640" edge="bluen"/>
+	</block>
+	<block id="path2831-5-3-9-19-5-7-27-4-93-7-8">
+		<position y="6.04859826892" x="13.9106943141" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.399716" y="-4.617561" edge="bluen"/>
+		<vertex x="-12.430190" y="-4.672011" edge="bluen"/>
+		<vertex x="-12.486606" y="-4.698662" edge="bluen"/>
+		<vertex x="-12.499247" y="-4.699543" edge="bluen"/>
+		<vertex x="-12.558821" y="-4.680974" edge="bluen"/>
+		<vertex x="-12.596554" y="-4.631276" edge="bluen"/>
+		<vertex x="-12.598398" y="-4.568909" edge="bluen"/>
+		<vertex x="-12.563676" y="-4.517052" edge="bluen"/>
+		<vertex x="-12.505320" y="-4.494985" edge="bluen"/>
+		<vertex x="-12.444992" y="-4.510900" edge="bluen"/>
+		<vertex x="-12.405108" y="-4.558885" edge="bluen"/>
+		<vertex x="-12.399678" y="-4.617562" edge="bluen"/>
+	</block>
+	<block id="path2831-5-3-9-19-5-7-27-4-93-7-8-3">
+		<position y="4.65857626892" x="14.3062658141" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.399716" y="-1.837517" edge="bluen"/>
+		<vertex x="-12.430190" y="-1.891967" edge="bluen"/>
+		<vertex x="-12.486606" y="-1.918618" edge="bluen"/>
+		<vertex x="-12.499247" y="-1.919499" edge="bluen"/>
+		<vertex x="-12.558821" y="-1.900930" edge="bluen"/>
+		<vertex x="-12.596554" y="-1.851232" edge="bluen"/>
+		<vertex x="-12.598398" y="-1.788865" edge="bluen"/>
+		<vertex x="-12.563676" y="-1.737008" edge="bluen"/>
+		<vertex x="-12.505320" y="-1.714941" edge="bluen"/>
+		<vertex x="-12.444992" y="-1.730856" edge="bluen"/>
+		<vertex x="-12.405108" y="-1.778841" edge="bluen"/>
+		<vertex x="-12.399678" y="-1.837518" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2">
+		<position y="7.23824770996" x="11.3959494664" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.562479" y="-6.820402" edge="bluen"/>
+		<vertex x="-12.388044" y="-7.102979" edge="bluen"/>
+		<vertex x="-12.396503" y="-7.140839" edge="bluen"/>
+		<vertex x="-12.396503" y="-7.140839" edge="bluen"/>
+		<vertex x="-12.410878" y="-7.145183" edge="bluen"/>
+		<vertex x="-12.425208" y="-7.140997" edge="bluen"/>
+		<vertex x="-12.607862" y="-6.850012" edge="bluen"/>
+		<vertex x="-12.611894" y="-6.833633" edge="bluen"/>
+		<vertex x="-12.605719" y="-6.817855" edge="bluen"/>
+		<vertex x="-12.599403" y="-6.812152" edge="bluen"/>
+		<vertex x="-12.599403" y="-6.812152" edge="bluen"/>
+		<vertex x="-12.585029" y="-6.807808" edge="bluen"/>
+		<vertex x="-12.570699" y="-6.811994" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1">
+		<position y="6.93922058985" x="11.1477919362" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.601329" y="-6.245907" edge="bluen"/>
+		<vertex x="-12.356344" y="-6.470095" edge="bluen"/>
+		<vertex x="-12.354141" y="-6.508826" edge="bluen"/>
+		<vertex x="-12.366782" y="-6.516931" edge="bluen"/>
+		<vertex x="-12.373411" y="-6.517956" edge="bluen"/>
+		<vertex x="-12.387854" y="-6.514040" edge="bluen"/>
+		<vertex x="-12.636898" y="-6.286788" edge="bluen"/>
+		<vertex x="-12.636898" y="-6.286788" edge="bluen"/>
+		<vertex x="-12.645251" y="-6.272133" edge="bluen"/>
+		<vertex x="-12.643619" y="-6.255268" edge="bluen"/>
+		<vertex x="-12.639102" y="-6.248056" edge="bluen"/>
+		<vertex x="-12.626461" y="-6.239951" edge="bluen"/>
+		<vertex x="-12.611532" y="-6.240065" edge="bluen"/>
+		<vertex x="-12.602619" y="-6.244799" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4">
+		<position y="6.75303429163" x="10.8092195961" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.652709" y="-5.934796" edge="bluen"/>
+		<vertex x="-12.333067" y="-6.024830" edge="bluen"/>
+		<vertex x="-12.313677" y="-6.058432" edge="bluen"/>
+		<vertex x="-12.321322" y="-6.071356" edge="bluen"/>
+		<vertex x="-12.334706" y="-6.077970" edge="bluen"/>
+		<vertex x="-12.339751" y="-6.078343" edge="bluen"/>
+		<vertex x="-12.666089" y="-5.987307" edge="bluen"/>
+		<vertex x="-12.680140" y="-5.977975" edge="bluen"/>
+		<vertex x="-12.686269" y="-5.962179" edge="bluen"/>
+		<vertex x="-12.685478" y="-5.953706" edge="bluen"/>
+		<vertex x="-12.677834" y="-5.940781" edge="bluen"/>
+		<vertex x="-12.664450" y="-5.934167" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9">
+		<position y="6.67636257166" x="10.4296151595" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.663099" y="-5.808960" edge="bluen"/>
+		<vertex x="-12.332712" y="-5.842458" edge="bluen"/>
+		<vertex x="-12.307813" y="-5.872207" edge="bluen"/>
+		<vertex x="-12.307813" y="-5.872207" edge="bluen"/>
+		<vertex x="-12.313111" y="-5.886257" edge="bluen"/>
+		<vertex x="-12.325152" y="-5.895082" edge="bluen"/>
+		<vertex x="-12.333431" y="-5.896619" edge="bluen"/>
+		<vertex x="-12.667212" y="-5.862993" edge="bluen"/>
+		<vertex x="-12.682664" y="-5.856227" edge="bluen"/>
+		<vertex x="-12.691428" y="-5.841726" edge="bluen"/>
+		<vertex x="-12.692111" y="-5.833244" edge="bluen"/>
+		<vertex x="-12.692111" y="-5.833244" edge="bluen"/>
+		<vertex x="-12.686813" y="-5.819193" edge="bluen"/>
+		<vertex x="-12.674772" y="-5.810368" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-48">
+		<position y="6.67163089344" x="10.0385708861" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.668741" y="-5.835739" edge="bluen"/>
+		<vertex x="-12.338933" y="-5.796957" edge="bluen"/>
+		<vertex x="-12.308187" y="-5.820614" edge="bluen"/>
+		<vertex x="-12.308187" y="-5.820614" edge="bluen"/>
+		<vertex x="-12.310320" y="-5.835478" edge="bluen"/>
+		<vertex x="-12.320167" y="-5.846700" edge="bluen"/>
+		<vertex x="-12.661067" y="-5.889381" edge="bluen"/>
+		<vertex x="-12.664469" y="-5.889566" edge="bluen"/>
+		<vertex x="-12.680527" y="-5.884278" edge="bluen"/>
+		<vertex x="-12.690617" y="-5.870694" edge="bluen"/>
+		<vertex x="-12.691813" y="-5.865724" edge="bluen"/>
+		<vertex x="-12.691813" y="-5.865724" edge="bluen"/>
+		<vertex x="-12.689680" y="-5.850860" edge="bluen"/>
+		<vertex x="-12.679833" y="-5.839639" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-8">
+		<position y="6.77003553802" x="9.66328203246" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.664355" y="-6.077969" edge="bluen"/>
+		<vertex x="-12.357680" y="-5.950579" edge="bluen"/>
+		<vertex x="-12.321641" y="-5.964939" edge="bluen"/>
+		<vertex x="-12.319633" y="-5.979820" edge="bluen"/>
+		<vertex x="-12.326040" y="-5.993304" edge="bluen"/>
+		<vertex x="-12.642320" y="-6.127475" edge="bluen"/>
+		<vertex x="-12.642320" y="-6.127475" edge="bluen"/>
+		<vertex x="-12.652305" y="-6.129563" edge="bluen"/>
+		<vertex x="-12.668560" y="-6.124761" edge="bluen"/>
+		<vertex x="-12.678359" y="-6.113116" edge="bluen"/>
+		<vertex x="-12.680367" y="-6.098234" edge="bluen"/>
+		<vertex x="-12.673960" y="-6.084750" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2">
+		<position y="7.00305294494" x="9.35028108151" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.629274" y="-6.611703" edge="bluen"/>
+		<vertex x="-12.412674" y="-6.359985" edge="bluen"/>
+		<vertex x="-12.374028" y="-6.356599" edge="bluen"/>
+		<vertex x="-12.365540" y="-6.368987" edge="bluen"/>
+		<vertex x="-12.365198" y="-6.383912" edge="bluen"/>
+		<vertex x="-12.587326" y="-6.646007" edge="bluen"/>
+		<vertex x="-12.601719" y="-6.654803" edge="bluen"/>
+		<vertex x="-12.608547" y="-6.655612" edge="bluen"/>
+		<vertex x="-12.624620" y="-6.650429" edge="bluen"/>
+		<vertex x="-12.633891" y="-6.638589" edge="bluen"/>
+		<vertex x="-12.635193" y="-6.623718" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9-4">
+		<position y="7.31376373198" x="9.12030779375" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.608565" y="-7.255163" edge="bluen"/>
+		<vertex x="-12.438676" y="-6.969830" edge="bluen"/>
+		<vertex x="-12.401194" y="-6.959823" edge="bluen"/>
+		<vertex x="-12.390696" y="-6.970560" edge="bluen"/>
+		<vertex x="-12.387781" y="-6.985201" edge="bluen"/>
+		<vertex x="-12.561324" y="-7.281710" edge="bluen"/>
+		<vertex x="-12.573983" y="-7.292859" edge="bluen"/>
+		<vertex x="-12.585712" y="-7.295232" edge="bluen"/>
+		<vertex x="-12.598806" y="-7.291717" edge="bluen"/>
+		<vertex x="-12.609304" y="-7.280980" edge="bluen"/>
+		<vertex x="-12.612219" y="-7.266339" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-5">
+		<position y="7.65902964641" x="8.95789371503" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.580575" y="-7.965851" edge="bluen"/>
+		<vertex x="-12.471012" y="-7.652365" edge="bluen"/>
+		<vertex x="-12.436279" y="-7.635083" edge="bluen"/>
+		<vertex x="-12.423850" y="-7.643510" edge="bluen"/>
+		<vertex x="-12.418074" y="-7.657276" edge="bluen"/>
+		<vertex x="-12.528988" y="-7.982442" edge="bluen"/>
+		<vertex x="-12.539169" y="-7.995892" edge="bluen"/>
+		<vertex x="-12.555313" y="-8.001035" edge="bluen"/>
+		<vertex x="-12.563721" y="-7.999724" edge="bluen"/>
+		<vertex x="-12.576150" y="-7.991297" edge="bluen"/>
+		<vertex x="-12.581926" y="-7.977531" edge="bluen"/>
+		<vertex x="-12.581085" y="-7.967473" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5">
+		<position y="8.03844432345" x="8.88116107245" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.536964" y="-8.741697" edge="bluen"/>
+		<vertex x="-12.517192" y="-8.410205" edge="bluen"/>
+		<vertex x="-12.488501" y="-8.384094" edge="bluen"/>
+		<vertex x="-12.488501" y="-8.384094" edge="bluen"/>
+		<vertex x="-12.474242" y="-8.388806" edge="bluen"/>
+		<vertex x="-12.464926" y="-8.400471" edge="bluen"/>
+		<vertex x="-12.482808" y="-8.743567" edge="bluen"/>
+		<vertex x="-12.488928" y="-8.759285" edge="bluen"/>
+		<vertex x="-12.503053" y="-8.768643" edge="bluen"/>
+		<vertex x="-12.509796" y="-8.769683" edge="bluen"/>
+		<vertex x="-12.511499" y="-8.769678" edge="bluen"/>
+		<vertex x="-12.525758" y="-8.764966" edge="bluen"/>
+		<vertex x="-12.535074" y="-8.753301" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-1">
+		<position y="8.42097173629" x="8.95283460161" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.459994" y="-9.505767" edge="bluen"/>
+		<vertex x="-12.591440" y="-9.200809" edge="bluen"/>
+		<vertex x="-12.577560" y="-9.164583" edge="bluen"/>
+		<vertex x="-12.577560" y="-9.164583" edge="bluen"/>
+		<vertex x="-12.562706" y="-9.162378" edge="bluen"/>
+		<vertex x="-12.549138" y="-9.168606" edge="bluen"/>
+		<vertex x="-12.410785" y="-9.483078" edge="bluen"/>
+		<vertex x="-12.409180" y="-9.499869" edge="bluen"/>
+		<vertex x="-12.417587" y="-9.514580" edge="bluen"/>
+		<vertex x="-12.424665" y="-9.519304" edge="bluen"/>
+		<vertex x="-12.424665" y="-9.519304" edge="bluen"/>
+		<vertex x="-12.436162" y="-9.521766" edge="bluen"/>
+		<vertex x="-12.450418" y="-9.517333" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9-7">
+		<position y="8.76437880099" x="9.13380817161" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.433463" y="-10.183022" edge="bluen"/>
+		<vertex x="-12.615585" y="-9.905337" edge="bluen"/>
+		<vertex x="-12.608167" y="-9.867259" edge="bluen"/>
+		<vertex x="-12.593917" y="-9.862522" edge="bluen"/>
+		<vertex x="-12.579478" y="-9.866314" edge="bluen"/>
+		<vertex x="-12.388909" y="-10.152178" edge="bluen"/>
+		<vertex x="-12.388909" y="-10.152178" edge="bluen"/>
+		<vertex x="-12.384430" y="-10.168440" edge="bluen"/>
+		<vertex x="-12.390170" y="-10.184382" edge="bluen"/>
+		<vertex x="-12.396327" y="-10.190256" edge="bluen"/>
+		<vertex x="-12.410577" y="-10.194993" edge="bluen"/>
+		<vertex x="-12.412259" y="-10.194994" edge="bluen"/>
+		<vertex x="-12.426429" y="-10.190280" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-48-1">
+		<position y="9.07113707058" x="9.37785815021" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.403139" y="-10.778002" edge="bluen"/>
+		<vertex x="-12.641029" y="-10.546300" edge="bluen"/>
+		<vertex x="-12.642026" y="-10.507519" edge="bluen"/>
+		<vertex x="-12.629139" y="-10.499811" edge="bluen"/>
+		<vertex x="-12.614221" y="-10.500389" edge="bluen"/>
+		<vertex x="-12.366315" y="-10.738248" edge="bluen"/>
+		<vertex x="-12.366315" y="-10.738248" edge="bluen"/>
+		<vertex x="-12.358422" y="-10.753156" edge="bluen"/>
+		<vertex x="-12.360578" y="-10.769962" edge="bluen"/>
+		<vertex x="-12.365317" y="-10.777029" edge="bluen"/>
+		<vertex x="-12.378205" y="-10.784737" edge="bluen"/>
+		<vertex x="-12.384862" y="-10.785556" edge="bluen"/>
+		<vertex x="-12.399176" y="-10.781192" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-8-1">
+		<position y="9.30119793557" x="9.68777913767" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.367702" y="-11.205504" edge="bluen"/>
+		<vertex x="-12.659833" y="-11.047589" edge="bluen"/>
+		<vertex x="-12.671385" y="-11.010554" edge="bluen"/>
+		<vertex x="-12.661093" y="-10.999620" edge="bluen"/>
+		<vertex x="-12.646584" y="-10.996101" edge="bluen"/>
+		<vertex x="-12.343136" y="-11.157203" edge="bluen"/>
+		<vertex x="-12.343136" y="-11.157203" edge="bluen"/>
+		<vertex x="-12.331472" y="-11.169389" edge="bluen"/>
+		<vertex x="-12.328955" y="-11.186144" edge="bluen"/>
+		<vertex x="-12.331584" y="-11.194238" edge="bluen"/>
+		<vertex x="-12.341876" y="-11.205172" edge="bluen"/>
+		<vertex x="-12.354700" y="-11.208723" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5">
+		<position y="9.3987863684" x="10.0628383791" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.334137" y="-11.329484" edge="bluen"/>
+		<vertex x="-12.666078" y="-11.319846" edge="bluen"/>
+		<vertex x="-12.693053" y="-11.291965" edge="bluen"/>
+		<vertex x="-12.688779" y="-11.277570" edge="bluen"/>
+		<vertex x="-12.677404" y="-11.267901" edge="bluen"/>
+		<vertex x="-12.333922" y="-11.275296" edge="bluen"/>
+		<vertex x="-12.318024" y="-11.280932" edge="bluen"/>
+		<vertex x="-12.308239" y="-11.294765" edge="bluen"/>
+		<vertex x="-12.306947" y="-11.303176" edge="bluen"/>
+		<vertex x="-12.306947" y="-11.303176" edge="bluen"/>
+		<vertex x="-12.311221" y="-11.317571" edge="bluen"/>
+		<vertex x="-12.322596" y="-11.327240" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9-4-2">
+		<position y="9.38065365969" x="10.4500688459" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.331118" y="-11.264245" edge="bluen"/>
+		<vertex x="-12.659738" y="-11.312060" edge="bluen"/>
+		<vertex x="-12.691122" y="-11.289255" edge="bluen"/>
+		<vertex x="-12.691122" y="-11.289255" edge="bluen"/>
+		<vertex x="-12.689398" y="-11.274338" edge="bluen"/>
+		<vertex x="-12.679863" y="-11.262851" edge="bluen"/>
+		<vertex x="-12.340262" y="-11.210833" edge="bluen"/>
+		<vertex x="-12.323629" y="-11.213640" edge="bluen"/>
+		<vertex x="-12.311603" y="-11.225576" edge="bluen"/>
+		<vertex x="-12.308878" y="-11.233638" edge="bluen"/>
+		<vertex x="-12.308878" y="-11.233638" edge="bluen"/>
+		<vertex x="-12.310602" y="-11.248555" edge="bluen"/>
+		<vertex x="-12.320137" y="-11.260042" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-7">
+		<position y="9.24593663313" x="10.8080692629" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.344776" y="-10.927426" edge="bluen"/>
+		<vertex x="-12.625014" y="-11.105595" edge="bluen"/>
+		<vertex x="-12.662983" y="-11.097638" edge="bluen"/>
+		<vertex x="-12.662983" y="-11.097638" edge="bluen"/>
+		<vertex x="-12.667518" y="-11.083323" edge="bluen"/>
+		<vertex x="-12.663522" y="-11.068939" edge="bluen"/>
+		<vertex x="-12.374986" y="-10.882440" edge="bluen"/>
+		<vertex x="-12.358662" y="-10.878191" edge="bluen"/>
+		<vertex x="-12.342803" y="-10.884157" edge="bluen"/>
+		<vertex x="-12.337017" y="-10.890396" edge="bluen"/>
+		<vertex x="-12.337017" y="-10.890396" edge="bluen"/>
+		<vertex x="-12.332482" y="-10.904711" edge="bluen"/>
+		<vertex x="-12.336478" y="-10.919095" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9-4-2-6">
+		<position y="9.01242489932" x="11.118589622" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.358604" y="-10.436062" edge="bluen"/>
+		<vertex x="-12.603873" y="-10.659938" edge="bluen"/>
+		<vertex x="-12.642646" y="-10.658656" edge="bluen"/>
+		<vertex x="-12.642646" y="-10.658656" edge="bluen"/>
+		<vertex x="-12.649584" y="-10.645339" edge="bluen"/>
+		<vertex x="-12.648131" y="-10.630481" edge="bluen"/>
+		<vertex x="-12.396127" y="-10.396967" edge="bluen"/>
+		<vertex x="-12.380781" y="-10.389964" edge="bluen"/>
+		<vertex x="-12.364131" y="-10.393103" edge="bluen"/>
+		<vertex x="-12.357354" y="-10.398249" edge="bluen"/>
+		<vertex x="-12.350416" y="-10.411567" edge="bluen"/>
+		<vertex x="-12.351869" y="-10.426425" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4">
+		<position y="8.70463969476" x="11.346623323" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.401258" y="-9.773538" edge="bluen"/>
+		<vertex x="-12.549675" y="-10.070606" edge="bluen"/>
+		<vertex x="-12.586318" y="-10.083346" edge="bluen"/>
+		<vertex x="-12.597579" y="-10.073412" edge="bluen"/>
+		<vertex x="-12.601563" y="-10.059024" edge="bluen"/>
+		<vertex x="-12.450325" y="-9.750541" edge="bluen"/>
+		<vertex x="-12.438522" y="-9.738491" edge="bluen"/>
+		<vertex x="-12.421856" y="-9.735435" edge="bluen"/>
+		<vertex x="-12.407961" y="-9.741423" edge="bluen"/>
+		<vertex x="-12.399618" y="-9.753830" edge="bluen"/>
+		<vertex x="-12.399423" y="-9.768792" edge="bluen"/>
+		<vertex x="-12.400546" y="-9.771993" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-5">
+		<position y="8.28121275301" x="11.0106626877" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.401768" y="-8.926296" edge="bluen"/>
+		<vertex x="-12.549080" y="-9.223914" edge="bluen"/>
+		<vertex x="-12.585675" y="-9.236790" edge="bluen"/>
+		<vertex x="-12.585675" y="-9.236790" edge="bluen"/>
+		<vertex x="-12.596973" y="-9.226898" edge="bluen"/>
+		<vertex x="-12.601011" y="-9.212525" edge="bluen"/>
+		<vertex x="-12.450920" y="-8.903482" edge="bluen"/>
+		<vertex x="-12.439162" y="-8.891388" edge="bluen"/>
+		<vertex x="-12.422508" y="-8.888270" edge="bluen"/>
+		<vertex x="-12.408591" y="-8.894206" edge="bluen"/>
+		<vertex x="-12.400201" y="-8.906582" edge="bluen"/>
+		<vertex x="-12.399951" y="-8.921544" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-4">
+		<position y="8.21305704178" x="11.5473063279" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.333520" y="-8.954614" edge="bluen"/>
+		<vertex x="-12.665588" y="-8.951757" edge="bluen"/>
+		<vertex x="-12.693127" y="-8.924433" edge="bluen"/>
+		<vertex x="-12.689149" y="-8.909953" edge="bluen"/>
+		<vertex x="-12.677973" y="-8.900054" edge="bluen"/>
+		<vertex x="-12.334412" y="-8.900433" edge="bluen"/>
+		<vertex x="-12.318402" y="-8.905744" edge="bluen"/>
+		<vertex x="-12.308336" y="-8.919374" edge="bluen"/>
+		<vertex x="-12.306873" y="-8.927756" edge="bluen"/>
+		<vertex x="-12.306873" y="-8.927756" edge="bluen"/>
+		<vertex x="-12.310851" y="-8.942236" edge="bluen"/>
+		<vertex x="-12.322027" y="-8.952135" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-4-1">
+		<position y="8.21937095325" x="11.9955606688" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.333520" y="-8.967242" edge="bluen"/>
+		<vertex x="-12.665588" y="-8.964384" edge="bluen"/>
+		<vertex x="-12.693127" y="-8.937061" edge="bluen"/>
+		<vertex x="-12.693127" y="-8.937061" edge="bluen"/>
+		<vertex x="-12.689149" y="-8.922581" edge="bluen"/>
+		<vertex x="-12.677973" y="-8.912682" edge="bluen"/>
+		<vertex x="-12.334412" y="-8.913061" edge="bluen"/>
+		<vertex x="-12.318402" y="-8.918371" edge="bluen"/>
+		<vertex x="-12.308336" y="-8.932001" edge="bluen"/>
+		<vertex x="-12.306873" y="-8.940384" edge="bluen"/>
+		<vertex x="-12.306873" y="-8.940384" edge="bluen"/>
+		<vertex x="-12.310851" y="-8.954864" edge="bluen"/>
+		<vertex x="-12.322027" y="-8.964763" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-4-4">
+		<position y="8.22568377349" x="12.4438159915" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.333520" y="-8.979868" edge="bluen"/>
+		<vertex x="-12.665588" y="-8.977010" edge="bluen"/>
+		<vertex x="-12.693127" y="-8.949686" edge="bluen"/>
+		<vertex x="-12.689149" y="-8.935207" edge="bluen"/>
+		<vertex x="-12.677973" y="-8.925308" edge="bluen"/>
+		<vertex x="-12.334412" y="-8.925686" edge="bluen"/>
+		<vertex x="-12.318402" y="-8.930997" edge="bluen"/>
+		<vertex x="-12.308336" y="-8.944627" edge="bluen"/>
+		<vertex x="-12.306873" y="-8.953010" edge="bluen"/>
+		<vertex x="-12.306873" y="-8.953010" edge="bluen"/>
+		<vertex x="-12.310851" y="-8.967490" edge="bluen"/>
+		<vertex x="-12.322027" y="-8.977388" edge="bluen"/>
+		<vertex x="-12.331820" y="-8.979829" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-4-3">
+		<position y="8.13589807243" x="12.873130764" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.338222" y="-8.724627" edge="bluen"/>
+		<vertex x="-12.636868" y="-8.869844" edge="bluen"/>
+		<vertex x="-12.673690" y="-8.857630" edge="bluen"/>
+		<vertex x="-12.673690" y="-8.857630" edge="bluen"/>
+		<vertex x="-12.676570" y="-8.842892" edge="bluen"/>
+		<vertex x="-12.670967" y="-8.829054" edge="bluen"/>
+		<vertex x="-12.363132" y="-8.676503" edge="bluen"/>
+		<vertex x="-12.363132" y="-8.676503" edge="bluen"/>
+		<vertex x="-12.346431" y="-8.674135" edge="bluen"/>
+		<vertex x="-12.331352" y="-8.681861" edge="bluen"/>
+		<vertex x="-12.326310" y="-8.688717" edge="bluen"/>
+		<vertex x="-12.326310" y="-8.688717" edge="bluen"/>
+		<vertex x="-12.323430" y="-8.703454" edge="bluen"/>
+		<vertex x="-12.329033" y="-8.717292" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-4-8">
+		<position y="7.83423081178" x="13.0322267958" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.456029" y="-8.331198" edge="bluen"/>
+		<vertex x="-12.595112" y="-8.029647" edge="bluen"/>
+		<vertex x="-12.582148" y="-7.993082" edge="bluen"/>
+		<vertex x="-12.582148" y="-7.993082" edge="bluen"/>
+		<vertex x="-12.567355" y="-7.990504" edge="bluen"/>
+		<vertex x="-12.553634" y="-7.996388" edge="bluen"/>
+		<vertex x="-12.407406" y="-8.307277" edge="bluen"/>
+		<vertex x="-12.405379" y="-8.324022" edge="bluen"/>
+		<vertex x="-12.413412" y="-8.338941" edge="bluen"/>
+		<vertex x="-12.420370" y="-8.343841" edge="bluen"/>
+		<vertex x="-12.431801" y="-8.346592" edge="bluen"/>
+		<vertex x="-12.446164" y="-8.342519" edge="bluen"/>
+		<vertex x="-12.455268" y="-8.332719" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-4-6">
+		<position y="7.60065228969" x="12.7152954243" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.333520" y="-7.729805" edge="bluen"/>
+		<vertex x="-12.665588" y="-7.726947" edge="bluen"/>
+		<vertex x="-12.693127" y="-7.699623" edge="bluen"/>
+		<vertex x="-12.689149" y="-7.685144" edge="bluen"/>
+		<vertex x="-12.677973" y="-7.675245" edge="bluen"/>
+		<vertex x="-12.334412" y="-7.675623" edge="bluen"/>
+		<vertex x="-12.318402" y="-7.680934" edge="bluen"/>
+		<vertex x="-12.308336" y="-7.694564" edge="bluen"/>
+		<vertex x="-12.306873" y="-7.702947" edge="bluen"/>
+		<vertex x="-12.310851" y="-7.717427" edge="bluen"/>
+		<vertex x="-12.322027" y="-7.727326" edge="bluen"/>
+		<vertex x="-12.331820" y="-7.729766" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-4-5">
+		<position y="7.73045681301" x="12.3112324202" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.350476" y="-7.885113" edge="bluen"/>
+		<vertex x="-12.615879" y="-8.084708" edge="bluen"/>
+		<vertex x="-12.654356" y="-8.079754" edge="bluen"/>
+		<vertex x="-12.659999" y="-8.065838" edge="bluen"/>
+		<vertex x="-12.657143" y="-8.051185" edge="bluen"/>
+		<vertex x="-12.384121" y="-7.842635" edge="bluen"/>
+		<vertex x="-12.384121" y="-7.842635" edge="bluen"/>
+		<vertex x="-12.368180" y="-7.837119" edge="bluen"/>
+		<vertex x="-12.351902" y="-7.841823" edge="bluen"/>
+		<vertex x="-12.345644" y="-7.847589" edge="bluen"/>
+		<vertex x="-12.340001" y="-7.861505" edge="bluen"/>
+		<vertex x="-12.342857" y="-7.876158" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-4-5-8">
+		<position y="7.99562269509" x="11.9513669839" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.350476" y="-8.415445" edge="bluen"/>
+		<vertex x="-12.615879" y="-8.615040" edge="bluen"/>
+		<vertex x="-12.654356" y="-8.610086" edge="bluen"/>
+		<vertex x="-12.659999" y="-8.596170" edge="bluen"/>
+		<vertex x="-12.657143" y="-8.581517" edge="bluen"/>
+		<vertex x="-12.384121" y="-8.372966" edge="bluen"/>
+		<vertex x="-12.368180" y="-8.367451" edge="bluen"/>
+		<vertex x="-12.351902" y="-8.372154" edge="bluen"/>
+		<vertex x="-12.345644" y="-8.377921" edge="bluen"/>
+		<vertex x="-12.345644" y="-8.377921" edge="bluen"/>
+		<vertex x="-12.340001" y="-8.391836" edge="bluen"/>
+		<vertex x="-12.342857" y="-8.406490" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1">
+		<position y="7.68251677412" x="14.0803571407" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.536964" y="-8.029841" edge="bluen"/>
+		<vertex x="-12.517192" y="-7.698350" edge="bluen"/>
+		<vertex x="-12.488501" y="-7.672239" edge="bluen"/>
+		<vertex x="-12.488501" y="-7.672239" edge="bluen"/>
+		<vertex x="-12.474242" y="-7.676950" edge="bluen"/>
+		<vertex x="-12.464926" y="-7.688616" edge="bluen"/>
+		<vertex x="-12.482808" y="-8.031711" edge="bluen"/>
+		<vertex x="-12.482808" y="-8.031711" edge="bluen"/>
+		<vertex x="-12.488928" y="-8.047430" edge="bluen"/>
+		<vertex x="-12.503053" y="-8.056788" edge="bluen"/>
+		<vertex x="-12.509796" y="-8.057828" edge="bluen"/>
+		<vertex x="-12.511499" y="-8.057823" edge="bluen"/>
+		<vertex x="-12.525758" y="-8.053111" edge="bluen"/>
+		<vertex x="-12.535074" y="-8.041446" edge="bluen"/>
+		<vertex x="-12.537012" y="-8.031542" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-14">
+		<position y="7.70037366104" x="14.3303577475" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.536964" y="-8.065555" edge="bluen"/>
+		<vertex x="-12.517192" y="-7.734064" edge="bluen"/>
+		<vertex x="-12.488501" y="-7.707953" edge="bluen"/>
+		<vertex x="-12.488501" y="-7.707953" edge="bluen"/>
+		<vertex x="-12.474242" y="-7.712664" edge="bluen"/>
+		<vertex x="-12.464926" y="-7.724329" edge="bluen"/>
+		<vertex x="-12.482808" y="-8.067425" edge="bluen"/>
+		<vertex x="-12.488928" y="-8.083144" edge="bluen"/>
+		<vertex x="-12.503053" y="-8.092502" edge="bluen"/>
+		<vertex x="-12.509796" y="-8.093542" edge="bluen"/>
+		<vertex x="-12.511499" y="-8.093537" edge="bluen"/>
+		<vertex x="-12.525758" y="-8.088825" edge="bluen"/>
+		<vertex x="-12.535074" y="-8.077160" edge="bluen"/>
+		<vertex x="-12.537012" y="-8.067255" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-3">
+		<position y="7.71376680466" x="14.593749273" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.536964" y="-8.092341" edge="bluen"/>
+		<vertex x="-12.517192" y="-7.760850" edge="bluen"/>
+		<vertex x="-12.488501" y="-7.734739" edge="bluen"/>
+		<vertex x="-12.474242" y="-7.739450" edge="bluen"/>
+		<vertex x="-12.464926" y="-7.751116" edge="bluen"/>
+		<vertex x="-12.482808" y="-8.094212" edge="bluen"/>
+		<vertex x="-12.488928" y="-8.109930" edge="bluen"/>
+		<vertex x="-12.503053" y="-8.119288" edge="bluen"/>
+		<vertex x="-12.509796" y="-8.120328" edge="bluen"/>
+		<vertex x="-12.511499" y="-8.120323" edge="bluen"/>
+		<vertex x="-12.525758" y="-8.115611" edge="bluen"/>
+		<vertex x="-12.535074" y="-8.103946" edge="bluen"/>
+		<vertex x="-12.537012" y="-8.094042" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-8">
+		<position y="7.22269523493" x="14.1026791052" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.536964" y="-7.110198" edge="bluen"/>
+		<vertex x="-12.517192" y="-6.778707" edge="bluen"/>
+		<vertex x="-12.488501" y="-6.752596" edge="bluen"/>
+		<vertex x="-12.474242" y="-6.757307" edge="bluen"/>
+		<vertex x="-12.464926" y="-6.768973" edge="bluen"/>
+		<vertex x="-12.482808" y="-7.112068" edge="bluen"/>
+		<vertex x="-12.488928" y="-7.127787" edge="bluen"/>
+		<vertex x="-12.503053" y="-7.137145" edge="bluen"/>
+		<vertex x="-12.509796" y="-7.138185" edge="bluen"/>
+		<vertex x="-12.511499" y="-7.138180" edge="bluen"/>
+		<vertex x="-12.525758" y="-7.133468" edge="bluen"/>
+		<vertex x="-12.535074" y="-7.121803" edge="bluen"/>
+		<vertex x="-12.537012" y="-7.111898" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-8-0">
+		<position y="7.24501648402" x="14.3616063543" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.536964" y="-7.154841" edge="bluen"/>
+		<vertex x="-12.517192" y="-6.823350" edge="bluen"/>
+		<vertex x="-12.488501" y="-6.797238" edge="bluen"/>
+		<vertex x="-12.474242" y="-6.801950" edge="bluen"/>
+		<vertex x="-12.464926" y="-6.813615" edge="bluen"/>
+		<vertex x="-12.482808" y="-7.156711" edge="bluen"/>
+		<vertex x="-12.488928" y="-7.172430" edge="bluen"/>
+		<vertex x="-12.503053" y="-7.181787" edge="bluen"/>
+		<vertex x="-12.509796" y="-7.182827" edge="bluen"/>
+		<vertex x="-12.511499" y="-7.182822" edge="bluen"/>
+		<vertex x="-12.525758" y="-7.178111" edge="bluen"/>
+		<vertex x="-12.535074" y="-7.166446" edge="bluen"/>
+		<vertex x="-12.537012" y="-7.156541" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-8-07">
+		<position y="7.26287379189" x="14.6205369795" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.536964" y="-7.190555" edge="bluen"/>
+		<vertex x="-12.517192" y="-6.859064" edge="bluen"/>
+		<vertex x="-12.488501" y="-6.832953" edge="bluen"/>
+		<vertex x="-12.474242" y="-6.837664" edge="bluen"/>
+		<vertex x="-12.464926" y="-6.849330" edge="bluen"/>
+		<vertex x="-12.482808" y="-7.192426" edge="bluen"/>
+		<vertex x="-12.488928" y="-7.208144" edge="bluen"/>
+		<vertex x="-12.503053" y="-7.217502" edge="bluen"/>
+		<vertex x="-12.509796" y="-7.218542" edge="bluen"/>
+		<vertex x="-12.511499" y="-7.218537" edge="bluen"/>
+		<vertex x="-12.525758" y="-7.213825" edge="bluen"/>
+		<vertex x="-12.535074" y="-7.202160" edge="bluen"/>
+		<vertex x="-12.537012" y="-7.192256" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-8-6">
+		<position y="7.70718151926" x="14.9776789993" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.618757" y="-8.032124" edge="bluen"/>
+		<vertex x="-12.426161" y="-7.761598" edge="bluen"/>
+		<vertex x="-12.387989" y="-7.754681" edge="bluen"/>
+		<vertex x="-12.378401" y="-7.766238" edge="bluen"/>
+		<vertex x="-12.376690" y="-7.781069" edge="bluen"/>
+		<vertex x="-12.573839" y="-8.062435" edge="bluen"/>
+		<vertex x="-12.587364" y="-8.072515" edge="bluen"/>
+		<vertex x="-12.595809" y="-8.074045" edge="bluen"/>
+		<vertex x="-12.612011" y="-8.069352" edge="bluen"/>
+		<vertex x="-12.621599" y="-8.057795" edge="bluen"/>
+		<vertex x="-12.623310" y="-8.042964" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-8-62">
+		<position y="7.3119773517" x="15.006106754" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.446373" y="-7.283561" edge="bluen"/>
+		<vertex x="-12.603951" y="-6.991249" edge="bluen"/>
+		<vertex x="-12.593288" y="-6.953949" edge="bluen"/>
+		<vertex x="-12.593288" y="-6.953949" edge="bluen"/>
+		<vertex x="-12.578684" y="-6.950454" edge="bluen"/>
+		<vertex x="-12.564624" y="-6.955474" edge="bluen"/>
+		<vertex x="-12.399333" y="-7.256661" edge="bluen"/>
+		<vertex x="-12.399333" y="-7.256661" edge="bluen"/>
+		<vertex x="-12.396268" y="-7.273248" edge="bluen"/>
+		<vertex x="-12.403358" y="-7.288637" edge="bluen"/>
+		<vertex x="-12.409997" y="-7.293961" edge="bluen"/>
+		<vertex x="-12.422918" y="-7.297490" edge="bluen"/>
+		<vertex x="-12.437270" y="-7.293387" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-5">
+		<position y="8.71180320199" x="16.0614246976" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.536964" y="-10.088414" edge="bluen"/>
+		<vertex x="-12.517192" y="-9.756923" edge="bluen"/>
+		<vertex x="-12.488501" y="-9.730812" edge="bluen"/>
+		<vertex x="-12.474242" y="-9.735523" edge="bluen"/>
+		<vertex x="-12.464926" y="-9.747188" edge="bluen"/>
+		<vertex x="-12.482808" y="-10.090284" edge="bluen"/>
+		<vertex x="-12.488928" y="-10.106003" edge="bluen"/>
+		<vertex x="-12.503053" y="-10.115361" edge="bluen"/>
+		<vertex x="-12.509796" y="-10.116401" edge="bluen"/>
+		<vertex x="-12.511499" y="-10.116396" edge="bluen"/>
+		<vertex x="-12.525758" y="-10.111684" edge="bluen"/>
+		<vertex x="-12.535074" y="-10.100019" edge="bluen"/>
+		<vertex x="-12.537012" y="-10.090114" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-6">
+		<position y="8.26733776668" x="16.0892861475" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.536964" y="-9.199483" edge="bluen"/>
+		<vertex x="-12.517192" y="-8.867992" edge="bluen"/>
+		<vertex x="-12.488501" y="-8.841881" edge="bluen"/>
+		<vertex x="-12.474242" y="-8.846592" edge="bluen"/>
+		<vertex x="-12.464926" y="-8.858258" edge="bluen"/>
+		<vertex x="-12.482808" y="-9.201353" edge="bluen"/>
+		<vertex x="-12.488928" y="-9.217072" edge="bluen"/>
+		<vertex x="-12.503053" y="-9.226430" edge="bluen"/>
+		<vertex x="-12.509796" y="-9.227470" edge="bluen"/>
+		<vertex x="-12.511499" y="-9.227465" edge="bluen"/>
+		<vertex x="-12.525758" y="-9.222753" edge="bluen"/>
+		<vertex x="-12.535074" y="-9.211088" edge="bluen"/>
+		<vertex x="-12.537012" y="-9.201184" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-8">
+		<position y="7.81644233216" x="16.075955483" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.510456" y="-8.301470" edge="bluen"/>
+		<vertex x="-12.543438" y="-7.971031" edge="bluen"/>
+		<vertex x="-12.519245" y="-7.940705" edge="bluen"/>
+		<vertex x="-12.504420" y="-7.943099" edge="bluen"/>
+		<vertex x="-12.493374" y="-7.953141" edge="bluen"/>
+		<vertex x="-12.456687" y="-8.294738" edge="bluen"/>
+		<vertex x="-12.456687" y="-8.294738" edge="bluen"/>
+		<vertex x="-12.460240" y="-8.311228" edge="bluen"/>
+		<vertex x="-12.472704" y="-8.322705" edge="bluen"/>
+		<vertex x="-12.480880" y="-8.325064" edge="bluen"/>
+		<vertex x="-12.484271" y="-8.325273" edge="bluen"/>
+		<vertex x="-12.498635" y="-8.321023" edge="bluen"/>
+		<vertex x="-12.508309" y="-8.309636" edge="bluen"/>
+		<vertex x="-12.510234" y="-8.303156" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57">
+		<position y="7.39679925377" x="15.9612708888" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.450876" y="-7.454754" edge="bluen"/>
+		<vertex x="-12.599830" y="-7.157955" edge="bluen"/>
+		<vertex x="-12.588080" y="-7.120983" edge="bluen"/>
+		<vertex x="-12.573380" y="-7.117918" edge="bluen"/>
+		<vertex x="-12.559473" y="-7.123346" edge="bluen"/>
+		<vertex x="-12.403069" y="-7.429242" edge="bluen"/>
+		<vertex x="-12.403069" y="-7.429242" edge="bluen"/>
+		<vertex x="-12.400491" y="-7.445912" edge="bluen"/>
+		<vertex x="-12.408028" y="-7.461087" edge="bluen"/>
+		<vertex x="-12.414820" y="-7.466214" edge="bluen"/>
+		<vertex x="-12.414820" y="-7.466214" edge="bluen"/>
+		<vertex x="-12.427839" y="-7.469364" edge="bluen"/>
+		<vertex x="-12.442065" y="-7.464843" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-8">
+		<position y="7.01032481163" x="15.7412803749" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.441760" y="-6.678508" edge="bluen"/>
+		<vertex x="-12.608125" y="-6.391105" edge="bluen"/>
+		<vertex x="-12.598596" y="-6.353499" edge="bluen"/>
+		<vertex x="-12.584105" y="-6.349564" edge="bluen"/>
+		<vertex x="-12.569899" y="-6.354155" edge="bluen"/>
+		<vertex x="-12.395557" y="-6.650194" edge="bluen"/>
+		<vertex x="-12.395557" y="-6.650194" edge="bluen"/>
+		<vertex x="-12.391991" y="-6.666681" edge="bluen"/>
+		<vertex x="-12.398611" y="-6.682278" edge="bluen"/>
+		<vertex x="-12.405085" y="-6.687800" edge="bluen"/>
+		<vertex x="-12.405085" y="-6.687800" edge="bluen"/>
+		<vertex x="-12.419577" y="-6.691735" edge="bluen"/>
+		<vertex x="-12.433782" y="-6.687145" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4">
+		<position y="6.64414315" x="15.4779859084" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.409684" y="-5.928599" edge="bluen"/>
+		<vertex x="-12.636396" y="-5.685949" edge="bluen"/>
+		<vertex x="-12.635565" y="-5.647163" edge="bluen"/>
+		<vertex x="-12.635565" y="-5.647163" edge="bluen"/>
+		<vertex x="-12.622329" y="-5.640071" edge="bluen"/>
+		<vertex x="-12.607455" y="-5.641351" edge="bluen"/>
+		<vertex x="-12.371028" y="-5.890624" edge="bluen"/>
+		<vertex x="-12.363847" y="-5.905887" edge="bluen"/>
+		<vertex x="-12.366791" y="-5.922573" edge="bluen"/>
+		<vertex x="-12.371859" y="-5.929409" edge="bluen"/>
+		<vertex x="-12.371859" y="-5.929409" edge="bluen"/>
+		<vertex x="-12.385095" y="-5.936501" edge="bluen"/>
+		<vertex x="-12.390103" y="-5.937041" edge="bluen"/>
+		<vertex x="-12.404477" y="-5.932926" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-6">
+		<position y="6.40423381653" x="15.1148072166" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.346775" y="-5.378671" edge="bluen"/>
+		<vertex x="-12.667037" y="-5.290867" edge="bluen"/>
+		<vertex x="-12.686660" y="-5.257401" edge="bluen"/>
+		<vertex x="-12.679105" y="-5.244424" edge="bluen"/>
+		<vertex x="-12.665768" y="-5.237717" edge="bluen"/>
+		<vertex x="-12.333761" y="-5.326068" edge="bluen"/>
+		<vertex x="-12.319645" y="-5.335302" edge="bluen"/>
+		<vertex x="-12.313406" y="-5.351056" edge="bluen"/>
+		<vertex x="-12.314138" y="-5.359534" edge="bluen"/>
+		<vertex x="-12.321692" y="-5.372511" edge="bluen"/>
+		<vertex x="-12.335030" y="-5.379218" edge="bluen"/>
+		<vertex x="-12.340072" y="-5.379626" edge="bluen"/>
+		<vertex x="-12.345121" y="-5.379069" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-4">
+		<position y="6.35374736825" x="14.678778722" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.333460" y="-5.235638" edge="bluen"/>
+		<vertex x="-12.665533" y="-5.233488" edge="bluen"/>
+		<vertex x="-12.693130" y="-5.206223" edge="bluen"/>
+		<vertex x="-12.689182" y="-5.191735" edge="bluen"/>
+		<vertex x="-12.678028" y="-5.181813" edge="bluen"/>
+		<vertex x="-12.334467" y="-5.181459" edge="bluen"/>
+		<vertex x="-12.318445" y="-5.186735" edge="bluen"/>
+		<vertex x="-12.308351" y="-5.200344" edge="bluen"/>
+		<vertex x="-12.306870" y="-5.208724" edge="bluen"/>
+		<vertex x="-12.310817" y="-5.223212" edge="bluen"/>
+		<vertex x="-12.321972" y="-5.233134" edge="bluen"/>
+		<vertex x="-12.331760" y="-5.235596" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3">
+		<position y="6.34457540434" x="14.2406561923" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.334094" y="-5.220835" edge="bluen"/>
+		<vertex x="-12.666047" y="-5.211648" edge="bluen"/>
+		<vertex x="-12.693061" y="-5.183804" edge="bluen"/>
+		<vertex x="-12.688806" y="-5.169403" edge="bluen"/>
+		<vertex x="-12.677444" y="-5.159719" edge="bluen"/>
+		<vertex x="-12.333953" y="-5.166647" edge="bluen"/>
+		<vertex x="-12.318047" y="-5.172262" edge="bluen"/>
+		<vertex x="-12.308243" y="-5.186082" edge="bluen"/>
+		<vertex x="-12.306939" y="-5.194491" edge="bluen"/>
+		<vertex x="-12.311194" y="-5.208892" edge="bluen"/>
+		<vertex x="-12.322556" y="-5.218576" edge="bluen"/>
+		<vertex x="-12.332393" y="-5.220829" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-0">
+		<position y="5.93319117092" x="11.7273838026" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.590316" y="-4.226070" edge="bluen"/>
+		<vertex x="-12.363604" y="-4.468720" edge="bluen"/>
+		<vertex x="-12.364435" y="-4.507505" edge="bluen"/>
+		<vertex x="-12.364435" y="-4.507505" edge="bluen"/>
+		<vertex x="-12.377671" y="-4.514597" edge="bluen"/>
+		<vertex x="-12.382679" y="-4.515137" edge="bluen"/>
+		<vertex x="-12.397053" y="-4.511022" edge="bluen"/>
+		<vertex x="-12.628972" y="-4.264045" edge="bluen"/>
+		<vertex x="-12.628972" y="-4.264045" edge="bluen"/>
+		<vertex x="-12.636153" y="-4.248782" edge="bluen"/>
+		<vertex x="-12.633209" y="-4.232096" edge="bluen"/>
+		<vertex x="-12.628141" y="-4.225260" edge="bluen"/>
+		<vertex x="-12.614905" y="-4.218167" edge="bluen"/>
+		<vertex x="-12.600031" y="-4.219447" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-6-4">
+		<position y="6.17310114412" x="12.0905638402" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.653225" y="-4.775999" edge="bluen"/>
+		<vertex x="-12.332963" y="-4.863803" edge="bluen"/>
+		<vertex x="-12.313340" y="-4.897268" edge="bluen"/>
+		<vertex x="-12.313340" y="-4.897268" edge="bluen"/>
+		<vertex x="-12.320895" y="-4.910246" edge="bluen"/>
+		<vertex x="-12.334232" y="-4.916953" edge="bluen"/>
+		<vertex x="-12.339275" y="-4.917361" edge="bluen"/>
+		<vertex x="-12.666239" y="-4.828601" edge="bluen"/>
+		<vertex x="-12.680355" y="-4.819367" edge="bluen"/>
+		<vertex x="-12.686594" y="-4.803614" edge="bluen"/>
+		<vertex x="-12.685862" y="-4.795136" edge="bluen"/>
+		<vertex x="-12.678308" y="-4.782158" edge="bluen"/>
+		<vertex x="-12.664970" y="-4.775452" edge="bluen"/>
+		<vertex x="-12.654879" y="-4.775601" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-4-5">
+		<position y="6.22358735744" x="12.5265923389" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.666540" y="-4.919031" edge="bluen"/>
+		<vertex x="-12.334467" y="-4.921181" edge="bluen"/>
+		<vertex x="-12.306870" y="-4.948446" edge="bluen"/>
+		<vertex x="-12.310818" y="-4.962934" edge="bluen"/>
+		<vertex x="-12.321972" y="-4.972857" edge="bluen"/>
+		<vertex x="-12.331760" y="-4.975318" edge="bluen"/>
+		<vertex x="-12.665533" y="-4.973211" edge="bluen"/>
+		<vertex x="-12.681555" y="-4.967934" edge="bluen"/>
+		<vertex x="-12.691649" y="-4.954325" edge="bluen"/>
+		<vertex x="-12.693130" y="-4.945946" edge="bluen"/>
+		<vertex x="-12.689183" y="-4.931458" edge="bluen"/>
+		<vertex x="-12.678028" y="-4.921535" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4">
+		<position y="5.53009339956" x="11.6294628984" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.420180" y="-3.411967" edge="bluen"/>
+		<vertex x="-12.528150" y="-3.726005" edge="bluen"/>
+		<vertex x="-12.562794" y="-3.743462" edge="bluen"/>
+		<vertex x="-12.562794" y="-3.743462" edge="bluen"/>
+		<vertex x="-12.575266" y="-3.735099" edge="bluen"/>
+		<vertex x="-12.581112" y="-3.721362" edge="bluen"/>
+		<vertex x="-12.471850" y="-3.395638" edge="bluen"/>
+		<vertex x="-12.461738" y="-3.382137" edge="bluen"/>
+		<vertex x="-12.445620" y="-3.376911" edge="bluen"/>
+		<vertex x="-12.431058" y="-3.381015" edge="bluen"/>
+		<vertex x="-12.421152" y="-3.392214" edge="bluen"/>
+		<vertex x="-12.418987" y="-3.407021" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6">
+		<position y="5.14982078415" x="11.8526786372" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.628161" y="-2.906637" edge="bluen"/>
+		<vertex x="-12.414134" y="-2.652728" edge="bluen"/>
+		<vertex x="-12.375524" y="-2.648949" edge="bluen"/>
+		<vertex x="-12.375524" y="-2.648949" edge="bluen"/>
+		<vertex x="-12.366911" y="-2.661250" edge="bluen"/>
+		<vertex x="-12.366417" y="-2.676171" edge="bluen"/>
+		<vertex x="-12.585866" y="-2.940513" edge="bluen"/>
+		<vertex x="-12.585866" y="-2.940513" edge="bluen"/>
+		<vertex x="-12.600169" y="-2.949455" edge="bluen"/>
+		<vertex x="-12.606988" y="-2.950334" edge="bluen"/>
+		<vertex x="-12.623113" y="-2.945314" edge="bluen"/>
+		<vertex x="-12.624476" y="-2.944291" edge="bluen"/>
+		<vertex x="-12.633089" y="-2.931991" edge="bluen"/>
+		<vertex x="-12.633583" y="-2.917070" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6">
+		<position y="4.88024252477" x="12.2053581807" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.662412" y="-2.305566" edge="bluen"/>
+		<vertex x="-12.361853" y="-2.164351" edge="bluen"/>
+		<vertex x="-12.325198" y="-2.177056" edge="bluen"/>
+		<vertex x="-12.322515" y="-2.191830" edge="bluen"/>
+		<vertex x="-12.328302" y="-2.205592" edge="bluen"/>
+		<vertex x="-12.638147" y="-2.354019" edge="bluen"/>
+		<vertex x="-12.638147" y="-2.354019" edge="bluen"/>
+		<vertex x="-12.649743" y="-2.356619" edge="bluen"/>
+		<vertex x="-12.665924" y="-2.351560" edge="bluen"/>
+		<vertex x="-12.674802" y="-2.341314" edge="bluen"/>
+		<vertex x="-12.674802" y="-2.341314" edge="bluen"/>
+		<vertex x="-12.677485" y="-2.326540" edge="bluen"/>
+		<vertex x="-12.671698" y="-2.312778" edge="bluen"/>
+		<vertex x="-12.663928" y="-2.306338" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-6">
+		<position y="4.71001757046" x="12.6250005513" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.666611" y="-1.947061" edge="bluen"/>
+		<vertex x="-12.352027" y="-1.840690" edge="bluen"/>
+		<vertex x="-12.317042" y="-1.857453" edge="bluen"/>
+		<vertex x="-12.316044" y="-1.872436" edge="bluen"/>
+		<vertex x="-12.323348" y="-1.885456" edge="bluen"/>
+		<vertex x="-12.647973" y="-1.997943" edge="bluen"/>
+		<vertex x="-12.647973" y="-1.997943" edge="bluen"/>
+		<vertex x="-12.656360" y="-1.999380" edge="bluen"/>
+		<vertex x="-12.672579" y="-1.994477" edge="bluen"/>
+		<vertex x="-12.682958" y="-1.981181" edge="bluen"/>
+		<vertex x="-12.683956" y="-1.966197" edge="bluen"/>
+		<vertex x="-12.676652" y="-1.953177" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5">
+		<position y="4.60227761085" x="13.0714279914" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.668841" y="-1.699788" edge="bluen"/>
+		<vertex x="-12.339717" y="-1.655573" edge="bluen"/>
+		<vertex x="-12.308585" y="-1.678719" edge="bluen"/>
+		<vertex x="-12.308585" y="-1.678719" edge="bluen"/>
+		<vertex x="-12.310472" y="-1.693617" edge="bluen"/>
+		<vertex x="-12.320133" y="-1.704999" edge="bluen"/>
+		<vertex x="-12.660283" y="-1.753297" edge="bluen"/>
+		<vertex x="-12.663682" y="-1.753538" edge="bluen"/>
+		<vertex x="-12.679825" y="-1.748515" edge="bluen"/>
+		<vertex x="-12.690137" y="-1.735099" edge="bluen"/>
+		<vertex x="-12.691415" y="-1.730150" edge="bluen"/>
+		<vertex x="-12.689528" y="-1.715253" edge="bluen"/>
+		<vertex x="-12.679867" y="-1.703870" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5">
+		<position y="4.54870577889" x="13.5089297197" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.668841" y="-1.592645" edge="bluen"/>
+		<vertex x="-12.339717" y="-1.548429" edge="bluen"/>
+		<vertex x="-12.308585" y="-1.571576" edge="bluen"/>
+		<vertex x="-12.310472" y="-1.586473" edge="bluen"/>
+		<vertex x="-12.320133" y="-1.597855" edge="bluen"/>
+		<vertex x="-12.660283" y="-1.646153" edge="bluen"/>
+		<vertex x="-12.663682" y="-1.646394" edge="bluen"/>
+		<vertex x="-12.679825" y="-1.641371" edge="bluen"/>
+		<vertex x="-12.690137" y="-1.627956" edge="bluen"/>
+		<vertex x="-12.691415" y="-1.623006" edge="bluen"/>
+		<vertex x="-12.689528" y="-1.608109" edge="bluen"/>
+		<vertex x="-12.679867" y="-1.596727" edge="bluen"/>
+		<vertex x="-12.670519" y="-1.592924" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8">
+		<position y="4.8700139022" x="14.7550858106" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.594181" y="-2.102477" edge="bluen"/>
+		<vertex x="-12.360585" y="-2.338508" edge="bluen"/>
+		<vertex x="-12.360300" y="-2.377301" edge="bluen"/>
+		<vertex x="-12.373327" y="-2.384771" edge="bluen"/>
+		<vertex x="-12.379998" y="-2.385467" edge="bluen"/>
+		<vertex x="-12.394229" y="-2.380841" edge="bluen"/>
+		<vertex x="-12.631729" y="-2.141548" edge="bluen"/>
+		<vertex x="-12.631729" y="-2.141548" edge="bluen"/>
+		<vertex x="-12.639346" y="-2.126498" edge="bluen"/>
+		<vertex x="-12.636882" y="-2.109734" edge="bluen"/>
+		<vertex x="-12.632014" y="-2.102755" edge="bluen"/>
+		<vertex x="-12.618987" y="-2.095285" edge="bluen"/>
+		<vertex x="-12.604082" y="-2.096137" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-2">
+		<position y="5.21822736732" x="15.0259615684" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.530915" y="-2.770559" edge="bluen"/>
+		<vertex x="-12.417014" y="-3.082495" edge="bluen"/>
+		<vertex x="-12.432931" y="-3.117873" edge="bluen"/>
+		<vertex x="-12.432931" y="-3.117873" edge="bluen"/>
+		<vertex x="-12.442864" y="-3.119741" edge="bluen"/>
+		<vertex x="-12.457157" y="-3.115414" edge="bluen"/>
+		<vertex x="-12.466801" y="-3.103929" edge="bluen"/>
+		<vertex x="-12.581335" y="-2.790415" edge="bluen"/>
+		<vertex x="-12.581983" y="-2.773559" edge="bluen"/>
+		<vertex x="-12.572753" y="-2.759350" edge="bluen"/>
+		<vertex x="-12.565418" y="-2.755036" edge="bluen"/>
+		<vertex x="-12.550463" y="-2.753678" edge="bluen"/>
+		<vertex x="-12.537271" y="-2.760667" edge="bluen"/>
+		<vertex x="-12.531548" y="-2.768980" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-0">
+		<position y="5.58429933398" x="15.2729413182" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.594181" y="-3.531048" edge="bluen"/>
+		<vertex x="-12.360585" y="-3.767078" edge="bluen"/>
+		<vertex x="-12.360300" y="-3.805872" edge="bluen"/>
+		<vertex x="-12.373327" y="-3.813341" edge="bluen"/>
+		<vertex x="-12.379998" y="-3.814038" edge="bluen"/>
+		<vertex x="-12.394229" y="-3.809412" edge="bluen"/>
+		<vertex x="-12.631729" y="-3.570119" edge="bluen"/>
+		<vertex x="-12.631729" y="-3.570119" edge="bluen"/>
+		<vertex x="-12.639346" y="-3.555069" edge="bluen"/>
+		<vertex x="-12.636882" y="-3.538305" edge="bluen"/>
+		<vertex x="-12.632014" y="-3.531326" edge="bluen"/>
+		<vertex x="-12.618987" y="-3.523856" edge="bluen"/>
+		<vertex x="-12.604082" y="-3.524708" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-5">
+		<position y="5.84322858747" x="15.8979432873" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.594181" y="-4.048906" edge="bluen"/>
+		<vertex x="-12.360585" y="-4.284937" edge="bluen"/>
+		<vertex x="-12.360300" y="-4.323730" edge="bluen"/>
+		<vertex x="-12.360300" y="-4.323730" edge="bluen"/>
+		<vertex x="-12.373327" y="-4.331200" edge="bluen"/>
+		<vertex x="-12.379998" y="-4.331896" edge="bluen"/>
+		<vertex x="-12.394229" y="-4.327270" edge="bluen"/>
+		<vertex x="-12.631729" y="-4.087977" edge="bluen"/>
+		<vertex x="-12.639346" y="-4.072927" edge="bluen"/>
+		<vertex x="-12.636882" y="-4.056164" edge="bluen"/>
+		<vertex x="-12.632014" y="-4.049184" edge="bluen"/>
+		<vertex x="-12.618987" y="-4.041714" edge="bluen"/>
+		<vertex x="-12.604082" y="-4.042566" edge="bluen"/>
+		<vertex x="-12.595414" y="-4.047736" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-3">
+		<position y="6.08430002158" x="16.2763666835" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.652769" y="-4.597451" edge="bluen"/>
+		<vertex x="-12.333054" y="-4.687228" edge="bluen"/>
+		<vertex x="-12.313638" y="-4.720813" edge="bluen"/>
+		<vertex x="-12.321272" y="-4.733744" edge="bluen"/>
+		<vertex x="-12.334651" y="-4.740369" edge="bluen"/>
+		<vertex x="-12.339696" y="-4.740746" edge="bluen"/>
+		<vertex x="-12.666107" y="-4.649972" edge="bluen"/>
+		<vertex x="-12.680166" y="-4.640651" edge="bluen"/>
+		<vertex x="-12.686307" y="-4.624860" edge="bluen"/>
+		<vertex x="-12.685523" y="-4.616387" edge="bluen"/>
+		<vertex x="-12.677889" y="-4.603456" edge="bluen"/>
+		<vertex x="-12.664510" y="-4.596831" edge="bluen"/>
+		<vertex x="-12.654420" y="-4.597043" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-8">
+		<position y="6.17358609481" x="16.7142488729" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.663172" y="-4.803675" edge="bluen"/>
+		<vertex x="-12.332730" y="-4.836630" edge="bluen"/>
+		<vertex x="-12.307782" y="-4.866338" edge="bluen"/>
+		<vertex x="-12.313058" y="-4.880397" edge="bluen"/>
+		<vertex x="-12.325084" y="-4.889242" edge="bluen"/>
+		<vertex x="-12.333360" y="-4.890793" edge="bluen"/>
+		<vertex x="-12.667196" y="-4.857714" edge="bluen"/>
+		<vertex x="-12.682659" y="-4.850974" edge="bluen"/>
+		<vertex x="-12.691447" y="-4.836487" edge="bluen"/>
+		<vertex x="-12.692145" y="-4.828006" edge="bluen"/>
+		<vertex x="-12.686869" y="-4.813947" edge="bluen"/>
+		<vertex x="-12.674842" y="-4.805102" edge="bluen"/>
+		<vertex x="-12.664868" y="-4.803560" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-5-6">
+		<position y="4.57355997182" x="15.2647915328" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.405819" y="-1.784671" edge="bluen"/>
+		<vertex x="-12.639415" y="-1.548640" edge="bluen"/>
+		<vertex x="-12.639700" y="-1.509847" edge="bluen"/>
+		<vertex x="-12.626673" y="-1.502377" edge="bluen"/>
+		<vertex x="-12.611768" y="-1.503229" edge="bluen"/>
+		<vertex x="-12.368271" y="-1.745600" edge="bluen"/>
+		<vertex x="-12.368271" y="-1.745600" edge="bluen"/>
+		<vertex x="-12.360654" y="-1.760650" edge="bluen"/>
+		<vertex x="-12.363118" y="-1.777414" edge="bluen"/>
+		<vertex x="-12.367986" y="-1.784393" edge="bluen"/>
+		<vertex x="-12.367986" y="-1.784393" edge="bluen"/>
+		<vertex x="-12.381013" y="-1.791863" edge="bluen"/>
+		<vertex x="-12.387684" y="-1.792559" edge="bluen"/>
+		<vertex x="-12.401915" y="-1.787933" edge="bluen"/>
+		<vertex x="-12.404586" y="-1.785841" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-3-2">
+		<position y="4.33248805162" x="14.8863690809" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.347231" y="-1.236125" edge="bluen"/>
+		<vertex x="-12.666946" y="-1.146348" edge="bluen"/>
+		<vertex x="-12.686362" y="-1.112763" edge="bluen"/>
+		<vertex x="-12.678728" y="-1.099832" edge="bluen"/>
+		<vertex x="-12.665349" y="-1.093207" edge="bluen"/>
+		<vertex x="-12.333893" y="-1.183604" edge="bluen"/>
+		<vertex x="-12.319834" y="-1.192925" edge="bluen"/>
+		<vertex x="-12.313693" y="-1.208716" edge="bluen"/>
+		<vertex x="-12.314477" y="-1.217190" edge="bluen"/>
+		<vertex x="-12.322111" y="-1.230120" edge="bluen"/>
+		<vertex x="-12.335490" y="-1.236745" edge="bluen"/>
+		<vertex x="-12.340534" y="-1.237122" edge="bluen"/>
+		<vertex x="-12.345580" y="-1.236534" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-8-6">
+		<position y="4.24320208461" x="14.4484849953" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.336828" y="-1.029901" edge="bluen"/>
+		<vertex x="-12.667270" y="-0.996946" edge="bluen"/>
+		<vertex x="-12.692218" y="-0.967238" edge="bluen"/>
+		<vertex x="-12.686942" y="-0.953179" edge="bluen"/>
+		<vertex x="-12.674916" y="-0.944334" edge="bluen"/>
+		<vertex x="-12.332804" y="-0.975862" edge="bluen"/>
+		<vertex x="-12.317341" y="-0.982603" edge="bluen"/>
+		<vertex x="-12.308553" y="-0.997089" edge="bluen"/>
+		<vertex x="-12.307855" y="-1.005570" edge="bluen"/>
+		<vertex x="-12.313131" y="-1.019629" edge="bluen"/>
+		<vertex x="-12.325158" y="-1.028474" edge="bluen"/>
+		<vertex x="-12.333433" y="-1.030025" edge="bluen"/>
+		<vertex x="-12.335132" y="-1.030016" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-3-0">
+		<position y="4.06109921662" x="14.8400835802" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.623212" y="-0.508860" edge="bluen"/>
+		<vertex x="-12.344448" y="-0.689325" edge="bluen"/>
+		<vertex x="-12.335853" y="-0.727155" edge="bluen"/>
+		<vertex x="-12.335853" y="-0.727155" edge="bluen"/>
+		<vertex x="-12.346975" y="-0.737244" edge="bluen"/>
+		<vertex x="-12.358357" y="-0.739830" edge="bluen"/>
+		<vertex x="-12.371291" y="-0.736416" edge="bluen"/>
+		<vertex x="-12.651511" y="-0.555072" edge="bluen"/>
+		<vertex x="-12.662178" y="-0.542004" edge="bluen"/>
+		<vertex x="-12.663365" y="-0.525102" edge="bluen"/>
+		<vertex x="-12.660106" y="-0.517242" edge="bluen"/>
+		<vertex x="-12.648984" y="-0.507153" edge="bluen"/>
+		<vertex x="-12.634243" y="-0.504789" edge="bluen"/>
+		<vertex x="-12.624668" y="-0.507981" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-8-5">
+		<position y="4.2759904635" x="15.2325600583" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.642044" y="-0.962085" edge="bluen"/>
+		<vertex x="-12.336200" y="-1.091456" edge="bluen"/>
+		<vertex x="-12.321174" y="-1.127222" edge="bluen"/>
+		<vertex x="-12.321174" y="-1.127222" edge="bluen"/>
+		<vertex x="-12.330377" y="-1.139087" edge="bluen"/>
+		<vertex x="-12.344485" y="-1.143972" edge="bluen"/>
+		<vertex x="-12.346171" y="-1.143992" edge="bluen"/>
+		<vertex x="-12.661898" y="-1.012505" edge="bluen"/>
+		<vertex x="-12.674669" y="-1.001486" edge="bluen"/>
+		<vertex x="-12.678771" y="-0.985047" edge="bluen"/>
+		<vertex x="-12.676925" y="-0.976740" edge="bluen"/>
+		<vertex x="-12.667721" y="-0.964875" edge="bluen"/>
+		<vertex x="-12.653614" y="-0.959990" edge="bluen"/>
+		<vertex x="-12.643630" y="-0.961472" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-8-5-9">
+		<position y="4.45037161355" x="15.6419069095" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.642044" y="-1.310847" edge="bluen"/>
+		<vertex x="-12.336200" y="-1.440219" edge="bluen"/>
+		<vertex x="-12.321174" y="-1.475984" edge="bluen"/>
+		<vertex x="-12.321174" y="-1.475984" edge="bluen"/>
+		<vertex x="-12.330377" y="-1.487850" edge="bluen"/>
+		<vertex x="-12.344485" y="-1.492734" edge="bluen"/>
+		<vertex x="-12.346171" y="-1.492755" edge="bluen"/>
+		<vertex x="-12.661898" y="-1.361268" edge="bluen"/>
+		<vertex x="-12.674669" y="-1.350249" edge="bluen"/>
+		<vertex x="-12.678771" y="-1.333809" edge="bluen"/>
+		<vertex x="-12.676925" y="-1.325502" edge="bluen"/>
+		<vertex x="-12.667721" y="-1.313637" edge="bluen"/>
+		<vertex x="-12.653614" y="-1.308752" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-3-0-1">
+		<position y="3.82537056481" x="14.4711938254" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.623212" y="-0.037402" edge="bluen"/>
+		<vertex x="-12.344448" y="-0.217868" edge="bluen"/>
+		<vertex x="-12.335853" y="-0.255698" edge="bluen"/>
+		<vertex x="-12.335853" y="-0.255698" edge="bluen"/>
+		<vertex x="-12.346975" y="-0.265787" edge="bluen"/>
+		<vertex x="-12.358357" y="-0.268373" edge="bluen"/>
+		<vertex x="-12.371291" y="-0.264959" edge="bluen"/>
+		<vertex x="-12.651511" y="-0.083614" edge="bluen"/>
+		<vertex x="-12.662178" y="-0.070547" edge="bluen"/>
+		<vertex x="-12.663365" y="-0.053645" edge="bluen"/>
+		<vertex x="-12.660106" y="-0.045784" edge="bluen"/>
+		<vertex x="-12.660106" y="-0.045784" edge="bluen"/>
+		<vertex x="-12.648984" y="-0.035696" edge="bluen"/>
+		<vertex x="-12.634243" y="-0.033332" edge="bluen"/>
+		<vertex x="-12.624668" y="-0.036523" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-3-0-2">
+		<position y="3.52692796125" x="14.3749999648" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.360582" y="0.537693" edge="bluen"/>
+		<vertex x="-12.601079" y="0.308699" edge="bluen"/>
+		<vertex x="-12.639871" y="0.309163" edge="bluen"/>
+		<vertex x="-12.639871" y="0.309163" edge="bluen"/>
+		<vertex x="-12.647088" y="0.322332" edge="bluen"/>
+		<vertex x="-12.645948" y="0.337217" edge="bluen"/>
+		<vertex x="-12.398921" y="0.575989" edge="bluen"/>
+		<vertex x="-12.398921" y="0.575989" edge="bluen"/>
+		<vertex x="-12.383726" y="0.583314" edge="bluen"/>
+		<vertex x="-12.367013" y="0.580527" edge="bluen"/>
+		<vertex x="-12.360129" y="0.575525" edge="bluen"/>
+		<vertex x="-12.360129" y="0.575525" edge="bluen"/>
+		<vertex x="-12.352912" y="0.562356" edge="bluen"/>
+		<vertex x="-12.354052" y="0.547471" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-3-0-3">
+		<position y="4.34298943476" x="15.9642850904" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.438342" y="-1.028969" edge="bluen"/>
+		<vertex x="-12.508420" y="-1.353571" edge="bluen"/>
+		<vertex x="-12.540757" y="-1.375003" edge="bluen"/>
+		<vertex x="-12.554130" y="-1.368173" edge="bluen"/>
+		<vertex x="-12.561559" y="-1.355224" edge="bluen"/>
+		<vertex x="-12.491580" y="-1.018864" edge="bluen"/>
+		<vertex x="-12.483135" y="-1.004262" edge="bluen"/>
+		<vertex x="-12.467749" y="-0.997168" edge="bluen"/>
+		<vertex x="-12.452803" y="-0.999521" edge="bluen"/>
+		<vertex x="-12.441642" y="-1.009470" edge="bluen"/>
+		<vertex x="-12.437742" y="-1.023917" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-3-9">
+		<position y="3.84322782163" x="15.8835081773" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.652769" y="-0.115306" edge="bluen"/>
+		<vertex x="-12.333054" y="-0.205083" edge="bluen"/>
+		<vertex x="-12.313638" y="-0.238669" edge="bluen"/>
+		<vertex x="-12.321272" y="-0.251600" edge="bluen"/>
+		<vertex x="-12.334651" y="-0.258224" edge="bluen"/>
+		<vertex x="-12.339696" y="-0.258602" edge="bluen"/>
+		<vertex x="-12.666107" y="-0.167828" edge="bluen"/>
+		<vertex x="-12.680166" y="-0.158507" edge="bluen"/>
+		<vertex x="-12.686307" y="-0.142716" edge="bluen"/>
+		<vertex x="-12.685523" y="-0.134242" edge="bluen"/>
+		<vertex x="-12.677889" y="-0.121311" edge="bluen"/>
+		<vertex x="-12.664510" y="-0.114687" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-1-57-4-3-4-6-6-5-5-8-3-3">
+		<position y="3.65572781582" x="15.4801002959" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.622860" y="0.302248" edge="bluen"/>
+		<vertex x="-12.344623" y="0.120971" edge="bluen"/>
+		<vertex x="-12.336138" y="0.083116" edge="bluen"/>
+		<vertex x="-12.336138" y="0.083116" edge="bluen"/>
+		<vertex x="-12.347290" y="0.073059" edge="bluen"/>
+		<vertex x="-12.358679" y="0.070507" edge="bluen"/>
+		<vertex x="-12.371603" y="0.073958" edge="bluen"/>
+		<vertex x="-12.651294" y="0.256118" edge="bluen"/>
+		<vertex x="-12.651294" y="0.256118" edge="bluen"/>
+		<vertex x="-12.661922" y="0.269217" edge="bluen"/>
+		<vertex x="-12.663060" y="0.286122" edge="bluen"/>
+		<vertex x="-12.659778" y="0.293973" edge="bluen"/>
+		<vertex x="-12.648626" y="0.304029" edge="bluen"/>
+		<vertex x="-12.633879" y="0.306350" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-41">
+		<position y="7.02627491113" x="17.7356284771" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.436582" y="-6.395038" edge="bluen"/>
+		<vertex x="-12.424821" y="-6.385732" edge="bluen"/>
+		<vertex x="-12.409950" y="-6.384375" edge="bluen"/>
+		<vertex x="-12.400597" y="-6.388206" edge="bluen"/>
+		<vertex x="-12.389977" y="-6.401312" edge="bluen"/>
+		<vertex x="-12.388850" y="-6.418218" edge="bluen"/>
+		<vertex x="-12.392138" y="-6.426067" edge="bluen"/>
+		<vertex x="-12.392138" y="-6.426067" edge="bluen"/>
+		<vertex x="-12.567511" y="-6.710062" edge="bluen"/>
+		<vertex x="-12.579272" y="-6.719368" edge="bluen"/>
+		<vertex x="-12.589122" y="-6.721238" edge="bluen"/>
+		<vertex x="-12.603497" y="-6.716894" edge="bluen"/>
+		<vertex x="-12.611956" y="-6.679033" edge="bluen"/>
+		<vertex x="-12.437521" y="-6.396456" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-1">
+		<position y="6.72724794761" x="17.9837866844" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.397381" y="-5.820854" edge="bluen"/>
+		<vertex x="-12.383526" y="-5.815114" edge="bluen"/>
+		<vertex x="-12.368849" y="-5.817871" edge="bluen"/>
+		<vertex x="-12.360898" y="-5.824111" edge="bluen"/>
+		<vertex x="-12.354262" y="-5.839619" edge="bluen"/>
+		<vertex x="-12.357795" y="-5.856190" edge="bluen"/>
+		<vertex x="-12.363102" y="-5.862842" edge="bluen"/>
+		<vertex x="-12.363102" y="-5.862842" edge="bluen"/>
+		<vertex x="-12.609376" y="-6.088138" edge="bluen"/>
+		<vertex x="-12.623231" y="-6.093877" edge="bluen"/>
+		<vertex x="-12.626589" y="-6.094011" edge="bluen"/>
+		<vertex x="-12.640808" y="-6.089390" edge="bluen"/>
+		<vertex x="-12.645859" y="-6.084881" edge="bluen"/>
+		<vertex x="-12.645859" y="-6.084881" edge="bluen"/>
+		<vertex x="-12.643656" y="-6.046149" edge="bluen"/>
+		<vertex x="-12.398671" y="-5.821962" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-3">
+		<position y="6.54106115166" x="18.3223603425" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.345640" y="-5.510440" edge="bluen"/>
+		<vertex x="-12.330684" y="-5.511546" edge="bluen"/>
+		<vertex x="-12.318816" y="-5.520610" edge="bluen"/>
+		<vertex x="-12.314522" y="-5.529759" edge="bluen"/>
+		<vertex x="-12.315570" y="-5.546595" edge="bluen"/>
+		<vertex x="-12.326179" y="-5.559806" edge="bluen"/>
+		<vertex x="-12.333911" y="-5.563361" edge="bluen"/>
+		<vertex x="-12.333911" y="-5.563361" edge="bluen"/>
+		<vertex x="-12.655204" y="-5.653804" edge="bluen"/>
+		<vertex x="-12.660249" y="-5.654397" edge="bluen"/>
+		<vertex x="-12.674675" y="-5.650467" edge="bluen"/>
+		<vertex x="-12.684607" y="-5.639275" edge="bluen"/>
+		<vertex x="-12.686323" y="-5.634485" edge="bluen"/>
+		<vertex x="-12.686323" y="-5.634485" edge="bluen"/>
+		<vertex x="-12.666933" y="-5.600884" edge="bluen"/>
+		<vertex x="-12.347291" y="-5.510850" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9-8">
+		<position y="6.46438969072" x="18.7019633272" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.335205" y="-5.384896" edge="bluen"/>
+		<vertex x="-12.320664" y="-5.388568" edge="bluen"/>
+		<vertex x="-12.310539" y="-5.399544" edge="bluen"/>
+		<vertex x="-12.307889" y="-5.409298" edge="bluen"/>
+		<vertex x="-12.311828" y="-5.425699" edge="bluen"/>
+		<vertex x="-12.324559" y="-5.436880" edge="bluen"/>
+		<vertex x="-12.332788" y="-5.439047" edge="bluen"/>
+		<vertex x="-12.664871" y="-5.472662" edge="bluen"/>
+		<vertex x="-12.666569" y="-5.472674" edge="bluen"/>
+		<vertex x="-12.680829" y="-5.468086" edge="bluen"/>
+		<vertex x="-12.690232" y="-5.456476" edge="bluen"/>
+		<vertex x="-12.692187" y="-5.448261" edge="bluen"/>
+		<vertex x="-12.667288" y="-5.418512" edge="bluen"/>
+		<vertex x="-12.336901" y="-5.385015" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-48-7">
+		<position y="6.45965771203" x="19.0930065767" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.329577" y="-5.412044" edge="bluen"/>
+		<vertex x="-12.316175" y="-5.418775" edge="bluen"/>
+		<vertex x="-12.308664" y="-5.431682" edge="bluen"/>
+		<vertex x="-12.308187" y="-5.441778" edge="bluen"/>
+		<vertex x="-12.315582" y="-5.456939" edge="bluen"/>
+		<vertex x="-12.330430" y="-5.465100" edge="bluen"/>
+		<vertex x="-12.335531" y="-5.465620" edge="bluen"/>
+		<vertex x="-12.338933" y="-5.465435" edge="bluen"/>
+		<vertex x="-12.670423" y="-5.426402" edge="bluen"/>
+		<vertex x="-12.683825" y="-5.419671" edge="bluen"/>
+		<vertex x="-12.691336" y="-5.406763" edge="bluen"/>
+		<vertex x="-12.691813" y="-5.396668" edge="bluen"/>
+		<vertex x="-12.661067" y="-5.373011" edge="bluen"/>
+		<vertex x="-12.331259" y="-5.411793" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-8-4">
+		<position y="6.55806237756" x="19.4682961954" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.334096" y="-5.654724" edge="bluen"/>
+		<vertex x="-12.323042" y="-5.664859" edge="bluen"/>
+		<vertex x="-12.319343" y="-5.679327" edge="bluen"/>
+		<vertex x="-12.321641" y="-5.689169" edge="bluen"/>
+		<vertex x="-12.332896" y="-5.701734" edge="bluen"/>
+		<vertex x="-12.347695" y="-5.705617" edge="bluen"/>
+		<vertex x="-12.357680" y="-5.703529" edge="bluen"/>
+		<vertex x="-12.665904" y="-5.575438" edge="bluen"/>
+		<vertex x="-12.676958" y="-5.565302" edge="bluen"/>
+		<vertex x="-12.680657" y="-5.550834" edge="bluen"/>
+		<vertex x="-12.678359" y="-5.540992" edge="bluen"/>
+		<vertex x="-12.642320" y="-5.526633" edge="bluen"/>
+		<vertex x="-12.335645" y="-5.654022" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-2">
+		<position y="6.79107858578" x="19.7812963398" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.369658" y="-6.189077" edge="bluen"/>
+		<vertex x="-12.364344" y="-6.203101" edge="bluen"/>
+		<vertex x="-12.367548" y="-6.217687" edge="bluen"/>
+		<vertex x="-12.374028" y="-6.225444" edge="bluen"/>
+		<vertex x="-12.389731" y="-6.231603" edge="bluen"/>
+		<vertex x="-12.391453" y="-6.231664" edge="bluen"/>
+		<vertex x="-12.407620" y="-6.226627" edge="bluen"/>
+		<vertex x="-12.412674" y="-6.222058" edge="bluen"/>
+		<vertex x="-12.630342" y="-5.969017" edge="bluen"/>
+		<vertex x="-12.635656" y="-5.954993" edge="bluen"/>
+		<vertex x="-12.632452" y="-5.940407" edge="bluen"/>
+		<vertex x="-12.625972" y="-5.932651" edge="bluen"/>
+		<vertex x="-12.587326" y="-5.936036" edge="bluen"/>
+		<vertex x="-12.370726" y="-6.187754" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9-4-7">
+		<position y="7.10178994346" x="20.0112703473" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.390611" y="-6.832703" edge="bluen"/>
+		<vertex x="-12.387799" y="-6.847434" edge="bluen"/>
+		<vertex x="-12.393472" y="-6.861248" edge="bluen"/>
+		<vertex x="-12.401194" y="-6.867769" edge="bluen"/>
+		<vertex x="-12.401194" y="-6.867769" edge="bluen"/>
+		<vertex x="-12.414288" y="-6.871284" edge="bluen"/>
+		<vertex x="-12.430526" y="-6.866411" edge="bluen"/>
+		<vertex x="-12.438676" y="-6.857762" edge="bluen"/>
+		<vertex x="-12.609389" y="-6.570941" edge="bluen"/>
+		<vertex x="-12.612201" y="-6.556211" edge="bluen"/>
+		<vertex x="-12.606528" y="-6.542397" edge="bluen"/>
+		<vertex x="-12.598806" y="-6.535876" edge="bluen"/>
+		<vertex x="-12.561324" y="-6.545882" edge="bluen"/>
+		<vertex x="-12.391435" y="-6.831215" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-5-7">
+		<position y="7.44705703601" x="20.173683704" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.418915" y="-7.543528" edge="bluen"/>
+		<vertex x="-12.419097" y="-7.558524" edge="bluen"/>
+		<vertex x="-12.427412" y="-7.570928" edge="bluen"/>
+		<vertex x="-12.436279" y="-7.575778" edge="bluen"/>
+		<vertex x="-12.444687" y="-7.577090" edge="bluen"/>
+		<vertex x="-12.460831" y="-7.571946" edge="bluen"/>
+		<vertex x="-12.471012" y="-7.558497" edge="bluen"/>
+		<vertex x="-12.581085" y="-7.243389" edge="bluen"/>
+		<vertex x="-12.580903" y="-7.228393" edge="bluen"/>
+		<vertex x="-12.572588" y="-7.215988" edge="bluen"/>
+		<vertex x="-12.563721" y="-7.211138" edge="bluen"/>
+		<vertex x="-12.528988" y="-7.228420" edge="bluen"/>
+		<vertex x="-12.419425" y="-7.541906" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-5-9">
+		<position y="7.82647133257" x="20.250417865" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.462988" y="-8.319451" edge="bluen"/>
+		<vertex x="-12.467259" y="-8.333827" edge="bluen"/>
+		<vertex x="-12.478646" y="-8.343488" edge="bluen"/>
+		<vertex x="-12.488501" y="-8.345732" edge="bluen"/>
+		<vertex x="-12.490204" y="-8.345737" edge="bluen"/>
+		<vertex x="-12.506131" y="-8.340121" edge="bluen"/>
+		<vertex x="-12.515940" y="-8.326317" edge="bluen"/>
+		<vertex x="-12.517192" y="-8.319621" edge="bluen"/>
+		<vertex x="-12.537012" y="-7.986429" edge="bluen"/>
+		<vertex x="-12.532741" y="-7.972054" edge="bluen"/>
+		<vertex x="-12.521354" y="-7.962392" edge="bluen"/>
+		<vertex x="-12.511499" y="-7.960148" edge="bluen"/>
+		<vertex x="-12.511499" y="-7.960148" edge="bluen"/>
+		<vertex x="-12.482808" y="-7.986259" edge="bluen"/>
+		<vertex x="-12.463036" y="-8.317751" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-1-3">
+		<position y="8.20899960043" x="20.1787442954" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.540728" y="-9.083363" edge="bluen"/>
+		<vertex x="-12.551008" y="-9.094281" edge="bluen"/>
+		<vertex x="-12.563838" y="-9.097822" edge="bluen"/>
+		<vertex x="-12.575335" y="-9.095360" edge="bluen"/>
+		<vertex x="-12.587749" y="-9.083940" edge="bluen"/>
+		<vertex x="-12.591325" y="-9.067378" edge="bluen"/>
+		<vertex x="-12.589215" y="-9.059134" edge="bluen"/>
+		<vertex x="-12.457048" y="-8.752636" edge="bluen"/>
+		<vertex x="-12.446767" y="-8.741717" edge="bluen"/>
+		<vertex x="-12.432251" y="-8.738210" edge="bluen"/>
+		<vertex x="-12.422440" y="-8.740639" edge="bluen"/>
+		<vertex x="-12.408560" y="-8.776865" edge="bluen"/>
+		<vertex x="-12.540006" y="-9.081823" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9-7-1">
+		<position y="8.55240673199" x="19.9977708898" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.566537" y="-9.759078" edge="bluen"/>
+		<vertex x="-12.577967" y="-9.768817" edge="bluen"/>
+		<vertex x="-12.587741" y="-9.771050" edge="bluen"/>
+		<vertex x="-12.602245" y="-9.767236" edge="bluen"/>
+		<vertex x="-12.603673" y="-9.766312" edge="bluen"/>
+		<vertex x="-12.603673" y="-9.766312" edge="bluen"/>
+		<vertex x="-12.613929" y="-9.752920" edge="bluen"/>
+		<vertex x="-12.614592" y="-9.735990" edge="bluen"/>
+		<vertex x="-12.611091" y="-9.728234" edge="bluen"/>
+		<vertex x="-12.427992" y="-9.449156" edge="bluen"/>
+		<vertex x="-12.415980" y="-9.440177" edge="bluen"/>
+		<vertex x="-12.401077" y="-9.439228" edge="bluen"/>
+		<vertex x="-12.391833" y="-9.443315" edge="bluen"/>
+		<vertex x="-12.384415" y="-9.481393" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-48-1-9">
+		<position y="8.85916295905" x="19.7537201471" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.598116" y="-10.355202" edge="bluen"/>
+		<vertex x="-12.611786" y="-10.361369" edge="bluen"/>
+		<vertex x="-12.615138" y="-10.361607" edge="bluen"/>
+		<vertex x="-12.629494" y="-10.357431" edge="bluen"/>
+		<vertex x="-12.634683" y="-10.353081" edge="bluen"/>
+		<vertex x="-12.641798" y="-10.337787" edge="bluen"/>
+		<vertex x="-12.638782" y="-10.321114" edge="bluen"/>
+		<vertex x="-12.633685" y="-10.314300" edge="bluen"/>
+		<vertex x="-12.394540" y="-10.081450" edge="bluen"/>
+		<vertex x="-12.380871" y="-10.075283" edge="bluen"/>
+		<vertex x="-12.366115" y="-10.077581" edge="bluen"/>
+		<vertex x="-12.357974" y="-10.083571" edge="bluen"/>
+		<vertex x="-12.358971" y="-10.122352" edge="bluen"/>
+		<vertex x="-12.596861" y="-10.354054" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-1-8-1-8">
+		<position y="9.08922471817" x="19.443800154" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.632298" y="-10.781557" edge="bluen"/>
+		<vertex x="-12.645300" y="-10.784777" edge="bluen"/>
+		<vertex x="-12.659550" y="-10.780332" edge="bluen"/>
+		<vertex x="-12.668416" y="-10.770291" edge="bluen"/>
+		<vertex x="-12.668416" y="-10.770291" edge="bluen"/>
+		<vertex x="-12.671083" y="-10.753635" edge="bluen"/>
+		<vertex x="-12.663628" y="-10.738420" edge="bluen"/>
+		<vertex x="-12.656864" y="-10.733257" edge="bluen"/>
+		<vertex x="-12.363212" y="-10.574580" edge="bluen"/>
+		<vertex x="-12.348378" y="-10.572381" edge="bluen"/>
+		<vertex x="-12.334811" y="-10.578622" edge="bluen"/>
+		<vertex x="-12.328615" y="-10.586608" edge="bluen"/>
+		<vertex x="-12.340167" y="-10.623642" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-6">
+		<position y="9.18681279276" x="19.0687403574" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.665863" y="-10.905537" edge="bluen"/>
+		<vertex x="-12.680391" y="-10.901740" edge="bluen"/>
+		<vertex x="-12.690430" y="-10.890690" edge="bluen"/>
+		<vertex x="-12.693053" y="-10.879229" edge="bluen"/>
+		<vertex x="-12.687944" y="-10.863153" edge="bluen"/>
+		<vertex x="-12.674442" y="-10.852918" edge="bluen"/>
+		<vertex x="-12.332437" y="-10.841714" edge="bluen"/>
+		<vertex x="-12.318198" y="-10.846423" edge="bluen"/>
+		<vertex x="-12.308888" y="-10.858099" edge="bluen"/>
+		<vertex x="-12.306947" y="-10.868018" edge="bluen"/>
+		<vertex x="-12.333922" y="-10.895899" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9-4-2-5">
+		<position y="9.1686805142" x="18.6815110707" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.670556" y="-10.840001" edge="bluen"/>
+		<vertex x="-12.683768" y="-10.832905" edge="bluen"/>
+		<vertex x="-12.690922" y="-10.819797" edge="bluen"/>
+		<vertex x="-12.691122" y="-10.809692" edge="bluen"/>
+		<vertex x="-12.683314" y="-10.794739" edge="bluen"/>
+		<vertex x="-12.668247" y="-10.786988" edge="bluen"/>
+		<vertex x="-12.329444" y="-10.834999" edge="bluen"/>
+		<vertex x="-12.316232" y="-10.842095" edge="bluen"/>
+		<vertex x="-12.309078" y="-10.855204" edge="bluen"/>
+		<vertex x="-12.308878" y="-10.865309" edge="bluen"/>
+		<vertex x="-12.340262" y="-10.888114" edge="bluen"/>
+		<vertex x="-12.668882" y="-10.840299" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-7-0">
+		<position y="9.03396351395" x="18.3235081918" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.656630" y="-10.502522" edge="bluen"/>
+		<vertex x="-12.665779" y="-10.490639" edge="bluen"/>
+		<vertex x="-12.666938" y="-10.475751" edge="bluen"/>
+		<vertex x="-12.662983" y="-10.466450" edge="bluen"/>
+		<vertex x="-12.649738" y="-10.456005" edge="bluen"/>
+		<vertex x="-12.632819" y="-10.455102" edge="bluen"/>
+		<vertex x="-12.625014" y="-10.458493" edge="bluen"/>
+		<vertex x="-12.343370" y="-10.637619" edge="bluen"/>
+		<vertex x="-12.334221" y="-10.649502" edge="bluen"/>
+		<vertex x="-12.333062" y="-10.664391" edge="bluen"/>
+		<vertex x="-12.337017" y="-10.673692" edge="bluen"/>
+		<vertex x="-12.374986" y="-10.681648" edge="bluen"/>
+		<vertex x="-12.655224" y="-10.503479" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-9-4-2-6-2">
+		<position y="8.80045195506" x="18.0129888108" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.642616" y="-10.010931" edge="bluen"/>
+		<vertex x="-12.649576" y="-9.997647" edge="bluen"/>
+		<vertex x="-12.648147" y="-9.982782" edge="bluen"/>
+		<vertex x="-12.642646" y="-9.974303" edge="bluen"/>
+		<vertex x="-12.627797" y="-9.966302" edge="bluen"/>
+		<vertex x="-12.610975" y="-9.968334" edge="bluen"/>
+		<vertex x="-12.603873" y="-9.973022" edge="bluen"/>
+		<vertex x="-12.603873" y="-9.973022" edge="bluen"/>
+		<vertex x="-12.357384" y="-10.198083" edge="bluen"/>
+		<vertex x="-12.350424" y="-10.211367" edge="bluen"/>
+		<vertex x="-12.351853" y="-10.226232" edge="bluen"/>
+		<vertex x="-12.357354" y="-10.234711" edge="bluen"/>
+		<vertex x="-12.396127" y="-10.235992" edge="bluen"/>
+		<vertex x="-12.641396" y="-10.012117" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-8">
+		<position y="8.49266745171" x="17.7849540537" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.599454" y="-9.348049" edge="bluen"/>
+		<vertex x="-12.601174" y="-9.333151" edge="bluen"/>
+		<vertex x="-12.594499" y="-9.319792" edge="bluen"/>
+		<vertex x="-12.586318" y="-9.313857" edge="bluen"/>
+		<vertex x="-12.569585" y="-9.311728" edge="bluen"/>
+		<vertex x="-12.554618" y="-9.319670" edge="bluen"/>
+		<vertex x="-12.549675" y="-9.326597" edge="bluen"/>
+		<vertex x="-12.549675" y="-9.326597" edge="bluen"/>
+		<vertex x="-12.400546" y="-9.625210" edge="bluen"/>
+		<vertex x="-12.398826" y="-9.640108" edge="bluen"/>
+		<vertex x="-12.405501" y="-9.653466" edge="bluen"/>
+		<vertex x="-12.413682" y="-9.659401" edge="bluen"/>
+		<vertex x="-12.450325" y="-9.646662" edge="bluen"/>
+		<vertex x="-12.598742" y="-9.349593" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-5-6">
+		<position y="8.06923943675" x="18.120916336" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.598938" y="-8.500802" edge="bluen"/>
+		<vertex x="-12.600603" y="-8.485898" edge="bluen"/>
+		<vertex x="-12.593878" y="-8.472565" edge="bluen"/>
+		<vertex x="-12.585675" y="-8.466660" edge="bluen"/>
+		<vertex x="-12.568934" y="-8.464593" edge="bluen"/>
+		<vertex x="-12.553997" y="-8.472590" edge="bluen"/>
+		<vertex x="-12.549080" y="-8.479536" edge="bluen"/>
+		<vertex x="-12.549080" y="-8.479536" edge="bluen"/>
+		<vertex x="-12.401062" y="-8.778701" edge="bluen"/>
+		<vertex x="-12.399397" y="-8.793605" edge="bluen"/>
+		<vertex x="-12.406122" y="-8.806939" edge="bluen"/>
+		<vertex x="-12.414325" y="-8.812843" edge="bluen"/>
+		<vertex x="-12.414325" y="-8.812843" edge="bluen"/>
+		<vertex x="-12.450920" y="-8.799968" edge="bluen"/>
+		<vertex x="-12.598232" y="-8.502350" edge="bluen"/>
+	</block>
+	<block id="rect3131-65-6-4-6-0-7-0-2-22-2-4-2-5-4-4-0">
+		<position y="8.0010841679" x="17.5842711745" islayer="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.668180" y="-8.530629" edge="bluen"/>
+		<vertex x="-12.682320" y="-8.525631" edge="bluen"/>
+		<vertex x="-12.691389" y="-8.513767" edge="bluen"/>
+		<vertex x="-12.693127" y="-8.503811" edge="bluen"/>
+		<vertex x="-12.687691" y="-8.487843" edge="bluen"/>
+		<vertex x="-12.673982" y="-8.477885" edge="bluen"/>
+		<vertex x="-12.331820" y="-8.473668" edge="bluen"/>
+		<vertex x="-12.317680" y="-8.478666" edge="bluen"/>
+		<vertex x="-12.308611" y="-8.490531" edge="bluen"/>
+		<vertex x="-12.306873" y="-8.500487" edge="bluen"/>
+		<vertex x="-12.306873" y="-8.500487" edge="bluen"/>
+		<vertex x="-12.334412" y="-8.527811" edge="bluen"/>
+		<vertex x="-12.666480" y="-8.530668" edge="bluen"/>
+	</block>
+</level>

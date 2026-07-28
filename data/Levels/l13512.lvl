@@ -1,0 +1,4092 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="Retrosnakelevel" rversion="0.2.5">
+	<info>
+		<name>Retro Snake</name>
+		<description>Scripted snake level, like 1979. Also check ou Retro Pong!</description>
+		<author>Unknow~</author>
+		<date>2014-04-17</date>
+		<sky>yellow_shadow</sky>
+		<border texture="yellow_shadow"/>
+	</info>
+	<limits left="-12.500000" right="12.500000" top="12.500000" bottom="-12.500000"/>
+	<script>
+--TIMER
+gameLoop = {}
+
+--GAME OBJECTS
+snakeHead = {}
+food = {}
+food2 = {}
+
+--VARIABLES
+snakeDirection = 1
+snakeSteps = 0.5
+snakePosX = {}
+snakeposY = {}
+cellX = {} 
+cellY = {}
+foodPosX = {}
+foodPosY = {}
+foodPosX2 = {}
+foodPosY2 = {}
+partsConnected = 1
+gameSpeed = 15
+penTime = 0
+berrysLeft = 50
+
+function OnLoad()
+	Game.Message("I for help")
+	--MOVING CAM. TO PLAYAREA
+	Game.CameraZoom(-0.0847)
+	Game.CameraMove(9, 15)
+
+	--REGISTER KEYS
+	Game.SetKeyHook("W", "moveUp")
+	Game.SetKeyHook("S", "moveDown")
+	Game.SetKeyHook("A", "moveLeft")
+	Game.SetKeyHook("D", "moveRight")
+	Game.SetKeyHook("I", "info")
+	Game.SetKeyHook("G", "startGame")
+
+
+
+	--INIT FIELD MATRIX
+	initField()
+	snakePosX = 5
+	snakePosY = 1
+	Game.SetBlockPos("snakeHead", cellX[snakePosX], cellY[snakePosY])
+	setFoodPos()
+	setFoodPos2()
+	return true
+end
+
+function info()
+	Game.Message("Eat 50 Berrys as fast as you can to win this level!")
+	Game.Message("For each change of the direction, the game will add 1 second to your current time!")
+	Game.Message("W/A/S/D: Move")
+	Game.Message("G: Start")
+	Game.Message("Good luck. :)")
+end
+
+function startGame()
+	Game.StartTimer("gameLoop", gameSpeed, 0)
+end
+
+--FUNCTION TO INITIALIZE THE GAME FIELD MATRIX
+function initField()
+    for i=0, 48, 1 do 	 --X
+		cellX[i] = i*snakeSteps
+    end
+	
+	for j=0, 24, 1 do	 --Y
+        cellY[j] = (j*-1)*(snakeSteps)
+    end
+end
+
+--SET RANDOM FOOD POSITION
+function setFoodPos()
+	foodPosX = math.random(47)+1
+	foodPosY = math.random(23)+1
+
+	Game.SetBlockPos("food", cellX[foodPosX], cellY[foodPosY])
+	
+	if(
+	7 == foodPosX and 2 == foodPosY or
+	8 == foodPosX and 2 == foodPosY or
+	7 == foodPosX and 3 == foodPosY or
+	8 == foodPosX and 3 == foodPosY or
+	
+	7 == foodPosX and 19 == foodPosY or
+	8 == foodPosX and 19 == foodPosY or
+	7 == foodPosX and 20 == foodPosY or
+	8 == foodPosX and 20 == foodPosY or
+	
+	42 == foodPosX and 2 == foodPosY or
+	43 == foodPosX and 2 == foodPosY or
+	42 == foodPosX and 3 == foodPosY or
+	43 == foodPosX and 3 == foodPosY or
+	
+	42 == foodPosX and 19 == foodPosY or
+	43 == foodPosX and 19 == foodPosY or
+	42 == foodPosX and 20 == foodPosY or
+	43 == foodPosX and 20 == foodPosY or
+	
+	23 == foodPosX and 10 == foodPosY or
+	24 == foodPosX and 10 == foodPosY or
+	23 == foodPosX and 11 == foodPosY or
+	24 == foodPosX and 11 == foodPosY or
+	
+	26 == foodPosX and 10 == foodPosY or
+	27 == foodPosX and 10 == foodPosY or
+	26 == foodPosX and 11 == foodPosY or
+	27 == foodPosX and 11 == foodPosY or
+	
+	13 == foodPosX and 8 == foodPosY or
+	14 == foodPosX and 8 == foodPosY or
+	13 == foodPosX and 9 == foodPosY or
+	14 == foodPosX and 9 == foodPosY or
+	
+	13 == foodPosX and 14 == foodPosY or
+	14 == foodPosX and 14 == foodPosY or
+	13 == foodPosX and 15 == foodPosY or
+	14 == foodPosX and 15 == foodPosY or
+	
+	36 == foodPosX and 8 == foodPosY or
+	37 == foodPosX and 8 == foodPosY or
+	36 == foodPosX and 9 == foodPosY or
+	37 == foodPosX and 9 == foodPosY or
+	
+	36 == foodPosX and 14 == foodPosY or
+	37 == foodPosX and 14 == foodPosY or
+	36 == foodPosX and 15 == foodPosY or
+	37 == foodPosX and 15 == foodPosY or
+	
+	
+	foodPosX &gt;= 18 and foodPosX &lt;= 24 and
+	foodPosY &lt;= 1 and foodPosY &gt;= 0 or
+	
+	foodPosX &gt;= 26 and foodPosX &lt;= 32 and
+	foodPosY &gt;= 21 and foodPosY &lt;= 22) then
+		setFoodPos()
+	end
+end
+
+--SET RANDOM FOOD2 POSITION
+function setFoodPos2()
+	foodPosX2 = math.random(47)+1
+	foodPosY2 = math.random(23)+1
+
+	Game.SetBlockPos("food2", cellX[foodPosX2], cellY[foodPosY2])
+	
+	if(
+	7 == foodPosX2 and 2 == foodPosY2 or
+	8 == foodPosX2 and 2 == foodPosY2 or
+	7 == foodPosX2 and 3 == foodPosY2 or
+	8 == foodPosX2 and 3 == foodPosY2 or
+	
+	7 == foodPosX2 and 19 == foodPosY2 or
+	8 == foodPosX2 and 19 == foodPosY2 or
+	7 == foodPosX2 and 20 == foodPosY2 or
+	8 == foodPosX2 and 20 == foodPosY2 or
+	
+	42 == foodPosX2 and 2 == foodPosY2 or
+	43 == foodPosX2 and 2 == foodPosY2 or
+	42 == foodPosX2 and 3 == foodPosY2 or
+	43 == foodPosX2 and 3 == foodPosY2 or
+	
+	42 == foodPosX2 and 19 == foodPosY2 or
+	43 == foodPosX2 and 19 == foodPosY2 or
+	42 == foodPosX2 and 20 == foodPosY2 or
+	43 == foodPosX2 and 20 == foodPosY2 or
+	
+	23 == foodPosX2 and 10 == foodPosY2 or
+	24 == foodPosX2 and 10 == foodPosY2 or
+	23 == foodPosX2 and 11 == foodPosY2 or
+	24 == foodPosX2 and 11 == foodPosY2 or
+	
+	26 == foodPosX2 and 10 == foodPosY2 or
+	27 == foodPosX2 and 10 == foodPosY2 or
+	26 == foodPosX2 and 11 == foodPosY2 or
+	27 == foodPosX2 and 11 == foodPosY2 or
+	
+	13 == foodPosX2 and 8 == foodPosY2 or
+	14 == foodPosX2 and 8 == foodPosY2 or
+	13 == foodPosX2 and 9 == foodPosY2 or
+	14 == foodPosX2 and 9 == foodPosY2 or
+	
+	13 == foodPosX2 and 14 == foodPosY2 or
+	14 == foodPosX2 and 14 == foodPosY2 or
+	13 == foodPosX2 and 15 == foodPosY2 or
+	14 == foodPosX2 and 15 == foodPosY2 or
+	
+	36 == foodPosX2 and 8 == foodPosY2 or
+	37 == foodPosX2 and 8 == foodPosY2 or
+	36 == foodPosX2 and 9 == foodPosY2 or
+	37 == foodPosX2 and 9 == foodPosY2 or
+	
+	36 == foodPosX2 and 14 == foodPosY2 or
+	37 == foodPosX2 and 14 == foodPosY2 or
+	36 == foodPosX2 and 15 == foodPosY2 or
+	37 == foodPosX2 and 15 == foodPosY2 or
+	foodPosX == foodPosX2 and foodPosY == foodPosY2 or
+	
+	foodPosX2 &gt;= 18 and foodPosX2 &lt;= 24 and
+	foodPosY2 &lt;= 1 and foodPosY2 &gt;= 0 or
+	
+	foodPosX2 &gt;= 26 and foodPosX2 &lt;= 32 and
+	foodPosY2 &gt;= 21 and foodPosY2 &lt;= 22) then
+		setFoodPos2()
+	end
+end
+
+--MOVEMENTFUNCTIONS
+function moveUp()
+	if(snakeDirection ~= 2) then
+		snakeDirection = 0
+		Game.AddPenaltyTime(1.0)
+	end
+end
+
+function moveDown()
+	if(snakeDirection ~= 0) then
+		snakeDirection = 2
+		Game.AddPenaltyTime(1.0)
+	end
+end
+
+function moveLeft()
+	if(snakeDirection ~= 1) then
+		snakeDirection = 3
+		Game.AddPenaltyTime(1.0)
+	end
+end
+
+function moveRight()
+	if(snakeDirection ~= 3) then
+		snakeDirection = 1
+		Game.AddPenaltyTime(1.0)
+	end
+end
+--END MOVEMENTFUNCTIONS
+
+--MOVE SNAKE BODY AND CHECK SELFCOLLISION
+function moveBodyTiles()
+	if(partsConnected == 1) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+	end
+	if(partsConnected == 2) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part2", x, y)
+	end
+	if(partsConnected == 3) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+	end
+	if(partsConnected == 4) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+	end
+	if(partsConnected == 5) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+	end
+	if(partsConnected == 6) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+	end
+	if(partsConnected == 7) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+	end
+	if(partsConnected == 8) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+	end
+	if(partsConnected == 9) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+	end
+	if(partsConnected == 10) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+	end
+	if(partsConnected == 11) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+	end
+	if(partsConnected == 12) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+	end
+	if(partsConnected == 13) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+	end
+	if(partsConnected == 14) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+	end
+	if(partsConnected == 15) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+	end
+	if(partsConnected == 16) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+	end
+	if(partsConnected == 17) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+	end
+	if(partsConnected == 18) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+	end
+	if(partsConnected == 19) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+	end
+	if(partsConnected == 20) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+	end
+	if(partsConnected == 21) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+	end
+	if(partsConnected == 22) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+	end
+	if(partsConnected == 23) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+	end
+	if(partsConnected == 24) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+	end
+	if(partsConnected == 25) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+	end
+	if(partsConnected == 26) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+	end
+	if(partsConnected == 27) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+	end
+	if(partsConnected == 28) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+	end
+	if(partsConnected == 29) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+	end
+	if(partsConnected == 30) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+	end
+	if(partsConnected == 30) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+	end
+	if(partsConnected == 31) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+	end
+	if(partsConnected == 32) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+	end
+	if(partsConnected == 33) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+	end
+	if(partsConnected == 34) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+	end
+	if(partsConnected == 35) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+	end
+	if(partsConnected == 36) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+	end
+	if(partsConnected == 37) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+	end
+	if(partsConnected == 38) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+	end
+	if(partsConnected == 39) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+	end
+	if(partsConnected == 40) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+	end
+	if(partsConnected == 41) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+	end
+	if(partsConnected == 42) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+		x41, y41 = Game.GetBlockPos("part40")
+		Game.SetBlockPos("part41", x41, y41)
+	end
+	if(partsConnected == 43) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+		x41, y41 = Game.GetBlockPos("part40")
+		Game.SetBlockPos("part41", x41, y41)
+		x42, y42 = Game.GetBlockPos("part41")
+		Game.SetBlockPos("part42", x42, y42)
+	end
+	if(partsConnected == 44) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+		x41, y41 = Game.GetBlockPos("part40")
+		Game.SetBlockPos("part41", x41, y41)
+		x42, y42 = Game.GetBlockPos("part41")
+		Game.SetBlockPos("part42", x42, y42)
+		x43, y43 = Game.GetBlockPos("part42")
+		Game.SetBlockPos("part43", x43, y43)
+	end
+	if(partsConnected == 45) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+		x41, y41 = Game.GetBlockPos("part40")
+		Game.SetBlockPos("part41", x41, y41)
+		x42, y42 = Game.GetBlockPos("part41")
+		Game.SetBlockPos("part42", x42, y42)
+		x43, y43 = Game.GetBlockPos("part42")
+		Game.SetBlockPos("part43", x43, y43)
+		x44, y44 = Game.GetBlockPos("part43")
+		Game.SetBlockPos("part44", x44, y44)
+	end
+	if(partsConnected == 46) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+		x41, y41 = Game.GetBlockPos("part40")
+		Game.SetBlockPos("part41", x41, y41)
+		x42, y42 = Game.GetBlockPos("part41")
+		Game.SetBlockPos("part42", x42, y42)
+		x43, y43 = Game.GetBlockPos("part42")
+		Game.SetBlockPos("part43", x43, y43)
+		x44, y44 = Game.GetBlockPos("part43")
+		Game.SetBlockPos("part44", x44, y44)
+		x45, y45 = Game.GetBlockPos("part44")
+		Game.SetBlockPos("part45", x45, y45)
+	end
+	if(partsConnected == 47) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+		x41, y41 = Game.GetBlockPos("part40")
+		Game.SetBlockPos("part41", x41, y41)
+		x42, y42 = Game.GetBlockPos("part41")
+		Game.SetBlockPos("part42", x42, y42)
+		x43, y43 = Game.GetBlockPos("part42")
+		Game.SetBlockPos("part43", x43, y43)
+		x44, y44 = Game.GetBlockPos("part43")
+		Game.SetBlockPos("part44", x44, y44)
+		x45, y45 = Game.GetBlockPos("part44")
+		Game.SetBlockPos("part45", x45, y45)
+		x46, y46 = Game.GetBlockPos("part45")
+		Game.SetBlockPos("part46", x46, y46)
+	end
+	if(partsConnected == 48) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+		x41, y41 = Game.GetBlockPos("part40")
+		Game.SetBlockPos("part41", x41, y41)
+		x42, y42 = Game.GetBlockPos("part41")
+		Game.SetBlockPos("part42", x42, y42)
+		x43, y43 = Game.GetBlockPos("part42")
+		Game.SetBlockPos("part43", x43, y43)
+		x44, y44 = Game.GetBlockPos("part43")
+		Game.SetBlockPos("part44", x44, y44)
+		x45, y45 = Game.GetBlockPos("part44")
+		Game.SetBlockPos("part45", x45, y45)
+		x46, y46 = Game.GetBlockPos("part45")
+		Game.SetBlockPos("part46", x46, y46)
+		x47, y47 = Game.GetBlockPos("part46")
+		Game.SetBlockPos("part47", x47, y47)
+	end
+	if(partsConnected == 49) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+		x41, y41 = Game.GetBlockPos("part40")
+		Game.SetBlockPos("part41", x41, y41)
+		x42, y42 = Game.GetBlockPos("part41")
+		Game.SetBlockPos("part42", x42, y42)
+		x43, y43 = Game.GetBlockPos("part42")
+		Game.SetBlockPos("part43", x43, y43)
+		x44, y44 = Game.GetBlockPos("part43")
+		Game.SetBlockPos("part44", x44, y44)
+		x45, y45 = Game.GetBlockPos("part44")
+		Game.SetBlockPos("part45", x45, y45)
+		x46, y46 = Game.GetBlockPos("part45")
+		Game.SetBlockPos("part46", x46, y46)
+		x47, y47 = Game.GetBlockPos("part46")
+		Game.SetBlockPos("part47", x47, y47)
+		x48, y48 = Game.GetBlockPos("part47")
+		Game.SetBlockPos("part48", x48, y48)
+	end
+	if(partsConnected == 50) then
+		Game.SetBlockPos("part0", snakeX, snakeY)
+		x, y = Game.GetBlockPos("part0")
+		Game.SetBlockPos("part1", x, y)
+		x2, y2 = Game.GetBlockPos("part1")
+		Game.SetBlockPos("part2", x2, y2)
+		x3, y3 = Game.GetBlockPos("part2")
+		Game.SetBlockPos("part3", x3, y3)
+		x4, y4 = Game.GetBlockPos("part3")
+		Game.SetBlockPos("part4", x4, y4)
+		x5, y5 = Game.GetBlockPos("part4")
+		Game.SetBlockPos("part5", x5, y5)
+		x6, y6 = Game.GetBlockPos("part5")
+		Game.SetBlockPos("part6", x6, y6)
+		x7, y7 = Game.GetBlockPos("part6")
+		Game.SetBlockPos("part7", x7, y7)
+		x8, y8 = Game.GetBlockPos("part7")
+		Game.SetBlockPos("part8", x8, y8)
+		x9, y9 = Game.GetBlockPos("part8")
+		Game.SetBlockPos("part9", x9, y9)
+		x10, y10 = Game.GetBlockPos("part9")
+		Game.SetBlockPos("part10", x10, y10)
+		x11, y11 = Game.GetBlockPos("part10")
+		Game.SetBlockPos("part11", x11, y11)
+		x12, y12 = Game.GetBlockPos("part11")
+		Game.SetBlockPos("part12", x12, y12)
+		x13, y13 = Game.GetBlockPos("part12")
+		Game.SetBlockPos("part13", x13, y13)
+		x14, y14 = Game.GetBlockPos("part13")
+		Game.SetBlockPos("part14", x14, y14)
+		x15, y15 = Game.GetBlockPos("part14")
+		Game.SetBlockPos("part15", x15, y15)
+		x16, y16 = Game.GetBlockPos("part15")
+		Game.SetBlockPos("part16", x16, y16)
+		x17, y17 = Game.GetBlockPos("part16")
+		Game.SetBlockPos("part17", x17, y17)
+		x18, y18 = Game.GetBlockPos("part17")
+		Game.SetBlockPos("part18", x18, y18)
+		x19, y19 = Game.GetBlockPos("part18")
+		Game.SetBlockPos("part19", x19, y19)
+		x20, y20 = Game.GetBlockPos("part19")
+		Game.SetBlockPos("part20", x20, y20)
+		x21, y21 = Game.GetBlockPos("part20")
+		Game.SetBlockPos("part21", x21, y21)
+		x22, y22 = Game.GetBlockPos("part21")
+		Game.SetBlockPos("part22", x22, y22)
+		x23, y23 = Game.GetBlockPos("part22")
+		Game.SetBlockPos("part23", x23, y23)
+		x24, y24 = Game.GetBlockPos("part23")
+		Game.SetBlockPos("part24", x24, y24)
+		x25, y25 = Game.GetBlockPos("part24")
+		Game.SetBlockPos("part25", x25, y25)
+		x26, y26 = Game.GetBlockPos("part25")
+		Game.SetBlockPos("part26", x26, y26)
+		x27, y27 = Game.GetBlockPos("part26")
+		Game.SetBlockPos("part27", x27, y27)
+		x28, y28 = Game.GetBlockPos("part27")
+		Game.SetBlockPos("part28", x28, y28)
+		x29, y29 = Game.GetBlockPos("part28")
+		Game.SetBlockPos("part29", x29, y29)
+		x30, y30 = Game.GetBlockPos("part29")
+		Game.SetBlockPos("part30", x30, y30)
+		x31, y31 = Game.GetBlockPos("part30")
+		Game.SetBlockPos("part31", x31, y31)
+		x32, y32 = Game.GetBlockPos("part31")
+		Game.SetBlockPos("part32", x32, y32)
+		x33, y33 = Game.GetBlockPos("part32")
+		Game.SetBlockPos("part33", x33, y33)
+		x34, y34 = Game.GetBlockPos("part33")
+		Game.SetBlockPos("part34", x34, y34)
+		x35, y35 = Game.GetBlockPos("part34")
+		Game.SetBlockPos("part35", x35, y35)
+		x36, y36 = Game.GetBlockPos("part35")
+		Game.SetBlockPos("part36", x36, y36)
+		x37, y37 = Game.GetBlockPos("part36")
+		Game.SetBlockPos("part37", x37, y37)
+		x38, y38 = Game.GetBlockPos("part37")
+		Game.SetBlockPos("part38", x38, y38)
+		x39, y39 = Game.GetBlockPos("part38")
+		Game.SetBlockPos("part39", x39, y39)
+		x40, y40 = Game.GetBlockPos("part39")
+		Game.SetBlockPos("part40", x40, y40)
+		x41, y41 = Game.GetBlockPos("part40")
+		Game.SetBlockPos("part41", x41, y41)
+		x42, y42 = Game.GetBlockPos("part41")
+		Game.SetBlockPos("part42", x42, y42)
+		x43, y43 = Game.GetBlockPos("part42")
+		Game.SetBlockPos("part43", x43, y43)
+		x44, y44 = Game.GetBlockPos("part43")
+		Game.SetBlockPos("part44", x44, y44)
+		x45, y45 = Game.GetBlockPos("part44")
+		Game.SetBlockPos("part45", x45, y45)
+		x46, y46 = Game.GetBlockPos("part45")
+		Game.SetBlockPos("part46", x46, y46)
+		x47, y47 = Game.GetBlockPos("part46")
+		Game.SetBlockPos("part47", x47, y47)
+		x48, y48 = Game.GetBlockPos("part47")
+		Game.SetBlockPos("part48", x48, y48)
+		x49, y49 = Game.GetBlockPos("part48")
+		Game.SetBlockPos("part49", x49, y49)
+	end
+	
+x, y = Game.GetBlockPos("part0")	
+x2, y2 = Game.GetBlockPos("part1")
+x3, y3 = Game.GetBlockPos("part2")
+x4, y4 = Game.GetBlockPos("part3")
+x5, y5 = Game.GetBlockPos("part4")
+x6, y6 = Game.GetBlockPos("part5")
+x7, y7 = Game.GetBlockPos("part6")
+x8, y8 = Game.GetBlockPos("part7")
+x9, y9 = Game.GetBlockPos("part8")
+x10, y10 = Game.GetBlockPos("part9")
+x11, y11 = Game.GetBlockPos("part10")
+x12, y12 = Game.GetBlockPos("part11")
+x13, y13 = Game.GetBlockPos("part12")
+x14, y14 = Game.GetBlockPos("part13")
+x15, y15 = Game.GetBlockPos("part14")
+x16, y16 = Game.GetBlockPos("part15")
+x17, y17 = Game.GetBlockPos("part16")
+x18, y18 = Game.GetBlockPos("part17")
+x19, y19 = Game.GetBlockPos("part18")
+x20, y20 = Game.GetBlockPos("part19")
+x21, y21 = Game.GetBlockPos("part20")
+x22, y22 = Game.GetBlockPos("part21")
+x23, y23 = Game.GetBlockPos("part22")
+x24, y24 = Game.GetBlockPos("part23")
+x25, y25 = Game.GetBlockPos("part24")
+x26, y26 = Game.GetBlockPos("part25")
+x27, y27 = Game.GetBlockPos("part26")
+x28, y28 = Game.GetBlockPos("part27")
+x29, y29 = Game.GetBlockPos("part28")
+x30, y30 = Game.GetBlockPos("part29")
+x31, y31 = Game.GetBlockPos("part30")
+x32, y32 = Game.GetBlockPos("part31")
+x33, y33 = Game.GetBlockPos("part32")
+x34, y34 = Game.GetBlockPos("part33")
+x35, y35 = Game.GetBlockPos("part34")
+x36, y36 = Game.GetBlockPos("part35")
+x37, y37 = Game.GetBlockPos("part36")
+x38, y38 = Game.GetBlockPos("part37")
+x39, y39 = Game.GetBlockPos("part38")
+x40, y40 = Game.GetBlockPos("part39")
+snakeX = snakePosX*snakeSteps
+snakeY = (snakePosY*snakeSteps)-1
+if( x == snakeX and y == snakeY or
+	x2 == snakeX and y2 == snakeY or 
+	x3 == snakeX and y3 == snakeY or 
+	x4 == snakeX and y4 == snakeY or 
+	x5 == snakeX and y5 == snakeY or 
+	x6 == snakeX and y6 == snakeY or 
+	x7 == snakeX and y7 == snakeY or 
+	x8 == snakeX and y8 == snakeY or 
+	x9 == snakeX and y9 == snakeY or 
+	x10 == snakeX and y10 == snakeY or 
+	x11 == snakeX and y11 == snakeY or 
+	x12 == snakeX and y12 == snakeY or 
+	x13 == snakeX and y13 == snakeY or 
+	x14 == snakeX and y14 == snakeY or 
+	x15 == snakeX and y15 == snakeY or 
+	x16 == snakeX and y16 == snakeY or 
+	x17 == snakeX and y17 == snakeY or 
+	x18 == snakeX and y18 == snakeY or 
+	x19 == snakeX and y19 == snakeY or 
+	x20 == snakeX and y20 == snakeY or 
+	x21 == snakeX and y21 == snakeY or 
+	x22 == snakeX and y22 == snakeY or 
+	x23 == snakeX and y23 == snakeY or 
+	x24 == snakeX and y24 == snakeY or 
+	x25 == snakeX and y25 == snakeY or 
+	x26 == snakeX and y26 == snakeY or 
+	x27 == snakeX and y27 == snakeY or 
+	x28 == snakeX and y28 == snakeY or 
+	x30 == snakeX and y30 == snakeY or
+	x31 == snakeX and y31 == snakeY or
+	x32 == snakeX and y32 == snakeY or
+	x33 == snakeX and y33 == snakeY or
+	x34 == snakeX and y34 == snakeY or
+	x35 == snakeX and y35 == snakeY or
+	x36 == snakeX and y36 == snakeY or
+	x37 == snakeX and y37 == snakeY or
+	x38 == snakeX and y38 == snakeY or
+	x39 == snakeX and y39 == snakeY or
+	x40 == snakeX and y40 == snakeY or
+	x41 == snakeX and y41 == snakeY or
+	x42 == snakeX and y42 == snakeY or
+	x43 == snakeX and y43 == snakeY or
+	x44 == snakeX and y44 == snakeY or
+	x45 == snakeX and y45 == snakeY or
+	x46 == snakeX and y46 == snakeY or
+	x47 == snakeX and y47 == snakeY or
+	x48 == snakeX and y48 == snakeY or
+	x49 == snakeX and y49 == snakeY or
+	x50 == snakeX and y50 == snakeY or
+	cellX[7] == snakeX and cellY[2] == snakeY or
+	cellX[8] == snakeX and cellY[2] == snakeY or
+	cellX[7] == snakeX and cellY[3] == snakeY or
+	cellX[8] == snakeX and cellY[3] == snakeY or
+	
+	cellX[7] == snakeX and cellY[19] == snakeY or
+	cellX[8] == snakeX and cellY[19] == snakeY or
+	cellX[7] == snakeX and cellY[20] == snakeY or
+	cellX[8] == snakeX and cellY[20] == snakeY or
+	
+	cellX[42] == snakeX and cellY[2] == snakeY or
+	cellX[43] == snakeX and cellY[2] == snakeY or
+	cellX[42] == snakeX and cellY[3] == snakeY or
+	cellX[43] == snakeX and cellY[3] == snakeY or
+	
+	cellX[42] == snakeX and cellY[19] == snakeY or
+	cellX[43] == snakeX and cellY[19] == snakeY or
+	cellX[42] == snakeX and cellY[20] == snakeY or
+	cellX[43] == snakeX and cellY[20] == snakeY or
+	
+	cellX[23] == snakeX and cellY[10] == snakeY or
+	cellX[24] == snakeX and cellY[10] == snakeY or
+	cellX[23] == snakeX and cellY[11] == snakeY or
+	cellX[24] == snakeX and cellY[11] == snakeY or
+	
+	cellX[26] == snakeX and cellY[10] == snakeY or
+	cellX[27] == snakeX and cellY[10] == snakeY or
+	cellX[26] == snakeX and cellY[11] == snakeY or
+	cellX[27] == snakeX and cellY[11] == snakeY or
+	
+	cellX[13] == snakeX and cellY[8] == snakeY or
+	cellX[14] == snakeX and cellY[8] == snakeY or
+	cellX[13] == snakeX and cellY[9] == snakeY or
+	cellX[14] == snakeX and cellY[9] == snakeY or
+	
+	cellX[13] == snakeX and cellY[14] == snakeY or
+	cellX[14] == snakeX and cellY[14] == snakeY or
+	cellX[13] == snakeX and cellY[15] == snakeY or
+	cellX[14] == snakeX and cellY[15] == snakeY or
+	
+	cellX[36] == snakeX and cellY[8] == snakeY or
+	cellX[37] == snakeX and cellY[8] == snakeY or
+	cellX[36] == snakeX and cellY[9] == snakeY or
+	cellX[37] == snakeX and cellY[9] == snakeY or
+	
+	cellX[36] == snakeX and cellY[14] == snakeY or
+	cellX[37] == snakeX and cellY[14] == snakeY or
+	cellX[36] == snakeX and cellY[15] == snakeY or
+	cellX[37] == snakeX and cellY[15] == snakeY or
+	
+	snakeX &gt;= cellX[18] and snakeX &lt;= cellX[24] and
+	snakeY &lt;= cellY[0] and snakeY &gt;= cellY[1] or
+	
+	snakeX &gt;= cellX[26] and snakeX &lt;= cellX[32] and
+	snakeY &lt;= cellY[21] and snakeY &gt;= cellY[22]) then
+	Game.StopTimer("gameLoop")
+	Game.KillPlayer()
+	end
+
+end
+
+--MAINLOOP
+function gameLoop.Tick()
+	snakeX, snakeY = Game.GetBlockPos("snakeHead")
+
+	--MOVE SNAKE
+	if(snakeDirection == 0) then
+		Game.SetBlockPos("snakeHead", snakeX, snakeY+snakeSteps)
+		snakePosY = snakePosY+1
+	end
+	if(snakeDirection == 1) then
+		Game.SetBlockPos("snakeHead", snakeX+snakeSteps, snakeY)
+		snakePosX = snakePosX+1
+	end
+	if(snakeDirection == 2) then
+		Game.SetBlockPos("snakeHead", snakeX, snakeY-snakeSteps)
+		snakePosY = snakePosY-1
+	end
+	if(snakeDirection == 3) then
+		Game.SetBlockPos("snakeHead", snakeX-snakeSteps, snakeY)
+		snakePosX = snakePosX-1
+	end
+	
+	--COLLISION WITH BORDERS
+	if(snakePosX &gt; 48 or snakePosX &lt; 2 or snakePosY &lt; -22 or snakePosY &gt; 4) then
+		Game.KillPlayer()
+		Game.StopTimer("gameLoop")
+	end
+	
+	
+	moveBodyTiles()
+
+	--COLLISION WITH FOOD
+	if(snakePosX == foodPosX and (snakePosY*-1)+2 == foodPosY) then
+	Game.PlaySound("ring");
+		if(partsConnected &lt;= 50) then
+			partsConnected = partsConnected+1
+			berrysLeft = berrysLeft -1
+			Game.ClearMessages()
+			Game.Message(berrysLeft.." Berrys left!")
+			if(berrysLeft &lt;= 0) then
+				Game.WinPlayer()
+			end
+			if(partsConnected == 5) then
+				gameSpeed = 12
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 10) then
+				gameSpeed = 11
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 15) then
+				gameSpeed = 10
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 20) then
+				gameSpeed = 9
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 25) then
+				gameSpeed = 8
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 30) then
+				gameSpeed = 7
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 35) then
+				gameSpeed = 6
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 40) then
+				gameSpeed = 5
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 48) then
+				gameSpeed = 4
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+		end
+		setFoodPos()
+	end
+	if(snakePosX == foodPosX2 and (snakePosY*-1)+2 == foodPosY2) then
+		Game.PlaySound("ring");
+		if(partsConnected &lt;= 50) then
+			partsConnected = partsConnected+1
+			berrysLeft = berrysLeft -1
+			Game.ClearMessages()
+			Game.Message(berrysLeft.." Berrys left!")
+			if(berrysLeft &lt;= 0) then
+				Game.WinPlayer()
+			end
+			if(partsConnected == 5) then
+				gameSpeed = 12
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 10) then
+				gameSpeed = 11
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 15) then
+				gameSpeed = 10
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 20) then
+				gameSpeed = 9
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 25) then
+				gameSpeed = 8
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 30) then
+				gameSpeed = 7
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 35) then
+				gameSpeed = 6
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 40) then
+				gameSpeed = 5
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+			if(partsConnected == 48) then
+				gameSpeed = 4
+				Game.SetTimerDelay("gameLoop", gameSpeed)
+				Game.Message("Speed up!")
+			end
+		end
+		setFoodPos2()
+	end
+end
+	</script>
+	<block id="rect2968">
+		<position y="24.616851" x="1.25328765925"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.753581" y="-36.295422"/>
+		<vertex x="-11.246419" y="-36.295422"/>
+		<vertex x="-11.246419" y="-37.171982"/>
+		<vertex x="-11.672654" y="-37.171982"/>
+		<vertex x="-11.672654" y="-36.411047"/>
+		<vertex x="-13.753581" y="-36.411047"/>
+	</block>
+	<block id="rect3257">
+		<position y="0.499999925" x="12.49888375"/>
+		<usetexture id="Black"/>
+		<vertex x="-24.748884" y="11.750000"/>
+		<vertex x="-0.251116" y="11.750000"/>
+		<vertex x="-0.251116" y="11.250000"/>
+		<vertex x="-24.748884" y="11.250000"/>
+	</block>
+	<block id="rect3283">
+		<position y="7.5" x="0.5"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.750000" y="4.250000"/>
+		<vertex x="-12.250000" y="4.250000"/>
+		<vertex x="-12.250000" y="-9.250000"/>
+		<vertex x="-12.750000" y="-9.250000"/>
+	</block>
+	<block id="rect3283-7">
+		<position y="7.5" x="24.5"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.750000" y="4.250000"/>
+		<vertex x="-12.250000" y="4.250000"/>
+		<vertex x="-12.250000" y="-9.250000"/>
+		<vertex x="-12.750000" y="-9.250000"/>
+	</block>
+	<block id="rect3257-4">
+		<position y="14.499999925" x="12.62444225"/>
+		<usetexture id="Black"/>
+		<vertex x="-24.624442" y="-16.250000"/>
+		<vertex x="-0.375558" y="-16.250000"/>
+		<vertex x="-0.375558" y="-16.750000"/>
+		<vertex x="-24.624442" y="-16.750000"/>
+	</block>
+	<block id="snakeHead">
+		<position y="0.999999925" x="1.0" dynamic="true"/>
+		<usetexture id="GreenInRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="food">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="RedInRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part0">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part1">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part2">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part3">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part4">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part5">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part6">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part7">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part8">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part9">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part10">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part11">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part12">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part13">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part14">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part15">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part16">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part17">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part18">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part19">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part20">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part21">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part22">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part23">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part24">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part25">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part26">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part27">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part28">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part29">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="rect4292">
+		<position y="15.1160705" x="9.125" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.125000" y="-17.607141"/>
+		<vertex x="-11.875000" y="-17.607141"/>
+		<vertex x="-11.875000" y="-17.857141"/>
+		<vertex x="-13.125000" y="-17.857141"/>
+	</block>
+	<block id="rect4307">
+		<position y="15.750000475" x="8.366071075" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.633929" y="-18.500000"/>
+		<vertex x="-12.366071" y="-18.500000"/>
+		<vertex x="-12.366071" y="-19.500001"/>
+		<vertex x="-12.633929" y="-19.500001"/>
+	</block>
+	<block id="rect4292-1">
+		<position y="16.3660705" x="9.0" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-20.107141"/>
+		<vertex x="-12.000000" y="-20.107141"/>
+		<vertex x="-12.000000" y="-20.357141"/>
+		<vertex x="-13.000000" y="-20.357141"/>
+	</block>
+	<block id="rect4307-7">
+		<position y="16.99107045" x="9.616071075" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.633929" y="-20.982141"/>
+		<vertex x="-12.366071" y="-20.982141"/>
+		<vertex x="-12.366071" y="-21.982141"/>
+		<vertex x="-12.633929" y="-21.982141"/>
+	</block>
+	<block id="rect4292-4">
+		<position y="17.6160705" x="8.875" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.125000" y="-22.607141"/>
+		<vertex x="-11.875000" y="-22.607141"/>
+		<vertex x="-11.875000" y="-22.857141"/>
+		<vertex x="-13.125000" y="-22.857141"/>
+	</block>
+	<block id="rect4375">
+		<position y="16.9910735" x="10.375" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-20.732147"/>
+		<vertex x="-12.375000" y="-20.732147"/>
+		<vertex x="-12.375000" y="-22.232147"/>
+		<vertex x="-12.625000" y="-22.232147"/>
+	</block>
+	<block id="rect4377">
+		<position y="16.620535675" x="10.8750001" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.875000" y="-20.620536"/>
+		<vertex x="-12.125000" y="-20.620536"/>
+		<vertex x="-12.125000" y="-20.861607"/>
+		<vertex x="-12.875000" y="-20.861607"/>
+	</block>
+	<block id="rect4379">
+		<position y="17.2410705" x="11.375" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-21.482141"/>
+		<vertex x="-12.375000" y="-21.482141"/>
+		<vertex x="-12.375000" y="-22.482141"/>
+		<vertex x="-12.625000" y="-22.482141"/>
+	</block>
+	<block id="rect4379-0">
+		<position y="17.124999925" x="12.125" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-21.375000"/>
+		<vertex x="-12.375000" y="-21.375000"/>
+		<vertex x="-12.375000" y="-22.125000"/>
+		<vertex x="-12.625000" y="-22.125000"/>
+	</block>
+	<block id="rect4377-9">
+		<position y="16.611606175" x="12.7500001" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-20.602677"/>
+		<vertex x="-12.000000" y="-20.602677"/>
+		<vertex x="-12.000000" y="-20.843748"/>
+		<vertex x="-13.000000" y="-20.843748"/>
+	</block>
+	<block id="rect4377-9-4">
+		<position y="17.620535675" x="12.7500001" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-22.620536"/>
+		<vertex x="-12.000000" y="-22.620536"/>
+		<vertex x="-12.000000" y="-22.861607"/>
+		<vertex x="-13.000000" y="-22.861607"/>
+	</block>
+	<block id="rect4379-0-8">
+		<position y="17.1160704" x="13.375" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-20.857141"/>
+		<vertex x="-12.375000" y="-20.857141"/>
+		<vertex x="-12.375000" y="-22.607141"/>
+		<vertex x="-12.625000" y="-22.607141"/>
+	</block>
+	<block id="rect4379-0-8-8">
+		<position y="16.6160705" x="14.125" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-19.607141"/>
+		<vertex x="-12.375000" y="-19.607141"/>
+		<vertex x="-12.375000" y="-21.857141"/>
+		<vertex x="-12.625000" y="-21.857141"/>
+	</block>
+	<block id="rect4569-2">
+		<position y="16.61607055" x="14.625" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-20.607141"/>
+		<vertex x="-12.375000" y="-20.607141"/>
+		<vertex x="-12.375000" y="-20.857141"/>
+		<vertex x="-12.625000" y="-20.857141"/>
+	</block>
+	<block id="rect4569-21">
+		<position y="16.866070325" x="14.375" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-21.107141"/>
+		<vertex x="-12.375000" y="-21.107141"/>
+		<vertex x="-12.375000" y="-21.357140"/>
+		<vertex x="-12.625000" y="-21.357140"/>
+	</block>
+	<block id="rect4569-2-6">
+		<position y="17.11607045" x="14.65" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.650000" y="-21.607141"/>
+		<vertex x="-12.350000" y="-21.607141"/>
+		<vertex x="-12.350000" y="-21.857141"/>
+		<vertex x="-12.650000" y="-21.857141"/>
+	</block>
+	<block id="rect4569-2-5">
+		<position y="17.36607045" x="14.925" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-22.107141"/>
+		<vertex x="-12.375000" y="-22.107141"/>
+		<vertex x="-12.375000" y="-22.357141"/>
+		<vertex x="-12.625000" y="-22.357141"/>
+	</block>
+	<block id="rect4569-2-6-7">
+		<position y="17.61607045" x="15.1750001" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-22.607141"/>
+		<vertex x="-12.375000" y="-22.607141"/>
+		<vertex x="-12.375000" y="-22.857141"/>
+		<vertex x="-12.625000" y="-22.857141"/>
+	</block>
+	<block id="rect4668">
+		<position y="17.124999925" x="15.875" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-21.375000"/>
+		<vertex x="-12.375000" y="-21.375000"/>
+		<vertex x="-12.375000" y="-22.125000"/>
+		<vertex x="-12.625000" y="-22.125000"/>
+	</block>
+	<block id="rect4668-6">
+		<position y="16.87499995" x="16.875" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-21.125000"/>
+		<vertex x="-12.375000" y="-21.125000"/>
+		<vertex x="-12.375000" y="-21.375000"/>
+		<vertex x="-12.625000" y="-21.375000"/>
+	</block>
+	<block id="rect4377-9-1">
+		<position y="16.616070975" x="16.3750001" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.875000" y="-20.607141"/>
+		<vertex x="-12.125000" y="-20.607141"/>
+		<vertex x="-12.125000" y="-20.857142"/>
+		<vertex x="-12.875000" y="-20.857142"/>
+	</block>
+	<block id="rect4377-9-1-8">
+		<position y="17.116070975" x="16.3750001" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.875000" y="-21.607141"/>
+		<vertex x="-12.125000" y="-21.607141"/>
+		<vertex x="-12.125000" y="-21.857142"/>
+		<vertex x="-12.875000" y="-21.857142"/>
+	</block>
+	<block id="rect4377-9-1-9">
+		<position y="17.616070975" x="16.5" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-22.607141"/>
+		<vertex x="-12.000000" y="-22.607141"/>
+		<vertex x="-12.000000" y="-22.857142"/>
+		<vertex x="-13.000000" y="-22.857142"/>
+	</block>
+	<block id="rect4569-2-5-5">
+		<position y="16.11607045" x="15.125" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-19.607141"/>
+		<vertex x="-12.375000" y="-19.607141"/>
+		<vertex x="-12.375000" y="-19.857141"/>
+		<vertex x="-12.625000" y="-19.857141"/>
+	</block>
+	<block id="rect4569-2-5-3">
+		<position y="16.36607045" x="14.875" background="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-12.625000" y="-20.107141"/>
+		<vertex x="-12.375000" y="-20.107141"/>
+		<vertex x="-12.375000" y="-20.357141"/>
+		<vertex x="-12.625000" y="-20.357141"/>
+	</block>
+	<block id="block1">
+		<position y="7.24999995" x="13.25" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-1.500000"/>
+		<vertex x="-12.000000" y="-1.500000"/>
+		<vertex x="-12.000000" y="-2.500000"/>
+		<vertex x="-13.000000" y="-2.500000"/>
+	</block>
+	<block id="block10">
+		<position y="3.24999995" x="3.75" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="6.500000"/>
+		<vertex x="-12.000000" y="6.500000"/>
+		<vertex x="-12.000000" y="5.500000"/>
+		<vertex x="-13.000000" y="5.500000"/>
+	</block>
+	<block id="block8">
+		<position y="11.74999995" x="21.25" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-10.500000"/>
+		<vertex x="-12.000000" y="-10.500000"/>
+		<vertex x="-12.000000" y="-11.500000"/>
+		<vertex x="-13.000000" y="-11.500000"/>
+	</block>
+	<block id="block7">
+		<position y="3.24999995" x="21.25" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="6.500000"/>
+		<vertex x="-12.000000" y="6.500000"/>
+		<vertex x="-12.000000" y="5.500000"/>
+		<vertex x="-13.000000" y="5.500000"/>
+	</block>
+	<block id="block11">
+		<position y="11.74999995" x="3.75" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-10.500000"/>
+		<vertex x="-12.000000" y="-10.500000"/>
+		<vertex x="-12.000000" y="-11.500000"/>
+		<vertex x="-13.000000" y="-11.500000"/>
+	</block>
+	<block id="block12">
+		<position y="7.24999995" x="11.75" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-1.500000"/>
+		<vertex x="-12.000000" y="-1.500000"/>
+		<vertex x="-12.000000" y="-2.500000"/>
+		<vertex x="-13.000000" y="-2.500000"/>
+	</block>
+	<block id="block10-8">
+		<position y="6.25000005" x="6.75" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="0.500000"/>
+		<vertex x="-12.000000" y="0.500000"/>
+		<vertex x="-12.000000" y="-0.500000"/>
+		<vertex x="-13.000000" y="-0.500000"/>
+	</block>
+	<block id="block10-8-1">
+		<position y="9.25000005" x="6.75" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-5.500000"/>
+		<vertex x="-12.000000" y="-5.500000"/>
+		<vertex x="-12.000000" y="-6.500000"/>
+		<vertex x="-13.000000" y="-6.500000"/>
+	</block>
+	<block id="block10-8-2">
+		<position y="6.25000005" x="18.25" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="0.500000"/>
+		<vertex x="-12.000000" y="0.500000"/>
+		<vertex x="-12.000000" y="-0.500000"/>
+		<vertex x="-13.000000" y="-0.500000"/>
+	</block>
+	<block id="block10-8-1-3">
+		<position y="9.25000005" x="18.25" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-13.000000" y="-5.500000"/>
+		<vertex x="-12.000000" y="-5.500000"/>
+		<vertex x="-12.000000" y="-6.500000"/>
+		<vertex x="-13.000000" y="-6.500000"/>
+	</block>
+	<block id="block10-6">
+		<position y="2.24999995" x="10.5" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-14.250000" y="8.500000"/>
+		<vertex x="-10.750000" y="8.500000"/>
+		<vertex x="-10.750000" y="7.500000"/>
+		<vertex x="-14.250000" y="7.500000"/>
+	</block>
+	<block id="block10-6-1">
+		<position y="12.75000025" x="14.5" dynamic="true"/>
+		<usetexture id="Black"/>
+		<vertex x="-14.250000" y="-12.500000"/>
+		<vertex x="-10.750000" y="-12.500000"/>
+		<vertex x="-10.750000" y="-13.500001"/>
+		<vertex x="-14.250000" y="-13.500001"/>
+	</block>
+	<block id="part30">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part31">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part32">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part33">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part34">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part35">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part36">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part37">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part38">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part39">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part40">
+		<position y="0.999999925" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part41">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part42">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part43">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part44">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part45">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part46">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part47">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part48">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="part49">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="Orange1InRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="food2">
+		<position y="1.0" x="0.5" dynamic="true"/>
+		<usetexture id="RedInRainbows"/>
+		<vertex x="-12.750000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.750000"/>
+		<vertex x="-12.250000" y="10.250000"/>
+		<vertex x="-12.750000" y="10.250000"/>
+	</block>
+	<block id="rect50005">
+		<position y="2.2547783" x="10.5"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-14.000000" y="8.235664"/>
+		<vertex x="-11.000000" y="8.235664"/>
+		<vertex x="-11.000000" y="7.745223"/>
+		<vertex x="-14.000000" y="7.745223"/>
+	</block>
+	<block id="rect50005-3">
+		<position y="12.7547783" x="14.5"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-14.000000" y="-12.764336"/>
+		<vertex x="-11.000000" y="-12.764336"/>
+		<vertex x="-11.000000" y="-13.254777"/>
+		<vertex x="-14.000000" y="-13.254777"/>
+	</block>
+	<block id="rect50005-3-6">
+		<position y="9.2547783" x="6.75"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="-5.764336"/>
+		<vertex x="-12.250000" y="-5.764336"/>
+		<vertex x="-12.250000" y="-6.254777"/>
+		<vertex x="-12.750000" y="-6.254777"/>
+	</block>
+	<block id="rect50005-3-6-1">
+		<position y="7.2547783" x="11.75"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="-1.764336"/>
+		<vertex x="-12.250000" y="-1.764336"/>
+		<vertex x="-12.250000" y="-2.254777"/>
+		<vertex x="-12.750000" y="-2.254777"/>
+	</block>
+	<block id="rect50005-3-6-2">
+		<position y="7.2547783" x="13.25"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="-1.764336"/>
+		<vertex x="-12.250000" y="-1.764336"/>
+		<vertex x="-12.250000" y="-2.254777"/>
+		<vertex x="-12.750000" y="-2.254777"/>
+	</block>
+	<block id="rect50005-3-6-19">
+		<position y="9.2547783" x="18.25"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="-5.764336"/>
+		<vertex x="-12.250000" y="-5.764336"/>
+		<vertex x="-12.250000" y="-6.254777"/>
+		<vertex x="-12.750000" y="-6.254777"/>
+	</block>
+	<block id="rect50005-3-6-7">
+		<position y="6.2547783" x="18.25"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="0.235664"/>
+		<vertex x="-12.250000" y="0.235664"/>
+		<vertex x="-12.250000" y="-0.254777"/>
+		<vertex x="-12.750000" y="-0.254777"/>
+	</block>
+	<block id="rect50005-3-6-9">
+		<position y="6.2547783" x="6.75"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="0.235664"/>
+		<vertex x="-12.250000" y="0.235664"/>
+		<vertex x="-12.250000" y="-0.254777"/>
+		<vertex x="-12.750000" y="-0.254777"/>
+	</block>
+	<block id="rect50005-3-6-8">
+		<position y="3.2547783" x="3.75"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="6.235664"/>
+		<vertex x="-12.250000" y="6.235664"/>
+		<vertex x="-12.250000" y="5.745223"/>
+		<vertex x="-12.750000" y="5.745223"/>
+	</block>
+	<block id="rect50005-3-6-97">
+		<position y="11.7547783" x="3.75"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="-10.764336"/>
+		<vertex x="-12.250000" y="-10.764336"/>
+		<vertex x="-12.250000" y="-11.254777"/>
+		<vertex x="-12.750000" y="-11.254777"/>
+	</block>
+	<block id="rect50005-3-6-5">
+		<position y="11.7547783" x="21.25"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="-10.764336"/>
+		<vertex x="-12.250000" y="-10.764336"/>
+		<vertex x="-12.250000" y="-11.254777"/>
+		<vertex x="-12.750000" y="-11.254777"/>
+	</block>
+	<block id="rect50005-3-6-3">
+		<position y="3.2547783" x="21.25"/>
+		<usetexture id="darkgrey"/>
+		<vertex x="-12.750000" y="6.235664"/>
+		<vertex x="-12.250000" y="6.235664"/>
+		<vertex x="-12.250000" y="5.745223"/>
+		<vertex x="-12.750000" y="5.745223"/>
+	</block>
+	<block id="rect52270">
+		<position y="7.5" x="0.383928575"/>
+		<usetexture id="Sky2Drift"/>
+		<vertex x="-12.633929" y="4.500000"/>
+		<vertex x="-12.366071" y="4.500000"/>
+		<vertex x="-12.366071" y="-9.500000"/>
+		<vertex x="-12.633929" y="-9.500000"/>
+	</block>
+	<block id="rect52270-2">
+		<position y="7.375" x="24.616071075"/>
+		<usetexture id="Sky2Drift"/>
+		<vertex x="-12.633929" y="4.875000"/>
+		<vertex x="-12.366071" y="4.875000"/>
+		<vertex x="-12.366071" y="-9.375000"/>
+		<vertex x="-12.633929" y="-9.375000"/>
+	</block>
+	<block id="rect54471">
+		<position y="0.375" x="12.375"/>
+		<usetexture id="Sky2Drift"/>
+		<vertex x="-24.625000" y="11.875000"/>
+		<vertex x="-0.375000" y="11.875000"/>
+		<vertex x="-0.375000" y="11.625000"/>
+		<vertex x="-24.625000" y="11.625000"/>
+	</block>
+	<block id="rect54471-5">
+		<position y="14.625" x="12.5"/>
+		<usetexture id="Sky2Drift"/>
+		<vertex x="-24.750000" y="-16.625000"/>
+		<vertex x="-0.250000" y="-16.625000"/>
+		<vertex x="-0.250000" y="-16.875000"/>
+		<vertex x="-24.750000" y="-16.875000"/>
+	</block>
+	<block id="rect67687">
+		<position y="7.5" x="12.5" background="true"/>
+		<usetexture id="Blue2InRainbows"/>
+		<vertex x="-24.500000" y="4.500000"/>
+		<vertex x="-0.500000" y="4.500000"/>
+		<vertex x="-0.500000" y="-9.500000"/>
+		<vertex x="-24.500000" y="-9.500000"/>
+	</block>
+	<entity id="rect2816" typeid="PlayerStart">
+		<position y="-12.5026595" x="-11.4470762"/>
+		<size r="0.4"/>
+	</entity>
+</level>

@@ -12899,7 +12899,7 @@ end
 		<size r="0.4"/>
 	</entity>
 	<entity id="rect5479-0-5-8-0" typeid="Checkpoint">
-		<position y="39.528264" x="-13.8362966"/>
+		<position y="39.228264" x="-13.8362966"/>
 		<size r="0.4"/>
 	</entity>
 	<entity id="rect4271-7-0-2" typeid="Strawberry">

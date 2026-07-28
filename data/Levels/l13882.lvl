@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="wizardstraining2" rversion="0.5.2">
+	<info>
+		<name>Wizard's training 2</name>
+		<description></description>
+		<author>Wizard04</author>
+		<date>2017-09-09</date>
+		<sky color_g="38" color_b="161" color_a="255" color_r="109">sky2</sky>
+		<border texture="invisible"/>
+		<music name="blockolando" />
+	</info>
+	<theme_replacements>
+		<sprite_replacement old_name="Strawberry" new_name="ring"/>
+		<sprite_replacement old_name="Flower" new_name="spot_light"/>
+		<sprite_replacement old_name="Star" new_name="Grass1"/>
+	</theme_replacements>
+	<limits left="-23.034000" right="23.034000" top="14.027251" bottom="-14.027251"/>
+	<block id="rect9653">
+		<position y="14.600204" x="34.12721975" background="true"/>
+		<usetexture color_g="76" color_b="76" id="BlueBricks" color_a="255" color_r="76"/>
+		<vertex x="-25.566157" y="-12.038392"/>
+		<vertex x="-20.501843" y="-12.038392"/>
+		<vertex x="-20.501843" y="-18.307923"/>
+		<vertex x="-25.566157" y="-18.307923"/>
+	</block>
+	<block id="rect9383">
+		<position y="20.20371975" x="31.99921875" background="true"/>
+		<usetexture color_g="76" color_b="76" id="BlueBricks" color_a="255" color_r="76"/>
+		<vertex x="-18.444156" y="-23.821595"/>
+		<vertex x="-18.444156" y="-28.938782"/>
+		<vertex x="-27.623844" y="-28.938782"/>
+		<vertex x="-27.623844" y="-23.821595"/>
+	</block>
+	<block id="rect9649">
+		<position y="14.600204" x="11.62721775" background="true"/>
+		<usetexture color_g="76" color_b="76" id="BlueBricks" color_a="255" color_r="76"/>
+		<vertex x="-25.566157" y="-12.038392"/>
+		<vertex x="-20.501843" y="-12.038392"/>
+		<vertex x="-20.501843" y="-18.307923"/>
+		<vertex x="-25.566157" y="-18.307923"/>
+	</block>
+	<block id="rect9379">
+		<position y="20.20371975" x="13.69921875" background="true"/>
+		<usetexture color_g="76" color_b="76" id="BlueBricks" color_a="255" color_r="76"/>
+		<vertex x="-18.444156" y="-23.821595"/>
+		<vertex x="-18.444156" y="-28.938782"/>
+		<vertex x="-27.623844" y="-28.938782"/>
+		<vertex x="-27.623844" y="-23.821595"/>
+	</block>
+	<block id="rect8523">
+		<position y="13.992001" x="22.8515625" background="true"/>
+		<usetexture color_g="76" color_b="76" id="BlueBricks" color_a="255" color_r="76"/>
+		<vertex x="-27.604312" y="-4.816126"/>
+		<vertex x="-18.463687" y="-4.816126"/>
+		<vertex x="-18.463687" y="-23.097376"/>
+		<vertex x="-27.604312" y="-23.097376"/>
+	</block>
+	<block id="rect7173">
+		<position y="23.91667235" x="1.66625215" background="true"/>
+		<usetexture id="Water2"/>
+		<vertex x="-24.692189" y="-32.642555" edge="bluen"/>
+		<vertex x="-21.375811" y="-32.642555"/>
+		<vertex x="-21.375811" y="-34.969632"/>
+		<vertex x="-24.692189" y="-34.969632"/>
+	</block>
+	<block id="rect2843">
+		<position y="26.754502" x="23.04285585"/>
+		<usetexture id="T_Dirt"/>
+		<vertex x="-42.749653" y="-35.480385" edge="street2"/>
+		<vertex x="-3.318348" y="-35.480385"/>
+		<vertex x="-3.318348" y="-43.483121"/>
+		<vertex x="-42.749653" y="-43.483121"/>
+	</block>
+	<block id="rect2925">
+		<position y="29.0778545" x="23.04285505"/>
+		<usetexture id="T_Dirt"/>
+		<vertex x="-46.484958" y="-40.129348"/>
+		<vertex x="0.416958" y="-40.129348"/>
+		<vertex x="0.416958" y="-48.127568"/>
+		<vertex x="-46.484958" y="-48.127568"/>
+	</block>
+	<block id="rect5155">
+		<position y="22.37164425" x="3.46882845"/>
+		<usetexture id="invisible"/>
+		<vertex x="-23.175680" y="-30.330578"/>
+		<vertex x="-22.892320" y="-30.330578"/>
+		<vertex x="-22.892320" y="-31.101497"/>
+		<vertex x="-23.175680" y="-31.101497"/>
+	</block>
+	<block id="rect5259">
+		<position y="22.37164425" x="42.6157035"/>
+		<usetexture id="invisible"/>
+		<vertex x="-23.175680" y="-30.330578"/>
+		<vertex x="-22.892320" y="-30.330578"/>
+		<vertex x="-22.892320" y="-31.101497"/>
+		<vertex x="-23.175680" y="-31.101497"/>
+	</block>
+	<block id="rect5373">
+		<position y="27.770127" x="-6.8363845"/>
+		<usetexture id="T_Dirt"/>
+		<vertex x="-29.870412" y="-36.496010" edge="street2"/>
+		<vertex x="-16.197588" y="-36.496010"/>
+		<vertex x="-16.197588" y="-46.529996"/>
+		<vertex x="-29.870412" y="-46.529996"/>
+	</block>
+	<block id="rect5377">
+		<position y="27.770127" x="52.934227"/>
+		<usetexture id="T_Dirt"/>
+		<vertex x="-29.899806" y="-36.496010" edge="street2"/>
+		<vertex x="-16.168194" y="-36.496010"/>
+		<vertex x="-16.168194" y="-46.529996"/>
+		<vertex x="-29.899806" y="-46.529996"/>
+	</block>
+	<block id="rect7533">
+		<position y="23.91667235" x="44.415080025" background="true"/>
+		<usetexture id="Water2"/>
+		<vertex x="-24.701955" y="-32.642555" edge="bluen"/>
+		<vertex x="-21.366045" y="-32.642555"/>
+		<vertex x="-21.366045" y="-34.969632"/>
+		<vertex x="-24.701955" y="-34.969632"/>
+	</block>
+	<block id="rect11844">
+		<position y="17.2683687" x="23.0029298"/>
+		<usetexture color_g="51" color_b="51" id="BlueBricks" color_a="255" color_r="51"/>
+		<vertex x="-24.757633" y="-20.162807"/>
+		<vertex x="-21.310367" y="-20.162807"/>
+		<vertex x="-21.310367" y="-20.856166"/>
+		<vertex x="-24.757633" y="-20.856166"/>
+	</block>
+	<block id="rect12476">
+		<position y="11.2683682" x="23.0029298"/>
+		<usetexture color_g="51" color_b="51" id="BlueBricks" color_a="255" color_r="51"/>
+		<vertex x="-24.757633" y="-8.162806"/>
+		<vertex x="-21.310367" y="-8.162806"/>
+		<vertex x="-21.310367" y="-8.856165"/>
+		<vertex x="-24.757633" y="-8.856165"/>
+	</block>
+	<block id="rect12480">
+		<position y="11.2683682" x="11.621595"/>
+		<usetexture color_g="51" color_b="51" id="BlueBricks" color_a="255" color_r="51"/>
+		<vertex x="-25.876298" y="-8.162806"/>
+		<vertex x="-20.191702" y="-8.162806"/>
+		<vertex x="-20.191702" y="-8.856165"/>
+		<vertex x="-25.876298" y="-8.856165"/>
+	</block>
+	<block id="rect12484">
+		<position y="11.2683682" x="34.121595"/>
+		<usetexture color_g="51" color_b="51" id="BlueBricks" color_a="255" color_r="51"/>
+		<vertex x="-25.876298" y="-8.162806"/>
+		<vertex x="-20.191702" y="-8.162806"/>
+		<vertex x="-20.191702" y="-8.856165"/>
+		<vertex x="-25.876298" y="-8.856165"/>
+	</block>
+	<block id="rect12488">
+		<position y="4.631649475" x="22.92628275"/>
+		<usetexture color_g="51" color_b="51" id="BlueBricks" color_a="255" color_r="51"/>
+		<vertex x="-28.063798" y="5.247351"/>
+		<vertex x="-18.004202" y="5.247351"/>
+		<vertex x="-18.004202" y="4.280554"/>
+		<vertex x="-28.063798" y="4.280554"/>
+	</block>
+	<block id="rect12494">
+		<position y="10.8683682" x="9.284876175"/>
+		<usetexture color_g="51" color_b="51" id="BlueBricks" color_a="255" color_r="51"/>
+		<vertex x="-23.239579" y="-7.362806"/>
+		<vertex x="-22.828421" y="-7.362806"/>
+		<vertex x="-22.828421" y="-8.056165"/>
+		<vertex x="-23.239579" y="-8.056165"/>
+	</block>
+	<entity id="rect5491" typeid="Sprite">
+		<position y="-8.88755425" x="23.39986175"/>
+		<size r="0.4"/>
+		<param name="name" value="HStones"/>
+	</entity>
+	<entity id="path5615" typeid="Sprite">
+		<position y="-8.88755425" x="-23.40013825"/>
+		<size r="0.4"/>
+		<param name="name" value="HStones"/>
+	</entity>
+	<entity id="rect5617" typeid="Sprite">
+		<position y="-9.70020675" x="-19.6204776"/>
+		<param name="name" value="dock"/>
+		<size width="0.4" r="0.16" height="1.2"/>
+	</entity>
+	<entity id="path6025" typeid="Sprite">
+		<position y="-9.70020675" x="19.5795224"/>
+		<param name="name" value="dock"/>
+		<size width="0.4" r="0.16" height="1.2"/>
+	</entity>
+	<entity id="path6027" typeid="Strawberry">
+		<position y="-9.80225075" x="-21.10899975"/>
+		<size r="0.5"/>
+	</entity>
+	<entity id="path6181" typeid="Strawberry">
+		<position y="-9.80225075" x="21.19100025"/>
+		<size r="0.5"/>
+	</entity>
+	<entity id="path7537" typeid="Sprite">
+		<position y="-11.60000425" x="21.46932075" reversed="true" angle="3.14159265359"/>
+		<size width="1.8" r="0.24" height="2.4"/>
+		<param name="name" value="HangingVines2"/>
+	</entity>
+	<entity id="path8119" typeid="Sprite">
+		<position y="-11.60000425" x="-21.03067925" angle="3.14159265359"/>
+		<size width="1.8" r="0.24" height="2.4"/>
+		<param name="name" value="HangingVines2"/>
+	</entity>
+	<entity id="rect5059" typeid="Sprite">
+		<position y="-8.75813375" x="-0.07261775"/>
+		<size r="0.4"/>
+		<param name="name" value="CastleDoor1"/>
+	</entity>
+	<entity id="path2821" typeid="PlayerStart">
+		<position y="-8.63439375" x="-0.05542875"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="rect9659" typeid="EndOfLevel">
+		<position y="-9.13662575" x="-0.09493725"/>
+		<size r="0.5"/>
+	</entity>
+	<entity id="rect10657" typeid="Sprite">
+		<position y="-7.50069675" x="-11.417397825"/>
+		<size r="0.4"/>
+		<param name="name" value="CastleWindow1"/>
+	</entity>
+	<entity id="path10917" typeid="Sprite">
+		<position y="-7.50069675" x="-7.117397825"/>
+		<size r="0.4"/>
+		<param name="name" value="CastleWindow1"/>
+	</entity>
+	<entity id="path10923" typeid="Sprite">
+		<position y="-1.50069675" x="-11.417397825"/>
+		<size r="0.4"/>
+		<param name="name" value="CastleWindow1"/>
+	</entity>
+	<entity id="path10929" typeid="Sprite">
+		<position y="-1.50069675" x="11.182602175"/>
+		<size r="0.4"/>
+		<param name="name" value="CastleWindow1"/>
+	</entity>
+	<entity id="path10935" typeid="Sprite">
+		<position y="-7.50069675" x="11.182602175"/>
+		<size r="0.4"/>
+		<param name="name" value="CastleWindow1"/>
+	</entity>
+	<entity id="path10941" typeid="Sprite">
+		<position y="-7.50069675" x="6.982602175"/>
+		<size r="0.4"/>
+		<param name="name" value="CastleWindow1"/>
+	</entity>
+	<entity id="rect10957" typeid="Sprite">
+		<position y="-8.76870675" x="-16.81050475"/>
+		<size r="0.4"/>
+		<param name="name" value="Tree1"/>
+	</entity>
+	<entity id="rect11242" typeid="Sprite">
+		<size r="0.4"/>
+		<position y="-8.29581925" x="-26.8639028" reversed="true"/>
+		<param name="name" value="cow"/>
+	</entity>
+	<entity id="path11536" typeid="Sprite">
+		<position y="-3.25813375" x="-0.07261775"/>
+		<size r="0.4"/>
+		<param name="name" value="CastleWindow1"/>
+	</entity>
+	<entity id="path11836" typeid="Sprite">
+		<position y="2.74186625" x="-0.07261775"/>
+		<size r="0.4"/>
+		<param name="name" value="CastleWindow1"/>
+	</entity>
+	<entity id="rect12498" typeid="ParticleSource">
+		<position y="3.79501525" x="-13.7468905"/>
+		<size r="0.4"/>
+		<param name="type" value="Smoke"/>
+	</entity>
+	<entity id="rect13178" typeid="Sprite">
+		<position y="-8.85489575" x="24.96859675"/>
+		<size r="0.4"/>
+		<param name="name" value="bird"/>
+	</entity>
+	<entity id="rect13530" typeid="Sprite">
+		<position y="-10.38251775" x="15.93486975"/>
+		<param name="name" value="Tree2"/>
+		<size width="2.5" r="0.2" height="3.0"/>
+	</entity>
+</level>

@@ -73,9 +73,9 @@ function Helpp()
 end
 
 function Tick()
-	if table.getn(msgs)&gt;0  and explaining==false then
+	if #msgs &gt;0  and explaining==false then
 		if ticks&gt;timer then
-			if index&gt;table.getn(msgs) then
+			if index&gt; #msgs then
 				msgs={}
 				index=1
 				Game.ClearMessages()
@@ -99,9 +99,9 @@ function Tick()
 		ticks=ticks+1
 	end
 	if explaining==true then
-		if table.getn(expl)&gt;0 then
+		if #expl &gt;0 then
 			if eticks&gt;et then
-				if ei&gt;table.getn(expl) then
+				if ei&gt; #expl then
 					expl={}
 					ei=1
 					Game.ClearMessages()

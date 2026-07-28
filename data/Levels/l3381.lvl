@@ -19,6 +19,7 @@
 	<limits left="-18.527251" right="18.527251" top="17.500000" bottom="-17.500000"/>
 <script>
 tek = 0
+teleported = false
 
 function OnLoad()
 	Game.Message("Press 1-9 to use the trainer")
@@ -52,7 +53,10 @@ function zone1.OnEnter()
 end
 
 function zone2.OnEnter()
-  Game.WinPlayer()
+	if Game.RemainingStrawberries() == 0 and teleported == false
+	then
+		Game.WinPlayer()
+	end
 end
 
 
@@ -79,6 +83,7 @@ end
 function Teleport1()
 	x, y = Game.GetEntityPos("1")
 	Game.SetPlayerPosition(x, y, 0)
+	teleported = true
 	if tek == 0
 	then
 	Game.KillEntity("Exit")
@@ -89,6 +94,7 @@ end
 function Teleport2()
 	x, y = Game.GetEntityPos("2")
 	Game.SetPlayerPosition(x, y, 0)
+	teleported = true
 	if tek == 0
 	then
 	Game.KillEntity("Exit")
@@ -99,6 +105,7 @@ end
 function Teleport3()
 	x, y = Game.GetEntityPos("3")
 	Game.SetPlayerPosition(x, y, 0)
+	teleported = true
 	if tek == 0
 	then
 	Game.KillEntity("Exit")
@@ -109,6 +116,7 @@ end
 function Teleport4()
 	x, y = Game.GetEntityPos("4")
 	Game.SetPlayerPosition(x, y, 0)
+	teleported = true
 	if tek == 0
 	then
 	Game.KillEntity("Exit")
@@ -119,6 +127,7 @@ end
 function Teleport5()
 	x, y = Game.GetEntityPos("5")
 	Game.SetPlayerPosition(x, y, 0)
+	teleported = true
 	if tek == 0
 	then
 	Game.KillEntity("Exit")
@@ -129,6 +138,7 @@ end
 function Teleport6()
 	x, y = Game.GetEntityPos("6")
 	Game.SetPlayerPosition(x, y, 0)
+	teleported = true
 	if tek == 0
 	then
 	Game.KillEntity("Exit")
@@ -139,6 +149,7 @@ end
 function Teleport7()
 	x, y = Game.GetEntityPos("7")
 	Game.SetPlayerPosition(x, y, 0)
+	teleported = true
 	if tek == 0
 	then
 	Game.KillEntity("Exit")
@@ -149,6 +160,7 @@ end
 function Teleport8()
 	x, y = Game.GetEntityPos("8")
 	Game.SetPlayerPosition(x, y, 0)
+	teleported = true
 	if tek == 0
 	then
 	Game.KillEntity("Exit")
@@ -159,6 +171,7 @@ end
 function Teleport9()
 	x, y = Game.GetEntityPos("9")
 	Game.SetPlayerPosition(x, y, 0)
+	teleported = true
 	if tek == 0
 	then
 	Game.KillEntity("Exit")

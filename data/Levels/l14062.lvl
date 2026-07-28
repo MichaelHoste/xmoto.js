@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level id="simonsays" rversion="0.5.0">
+	<info>
+		<name>Simon Says - [Peace]</name>
+		<description>Do as Simon says! There are also a couple of secrets!</description>
+		<author>Peace</author>
+		<date>2021-10-07</date>
+		<sky>sky1</sky>
+        <border texture="invisible"/>
+<music name="SpeedItUp" />
+	</info>
+<script>
+secrets=0
+failedyet=0
+con=0
+item=0
+on=0
+off=Game.GetTime()
+Zone0 = {}
+timer1={}
+timer2={}
+timer3={}
+timer4={}
+timer5={}
+timer6={}
+timer7={}
+timer8={}
+timer9={}
+timer10={}
+timer11={}
+timer12={}
+timer13={}
+timer14={}
+started=0
+eggsf=0
+function OnLoad()
+    Game.SetKeyHook("S", "start")
+    Game.SetKeyHook("P", "kon")
+Game.SetKeyHook("E", "kon2")
+Game.SetKeyHook("A", "kon3")
+Game.SetKeyHook("C", "kon4")
+Game.SetKeyHook("E", "kon5")
+
+    Game.StartTimer("timer1",100,1)
+    return true
+end
+
+Game.Message("Press S to skip intro.")
+function timer1.Tick()
+    if (started==0)
+    then
+        Game.Message("Welcome to Simon Says!!!")
+        Game.Message("Try to find all the secrets!")
+        Game.StartTimer("timer2",200,1)
+    end 
+end
+function timer2.Tick()
+if (started==0)
+    then
+    Game.Message("Here is how to play:")
+    Game.StartTimer("timer3",200,1)
+end
+end
+function timer3.Tick()
+if (started==0)
+    then
+    Game.Message("If Simon says to do something, then you do it.")
+    Game.StartTimer("timer4",200,1)
+end
+end
+function timer4.Tick()
+if (started==0)
+    then
+    Game.Message("If someone else or nobody tells you to do something, then don't do it!")
+    Game.StartTimer("timer5",200,1)
+end
+end
+function timer5.Tick()
+if (started==0)
+    then
+    Game.Message("Should be simple..... *he he he he he*")
+    Game.StartTimer("timer6",200,1)
+end
+end
+function timer6.Tick()
+if (started==0)
+    then
+    Game.Message("Lets get started... *he he he*")
+    Game.StartTimer("timer7",200,1)
+end
+end
+function timer7.Tick()
+if (started==0)
+    then
+
+    start()
+
+    started=2
+
+end
+end
+
+function OnWheel1Touchs(bStatus)
+
+if thiggy==1
+then
+if (w1+w2)==2
+then
+thiggy=2
+item=5
+
+
+end
+if bStatus1==1
+then
+w1=1
+end
+end
+
+
+
+if (item)==1
+then
+    if (bStatus)==1
+    then
+        
+
+on=Game.GetTime()
+
+if (on-off)>=10
+then
+
+Game.Message("Yay! You did it!")
+Game.Message("Simon says: Clear the walls.")
+item=2
+
+    end
+off=2364.3
+else 
+if (started==2)
+then
+    on=Game.GetTime()
+    off=Game.GetTime()
+end   
+if (off==2364.3)
+then
+off=Game.GetTime()
+
+end
+    end
+    end
+end
+function start()
+    if (started==0)
+    then
+        Game.Message("Simon says: Balance on your left wheel for 10 seconds.")
+        item=1
+off=Game.GetTime()
+        started=2
+    off=Game.GetTime()
+    end
+
+    
+end
+function Zone0.OnEnter()
+    if item==2
+then
+  Game.Message("Yay! You did it!")
+Game.Message("Balance on your right wheel for 10 seconds.")
+Game.StartTimer("timer9",2000,1)
+
+
+item=3
+
+end
+end
+function timer9.Tick()
+if item==3
+then
+Game.Message("Correct! Simon never said to do that!")
+Game.Message("Simon Says: Do a clockwise flip.")
+item=4
+thiggy=0
+end
+end
+function OnWheel2Touchs(bStatus)
+
+if thiggy==1
+then
+if (w1+w2)==2
+then
+thiggy=2
+item=5
+
+
+end
+if bStatus==1
+then
+w2=1
+end
+end
+
+
+if item==3
+
+then
+
+    if (bStatus)==1
+    then
+       
+
+on=Game.GetTime()
+
+
+if (on-off)>10
+then
+if off > 0
+then
+if failedyet ==0
+then
+on=0
+off=0
+failedyet=1
+failed()
+con=1
+end 
+end
+end
+off=2364.3
+else 
+    
+       
+
+off=Game.GetTime()
+
+end
+end
+end
+function timer8.Tick()
+Game.Message("Simon: Maybe there was something.....")
+    Game.KillPlayer()
+    
+end
+function failed()
+Game.Message("Simon: I never said to do that!")
+Game.Message("Simon: Your punishment is DEATH!")
+Game.Message("Simon: YOU WILL DIE IN 3 SECONDS!!! THERE IS NOTHING YOU CAN DO TO STOP IT!!!")
+Game.StartTimer("timer8",300,1)
+end
+function kon()
+    if con==1
+then 
+parts=1
+end
+end
+
+function kon2()
+    if parts==1
+then 
+parts=2
+end
+end
+
+function kon3()
+    if parts==2
+then 
+parts=3
+end
+end
+function kon4()
+    if parts==3
+then 
+parts=4
+end
+end
+
+function kon5()
+    if parts==4
+then 
+parts=5
+Game.StopTimer("timer8")
+Game.Message("Whew! Saved! You found a secret!")
+Game.Message("Level Creater: Hey, just for that, I'll give you a time bonus at the end.")
+
+secrets =secrets+1
+Game.Message("Simon Says: Do a clockwise flip.")
+item=4
+
+end
+end
+w2=0
+w1=0
+thiggy=0
+sums=0
+function OnSomersault(bClockWise)
+if item==4
+then 
+if bClockWise ==1
+then
+sums = sums+1
+if sums==3
+then
+Game.Message("Well... Hmm... Three is the magic number... So you get a time bonus!")
+Game.Message("You found a secret!")
+secrets=secrets+1
+end
+Game.Message("Yay! You did it!")
+Game.StartTimer("timer10",500,1)
+thiggy=1
+else
+Game.Message("Yay!... Wait... Wrong one! DIE!!!")
+failed2()
+end 
+end
+end
+
+function failed2()
+Game.KillPlayer()
+end
+
+
+
+function timer10.Tick()
+Game.Message("Simon says: ")
+Game.StartTimer("timer11",200,1)
+end
+function timer11.Tick()
+Game.Message("I guess I should let you go...")
+Game.StartTimer("timer12",200,1)
+end
+
+function timer12.Tick()
+time2=40-(secrets*20)
+Game.Message("For finding "..secrets.." secrets you get "..time2.." in added time.")
+Game.StartTimer("timer13",200,1)
+
+end
+
+function timer13.Tick()
+Game.AddPenaltyTime(time2)
+Game.StartTimer("timer14",200,1)
+end
+
+function timer14.Tick()
+Game.WinPlayer()
+end
+</script>
+	<limits left="-55" right="55" top="65" bottom="40"/>
+	<block id="rect817">
+		<position y="22.2601914196" x="57.1712384819"/>
+		<usetexture scale="0.8" id="Asphalt1"/>
+		<vertex x="-140.156463" y="37.766196" edge="darken"/>
+		<vertex x="-102.825424" y="37.766196"/>
+		<vertex x="-102.825424" y="31.596443" edge="darken"/>
+		<vertex x="-102.744256" y="30.481773" edge="darken"/>
+		<vertex x="-102.591425" y="29.353637" edge="darken"/>
+		<vertex x="-102.393538" y="28.355679" edge="darken"/>
+		<vertex x="-102.167721" y="27.494134" edge="darken"/>
+		<vertex x="-101.925916" y="26.756874" edge="darken"/>
+		<vertex x="-101.678822" y="26.133226" edge="darken"/>
+		<vertex x="-101.430597" y="25.601769" edge="darken"/>
+		<vertex x="-101.178848" y="25.137326" edge="darken"/>
+		<vertex x="-100.931249" y="24.739207" edge="darken"/>
+		<vertex x="-100.677773" y="24.381416" edge="darken"/>
+		<vertex x="-100.421757" y="24.063257" edge="darken"/>
+		<vertex x="-100.166584" y="23.783320" edge="darken"/>
+		<vertex x="-99.915621" y="23.539629" edge="darken"/>
+		<vertex x="-99.672172" y="23.329799" edge="darken"/>
+		<vertex x="-99.415550" y="23.133965" edge="darken"/>
+		<vertex x="-99.170533" y="22.968925" edge="darken"/>
+		<vertex x="-98.914080" y="22.817036" edge="darken"/>
+		<vertex x="-98.645932" y="22.679052" edge="darken"/>
+		<vertex x="-98.365827" y="22.555726" edge="darken"/>
+		<vertex x="-98.073504" y="22.447812" edge="darken"/>
+		<vertex x="-97.768704" y="22.356064" edge="darken"/>
+		<vertex x="-97.451164" y="22.281235" edge="darken"/>
+		<vertex x="-94.963785" y="22.274712" edge="darken"/>
+		<vertex x="-94.953967" y="22.276314" edge="darken"/>
+		<vertex x="-94.951538" y="22.274712" edge="darken"/>
+		<vertex x="-16.801684" y="22.274712" edge="darken"/>
+		<vertex x="-16.483807" y="22.348583" edge="darken"/>
+		<vertex x="-16.178657" y="22.439379" edge="darken"/>
+		<vertex x="-15.885974" y="22.546348" edge="darken"/>
+		<vertex x="-15.605498" y="22.668738" edge="darken"/>
+		<vertex x="-15.336969" y="22.805799" edge="darken"/>
+		<vertex x="-15.080128" y="22.956779" edge="darken"/>
+		<vertex x="-14.810790" y="23.138035" edge="darken"/>
+		<vertex x="-14.554932" y="23.334224" edge="darken"/>
+		<vertex x="-14.290783" y="23.564102" edge="darken"/>
+		<vertex x="-14.041816" y="23.809261" edge="darken"/>
+		<vertex x="-13.788713" y="24.090587" edge="darken"/>
+		<vertex x="-13.534822" y="24.410013" edge="darken"/>
+		<vertex x="-13.283503" y="24.768906" edge="darken"/>
+		<vertex x="-13.023486" y="25.193340" edge="darken"/>
+		<vertex x="-12.762563" y="25.685580" edge="darken"/>
+		<vertex x="-12.497322" y="26.272558" edge="darken"/>
+		<vertex x="-12.240591" y="26.952029" edge="darken"/>
+		<vertex x="-11.989751" y="27.768965" edge="darken"/>
+		<vertex x="-11.761797" y="28.724468" edge="darken"/>
+		<vertex x="-11.574634" y="29.807035" edge="darken"/>
+		<vertex x="-11.448912" y="30.953792" edge="darken"/>
+		<vertex x="-11.411057" y="31.593911"/>
+		<vertex x="-11.411057" y="37.764077" edge="darken"/>
+		<vertex x="20.176497" y="37.764077"/>
+		<vertex x="20.5287" y="6.850098"/>
+		<vertex x="-114.131220" y="6.851700"/>
+		<vertex x="-114.131220" y="6.879373"/>
+		<vertex x="-114.156463" y="6.879373"/>
+	</block>
+	<zone id="Zone0">
+		<box left="-57.130875" right="56.918210" top="66.824680" bottom="60.059137"/>
+	</zone>
+	<entity id="path1877" typeid="PlayerStart">
+		<position y="44.5321593278" x="1.11937525"/>
+		<size r="0.4"/>
+	</entity>
+	<entity id="path2378" typeid="ParticleSource">
+		<position y="60.0209497778" x="45.8264965"/>
+		<size r="0.4"/>
+		<param name="type" value="Sparkle"/>
+	</entity>
+	<entity id="path2378-0" typeid="ParticleSource">
+		<position y="59.9702557778" x="-45.7361225"/>
+		<size r="0.4"/>
+		<param name="type" value="Sparkle"/>
+	</entity>
+	<entity id="path2599" typeid="Sprite">
+		<position y="44.5522958278" x="-1.25912545"/>
+		<size r="0.4"/>
+		<param name="name" value="Tree1"/>
+	</entity>
+	<entity id="path2736" typeid="Sprite">
+		<position y="45.0282219278" x="2.83030066"/>
+		<size r="0.4"/>
+		<param name="name" value="sunflower"/>
+	</entity>
+	<entity id="path2896" typeid="Sprite">
+		<position y="44.6338946778" x="-2.882515"/>
+		<size r="0.4"/>
+		<param name="name" value="BlankSignLeft1"/>
+	</entity>
+	<entity id="path2896-6" typeid="Sprite">
+		<position y="44.5814449778" x="4.8915445"/>
+		<size r="0.4"/>
+		<param name="name" value="BlankSignRight1"/>
+	</entity>
+	<entity id="path2814" typeid="Sprite">
+		<position y="44.5848937778" x="-0.2518445"/>
+		<size r="0.4"/>
+		<param name="name" value="Grass1"/>
+	</entity>
+	<entity id="path2814-2" typeid="Sprite">
+		<position y="44.5882007778" x="3.8280625"/>
+		<size r="0.4"/>
+		<param name="name" value="Grass1"/>
+	</entity>
+	<entity id="path3270" typeid="Sprite">
+		<position y="45.0454845778" x="23.0221436"/>
+		<size r="0.4"/>
+		<param name="name" value="palmtree2"/>
+	</entity>
+	<entity id="path3460" typeid="Sprite">
+		<position y="45.0621360278" x="-30.186497"/>
+		<size r="0.4"/>
+		<param name="name" value="palmtree2"/>
+	</entity>
+</level>

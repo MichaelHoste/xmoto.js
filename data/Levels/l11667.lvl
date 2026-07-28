@@ -2942,7 +2942,7 @@
 		<size r="0.4"/>
 	</entity>
 	<entity id="path4311-8" typeid="Checkpoint">
-		<position y="-0.5510184" x="11.8752255"/>
+		<position y="-0.9510184" x="11.8752255"/>
 		<size r="0.4"/>
 	</entity>
 	<entity id="path4311-5" typeid="Checkpoint">
