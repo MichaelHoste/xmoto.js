@@ -990,7 +990,7 @@
         width: options.width,
         height: options.height,
         background: 0xFFFFFF,
-        //clearBeforeRender:     false, # No need to clear, we paint the entire canvas
+        clearBeforeRender: false, // No need to clear, we paint the entire canvas
         //textureGCActive:       false, # We manage texture GC manually (`renderer.gc.enabled` can be toggled)
         powerPreference: 'high-performance' // Hint for GPU power preference (WebGL & WebGPU).
       }));
@@ -2736,14 +2736,14 @@
         this.zoom = this.parse_float(xml_sky.attr('zoom'), 1.0);
         this.drift_zoom = this.parse_float(xml_sky.attr('driftZoom'), 1.0);
         this.offset = this.parse_float(xml_sky.attr('offset'), 0.015);
-        this.drifted = xml_sky.attr('drifted') === 'true'; // enable the secondary scrolling drift layer
-        this.blend_name = xml_sky.attr('BlendTexture') || this.name; // empty => the drift layer reuses the sky texture
+        this.drifted = xml_sky.attr('drifted') === 'true'; // Enable the secondary scrolling drift layer
+        this.blend_name = xml_sky.attr('BlendTexture') || this.name; // Empty => the drift layer reuses the sky texture
         this.use_params = xml_sky.attr('use_params') === 'true'; // Not found in C++ code, can be ignored
         if (!this.has_advanced_options(xml_sky)) {
           this.apply_old_xmoto_values();
         }
         // Get texture filenames from theme (can be animated!)
-        // => For sky
+        // (1) For sky
         sky_params = this.assets.theme.texture_params(this.name);
         if (sky_params.frames_count) {
           this.sky_frames_count = sky_params.frames_count;
@@ -2752,7 +2752,7 @@
         } else {
           this.sky_filenames = [sky_params.file];
         }
-        // => For drifted sky
+        // (2) For drifted sky
         drifted_sky_params = this.assets.theme.texture_params(this.blend_name);
         if (drifted_sky_params.frames_count) {
           this.drifted_sky_frames_count = drifted_sky_params.frames_count;
@@ -2764,22 +2764,15 @@
         return this;
       }
 
-      // XMoto uses the legacy per-texture presets unless the <sky> element carries at least
-      // one advanced attribute (XMoto Level.cpp: v_useAdvancedOptions). use_params is NOT one.
+      // Detect if XMoto should fallback to the legacy per-texture presets (XMoto Level.cpp: v_useAdvancedOptions).
       has_advanced_options(xml_sky) {
-        var attr, attrs, l, len;
-        attrs = ['zoom', 'offset', 'drifted', 'driftZoom', 'BlendTexture', 'color_r', 'color_g', 'color_b', 'color_a', 'driftColor_r', 'driftColor_g', 'driftColor_b', 'driftColor_a'];
-        for (l = 0, len = attrs.length; l < len; l++) {
-          attr = attrs[l];
-          if (xml_sky.attr(attr) != null) {
-            return true;
-          }
-        }
-        return false;
+        return ['zoom', 'offset', 'color_r', 'color_g', 'color_b', 'color_a', 'drifted', 'BlendTexture'].some(function(attr) {
+          return xml_sky.attr(attr) != null;
+        });
       }
 
-      // XMoto SkyApparence::setOldXmotoValuesFromTextureName — presets for old-format skies.
-      // Unlisted textures keep the reInit defaults (zoom 1.0, offset 0.015, not drifted).
+      // Specific xmoto values for certain skies (only if no advanced options are used)
+      // => https://github.com/xmoto/xmoto/blob/539984a84e8b1ad6f1ab7f90f92e5af9c9878e1c/src/xmscene/SkyApparence.cpp#L46
       apply_old_xmoto_values() {
         switch (this.name) {
           case 'sky1':
@@ -2855,16 +2848,13 @@
         this.sprite.label = "sky";
         this.sprite.position.x = 0;
         this.sprite.position.y = 0;
-        // XMoto maps 1/zoom tiles across the canvas WIDTH, so the tile scale is tied to the
-        // canvas width — this makes the zoom appearance AND the on-screen parallax/wind speed
-        // match the original at any window size (a fixed base would bake in one resolution).
+        // XMoto maps 1/zoom tiles across the canvas width
         tile_scale = this.zoom * this.options.width / this.sprite.texture.width;
         this.sprite.tileScale.x = tile_scale;
         this.sprite.tileScale.y = tile_scale;
-        // Add tint to sprite (alpha is ignored in original code; color_a is NOT an opacity —
-        // many levels set color_a="0" yet clearly want a visible sky).
+        // Add tint to sprite (alpha is ignored in original code)
         this.sprite.tint = (this.color.r << 16) + (this.color.g << 8) + this.color.b;
-        return this.level.stage.addChildAt(this.sprite, 0); // Fixed on the root level of stage (not influenced by scale/translation, only adapt tilePosition)
+        return this.level.stage.addChildAt(this.sprite, 0); // Fixed on the root level of stage (not influenced by scale/translation)
       }
 
       
@@ -2896,20 +2886,21 @@
         this.drift_sprite.label = "sky drift";
         this.drift_sprite.position.x = 0;
         this.drift_sprite.position.y = 0;
+        // XMoto maps 1/zoom tiles across the canvas width
         tile_scale = this.drift_zoom * this.options.width / this.drift_sprite.texture.width;
         this.drift_sprite.tileScale.x = tile_scale;
         this.drift_sprite.tileScale.y = tile_scale;
         // Add tint to sprite (alpha is ignored in original code)
         this.drift_sprite.tint = (this.drift_color.r << 16) + (this.drift_color.g << 8) + this.drift_color.b;
-        // Additive so the drift combines with the sky instead of hiding it (matches XMoto,
-        // and explains the very dark driftColors seen in some levels). Switch to 'normal' to compare.
+        // Additive so the drift combines with the sky instead of hiding it
         this.drift_sprite.blendMode = 'add';
         return this.level.stage.addChildAt(this.drift_sprite, 1); // Just above the sky, below the game world
       }
 
       update() {
-        var ctx;
+        var ctx, now;
         ctx = this.level.debug_ctx;
+        now = performance.now();
         if (Constants.debug_physics) {
           ctx.beginPath();
           ctx.moveTo(this.options.width, this.options.height);
@@ -2920,14 +2911,14 @@
           ctx.fillStyle = "#222228";
           return ctx.fill();
         } else {
-          this.update_sky();
+          this.update_sky(now);
           if (this.drifted) {
-            return this.update_drifting_sky();
+            return this.update_drifting_sky(now);
           }
         }
       }
 
-      update_sky() {
+      update_sky(now) {
         var parallax, target, tile_px, wind;
         if (this.sprite.width !== this.options.width) {
           // Only when going in/out fullscreen (avoid some internal computations)
@@ -2938,48 +2929,48 @@
         }
         target = this.level.camera.target();
         tile_px = this.sprite.tileScale.x * this.sprite.texture.width; // on-screen size of one texture tile
-        parallax = this.offset * tile_px * Sky.FOV_COMPENSATION; // camera parallax factor (XMoto: camX * offset)
+        parallax = this.offset * tile_px * Sky.FOV_COMPENSATION; // camera parallax factor
         
-        // Only drifted skies get the constant "wind"; plain skies just track the camera.
-        // (XMoto: fDrift stays 0 unless the sky is drifted.) One tile every SKY_WIND_PERIOD
-        // seconds, resolution-agnostic and scaling with zoom, like XMoto's fDrift = time / 25.
-        wind = 0;
+        // Only skies that are drifted get the constant "wind". Classic skies just track the camera.
         if (this.drifted) {
-          wind = performance.now() / 1000.0 * tile_px / Sky.SKY_WIND_PERIOD;
+          wind = now / 1000.0 * tile_px / Sky.SKY_WIND;
+        } else {
+          wind = 0;
         }
-        this.sprite.tilePosition.x = -target.x * parallax - wind; // camera parallax + wind (right → left)
-        this.sprite.tilePosition.y = target.y * parallax; // vertical parallax (Y is inverted vs world)
+        this.sprite.tilePosition.x = -target.x * parallax - wind; // camera position + parallax + wind (right → left)
+        this.sprite.tilePosition.y = target.y * parallax; // camera position + parallax
         if (this.sprite.frames_count) {
-          return this.update_animation(this.sprite);
+          return this.update_animation(this.sprite, now);
         }
       }
 
-      // The drift layer follows the same parallax but slowly scrolls on its own over time.
-      update_drifting_sky() {
+      update_drifting_sky(now) {
         var parallax, target, tile_px, wind;
         if (this.drift_sprite.width !== this.options.width) {
+          // Only when going in/out fullscreen (avoid some internal computations)
           this.drift_sprite.width = this.options.width;
         }
         if (this.drift_sprite.height !== this.options.height) {
           this.drift_sprite.height = this.options.height;
         }
         target = this.level.camera.target();
-        tile_px = this.drift_sprite.tileScale.x * this.drift_sprite.texture.width;
-        parallax = this.offset * tile_px * Sky.FOV_COMPENSATION; // same offset as the base sky
-        wind = performance.now() / 1000.0 * tile_px / Sky.DRIFT_WIND_PERIOD; // faster than base (15 vs 25)
-        this.drift_sprite.tilePosition.x = -target.x * parallax - wind; // camera parallax + wind (right → left)
-        this.drift_sprite.tilePosition.y = target.y * parallax;
+        tile_px = this.drift_sprite.tileScale.x * this.drift_sprite.texture.width; // on-screen size of one texture tile
+        parallax = this.offset * tile_px * Sky.FOV_COMPENSATION; // camera parallax factor
+        
+        // Drifted skies always have the wind
+        wind = now / 1000.0 * tile_px / Sky.DRIFT_WIND;
+        this.drift_sprite.tilePosition.x = -target.x * parallax - wind; // camera position + parallax + wind (right → left)
+        this.drift_sprite.tilePosition.y = target.y * parallax; // camera position + parallax
         if (this.drift_sprite.frames_count) {
-          return this.update_animation(this.drift_sprite);
+          return this.update_animation(this.drift_sprite, now);
         }
       }
 
-      // Swap an animated sky layer to its current time-based frame (see init_sky). The
-      // animation state (textures/frames_count/delay/current_frame/animation_start) lives
-      // on the sprite, mirroring how animated Blocks store it on the block.
-      update_animation(sprite) {
+      // Swap an animated sky layer to its current time-based frame
+      // The animation state lives on custom attributes of sprite, like Blocks (not perfect! Refactor?)
+      update_animation(sprite, now) {
         var elapsed, frame;
-        elapsed = (performance.now() - sprite.animation_start) / 1000.0;
+        elapsed = (now - sprite.animation_start) / 1000.0;
         frame = Math.floor(elapsed / sprite.delay) % sprite.frames_count;
         if (frame !== sprite.current_frame) {
           sprite.current_frame = frame;
@@ -3016,18 +3007,14 @@
 
     };
 
-    // XMoto scrolls each sky layer by one texture tile every N seconds, independent of
-    // resolution. Keep the 25:15 base:drift ratio to match the original; scale both up
-    // together for a gentler wind.
-    Sky.SKY_WIND_PERIOD = 25; // seconds per tile — base sky   (XMoto: fDrift = time / 25)
+    // XMoto scrolls each sky layer by one texture every N seconds
+    // Keep the 25:15 base:drift ratio to match the original
+    Sky.SKY_WIND = 25; // seconds — base sky
 
-    Sky.DRIFT_WIND_PERIOD = 15; // seconds per tile — drift layer (XMoto: fDrift = time / 15)
+    Sky.DRIFT_WIND = 15; // seconds — drift layer
 
     
-    // The port shows a wider view than XMoto (its camera is ~2x more zoomed out), so the
-    // camera-driven parallax reads too fast relative to the world. Scale just the parallax
-    // down to compensate — brings l1 back near the original's ~15 px/m. (The wind is an
-    // absolute, camera-independent scroll and already matches XMoto, so it is NOT touched.)
+    // Should we remove this? To compensate camera zoom but we don't use it anymore
     Sky.FOV_COMPENSATION = 0.5;
 
     return Sky;

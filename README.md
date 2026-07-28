@@ -66,9 +66,13 @@ You can copy-paste the generated URL to keep the custom physics.
 
 ### Working environnement
 
- * ```./node_modules/.bin/coffee -j bin/xmoto.js -wc src/*.coffee src/*/*.coffee``` to compile
-   to JavaScript in real-time.
- * ```node server.js``` to launch HTTP Server (http://localhost:3001).
+To compile to JavaScript in real-time:
+
+    ./node_modules/.bin/coffee -j bin/xmoto.js -wc src/*.coffee src/*/*.coffee
+
+To start web server on http://localhost:3001 :
+
+    node server.js
 
 Don't forget to restart the coffee command if you create new COFFEE files.
 
@@ -89,7 +93,6 @@ Use this link to compare screen 1/1 with original X-Moto (same zoom/resolution):
 ### Technical informations
 
  * Implementation of replays is described [here](https://github.com/MichaelHoste/xmoto.js/issues/8)
- * Use [this link](http://js.xmoto.io?level=943&debug=true&automatic_scale=false&manual_scale=false&default_scale.x=90&default_scale.y=-90&width=1024&height=768) to compare screen 1/1 with original X-Moto (same zoom/resolution): 
 
 ## COVID-XMoto
 
@@ -117,12 +120,8 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
-* Reset assets to original assets (no more number/capizatlization issues) + orignal theme xml
-* Manage sky better:  
-  * Level 10181 to debug sky drifting
-  * `<sky color_r="150" color_g="100" color_b="50" zoom="3.0">sky1</sky>`
-  * `<sky color_g="255" zoom="3.7" color_a="255" color_b="255" offset="0.16" drifted="false" use_params="true" color_r="255">Water1</sky>`
-  * `<sky driftColor_b="0" driftColor_a="0" driftColor_g="215" driftZoom="13.0" color_g="255" drifted="true" BlendTexture="WuTz_coolGrate" zoom="1.4" driftColor_r="255" color_a="255" offset="0.0" color_b="255" use_params="true" color_r="231">Lava</sky>`
+* Merger niveau et assets du dernier build de xmoto pour voir si ça fonctionne (et tester autres themes)
+* Reset assets to original assets (no more number/capitalization issues) + orignal theme xml
 * Manage checkpoints
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Notes_on_Checkpoints
 * Shouldn't `assets.get_url(texture_name)` be `assets.get_url(texture_file)`?

@@ -8,3 +8,4 @@ AGENTS.md
 skills-lock.json
 .agents/skills/pixijs/SKILL.md
 .agents/skills/pixijs/references/index.md
+test/failing_levels.txt

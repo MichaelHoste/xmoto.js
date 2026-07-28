@@ -7,7 +7,7 @@ $.xmoto = (level_filename, options = {}) ->
       width:                 options.width,
       height:                options.height,
       background:            0xFFFFFF,
-      #clearBeforeRender:     false, # No need to clear, we paint the entire canvas
+      clearBeforeRender:     false, # No need to clear, we paint the entire canvas
       #textureGCActive:       false, # We manage texture GC manually (`renderer.gc.enabled` can be toggled)
       powerPreference:       'high-performance' # Hint for GPU power preference (WebGL & WebGPU).
       #antialias:             true  # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)

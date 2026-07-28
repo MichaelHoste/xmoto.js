@@ -1,15 +1,11 @@
 class Sky
 
-  # XMoto scrolls each sky layer by one texture tile every N seconds, independent of
-  # resolution. Keep the 25:15 base:drift ratio to match the original; scale both up
-  # together for a gentler wind.
-  @SKY_WIND_PERIOD   = 25 # seconds per tile — base sky   (XMoto: fDrift = time / 25)
-  @DRIFT_WIND_PERIOD = 15 # seconds per tile — drift layer (XMoto: fDrift = time / 15)
+  # XMoto scrolls each sky layer by one texture every N seconds
+  # Keep the 25:15 base:drift ratio to match the original
+  @SKY_WIND   = 25 # seconds — base sky
+  @DRIFT_WIND = 15 # seconds — drift layer
 
-  # The port shows a wider view than XMoto (its camera is ~2x more zoomed out), so the
-  # camera-driven parallax reads too fast relative to the world. Scale just the parallax
-  # down to compensate — brings l1 back near the original's ~15 px/m. (The wind is an
-  # absolute, camera-independent scroll and already matches XMoto, so it is NOT touched.)
+  # Should we remove this? To compensate camera zoom but we don't use it anymore
   @FOV_COMPENSATION  = 0.5
 
   constructor: (level) ->
@@ -37,15 +33,16 @@ class Sky
     @zoom       = @parse_float(xml_sky.attr('zoom'),      1.0)
     @drift_zoom = @parse_float(xml_sky.attr('driftZoom'), 1.0)
     @offset     = @parse_float(xml_sky.attr('offset'),    0.015)
-    @drifted    = xml_sky.attr('drifted') == 'true'     # enable the secondary scrolling drift layer
-    @blend_name = xml_sky.attr('BlendTexture') || @name # empty => the drift layer reuses the sky texture
+    @drifted    = xml_sky.attr('drifted') == 'true'     # Enable the secondary scrolling drift layer
+    @blend_name = xml_sky.attr('BlendTexture') || @name # Empty => the drift layer reuses the sky texture
     @use_params = xml_sky.attr('use_params') == 'true'  # Not found in C++ code, can be ignored
 
+    # Apply legacy values for some skies if no advanced options are used.
     if !@has_advanced_options(xml_sky)
       @apply_old_xmoto_values()
 
     # Get texture filenames from theme (can be animated!)
-    # => For sky
+    # (1) For sky
     sky_params = @assets.theme.texture_params(@name)
 
     if sky_params.frames_count
@@ -55,7 +52,7 @@ class Sky
     else
       @sky_filenames = [sky_params.file]
 
-    # => For drifted sky
+    # (2) For drifted sky
     drifted_sky_params = @assets.theme.texture_params(@blend_name)
 
     if drifted_sky_params.frames_count
@@ -67,19 +64,14 @@ class Sky
 
     return this
 
-  # XMoto uses the legacy per-texture presets unless the <sky> element carries at least
-  # one advanced attribute (XMoto Level.cpp: v_useAdvancedOptions). use_params is NOT one.
+  # Detect if XMoto should fallback to the legacy per-texture presets (XMoto Level.cpp: v_useAdvancedOptions).
   has_advanced_options: (xml_sky) ->
-    attrs = ['zoom', 'offset', 'drifted', 'driftZoom', 'BlendTexture',
-             'color_r', 'color_g', 'color_b', 'color_a',
-             'driftColor_r', 'driftColor_g', 'driftColor_b', 'driftColor_a']
+    ['zoom', 'offset', 'color_r', 'color_g', 'color_b', 'color_a', 'drifted', 'BlendTexture'].some((attr) ->
+      xml_sky.attr(attr)?
+    )
 
-    for attr in attrs
-      return true if xml_sky.attr(attr)?
-    false
-
-  # XMoto SkyApparence::setOldXmotoValuesFromTextureName — presets for old-format skies.
-  # Unlisted textures keep the reInit defaults (zoom 1.0, offset 0.015, not drifted).
+  # Specific xmoto values for certain skies (only if no advanced options are used)
+  # => https://github.com/xmoto/xmoto/blob/539984a84e8b1ad6f1ab7f90f92e5af9c9878e1c/src/xmscene/SkyApparence.cpp#L46
   apply_old_xmoto_values: ->
     switch @name
       when 'sky1'
@@ -121,18 +113,15 @@ class Sky
     @sprite.position.x = 0
     @sprite.position.y = 0
 
-    # XMoto maps 1/zoom tiles across the canvas WIDTH, so the tile scale is tied to the
-    # canvas width — this makes the zoom appearance AND the on-screen parallax/wind speed
-    # match the original at any window size (a fixed base would bake in one resolution).
+    # XMoto maps 1/zoom tiles across the canvas width
     tile_scale          = @zoom * @options.width / @sprite.texture.width
     @sprite.tileScale.x = tile_scale
     @sprite.tileScale.y = tile_scale
 
-    # Add tint to sprite (alpha is ignored in original code; color_a is NOT an opacity —
-    # many levels set color_a="0" yet clearly want a visible sky).
+    # Add tint to sprite (alpha is ignored in original code)
     @sprite.tint = (@color.r << 16) + (@color.g << 8) + @color.b
 
-    @level.stage.addChildAt(@sprite, 0) # Fixed on the root level of stage (not influenced by scale/translation, only adapt tilePosition)
+    @level.stage.addChildAt(@sprite, 0) # Fixed on the root level of stage (not influenced by scale/translation)
 
   # Second tiling texture drifting over the sky (moving clouds / atmosphere).
   init_drifting_sky: ->
@@ -151,6 +140,7 @@ class Sky
     @drift_sprite.position.x = 0
     @drift_sprite.position.y = 0
 
+    # XMoto maps 1/zoom tiles across the canvas width
     tile_scale                = @drift_zoom * @options.width / @drift_sprite.texture.width
     @drift_sprite.tileScale.x = tile_scale
     @drift_sprite.tileScale.y = tile_scale
@@ -158,14 +148,14 @@ class Sky
     # Add tint to sprite (alpha is ignored in original code)
     @drift_sprite.tint = (@drift_color.r << 16) + (@drift_color.g << 8) + @drift_color.b
 
-    # Additive so the drift combines with the sky instead of hiding it (matches XMoto,
-    # and explains the very dark driftColors seen in some levels). Switch to 'normal' to compare.
+    # Additive so the drift combines with the sky instead of hiding it
     @drift_sprite.blendMode = 'add'
 
     @level.stage.addChildAt(@drift_sprite, 1) # Just above the sky, below the game world
 
   update: ->
     ctx = @level.debug_ctx
+    now = performance.now()
 
     if Constants.debug_physics
       ctx.beginPath()
@@ -178,49 +168,50 @@ class Sky
       ctx.fillStyle = "#222228"
       ctx.fill()
     else
-      @update_sky()
-      @update_drifting_sky() if @drifted
+      @update_sky(now)
+      @update_drifting_sky(now) if @drifted
 
-  update_sky: ->
+  update_sky: (now) ->
     # Only when going in/out fullscreen (avoid some internal computations)
     @sprite.width  = @options.width  if @sprite.width  != @options.width
     @sprite.height = @options.height if @sprite.height != @options.height
 
     target   = @level.camera.target()
     tile_px  = @sprite.tileScale.x * @sprite.texture.width # on-screen size of one texture tile
-    parallax = @offset * tile_px * Sky.FOV_COMPENSATION    # camera parallax factor (XMoto: camX * offset)
+    parallax = @offset * tile_px * Sky.FOV_COMPENSATION    # camera parallax factor
 
-    # Only drifted skies get the constant "wind"; plain skies just track the camera.
-    # (XMoto: fDrift stays 0 unless the sky is drifted.) One tile every SKY_WIND_PERIOD
-    # seconds, resolution-agnostic and scaling with zoom, like XMoto's fDrift = time / 25.
-    wind = 0
-    wind = performance.now() / 1000.0 * tile_px / Sky.SKY_WIND_PERIOD if @drifted
+    # Only skies that are drifted get the constant "wind". Classic skies just track the camera.
+    if @drifted
+      wind = now / 1000.0 * tile_px / Sky.SKY_WIND
+    else
+      wind = 0
 
-    @sprite.tilePosition.x = -target.x * parallax - wind # camera parallax + wind (right → left)
-    @sprite.tilePosition.y =  target.y * parallax        # vertical parallax (Y is inverted vs world)
+    @sprite.tilePosition.x = -target.x * parallax - wind # camera position + parallax + wind (right → left)
+    @sprite.tilePosition.y =  target.y * parallax        # camera position + parallax
 
-    @update_animation(@sprite) if @sprite.frames_count
+    @update_animation(@sprite, now) if @sprite.frames_count
 
-  # The drift layer follows the same parallax but slowly scrolls on its own over time.
-  update_drifting_sky: ->
+  update_drifting_sky: (now) ->
+    # Only when going in/out fullscreen (avoid some internal computations)
     @drift_sprite.width  = @options.width  if @drift_sprite.width  != @options.width
     @drift_sprite.height = @options.height if @drift_sprite.height != @options.height
 
     target   = @level.camera.target()
-    tile_px  = @drift_sprite.tileScale.x * @drift_sprite.texture.width
-    parallax = @offset * tile_px * Sky.FOV_COMPENSATION                     # same offset as the base sky
-    wind     = performance.now() / 1000.0 * tile_px / Sky.DRIFT_WIND_PERIOD # faster than base (15 vs 25)
+    tile_px  = @drift_sprite.tileScale.x * @drift_sprite.texture.width # on-screen size of one texture tile
+    parallax = @offset * tile_px * Sky.FOV_COMPENSATION                # camera parallax factor
 
-    @drift_sprite.tilePosition.x = -target.x * parallax - wind # camera parallax + wind (right → left)
-    @drift_sprite.tilePosition.y =  target.y * parallax
+    # Drifted skies always have the wind
+    wind = now / 1000.0 * tile_px / Sky.DRIFT_WIND
 
-    @update_animation(@drift_sprite) if @drift_sprite.frames_count
+    @drift_sprite.tilePosition.x = -target.x * parallax - wind # camera position + parallax + wind (right → left)
+    @drift_sprite.tilePosition.y =  target.y * parallax        # camera position + parallax
 
-  # Swap an animated sky layer to its current time-based frame (see init_sky). The
-  # animation state (textures/frames_count/delay/current_frame/animation_start) lives
-  # on the sprite, mirroring how animated Blocks store it on the block.
-  update_animation: (sprite) ->
-    elapsed = (performance.now() - sprite.animation_start) / 1000.0
+    @update_animation(@drift_sprite, now) if @drift_sprite.frames_count
+
+  # Swap an animated sky layer to its current time-based frame
+  # The animation state lives on custom attributes of sprite, like Blocks (not perfect! Refactor?)
+  update_animation: (sprite, now) ->
+    elapsed = (now - sprite.animation_start) / 1000.0
     frame   = Math.floor(elapsed / sprite.delay) % sprite.frames_count
 
     if frame != sprite.current_frame
