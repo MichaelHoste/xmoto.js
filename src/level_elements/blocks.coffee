@@ -47,13 +47,12 @@ class Blocks
       else
         block.texture_name = texture_params.file
 
-      xml_vertices = $(xml_block).find('vertex')
-      for xml_vertex in xml_vertices
+      for xml_vertex in $(xml_block).find('vertex')
         vertex =
-          x:          parseFloat($(xml_vertex).attr('x'))
-          y:          parseFloat($(xml_vertex).attr('y'))
-          absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x # absolutes positions are practical
-          absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y # for edges creation
+          x:          @parse_coordinate(xml_vertex, 'x')
+          y:          @parse_coordinate(xml_vertex, 'y')
+          absolute_x: @parse_coordinate(xml_vertex, 'x') + block.position.x # | absolutes positions are practical
+          absolute_y: @parse_coordinate(xml_vertex, 'y') + block.position.y # / for edges creation
           edge:       $(xml_vertex).attr('edge')
 
         block.vertices.push(vertex)
@@ -244,6 +243,11 @@ class Blocks
   parse_color: (xml_block, channel) ->
     value = $(xml_block).find('usetexture').attr("color_#{channel}")
     if value? then parseInt(value) else 255 # to manage that if NaN => 255, but if 0 => 0
+
+  # Some levels have malformed vertex coordinates with a duplicated sign (e.g. "--0.366141")
+  parse_coordinate: (xml_vertex, axis) ->
+    value = $(xml_vertex).attr(axis).replaceAll('--', '-')
+    parseFloat(value)
 
   # Blocks drawing is sorted by textures + order in XML (if same texture)
   # http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
