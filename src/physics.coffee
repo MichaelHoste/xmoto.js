@@ -23,10 +23,15 @@ class Physics
     @world     = new b2World(new b2Vec2(0, -Constants.gravity), true) # gravity vector, and doSleep
     @debug_ctx = level.debug_ctx
 
-    # Double default precision between wheel and ground
+    # Double default precision between wheel and ground (to avoid seing space between them)
     b2Settings.b2_linearSlop = 0.0025
 
-    # debug initialization
+    # Box2D throws a bare string (`throw "Assertion Failed"`) on internal assertion failures.
+    # It was hiding the full error stack, making it difficult to debug
+    b2Settings.b2Assert = (condition) ->
+      throw new Error("Box2D assertion failed") unless condition
+
+    # Debug initialization
     debugDraw = new b2DebugDraw()
     debugDraw.SetSprite(@debug_ctx)                # context
     @debug_ctx.lineWidth = 0.03                    # thickness of line (debugDraw.SetLineThickness doesn't work)
