@@ -120,7 +120,7 @@ class Level
 
     # Force animation refresh
     selector.removeClass('fade-out')
-    selector[0].offsetWidth;
+    selector[0].offsetWidth
     selector.addClass('fade-out')
 
   init_timer: ->
