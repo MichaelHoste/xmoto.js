@@ -265,7 +265,7 @@
         x: 0.0,
         y: 1.0
       },
-      shape: [new b2Vec2(0.4, -0.3), new b2Vec2(0.50, 0.40), new b2Vec2(-0.75, 0.16), new b2Vec2(-0.35, -0.3)],
+      vertices: [new b2Vec2(0.4, -0.3), new b2Vec2(0.50, 0.40), new b2Vec2(-0.75, 0.16), new b2Vec2(-0.35, -0.3)],
       collisions: true,
       texture: 'playerbikerbody.png',
       ghost_texture: 'ghostbikerbody.png',
@@ -311,7 +311,7 @@
         x: 0.0,
         y: 1.0
       },
-      shape: [new b2Vec2(-0.10, -0.30), new b2Vec2(-0.25, -0.30), new b2Vec2(-0.80, -0.58), new b2Vec2(-0.65, -0.58)],
+      vertices: [new b2Vec2(-0.10, -0.30), new b2Vec2(-0.25, -0.30), new b2Vec2(-0.80, -0.58), new b2Vec2(-0.65, -0.58)],
       collisions: true,
       texture: 'rear1.png',
       ghost_texture: 'rear_ghost.png'
@@ -325,7 +325,7 @@
         x: 0.0,
         y: 1.0
       },
-      shape: [new b2Vec2(0.58, -0.02), new b2Vec2(0.48, -0.02), new b2Vec2(0.66, -0.58), new b2Vec2(0.76, -0.58)],
+      vertices: [new b2Vec2(0.58, -0.02), new b2Vec2(0.48, -0.02), new b2Vec2(0.66, -0.58), new b2Vec2(0.76, -0.58)],
       collisions: true,
       texture: 'front1.png',
       ghost_texture: 'front_ghost.png'
@@ -353,7 +353,7 @@
         y: 1.89
       },
       angle: -Math.PI / 30.0,
-      shape: [new b2Vec2(0.10, -0.55), new b2Vec2(0.13, 0.15), new b2Vec2(-0.20, 0.22), new b2Vec2(-0.18, -0.55)],
+      vertices: [new b2Vec2(0.10, -0.55), new b2Vec2(0.13, 0.15), new b2Vec2(-0.20, 0.22), new b2Vec2(-0.18, -0.55)],
       collisions: true,
       texture: 'playertorso.png',
       ghost_texture: 'ghosttorso.png',
@@ -372,7 +372,7 @@
         y: 0.90
       },
       angle: -Math.PI / 6.0,
-      shape: [new b2Vec2(0.2, -0.33), new b2Vec2(0.2, -0.27), new b2Vec2(0.00, -0.2), new b2Vec2(0.02, 0.33), new b2Vec2(-0.17, 0.33), new b2Vec2(-0.14, -0.33)],
+      vertices: [new b2Vec2(0.2, -0.33), new b2Vec2(0.2, -0.27), new b2Vec2(0.00, -0.2), new b2Vec2(0.02, 0.33), new b2Vec2(-0.17, 0.33), new b2Vec2(-0.14, -0.33)],
       collisions: true,
       texture: 'playerlowerleg.png',
       ghost_texture: 'ghostlowerleg.png',
@@ -391,7 +391,7 @@
         y: 1.27
       },
       angle: -Math.PI / 11.0,
-      shape: [new b2Vec2(0.4, -0.14), new b2Vec2(0.4, 0.07), new b2Vec2(-0.4, 0.14), new b2Vec2(-0.4, -0.08)],
+      vertices: [new b2Vec2(0.4, -0.14), new b2Vec2(0.4, 0.07), new b2Vec2(-0.4, 0.14), new b2Vec2(-0.4, -0.08)],
       collisions: true,
       texture: 'playerupperleg.png',
       ghost_texture: 'ghostupperleg.png',
@@ -410,7 +410,7 @@
         y: 1.54
       },
       angle: -Math.PI / 10.0,
-      shape: [new b2Vec2(0.28, -0.07), new b2Vec2(0.28, 0.04), new b2Vec2(-0.30, 0.07), new b2Vec2(-0.30, -0.06)],
+      vertices: [new b2Vec2(0.28, -0.07), new b2Vec2(0.28, 0.04), new b2Vec2(-0.30, 0.07), new b2Vec2(-0.30, -0.06)],
       collisions: true,
       texture: 'playerlowerarm.png',
       ghost_texture: 'ghostlowerarm.png',
@@ -429,7 +429,7 @@
         y: 1.85
       },
       angle: Math.PI / 10.0,
-      shape: [new b2Vec2(0.09, -0.29), new b2Vec2(0.09, 0.22), new b2Vec2(-0.11, 0.26), new b2Vec2(-0.10, -0.29)],
+      vertices: [new b2Vec2(0.09, -0.29), new b2Vec2(0.09, 0.22), new b2Vec2(-0.11, 0.26), new b2Vec2(-0.10, -0.29)],
       collisions: true,
       texture: 'playerupperarm.png',
       ghost_texture: 'ghostupperarm.png',
@@ -1136,9 +1136,16 @@
       this.camera = level.camera;
       this.world = new b2World(new b2Vec2(0, -Constants.gravity), true); // gravity vector, and doSleep
       this.debug_ctx = level.debug_ctx;
-      // Double default precision between wheel and ground
+      // Double default precision between wheel and ground (to avoid seing space between them)
       b2Settings.b2_linearSlop = 0.0025;
-      // debug initialization
+      // Box2D throws a bare string (`throw "Assertion Failed"`) on internal assertion failures.
+      // It was hiding the full error stack, making it difficult to debug
+      b2Settings.b2Assert = function(condition) {
+        if (!condition) {
+          throw new Error("Box2D assertion failed");
+        }
+      };
+      // Debug initialization
       debugDraw = new b2DebugDraw();
       debugDraw.SetSprite(this.debug_ctx); // context
       this.debug_ctx.lineWidth = 0.03; // thickness of line (debugDraw.SetLineThickness doesn't work)
@@ -1234,7 +1241,10 @@
     }
 
     create_lines(block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) {
-      var body, bodyDef, fixDef, i, l, len, ref, results, vertex, vertex1, vertex2;
+      var body, bodyDef, fixDef, i, l, len, results, vertex, vertex1, vertex2, vertices;
+      if (!block.vertices.length) {
+        return;
+      }
       // Create body
       bodyDef = new b2BodyDef();
       // Assign body position
@@ -1246,11 +1256,13 @@
       bodyDef.type = b2Body.b2_staticBody;
       // add body to the world
       body = this.world.CreateBody(bodyDef);
-      ref = block.vertices;
-      // assign each couple of vertices to a line
+      // Some levels contain consecutive (near-)duplicate vertices, which would
+      // produce a zero-length edge and crash Box2D's assertion.
+      vertices = Physics.dedupe_vertices(block.vertices);
+// assign each couple of vertices to a line
       results = [];
-      for (i = l = 0, len = ref.length; l < len; i = ++l) {
-        vertex = ref[i];
+      for (i = l = 0, len = vertices.length; l < len; i = ++l) {
+        vertex = vertices[i];
         // Create fixture
         fixDef = new b2FixtureDef();
         fixDef.shape = new b2PolygonShape();
@@ -1260,7 +1272,7 @@
         fixDef.filter.groupIndex = group_index;
         // Create line (from polygon because box2Dweb cannot do otherwise)
         vertex1 = vertex;
-        vertex2 = i === block.vertices.length - 1 ? block.vertices[0] : block.vertices[i + 1];
+        vertex2 = i === vertices.length - 1 ? vertices[0] : vertices[i + 1];
         fixDef.shape.SetAsArray([new b2Vec2(vertex1.x, vertex1.y), new b2Vec2(vertex2.x, vertex2.y)], 2);
         // Assign fixture (line) to body
         results.push(body.CreateFixture(fixDef));
@@ -1268,17 +1280,48 @@
       return results;
     }
 
-    static create_shape(fix_def, shape, mirror = false) {
+    // Remove consecutive (cyclic) vertices that are too close (or the same).
+    // It will avoid zero-length Box2D edges that would crash SetAsArray().
+    static dedupe_vertices(vertices, distance = 1e-9) {
+      var deduped, l, len, previous, too_close, vertex;
+      too_close = function(a, b, distance) {
+        var dx, dy;
+        dx = a.x - b.x;
+        dy = a.y - b.y;
+        return (dx * dx + dy * dy) < distance * distance;
+      };
+      deduped = [];
+      for (l = 0, len = vertices.length; l < len; l++) {
+        vertex = vertices[l];
+        previous = deduped[deduped.length - 1];
+        if ((previous != null) && too_close(previous, vertex, distance)) {
+          continue;
+        }
+        deduped.push(vertex);
+      }
+      // Repeatedly trim the wrap-around edge (last vertex back to the first),
+      // since popping one duplicate can expose another.
+      while (deduped.length > 1 && too_close(deduped[0], deduped[deduped.length - 1], distance)) {
+        deduped.pop();
+      }
+      if (deduped.length < 3) {
+        throw new Error(`dedupe_vertices: polygon degenerated to ${deduped.length} vertex(es) after removing duplicates`);
+      }
+      return deduped;
+    }
+
+    static create_shape(fix_def, vertices, mirror = false) {
       var b2vertices, l, len, len1, m, vertex;
+      vertices = Physics.dedupe_vertices(vertices);
       b2vertices = [];
       if (mirror === false) {
-        for (l = 0, len = shape.length; l < len; l++) {
-          vertex = shape[l];
+        for (l = 0, len = vertices.length; l < len; l++) {
+          vertex = vertices[l];
           b2vertices.push(new b2Vec2(vertex.x, vertex.y));
         }
       } else {
-        for (m = 0, len1 = shape.length; m < len1; m++) {
-          vertex = shape[m];
+        for (m = 0, len1 = vertices.length; m < len1; m++) {
+          vertex = vertices[m];
           b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y));
         }
       }
@@ -1295,7 +1338,7 @@
     }
 
     parse(xml) {
-      var block, l, len, len1, m, texture_params, vertex, xml_block, xml_blocks, xml_vertex, xml_vertices;
+      var block, l, len, len1, m, ref, texture_params, vertex, xml_block, xml_blocks, xml_vertex;
       xml_blocks = $(xml).find('block');
       for (l = 0, len = xml_blocks.length; l < len; l++) {
         xml_block = xml_blocks[l];
@@ -1345,14 +1388,14 @@
         } else {
           block.texture_name = texture_params.file;
         }
-        xml_vertices = $(xml_block).find('vertex');
-        for (m = 0, len1 = xml_vertices.length; m < len1; m++) {
-          xml_vertex = xml_vertices[m];
+        ref = $(xml_block).find('vertex');
+        for (m = 0, len1 = ref.length; m < len1; m++) {
+          xml_vertex = ref[m];
           vertex = {
-            x: parseFloat($(xml_vertex).attr('x')),
-            y: parseFloat($(xml_vertex).attr('y')),
-            absolute_x: parseFloat($(xml_vertex).attr('x')) + block.position.x, // absolutes positions are practical
-            absolute_y: parseFloat($(xml_vertex).attr('y')) + block.position.y, // for edges creation
+            x: this.parse_coordinate(xml_vertex, 'x'),
+            y: this.parse_coordinate(xml_vertex, 'y'),
+            absolute_x: this.parse_coordinate(xml_vertex, 'x') + block.position.x, // | absolutes positions are practical
+            absolute_y: this.parse_coordinate(xml_vertex, 'y') + block.position.y, // / for edges creation
             edge: $(xml_vertex).attr('edge')
           };
           block.vertices.push(vertex);
@@ -1629,7 +1672,14 @@
     }
 
     
-      // Blocks drawing is sorted by textures + order in XML (if same texture)
+      // Some levels have malformed vertex coordinates with a duplicated sign (e.g. "--0.366141")
+    parse_coordinate(xml_vertex, axis) {
+      var value;
+      value = $(xml_vertex).attr(axis).replaceAll('--', '-');
+      return parseFloat(value);
+    }
+
+    // Blocks drawing is sorted by textures + order in XML (if same texture)
     // http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels#Parallax_layers
     sort_blocks_by_texture(a, b) {
       if (a.usetexture.id > b.usetexture.id) {
@@ -3432,7 +3482,7 @@
       fixDef.friction = Constants.body.friction;
       fixDef.isSensor = !Constants.body.collisions;
       fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, Constants.body.shape, this.mirror === -1);
+      Physics.create_shape(fixDef, Constants.body.vertices, this.mirror === -1);
       // Create body
       bodyDef = new b2BodyDef();
       // Assign body position
@@ -3487,7 +3537,7 @@
       fixDef.friction = part_constants.friction;
       fixDef.isSensor = !part_constants.collisions;
       fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, part_constants.shape, this.mirror === -1);
+      Physics.create_shape(fixDef, part_constants.vertices, this.mirror === -1);
       // Create body
       bodyDef = new b2BodyDef();
       // Assign body position
@@ -4032,7 +4082,7 @@
       fixDef.friction = part_constants.friction;
       fixDef.isSensor = !part_constants.collisions;
       fixDef.filter.groupIndex = -1;
-      Physics.create_shape(fixDef, part_constants.shape, this.mirror === -1);
+      Physics.create_shape(fixDef, part_constants.vertices, this.mirror === -1);
       // Create body
       bodyDef = new b2BodyDef();
       // Assign body position

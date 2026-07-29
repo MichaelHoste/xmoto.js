@@ -123,6 +123,8 @@ class Physics
     @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
   create_lines: (block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
+    return if !block.vertices.length
+
     # Create body
     bodyDef = new b2BodyDef()
 
@@ -138,8 +140,12 @@ class Physics
     # add body to the world
     body = @world.CreateBody(bodyDef)
 
+    # Some levels contain consecutive (near-)duplicate vertices, which would
+    # produce a zero-length edge and crash Box2D's assertion.
+    vertices = Physics.dedupe_vertices(block.vertices)
+
     # assign each couple of vertices to a line
-    for vertex, i in block.vertices
+    for vertex, i in vertices
       # Create fixture
       fixDef = new b2FixtureDef()
 
@@ -151,20 +157,46 @@ class Physics
 
       # Create line (from polygon because box2Dweb cannot do otherwise)
       vertex1 = vertex
-      vertex2 = if i == block.vertices.length-1 then block.vertices[0] else block.vertices[i+1]
+      vertex2 = if i == vertices.length-1 then vertices[0] else vertices[i+1]
       fixDef.shape.SetAsArray([new b2Vec2(vertex1.x, vertex1.y), new b2Vec2(vertex2.x, vertex2.y)], 2)
 
       # Assign fixture (line) to body
       body.CreateFixture(fixDef)
 
-  @create_shape: (fix_def, shape, mirror = false) ->
+  # Remove consecutive (cyclic) vertices that are too close (or the same).
+  # It will avoid zero-length Box2D edges that would crash SetAsArray().
+  @dedupe_vertices: (vertices, distance = 1e-9) ->
+    too_close = (a, b, distance) ->
+      dx = a.x - b.x
+      dy = a.y - b.y
+      (dx * dx + dy * dy) < distance * distance
+
+    deduped = []
+
+    for vertex in vertices
+      previous = deduped[deduped.length - 1]
+      continue if previous? && too_close(previous, vertex, distance)
+      deduped.push(vertex)
+
+    # Repeatedly trim the wrap-around edge (last vertex back to the first),
+    # since popping one duplicate can expose another.
+    while deduped.length > 1 && too_close(deduped[0], deduped[deduped.length - 1], distance)
+      deduped.pop()
+
+    if deduped.length < 3
+      throw new Error("dedupe_vertices: polygon degenerated to #{deduped.length} vertex(es) after removing duplicates")
+
+    deduped
+
+  @create_shape: (fix_def, vertices, mirror = false) ->
+    vertices   = Physics.dedupe_vertices(vertices)
     b2vertices = []
 
     if mirror == false
-      for vertex in shape
+      for vertex in vertices
         b2vertices.push(new b2Vec2(vertex.x, vertex.y))
     else
-      for vertex in shape
+      for vertex in vertices
         b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y))
 
     fix_def.shape.SetAsArray(b2vertices)
