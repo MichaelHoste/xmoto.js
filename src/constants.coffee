@@ -43,10 +43,12 @@ class Constants
     position:
       x: 0.0
       y: 1.0
-    shape: [ new b2Vec2( 0.4,  -0.3)
-             new b2Vec2( 0.50,  0.40)
-             new b2Vec2(-0.75,  0.16)
-             new b2Vec2(-0.35, -0.3) ]
+    vertices: [
+      new b2Vec2( 0.4,  -0.3)
+      new b2Vec2( 0.50,  0.40)
+      new b2Vec2(-0.75,  0.16)
+      new b2Vec2(-0.35, -0.3)
+    ]
     collisions: true
     texture:       'playerbikerbody.png'
     ghost_texture: 'ghostbikerbody.png'
@@ -85,10 +87,12 @@ class Constants
     position:
       x: 0.0
       y: 1.0
-    shape: [ new b2Vec2(-0.10, -0.30)
-             new b2Vec2(-0.25, -0.30)
-             new b2Vec2(-0.80, -0.58)
-             new b2Vec2(-0.65, -0.58) ]
+    vertices: [
+      new b2Vec2(-0.10, -0.30)
+      new b2Vec2(-0.25, -0.30)
+      new b2Vec2(-0.80, -0.58)
+      new b2Vec2(-0.65, -0.58)
+    ]
     collisions: true
     texture:       'rear1.png'
     ghost_texture: 'rear_ghost.png'
@@ -100,10 +104,12 @@ class Constants
     position:
       x: 0.0
       y: 1.0
-    shape: [ new b2Vec2(0.58, -0.02)
-             new b2Vec2(0.48, -0.02)
-             new b2Vec2(0.66, -0.58)
-             new b2Vec2(0.76, -0.58) ]
+    vertices: [
+      new b2Vec2(0.58, -0.02)
+      new b2Vec2(0.48, -0.02)
+      new b2Vec2(0.66, -0.58)
+      new b2Vec2(0.76, -0.58)
+    ]
     collisions: true
     texture:       'front1.png'
     ghost_texture: 'front_ghost.png'
@@ -128,10 +134,12 @@ class Constants
       x: -0.31
       y:  1.89
     angle: -Math.PI/30.0
-    shape: [ new b2Vec2( 0.10, -0.55)
-             new b2Vec2( 0.13,  0.15)
-             new b2Vec2(-0.20,  0.22)
-             new b2Vec2(-0.18, -0.55) ]
+    vertices: [
+      new b2Vec2( 0.10, -0.55)
+      new b2Vec2( 0.13,  0.15)
+      new b2Vec2(-0.20,  0.22)
+      new b2Vec2(-0.18, -0.55)
+    ]
     collisions: true
     texture:       'playertorso.png'
     ghost_texture: 'ghosttorso.png'
@@ -147,12 +155,14 @@ class Constants
       x: 0.07
       y: 0.90
     angle: -Math.PI/6.0
-    shape: [ new b2Vec2( 0.2,  -0.33)
-             new b2Vec2( 0.2,  -0.27)
-             new b2Vec2( 0.00, -0.2)
-             new b2Vec2( 0.02,  0.33)
-             new b2Vec2(-0.17,  0.33)
-             new b2Vec2(-0.14, -0.33) ]
+    vertices: [
+      new b2Vec2( 0.2,  -0.33)
+      new b2Vec2( 0.2,  -0.27)
+      new b2Vec2( 0.00, -0.2)
+      new b2Vec2( 0.02,  0.33)
+      new b2Vec2(-0.17,  0.33)
+      new b2Vec2(-0.14, -0.33)
+    ]
     collisions: true
     texture:       'playerlowerleg.png'
     ghost_texture: 'ghostlowerleg.png'
@@ -168,10 +178,12 @@ class Constants
       x: -0.15
       y:  1.27
     angle: -Math.PI/11.0
-    shape: [ new b2Vec2( 0.4, -0.14)
-             new b2Vec2( 0.4,  0.07)
-             new b2Vec2(-0.4,  0.14)
-             new b2Vec2(-0.4, -0.08) ]
+    vertices: [
+      new b2Vec2( 0.4, -0.14)
+      new b2Vec2( 0.4,  0.07)
+      new b2Vec2(-0.4,  0.14)
+      new b2Vec2(-0.4, -0.08)
+    ]
     collisions: true
     texture:       'playerupperleg.png'
     ghost_texture: 'ghostupperleg.png'
@@ -187,10 +199,12 @@ class Constants
       x: 0.07
       y: 1.54
     angle: -Math.PI/10.0
-    shape: [ new b2Vec2( 0.28, -0.07)
-             new b2Vec2( 0.28,  0.04)
-             new b2Vec2(-0.30,  0.07)
-             new b2Vec2(-0.30, -0.06) ]
+    vertices: [
+      new b2Vec2( 0.28, -0.07)
+      new b2Vec2( 0.28,  0.04)
+      new b2Vec2(-0.30,  0.07)
+      new b2Vec2(-0.30, -0.06)
+    ]
     collisions: true
     texture:       'playerlowerarm.png'
     ghost_texture: 'ghostlowerarm.png'
@@ -206,10 +220,12 @@ class Constants
       x: -0.20
       y:  1.85
     angle: Math.PI/10.0
-    shape: [ new b2Vec2( 0.09, -0.29)
-             new b2Vec2( 0.09,  0.22)
-             new b2Vec2(-0.11,  0.26)
-             new b2Vec2(-0.10, -0.29) ]
+    vertices: [
+      new b2Vec2( 0.09, -0.29)
+      new b2Vec2( 0.09,  0.22)
+      new b2Vec2(-0.11,  0.26)
+      new b2Vec2(-0.10, -0.29)
+    ]
     collisions: true
     texture:       'playerupperarm.png'
     ghost_texture: 'ghostupperarm.png'

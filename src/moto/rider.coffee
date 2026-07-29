@@ -131,7 +131,7 @@ class Rider
     fixDef.isSensor    = !part_constants.collisions
     fixDef.filter.groupIndex = -1
 
-    Physics.create_shape(fixDef, part_constants.shape, @mirror == -1)
+    Physics.create_shape(fixDef, part_constants.vertices, @mirror == -1)
 
     # Create body
     bodyDef = new b2BodyDef()
