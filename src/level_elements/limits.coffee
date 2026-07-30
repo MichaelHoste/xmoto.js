@@ -39,13 +39,20 @@ class Limits
     for wall in @walls
       wall.aabb = @compute_aabb(wall)
 
-    @texture      = @level.infos.border || 'dirt'
-    @texture_name = @assets.theme.texture_params(@texture).file
+    texture        = @level.infos.border || 'dirt'
+    texture_params = @assets.theme.texture_params(texture)
+
+    if texture_params.frames_count
+      @frames_count  = texture_params.frames_count
+      @delay         = texture_params.delay
+      @texture_names = @texture_names(texture_params)
+    else
+      @texture_names = [texture_params.file]
 
     return this
 
   load_assets: ->
-    @assets.textures.push(@texture_name)
+    @assets.textures.push(texture_name) for texture_name in @texture_names
 
   init: ->
     @init_physics()
@@ -65,8 +72,12 @@ class Limits
       @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_graphics: ->
-    texture = PIXI.Texture.from(@assets.get_url(@texture_name))
-    texture.source.addressMode = 'repeat'
+    @textures = (PIXI.Texture.from(@assets.get_url(name)) for name in @texture_names)
+    texture.source.addressMode = 'repeat' for texture in @textures
+
+    if @frames_count
+      @current_frame   = 0
+      @animation_start = performance.now()
 
     for wall in @walls
       # Four corners in PIXI coords (y inverted): TL, TR, BR, BL.
@@ -79,7 +90,7 @@ class Limits
 
       positions = new Float32Array(8)
       uvs       = new Float32Array(8)
-      uv_scale  = 64.0 / texture.source.width # Same world-space UV formula as Blocks so the texture stays continuous
+      uv_scale  = 64.0 / @textures[0].source.width # Same world-space UV formula as Blocks so the texture stays continuous
 
       for corner, i in corners
         positions[i * 2]     = corner.x
@@ -95,7 +106,7 @@ class Limits
 
       wall.graphic = new PIXI.Mesh({
         geometry: geometry
-        texture:  texture
+        texture:  @textures[0]
       })
 
       wall.graphic.label = "limit (#{wall.name})"
@@ -109,12 +120,24 @@ class Limits
       @level.layers.translate_layer.addChild(@culling_debug)
 
   update: ->
+    now = performance.now()
+
     if !Constants.debug_physics
       for wall in @walls
         wall.graphic.visible = @visible(wall)
+        @update_animation(wall, now)
 
     if Constants.debug_culling
       @draw_debug_culling()
+
+  update_animation: (wall, now) ->
+    if wall.graphic.visible && @frames_count
+      elapsed = (now - @animation_start) / 1000.0
+      frame   = Math.floor(elapsed / @delay) % @frames_count
+
+      if frame != @current_frame
+        @current_frame       = frame
+        wall.graphic.texture = @textures[frame]
 
   draw_debug_culling: ->
     @culling_debug.clear()
@@ -141,3 +164,7 @@ class Limits
     aabb.upperBound.Set(wall.right, wall.top)
 
     return aabb
+
+  texture_names: (texture_params) ->
+    for frame_i in [0..texture_params.frames_count - 1]
+      "#{texture_params.file_base}#{(frame_i/100.0).toFixed(2).toString().substring(2)}.#{texture_params.file_extension}"

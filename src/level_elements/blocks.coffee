@@ -17,7 +17,7 @@ class Blocks
           y:          parseFloat($(xml_block).find('position').attr('y'))
           dynamic:    $(xml_block).find('position').attr('dynamic')    == 'true'
           background: $(xml_block).find('position').attr('background') == 'true'
-          islayer:    $(xml_block).find('position').attr('islayer') == 'true'
+          islayer:    $(xml_block).find('position').attr('islayer')    == 'true'
           layerid:    do ->
                         attr = $(xml_block).find('position').attr('layerid')
                         if attr? then parseInt(attr) else undefined # integer or undefined if no attribute

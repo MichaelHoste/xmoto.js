@@ -1377,7 +1377,9 @@
         };
         block.no_collision = block.position.background; // background                   => no collision (old syntax)
         block.no_collision || (block.no_collision = block.position.islayer && block.position.layerid !== void 0); // layer with specific layerid  => no collision
-        if (block.usetexture.id === 'default') {
+        if (!block.usetexture.id || block.usetexture.id === 'default') {
+          
+          // 'dirt' fallback if no texture or 'default'
           block.usetexture.id = 'dirt';
         }
         texture_params = this.assets.theme.texture_params(block.usetexture.id);
@@ -2500,7 +2502,7 @@
     }
 
     parse(xml) {
-      var l, len, ref, wall, xml_limits;
+      var l, len, ref, texture, texture_params, wall, xml_limits;
       xml_limits = $(xml).find('limits');
       // CAREFUL ! The limits on files are not real, some polygons could be outside
       // => It seems to be the limits where the player can go
@@ -2558,13 +2560,27 @@
         wall = ref[l];
         wall.aabb = this.compute_aabb(wall);
       }
-      this.texture = this.level.infos.border || 'dirt';
-      this.texture_name = this.assets.theme.texture_params(this.texture).file;
+      texture = this.level.infos.border || 'dirt';
+      texture_params = this.assets.theme.texture_params(texture);
+      if (texture_params.frames_count) {
+        this.frames_count = texture_params.frames_count;
+        this.delay = texture_params.delay;
+        this.texture_names = this.texture_names(texture_params);
+      } else {
+        this.texture_names = [texture_params.file];
+      }
       return this;
     }
 
     load_assets() {
-      return this.assets.textures.push(this.texture_name);
+      var l, len, ref, results, texture_name;
+      ref = this.texture_names;
+      results = [];
+      for (l = 0, len = ref.length; l < len; l++) {
+        texture_name = ref[l];
+        results.push(this.assets.textures.push(texture_name));
+      }
+      return results;
     }
 
     init() {
@@ -2604,13 +2620,30 @@
     }
 
     init_graphics() {
-      var corner, corners, geometry, i, l, len, len1, m, positions, ref, results, texture, uv_scale, uvs, wall;
-      texture = PIXI.Texture.from(this.assets.get_url(this.texture_name));
-      texture.source.addressMode = 'repeat';
-      ref = this.walls;
-      results = [];
+      var corner, corners, geometry, i, l, len, len1, len2, m, name, o, positions, ref, ref1, results, texture, uv_scale, uvs, wall;
+      this.textures = (function() {
+        var l, len, ref, results;
+        ref = this.texture_names;
+        results = [];
+        for (l = 0, len = ref.length; l < len; l++) {
+          name = ref[l];
+          results.push(PIXI.Texture.from(this.assets.get_url(name)));
+        }
+        return results;
+      }).call(this);
+      ref = this.textures;
       for (l = 0, len = ref.length; l < len; l++) {
-        wall = ref[l];
+        texture = ref[l];
+        texture.source.addressMode = 'repeat';
+      }
+      if (this.frames_count) {
+        this.current_frame = 0;
+        this.animation_start = performance.now();
+      }
+      ref1 = this.walls;
+      results = [];
+      for (m = 0, len1 = ref1.length; m < len1; m++) {
+        wall = ref1[m];
         // Four corners in PIXI coords (y inverted): TL, TR, BR, BL.
         corners = [
           {
@@ -2632,8 +2665,8 @@
         ];
         positions = new Float32Array(8);
         uvs = new Float32Array(8);
-        uv_scale = 64.0 / texture.source.width; // Same world-space UV formula as Blocks so the texture stays continuous
-        for (i = m = 0, len1 = corners.length; m < len1; i = ++m) {
+        uv_scale = 64.0 / this.textures[0].source.width; // Same world-space UV formula as Blocks so the texture stays continuous
+        for (i = o = 0, len2 = corners.length; o < len2; i = ++o) {
           corner = corners[i];
           positions[i * 2] = corner.x;
           positions[i * 2 + 1] = corner.y;
@@ -2647,7 +2680,7 @@
         });
         wall.graphic = new PIXI.Mesh({
           geometry: geometry,
-          texture: texture
+          texture: this.textures[0]
         });
         wall.graphic.label = `limit (${wall.name})`;
         results.push(this.level.layers.static_level.addChild(wall.graphic));
@@ -2664,16 +2697,30 @@
     }
 
     update() {
-      var l, len, ref, wall;
+      var l, len, now, ref, wall;
+      now = performance.now();
       if (!Constants.debug_physics) {
         ref = this.walls;
         for (l = 0, len = ref.length; l < len; l++) {
           wall = ref[l];
           wall.graphic.visible = this.visible(wall);
+          this.update_animation(wall, now);
         }
       }
       if (Constants.debug_culling) {
         return this.draw_debug_culling();
+      }
+    }
+
+    update_animation(wall, now) {
+      var elapsed, frame;
+      if (wall.graphic.visible && this.frames_count) {
+        elapsed = (now - this.animation_start) / 1000.0;
+        frame = Math.floor(elapsed / this.delay) % this.frames_count;
+        if (frame !== this.current_frame) {
+          this.current_frame = frame;
+          return wall.graphic.texture = this.textures[frame];
+        }
       }
     }
 
@@ -2705,6 +2752,15 @@
       aabb.lowerBound.Set(wall.left, wall.bottom);
       aabb.upperBound.Set(wall.right, wall.top);
       return aabb;
+    }
+
+    texture_names(texture_params) {
+      var frame_i, l, ref, results;
+      results = [];
+      for (frame_i = l = 0, ref = texture_params.frames_count - 1; (0 <= ref ? l <= ref : l >= ref); frame_i = 0 <= ref ? ++l : --l) {
+        results.push(`${texture_params.file_base}${(frame_i / 100.0).toFixed(2).toString().substring(2)}.${texture_params.file_extension}`);
+      }
+      return results;
     }
 
   };
