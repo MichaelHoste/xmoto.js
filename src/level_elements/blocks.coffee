@@ -36,7 +36,8 @@ class Blocks
       block.no_collision  =  block.position.background                                     # background                   => no collision (old syntax)
       block.no_collision ||= block.position.islayer && block.position.layerid != undefined # layer with specific layerid  => no collision
 
-      block.usetexture.id = 'dirt' if block.usetexture.id == 'default'
+      # 'dirt' fallback if no texture or 'default'
+      block.usetexture.id = 'dirt' if !block.usetexture.id || block.usetexture.id == 'default'
 
       texture_params = @assets.theme.texture_params(block.usetexture.id)
 
