@@ -31,8 +31,11 @@
       timeout = timeout || 20000;
 
       return new Promise(function(resolve) {
-        var errors   = [];
-        var warnings = [];
+        var errors = [];
+        // Some warnings (e.g. "texture not found") can be logged once per entity,
+        // so the same message may repeat dozens of times for a single level.
+        // Dedupe by message and keep a count instead of flooding the output.
+        var warningCounts = {};
 
         var onErr = function(e) { errors.push(e.message || (e.error && e.error.message) || String(e)); };
         var onRej = function(e) { errors.push('unhandledrejection: ' + ((e.reason && e.reason.message) || e.reason)); };
@@ -42,7 +45,8 @@
 
         var origErr = console.error;
         console.error = function() {
-          warnings.push(Array.prototype.join.call(arguments, ' '));
+          var msg = Array.prototype.join.call(arguments, ' ');
+          warningCounts[msg] = (warningCounts[msg] || 0) + 1;
           origErr.apply(console, arguments);
         };
 
@@ -56,7 +60,10 @@
           clearInterval(poll);
           clearTimeout(timer);
           try { window.cancelAnimationFrame(window.game_loop); } catch (e) {}
-          result.warnings = warnings;
+          result.warnings = Object.keys(warningCounts).map(function(msg) {
+            var n = warningCounts[msg];
+            return n > 1 ? msg + ' (x' + n + ')' : msg;
+          });
           resolve(result);
         }
 

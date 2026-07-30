@@ -10,11 +10,13 @@
 //   node test/check_levels.js --timeout=30000 # per-level timeout (ms)
 //
 // Requires the dev server running (node server.js → http://localhost:3001).
-// Prints a summary to stdout and writes the failing levels to test/failing_levels.txt.
+// Prints a summary to stdout and writes the failing levels to test/failing_levels.txt
+// and levels that loaded but logged warnings to test/warning_levels.txt.
 
 const { chromium } = require('playwright');
-const fs   = require('fs');
-const path = require('path');
+const fs      = require('fs');
+const path    = require('path');
+const readline = require('readline');
 
 const BASE     = process.env.XMOTO_URL || 'http://localhost:3001';
 const PAGE_URL = BASE + '/test/level_loader.html';
@@ -58,6 +60,29 @@ async function main() {
       new Promise((_, reject) => setTimeout(() => reject(new Error(`hard timeout after ${ms}ms`)), ms)),
     ]);
 
+  // Keep the "… done/total" progress on its own line at the bottom instead of
+  // interleaved with ✗/⚠ lines, so a scrolling log of errors stays readable.
+  const isTTY = process.stdout.isTTY;
+  const clearProgressLine = () => {
+    if (!isTTY) return;
+    readline.clearLine(process.stdout, 0);
+    readline.cursorTo(process.stdout, 0);
+  };
+  const renderProgress = () => {
+    const line = `  … ${done}/${files.length}`;
+    if (isTTY) {
+      clearProgressLine();
+      process.stdout.write(line);
+    } else if (done % 100 === 0) {
+      console.log(line);
+    }
+  };
+  const logLine = (text) => {
+    clearProgressLine();
+    console.log(text);
+    renderProgress();
+  };
+
   async function worker() {
     let context = await browser.newContext();
     let page    = await context.newPage();
@@ -83,8 +108,13 @@ async function main() {
 
       results.push(Object.assign({ file }, res));
       done++;
-      if (!res.ok) console.log(`  ✗ ${file}  —  ${res.error}`);
-      if (done % 100 === 0) console.log(`  … ${done}/${files.length}`);
+      if (!res.ok) {
+        logLine(`  ✗ ${file}  —  ${res.error}`);
+      } else if (res.warnings && res.warnings.length) {
+        logLine(`  ⚠ ${file}  —  ${res.warnings.join(' | ')}`);
+      } else {
+        renderProgress();
+      }
     }
 
     await context.close();
@@ -101,9 +131,15 @@ async function main() {
     path.join(__dirname, 'failing_levels.txt'),
     failures.map((r) => `${r.file}\t${r.error}`).join('\n') + (failures.length ? '\n' : '')
   );
+  fs.writeFileSync(
+    path.join(__dirname, 'warning_levels.txt'),
+    warned.map((r) => `${r.file}\t${r.warnings.join(' | ')}`).join('\n') + (warned.length ? '\n' : '')
+  );
 
+  clearProgressLine();
   console.log(`\nDone. ${results.length} checked — ${failures.length} failed, ${warned.length} loaded with warnings.`);
   console.log('Failures written to test/failing_levels.txt');
+  console.log('Warnings written to test/warning_levels.txt');
   process.exit(failures.length ? 1 : 0);
 }
 
