@@ -42,6 +42,11 @@ class Limits
     texture        = @level.infos.border || 'dirt'
     texture_params = @assets.theme.texture_params(texture)
 
+    if !texture_params
+      console.error("XMoto warning: border texture \"#{texture}\" was not found in the theme, falling back to dirt.")
+      texture        = 'dirt'
+      texture_params = @assets.theme.texture_params(texture)
+
     if texture_params.frames_count
       @frames_count  = texture_params.frames_count
       @delay         = texture_params.delay
