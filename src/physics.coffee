@@ -10,11 +10,19 @@ b2PolygonShape  = Box2D.Collision.Shapes.b2PolygonShape
 b2CircleShape   = Box2D.Collision.Shapes.b2CircleShape
 b2EdgeShape     = Box2D.Collision.Shapes.b2EdgeShape
 b2EdgeChainDef  = Box2D.Collision.Shapes.b2EdgeChainDef
+b2Contact       = Box2D.Dynamics.Contacts.b2Contact
 b2DebugDraw     = Box2D.Dynamics.b2DebugDraw
 b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
 b2Settings      = Box2D.Common.b2Settings
 
 class Physics
+
+  # Per-`world.Step()` counter of Box2D TOI evaluations, and the cap beyond
+  # which we consider the TOI solver to be thrashing (see the ComputeTOI
+  # patch below). Static (class-level) since the patch lives on the shared
+  # b2Contact.prototype.
+  @toi_calls: 0
+  @MAX_TOI_CALLS_PER_STEP: 1000
 
   constructor: (level) ->
     @level     = level
@@ -30,6 +38,22 @@ class Physics
     # It was hiding the full error stack, making it difficult to debug
     b2Settings.b2Assert = (condition) ->
       throw new Error("Box2D assertion failed") unless condition
+
+    # Box2D's continuous-collision (TOI) solver has an unbounded `for(;;)` loop
+    # (b2World::SolveTOI) that repeatedly recomputes the time of impact of the
+    # closest contact until it's resolved. With levels made of many tiny/collinear
+    # ground segments (one fixture per vertex pair, see `create_lines`), the wheel
+    # can keep re-triggering near-zero-progress TOI events forever, freezing the
+    # tab (found on e.g. l14104.lvl, l4132.lvl). There's no iteration cap in this
+    # build of Box2D, so we add our own: count TOI evaluations per `world.Step()`
+    # (reset in `update`) and bail out of the step if it's clearly thrashing.
+    if !b2Contact.prototype._original_ComputeTOI
+      b2Contact.prototype._original_ComputeTOI = b2Contact.prototype.ComputeTOI
+      b2Contact.prototype.ComputeTOI = (sweepA, sweepB) ->
+        Physics.toi_calls += 1
+        if Physics.toi_calls > Physics.MAX_TOI_CALLS_PER_STEP
+          throw new Error("Box2D TOI solver exceeded its per-step iteration budget (likely degenerate level geometry)")
+        @_original_ComputeTOI(sweepA, sweepB)
 
     # Debug initialization
     debugDraw = new b2DebugDraw()
@@ -77,8 +101,22 @@ class Physics
       @level.ghosts.player = new Ghost(@level, replay.clone())
       @level.ghosts.player.init()
 
+  # Max physics steps to catch up on in a single update() call.
+  # Without this cap, a slow world.Step() (huge level, slow device, tab
+  # backgrounded...) can make the catch-up loop fall further behind on every
+  # iteration than it recovers, freezing the browser tab forever ("spiral of
+  # death"). We cap it instead, but *without* dropping the remaining backlog:
+  # any leftover lag just carries over to the next update() call (next
+  # `requestAnimationFrame`), so a long stall (e.g. an unfocused tab) is fully
+  # caught up over a handful of frames instead of a) freezing the tab trying
+  # to catch up in one go, or b) silently losing steps (which would desync
+  # replays/ghosts from real elapsed time).
+  MAX_STEPS_PER_UPDATE: 20
+
   update: ->
-    while (new Date()).getTime() - @last_step > @step
+    loops = 0
+    while (new Date()).getTime() - @last_step > @step and loops < @MAX_STEPS_PER_UPDATE
+      loops += 1
       @steps = @steps + 1
       @last_step += @step
 
@@ -86,7 +124,13 @@ class Physics
       @level.ghosts.move()
       @level.replay.add_step()
       @level.camera.move()
-      @world.Step(1.0/Constants.fps, 10, 10)
+
+      Physics.toi_calls = 0
+      try
+        @world.Step(1.0/Constants.fps, 10, 10)
+      catch e
+        console.error("XMoto warning: #{e.message}")
+
       @world.ClearForces()
       @level.input.space = false # Space can't stay pressed (used for `.move` and `.add_step`)
 
