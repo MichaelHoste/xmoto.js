@@ -1383,6 +1383,11 @@
           block.usetexture.id = 'dirt';
         }
         texture_params = this.assets.theme.texture_params(block.usetexture.id);
+        if (!texture_params) {
+          console.error(`XMoto warning: block texture \"${block.usetexture.id}\" was not found in the theme, falling back to dirt.`);
+          block.usetexture.id = 'dirt';
+          texture_params = this.assets.theme.texture_params(block.usetexture.id);
+        }
         if (texture_params.frames_count) {
           block.frames_count = texture_params.frames_count;
           block.delay = texture_params.delay;
@@ -2562,6 +2567,11 @@
       }
       texture = this.level.infos.border || 'dirt';
       texture_params = this.assets.theme.texture_params(texture);
+      if (!texture_params) {
+        console.error(`XMoto warning: border texture \"${texture}\" was not found in the theme, falling back to dirt.`);
+        texture = 'dirt';
+        texture_params = this.assets.theme.texture_params(texture);
+      }
       if (texture_params.frames_count) {
         this.frames_count = texture_params.frames_count;
         this.delay = texture_params.delay;
@@ -2851,6 +2861,11 @@
         // Get texture filenames from theme (can be animated!)
         // (1) For sky
         sky_params = this.assets.theme.texture_params(this.name);
+        if (!sky_params) {
+          console.error(`XMoto warning: sky texture \"${this.name}\" was not found in the theme, falling back to sky1.`);
+          this.name = 'sky1';
+          sky_params = this.assets.theme.texture_params(this.name);
+        }
         if (sky_params.frames_count) {
           this.sky_frames_count = sky_params.frames_count;
           this.sky_delay = sky_params.delay;
@@ -2860,6 +2875,11 @@
         }
         // (2) For drifted sky
         drifted_sky_params = this.assets.theme.texture_params(this.blend_name);
+        if (!drifted_sky_params) {
+          console.error(`XMoto warning: sky blend texture \"${this.blend_name}\" was not found in the theme, falling back to sky1.`);
+          this.blend_name = 'sky1';
+          drifted_sky_params = this.assets.theme.texture_params(this.blend_name);
+        }
         if (drifted_sky_params.frames_count) {
           this.drifted_sky_frames_count = drifted_sky_params.frames_count;
           this.drifted_sky_delay = drifted_sky_params.delay;
