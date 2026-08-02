@@ -132,6 +132,7 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 * Make the game playable on mobile (4 buttons or device rotation or volume buttons?)
 * Adjust a bit the camera (player more on the borders of the camera, less zoom)
 * Sounds with PixiJS Sound and play on the left/right depending on position
+* Manage 120fps on compatible screens? Make physics 120 steps/s and adapt replays?
 * Adjust the height of the driver (less bumpy!? Height of sprite? Compare values?)
 * Parse maps from https://github.com/bjorn/tiled ?
 * Create alternative box2D physics using DIV elements on screen to make the moto moves on websites.

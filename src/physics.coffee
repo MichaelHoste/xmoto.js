@@ -175,17 +175,20 @@ class Physics
   # stage-js-based bundle not worth pulling in for this hidden debug canvas).
   # Draws directly onto @debug_ctx, which the caller (Camera#update) has
   # already translated/scaled to camera space in world (Y-up) coordinates.
+  BACKGROUND_COLOR: '#222229'
+  FILL_ALPHA: 0.35
   BODY_COLORS:
-    inactive:        'rgba(127,127,76,1)'
-    static:          'rgba(127,229,127,1)'
-    kinematic:       'rgba(127,127,229,1)'
-    sleeping:        'rgba(153,153,153,1)'
-    awake:           'rgba(229,178,178,1)'
-  JOINT_COLOR: 'rgba(127,204,204,1)'
+    inactive:        '127,127,76'
+    static:          '127,229,127'
+    kinematic:       '127,127,229'
+    sleeping:        '153,153,153'
+    awake:           '229,178,178'
+  JOINT_COLOR: '127,204,204'
 
   draw_debug: ->
     ctx = @debug_ctx
-    ctx.clearRect(-1e6, -1e6, 2e6, 2e6)
+    ctx.fillStyle = @BACKGROUND_COLOR
+    ctx.fillRect(-1e6, -1e6, 2e6, 2e6)
 
     body = @world.getBodyList()
     while body
@@ -215,9 +218,11 @@ class Physics
       when 'circle'
         center = body.getWorldPoint(shape.m_p)
         ctx.beginPath()
-        ctx.strokeStyle = color
+        ctx.fillStyle   = "rgba(#{color},#{@FILL_ALPHA})"
+        ctx.strokeStyle = "rgba(#{color},1)"
         ctx.arc(center.x, center.y, shape.m_radius, 0, 2*Math.PI)
         ctx.closePath()
+        ctx.fill()
         ctx.stroke()
       when 'polygon'
         @draw_debug_polyline(shape.m_vertices.map((v) -> body.getWorldPoint(v)), true, color, ctx)
@@ -228,17 +233,19 @@ class Physics
     return if !points.length
 
     ctx.beginPath()
-    ctx.strokeStyle = color
+    ctx.fillStyle   = "rgba(#{color},#{@FILL_ALPHA})"
+    ctx.strokeStyle = "rgba(#{color},1)"
     ctx.moveTo(points[0].x, points[0].y)
     ctx.lineTo(point.x, point.y) for point in points[1..]
     ctx.closePath() if close
+    ctx.fill() if close
     ctx.stroke()
 
   draw_debug_joint: (joint, ctx) ->
     anchor_a = joint.getAnchorA()
     anchor_b = joint.getAnchorB()
 
-    ctx.strokeStyle = @JOINT_COLOR
+    ctx.strokeStyle = "rgba(#{@JOINT_COLOR},1)"
 
     ctx.beginPath()
     ctx.moveTo(joint.getBodyA().getPosition().x, joint.getBodyA().getPosition().y)

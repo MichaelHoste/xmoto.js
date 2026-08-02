@@ -1153,9 +1153,9 @@
         background: 0xFFFFFF,
         clearBeforeRender: false, // No need to clear, we paint the entire canvas
         //textureGCActive:       false, # We manage texture GC manually (`renderer.gc.enabled` can be toggled)
-        powerPreference: 'high-performance' // Hint for GPU power preference (WebGL & WebGPU).
+        powerPreference: 'high-performance', // Hint for GPU power preference (WebGL & WebGPU).
+        antialias: true // Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
       }));
-      //antialias:             true  # Default to "false" for performance, but it doesn't seem to impact a lot, and way better rendering! (disable if needed)
       //preserveDrawingBuffer: true  # Need to be true when capturing with "toDataUrl" (may have low performance impact)
       //transparent: true            # May be useful later (moto on website)
       window.cancelAnimationFrame(window.game_loop);
@@ -1467,7 +1467,8 @@
       draw_debug() {
         var body, ctx, joint, results;
         ctx = this.debug_ctx;
-        ctx.clearRect(-1e6, -1e6, 2e6, 2e6);
+        ctx.fillStyle = this.BACKGROUND_COLOR;
+        ctx.fillRect(-1e6, -1e6, 2e6, 2e6);
         body = this.world.getBodyList();
         while (body) {
           this.draw_debug_body(body, ctx);
@@ -1500,9 +1501,11 @@
           case 'circle':
             center = body.getWorldPoint(shape.m_p);
             ctx.beginPath();
-            ctx.strokeStyle = color;
+            ctx.fillStyle = `rgba(${color},${this.FILL_ALPHA})`;
+            ctx.strokeStyle = `rgba(${color},1)`;
             ctx.arc(center.x, center.y, shape.m_radius, 0, 2 * Math.PI);
             ctx.closePath();
+            ctx.fill();
             return ctx.stroke();
           case 'polygon':
             return this.draw_debug_polyline(shape.m_vertices.map(function(v) {
@@ -1521,7 +1524,8 @@
           return;
         }
         ctx.beginPath();
-        ctx.strokeStyle = color;
+        ctx.fillStyle = `rgba(${color},${this.FILL_ALPHA})`;
+        ctx.strokeStyle = `rgba(${color},1)`;
         ctx.moveTo(points[0].x, points[0].y);
         ref = points.slice(1);
         for (l = 0, len = ref.length; l < len; l++) {
@@ -1531,6 +1535,9 @@
         if (close) {
           ctx.closePath();
         }
+        if (close) {
+          ctx.fill();
+        }
         return ctx.stroke();
       }
 
@@ -1538,7 +1545,7 @@
         var anchor_a, anchor_b;
         anchor_a = joint.getAnchorA();
         anchor_b = joint.getAnchorB();
-        ctx.strokeStyle = this.JOINT_COLOR;
+        ctx.strokeStyle = `rgba(${this.JOINT_COLOR},1)`;
         ctx.beginPath();
         ctx.moveTo(joint.getBodyA().getPosition().x, joint.getBodyA().getPosition().y);
         ctx.lineTo(anchor_a.x, anchor_a.y);
@@ -1572,15 +1579,19 @@
     // stage-js-based bundle not worth pulling in for this hidden debug canvas).
     // Draws directly onto @debug_ctx, which the caller (Camera#update) has
     // already translated/scaled to camera space in world (Y-up) coordinates.
+    Physics.prototype.BACKGROUND_COLOR = '#222229';
+
+    Physics.prototype.FILL_ALPHA = 0.35;
+
     Physics.prototype.BODY_COLORS = {
-      inactive: 'rgba(127,127,76,1)',
-      static: 'rgba(127,229,127,1)',
-      kinematic: 'rgba(127,127,229,1)',
-      sleeping: 'rgba(153,153,153,1)',
-      awake: 'rgba(229,178,178,1)'
+      inactive: '127,127,76',
+      static: '127,229,127',
+      kinematic: '127,127,229',
+      sleeping: '153,153,153',
+      awake: '229,178,178'
     };
 
-    Physics.prototype.JOINT_COLOR = 'rgba(127,204,204,1)';
+    Physics.prototype.JOINT_COLOR = '127,204,204';
 
     return Physics;
 
