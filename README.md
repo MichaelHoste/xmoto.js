@@ -4,8 +4,7 @@ XMoto.js
 [DEMO](http://js.xmoto.io)
 
 This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using
-[CoffeeScript](http://coffeescript.org), [PixiJS](http://www.pixijs.com)
-and [Planck.js](https://piqnt.com/planck.js/).
+[CoffeeScript](http://coffeescript.org), [PixiJS 8.18.1](http://www.pixijs.com) and [Planck.js 1.5](https://piqnt.com/planck.js/).
 
 [![Image](http://js.xmoto.io/image.jpg)](http://js.xmoto.io)
 
