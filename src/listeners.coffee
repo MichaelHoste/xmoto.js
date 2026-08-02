@@ -93,8 +93,6 @@ class Listeners
 
       #createjs.Sound.play('Headcrash')
 
-      @world.destroyJoint(moto.rider.ankle_joint)
-      @world.destroyJoint(moto.rider.wrist_joint)
       moto.rider.shoulder_joint.enableLimit(false)
 
       knee_joint = moto.rider.knee_joint
@@ -105,4 +103,13 @@ class Listeners
 
       hip_joint = moto.rider.hip_joint
       hip_joint.setLimits(hip_joint.getLowerLimit() * 3, hip_joint.getUpperLimit())
+
+      # kill_moto is called from the 'begin-contact' listener while the world
+      # is mid-step (locked), where world.destroyJoint() silently no-ops (see
+      # planck's World#isLocked guard) — queueUpdate() defers it to run right
+      # after the step unlocks. It also runs immediately when kill_moto is
+      # called from elsewhere (e.g. Rider#eject, triggered by a keypress).
+      @world.queueUpdate =>
+        @world.destroyJoint(moto.rider.ankle_joint)
+        @world.destroyJoint(moto.rider.wrist_joint)
 

@@ -1120,15 +1120,22 @@
         //@level.moto.right_axle.GetFixtureList().SetSensor(false)
 
         //createjs.Sound.play('Headcrash')
-        this.world.destroyJoint(moto.rider.ankle_joint);
-        this.world.destroyJoint(moto.rider.wrist_joint);
         moto.rider.shoulder_joint.enableLimit(false);
         knee_joint = moto.rider.knee_joint;
         knee_joint.setLimits(knee_joint.getLowerLimit() * 3, knee_joint.getUpperLimit());
         elbow_joint = moto.rider.elbow_joint;
         elbow_joint.setLimits(elbow_joint.getLowerLimit(), elbow_joint.getUpperLimit() * 3);
         hip_joint = moto.rider.hip_joint;
-        return hip_joint.setLimits(hip_joint.getLowerLimit() * 3, hip_joint.getUpperLimit());
+        hip_joint.setLimits(hip_joint.getLowerLimit() * 3, hip_joint.getUpperLimit());
+        // kill_moto is called from the 'begin-contact' listener while the world
+        // is mid-step (locked), where world.destroyJoint() silently no-ops (see
+        // planck's World#isLocked guard) — queueUpdate() defers it to run right
+        // after the step unlocks. It also runs immediately when kill_moto is
+        // called from elsewhere (e.g. Rider#eject, triggered by a keypress).
+        return this.world.queueUpdate(() => {
+          this.world.destroyJoint(moto.rider.ankle_joint);
+          return this.world.destroyJoint(moto.rider.wrist_joint);
+        });
       }
     }
 
