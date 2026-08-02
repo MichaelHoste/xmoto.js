@@ -1,3 +1,5 @@
+Circle = planck.Circle
+
 class Particles
 
   constructor: (level, replay) ->
@@ -7,33 +9,28 @@ class Particles
     @list    = []
 
   create: ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
+    shape = new Circle(0.04)
 
-    fixDef.shape       = new b2CircleShape(0.04)
-    fixDef.density     = 1.0
-    fixDef.restitution = 0.5
-    fixDef.friction    = 1.0
-    fixDef.isSensor    = false
-    fixDef.filter.groupIndex = -1
+    particle = @world.createBody({
+      type:     'dynamic'
+      position: {
+        x: @level.moto.left_wheel.getPosition().x
+        y: @level.moto.left_wheel.getPosition().y - Constants.left_wheel.radius
+      }
+      userData: {
+        name: 'particle'
+      }
+    })
 
-    # Create body
-    bodyDef = new b2BodyDef()
+    particle.createFixture(shape, {
+      density:          1.0
+      restitution:      0.5
+      friction:         1.0
+      isSensor:         false
+      filterGroupIndex: -1
+    })
 
-    # Assign body position
-    bodyDef.position.x = @level.moto.left_wheel.GetPosition().x
-    bodyDef.position.y = @level.moto.left_wheel.GetPosition().y - Constants.left_wheel.radius
-
-    bodyDef.userData =
-      name: 'particle'
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    particle = @world.CreateBody(bodyDef)
-    particle.CreateFixture(fixDef)
-
-    particle.ApplyForce({x: -1, y: -1}, particle.GetWorldCenter())
+    particle.applyForce({x: -1, y: -1}, particle.getWorldCenter())
 
     @list.push(particle)
 
@@ -41,7 +38,7 @@ class Particles
     ctx = @level.ctx
 
     for particle in @list
-      position = particle.GetPosition()
+      position = particle.getPosition()
 
       ctx.save()
       ctx.translate(position.x, position.y)

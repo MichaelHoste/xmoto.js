@@ -1,12 +1,8 @@
-b2Vec2              = Box2D.Common.Math.b2Vec2
-b2BodyDef           = Box2D.Dynamics.b2BodyDef
-b2Body              = Box2D.Dynamics.b2Body
-b2FixtureDef        = Box2D.Dynamics.b2FixtureDef
-b2Fixture           = Box2D.Dynamics.b2Fixture
-b2PolygonShape      = Box2D.Collision.Shapes.b2PolygonShape
-b2CircleShape       = Box2D.Collision.Shapes.b2CircleShape
-b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef
-b2RevoluteJointDef  = Box2D.Dynamics.Joints.b2RevoluteJointDef
+Circle         = planck.Circle
+Polygon        = planck.Polygon
+PrismaticJoint = planck.PrismaticJoint
+RevoluteJoint  = planck.RevoluteJoint
+AABB           = planck.AABB
 
 class Moto
 
@@ -23,11 +19,11 @@ class Moto
     @rider.destroy()
 
     # physics
-    @world.DestroyBody(@body)
-    @world.DestroyBody(@left_wheel)
-    @world.DestroyBody(@right_wheel)
-    @world.DestroyBody(@left_axle)
-    @world.DestroyBody(@right_axle)
+    @world.destroyBody(@body)
+    @world.destroyBody(@left_wheel)
+    @world.destroyBody(@right_wheel)
+    @world.destroyBody(@left_axle)
+    @world.destroyBody(@right_axle)
 
     # graphics
     @level.layers.static_level.removeChild(@body_sprite)
@@ -107,13 +103,13 @@ class Moto
     if not @dead
       # Accelerate
       if input.up
-        @left_wheel.ApplyTorque(- @mirror * moto_acceleration)
+        @left_wheel.applyTorque(- @mirror * moto_acceleration)
 
       # Brakes
       if input.down
         # block wheels
-        @right_wheel.SetAngularVelocity(0)
-        @left_wheel.SetAngularVelocity(0)
+        @right_wheel.setAngularVelocity(0)
+        @left_wheel.setAngularVelocity(0)
 
       # Back wheeling
       if (input.left && @mirror == 1) || (input.right && @mirror == -1)
@@ -129,178 +125,158 @@ class Moto
 
     if !input.up && !input.down
       # Engine brake
-      v = @left_wheel.GetAngularVelocity()
-      @left_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/10))
+      v = @left_wheel.getAngularVelocity()
+      @left_wheel.applyTorque((if Math.abs(v) >= 0.2 then -v/10 else 0))
 
       # Friction on right wheel
-      v = @right_wheel.GetAngularVelocity()
-      @right_wheel.ApplyTorque((if Math.abs(v) >= 0.2 then -v/100))
+      v = @right_wheel.getAngularVelocity()
+      @right_wheel.applyTorque((if Math.abs(v) >= 0.2 then -v/100 else 0))
 
     # Left wheel suspension
     back_force = Constants.left_suspension.back_force
     rigidity   = Constants.left_suspension.rigidity
-    @left_prismatic_joint.SetMaxMotorForce(rigidity+Math.abs(rigidity*100*Math.pow(@left_prismatic_joint.GetJointTranslation(), 2)))
-    @left_prismatic_joint.SetMotorSpeed(-back_force*@left_prismatic_joint.GetJointTranslation())
+    @left_prismatic_joint.setMaxMotorForce(rigidity+Math.abs(rigidity*100*Math.pow(@left_prismatic_joint.getJointTranslation(), 2)))
+    @left_prismatic_joint.setMotorSpeed(-back_force*@left_prismatic_joint.getJointTranslation())
 
     # Right wheel suspension
     back_force = Constants.right_suspension.back_force
     rigidity   = Constants.right_suspension.rigidity
-    @right_prismatic_joint.SetMaxMotorForce(rigidity+Math.abs(rigidity*100*Math.pow(@right_prismatic_joint.GetJointTranslation(), 2)))
-    @right_prismatic_joint.SetMotorSpeed(-back_force*@right_prismatic_joint.GetJointTranslation())
+    @right_prismatic_joint.setMaxMotorForce(rigidity+Math.abs(rigidity*100*Math.pow(@right_prismatic_joint.getJointTranslation(), 2)))
+    @right_prismatic_joint.setMotorSpeed(-back_force*@right_prismatic_joint.getJointTranslation())
 
     # Drag (air resistance)
     air_density        = Constants.air_density
     object_penetration = 0.025
-    squared_speed      = Math.pow(@body.GetLinearVelocity().x, 2)
+    squared_speed      = Math.pow(@body.getLinearVelocity().x, 2)
     drag_force         = air_density * squared_speed * object_penetration
-    @body.SetLinearDamping(drag_force)
+    @body.setLinearDamping(drag_force)
 
     # Limitation of wheel rotation speed (and by extension, of moto)
-    if @right_wheel.GetAngularVelocity() > Constants.max_moto_speed
-      @right_wheel.SetAngularVelocity(Constants.max_moto_speed)
-    else if @right_wheel.GetAngularVelocity() < -Constants.max_moto_speed
-      @right_wheel.SetAngularVelocity(-Constants.max_moto_speed)
+    if @right_wheel.getAngularVelocity() > Constants.max_moto_speed
+      @right_wheel.setAngularVelocity(Constants.max_moto_speed)
+    else if @right_wheel.getAngularVelocity() < -Constants.max_moto_speed
+      @right_wheel.setAngularVelocity(-Constants.max_moto_speed)
 
-    if @left_wheel.GetAngularVelocity() > Constants.max_moto_speed
-      @left_wheel.SetAngularVelocity(Constants.max_moto_speed)
-    else if @left_wheel.GetAngularVelocity() < -Constants.max_moto_speed
-      @left_wheel.SetAngularVelocity(-Constants.max_moto_speed)
+    if @left_wheel.getAngularVelocity() > Constants.max_moto_speed
+      @left_wheel.setAngularVelocity(Constants.max_moto_speed)
+    else if @left_wheel.getAngularVelocity() < -Constants.max_moto_speed
+      @left_wheel.setAngularVelocity(-Constants.max_moto_speed)
 
     # Detection of drifting
-    #rotation_speed = -(moto.left_wheel.GetAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
-    #linear_speed   = moto.left_wheel.GetLinearVelocity().x/10
+    #rotation_speed = -(moto.left_wheel.getAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
+    #linear_speed   = moto.left_wheel.getLinearVelocity().x/10
     #if linear_speed > 0 and rotation_speed > 1.5*linear_speed
     #  @level.particles.create()
 
   wheeling: (force) ->
-    moto_angle = @mirror * @body.GetAngle()
+    moto_angle = @mirror * @body.getAngle()
 
-    @body.ApplyTorque(@mirror * force * 0.50)
+    @body.applyTorque(@mirror * force * 0.50)
 
     force_torso   = Math2D.rotate_point({x: @mirror * (-force), y: 0}, moto_angle, {x: 0, y: 0})
     force_torso.y = @mirror * force_torso.y
-    @rider.torso.ApplyForce(force_torso, @rider.torso.GetWorldCenter())
+    @rider.torso.applyForce(force_torso, @rider.torso.getWorldCenter())
 
     force_leg   = Math2D.rotate_point({x: @mirror * force, y: 0}, moto_angle, {x: 0, y: 0})
     force_leg.y = @mirror * force_leg.y
-    @rider.lower_leg.ApplyForce(force_leg, @rider.lower_leg.GetWorldCenter())
+    @rider.lower_leg.applyForce(force_leg, @rider.lower_leg.getWorldCenter())
 
   flip: ->
     if not @dead
       MotoFlipService.execute(this)
 
   create_body: ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
+    shape = new Polygon(Physics.create_shape(Constants.body.vertices, @mirror == -1))
 
-    fixDef.shape       =  new b2PolygonShape()
-    fixDef.density     =  Constants.body.density
-    fixDef.restitution =  Constants.body.restitution
-    fixDef.friction    =  Constants.body.friction
-    fixDef.isSensor    = !Constants.body.collisions
-    fixDef.filter.groupIndex = -1
+    body = @world.createBody({
+      type:     'dynamic'
+      position: {
+        x: @player_start.x + @mirror * Constants.body.position.x
+        y: @player_start.y +           Constants.body.position.y
+      }
+      userData: {
+        name: 'moto'
+        type: if @ghost then 'ghost' else 'player'
+        moto: this
+      }
+    })
 
-    Physics.create_shape(fixDef, Constants.body.vertices, @mirror == -1)
-
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = @player_start.x + @mirror * Constants.body.position.x
-    bodyDef.position.y = @player_start.y +           Constants.body.position.y
-
-    bodyDef.userData =
-      name: 'moto'
-      type: if @ghost then 'ghost' else 'player'
-      moto: this
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    body = @world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
+    body.createFixture(shape, {
+      density:          Constants.body.density
+      restitution:      Constants.body.restitution
+      friction:         Constants.body.friction
+      isSensor:         !Constants.body.collisions
+      filterGroupIndex: -1
+    })
 
     body
 
   create_wheel: (part_constants) ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
+    shape = new Circle(part_constants.radius)
 
-    fixDef.shape       =  new b2CircleShape(part_constants.radius)
-    fixDef.density     =  part_constants.density
-    fixDef.restitution =  part_constants.restitution
-    fixDef.friction    =  part_constants.friction
-    fixDef.isSensor    = !part_constants.collisions
-    fixDef.filter.groupIndex = -1
+    wheel = @world.createBody({
+      type:     'dynamic'
+      position: {
+        x: @player_start.x + @mirror * part_constants.position.x
+        y: @player_start.y +           part_constants.position.y
+      }
+      userData: {
+        name: 'moto'
+        type: if @ghost then 'ghost' else 'player'
+        moto: this
+      }
+    })
 
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = @player_start.x + @mirror * part_constants.position.x
-    bodyDef.position.y = @player_start.y +           part_constants.position.y
-
-    bodyDef.userData =
-      name: 'moto'
-      type: if @ghost then 'ghost' else 'player'
-      moto: this
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    wheel = @world.CreateBody(bodyDef)
-    wheel.CreateFixture(fixDef)
+    wheel.createFixture(shape, {
+      density:          part_constants.density
+      restitution:      part_constants.restitution
+      friction:         part_constants.friction
+      isSensor:         !part_constants.collisions
+      filterGroupIndex: -1
+    })
 
     wheel
 
   create_axle: (part_constants) ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
+    shape = new Polygon(Physics.create_shape(part_constants.vertices, @mirror == -1))
 
-    fixDef.shape       =  new b2PolygonShape()
-    fixDef.density     =  part_constants.density
-    fixDef.restitution =  part_constants.restitution
-    fixDef.friction    =  part_constants.friction
-    fixDef.isSensor    = !part_constants.collisions
-    fixDef.filter.groupIndex = -1
+    body = @world.createBody({
+      type:     'dynamic'
+      position: {
+        x: @player_start.x + @mirror * part_constants.position.x
+        y: @player_start.y +           part_constants.position.y
+      }
+      userData: {
+        name: 'moto'
+        type: if @ghost then 'ghost' else 'player'
+        moto: this
+      }
+    })
 
-    Physics.create_shape(fixDef, part_constants.vertices, @mirror == -1)
-
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = @player_start.x + @mirror * part_constants.position.x
-    bodyDef.position.y = @player_start.y +           part_constants.position.y
-
-    bodyDef.userData =
-      name: 'moto'
-      type: if @ghost then 'ghost' else 'player'
-      moto: this
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    body = @world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
+    body.createFixture(shape, {
+      density:          part_constants.density
+      restitution:      part_constants.restitution
+      friction:         part_constants.friction
+      isSensor:         !part_constants.collisions
+      filterGroupIndex: -1
+    })
 
     body
 
   create_revolute_joint: (axle, wheel) ->
-    jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(axle, wheel, wheel.GetWorldCenter())
-    @world.CreateJoint(jointDef)
+    @world.createJoint(new RevoluteJoint({}, axle, wheel, wheel.getWorldCenter()))
 
   create_prismatic_joint: (axle, part_constants) ->
-    jointDef = new b2PrismaticJointDef()
     angle = part_constants.angle
-    jointDef.Initialize(@body, axle, axle.GetWorldCenter(), new b2Vec2(@mirror * angle.x, angle.y))
-    jointDef.enableLimit      = true
-    jointDef.lowerTranslation = part_constants.lower_translation
-    jointDef.upperTranslation = part_constants.upper_translation
-    jointDef.enableMotor      = true
-    jointDef.collideConnected = false
-    @world.CreateJoint(jointDef)
+    axis  = {x: @mirror * angle.x, y: angle.y}
+
+    @world.createJoint(new PrismaticJoint({
+      enableLimit:      true
+      lowerTranslation: part_constants.lower_translation
+      upperTranslation: part_constants.upper_translation
+      enableMotor:      true
+      collideConnected: false
+    }, @body, axle, axle.getWorldCenter(), axis))
 
   update: ->
     @aabb = @compute_aabb()
@@ -325,8 +301,8 @@ class Moto
     wheel_sprite.visible = visible
 
     if visible
-      position = part.GetPosition()
-      angle    = part.GetAngle()
+      position = part.getPosition()
+      angle    = part.getAngle()
 
       wheel_sprite.x        = position.x
       wheel_sprite.y        = -position.y
@@ -337,8 +313,8 @@ class Moto
     @body_sprite.visible = visible
 
     if visible
-      position = part.GetPosition()
-      angle    = part.GetAngle()
+      position = part.getPosition()
+      angle    = part.getAngle()
 
       @body_sprite.x        = position.x
       @body_sprite.y        = -position.y
@@ -348,7 +324,7 @@ class Moto
   update_left_axle: (part, part_constants, visible) ->
     axle_thickness = 0.09
 
-    wheel_position = @left_wheel.GetPosition()
+    wheel_position = @left_wheel.getPosition()
     wheel_position =
       x: wheel_position.x - @mirror * axle_thickness/2.0
       y: wheel_position.y - 0.025
@@ -364,7 +340,7 @@ class Moto
   update_right_axle: (part, part_constants, visible) ->
     axle_thickness = 0.07
 
-    wheel_position = @right_wheel.GetPosition()
+    wheel_position = @right_wheel.getPosition()
     wheel_position =
       x: wheel_position.x + @mirror * axle_thickness/2.0 - @mirror * 0.03
       y: wheel_position.y - 0.045
@@ -382,8 +358,8 @@ class Moto
     axle_sprite.visible = visible
 
     if visible
-      body_position = @body.GetPosition()
-      body_angle    = @body.GetAngle()
+      body_position = @body.getPosition()
+      body_angle    = @body.getAngle()
 
       # Adjusted position depending of rotation of body
       axle_adjusted_position = Math2D.rotate_point(axle_position, body_angle, body_position)
@@ -404,20 +380,20 @@ class Moto
   # estimation of aabb of moto + rider (based on wheels and head)
   compute_aabb: ->
     # lower position of wheels or head (in case or looping)
-    lower1 = @left_wheel.GetFixtureList().GetAABB().lowerBound
-    lower2 = @right_wheel.GetFixtureList().GetAABB().lowerBound
-    lower3 = @rider.head.GetFixtureList().GetAABB().lowerBound
+    lower1 = @left_wheel.getFixtureList().getAABB(0).lowerBound
+    lower2 = @right_wheel.getFixtureList().getAABB(0).lowerBound
+    lower3 = @rider.head.getFixtureList().getAABB(0).lowerBound
 
     # upper position of wheels or head (in case or looping)
-    upper1 = @left_wheel.GetFixtureList().GetAABB().upperBound
-    upper2 = @right_wheel.GetFixtureList().GetAABB().upperBound
-    upper3 = @rider.head.GetFixtureList().GetAABB().upperBound
+    upper1 = @left_wheel.getFixtureList().getAABB(0).upperBound
+    upper2 = @right_wheel.getFixtureList().getAABB(0).upperBound
+    upper3 = @rider.head.getFixtureList().getAABB(0).upperBound
 
-    aabb = new Box2D.Collision.b2AABB()
-    aabb.lowerBound.Set(Math.min(lower1.x, lower2.x, lower3.x), Math.min(lower1.y, lower2.y, lower3.y))
-    aabb.upperBound.Set(Math.max(upper1.x, upper2.x, upper3.x), Math.max(upper1.y, upper2.y, upper3.y))
+    aabb = new AABB()
+    aabb.lowerBound.set(Math.min(lower1.x, lower2.x, lower3.x), Math.min(lower1.y, lower2.y, lower3.y))
+    aabb.upperBound.set(Math.max(upper1.x, upper2.x, upper3.x), Math.max(upper1.y, upper2.y, upper3.y))
 
     return aabb
 
   visible: ->
-    @aabb.TestOverlap(@level.camera.aabb)
+    AABB.testOverlap(@aabb, @level.camera.aabb)

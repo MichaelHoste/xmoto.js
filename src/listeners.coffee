@@ -13,20 +13,18 @@ class Listeners
 
   init: ->
     # Add listeners for end of level
-    listener = new Box2D.Dynamics.b2ContactListener
-
-    listener.BeginContact = (contact) =>
+    @world.on 'begin-contact', (contact) =>
       moto = @active_moto()
 
-      a = contact.GetFixtureA().GetBody().GetUserData()
-      b = contact.GetFixtureB().GetBody().GetUserData()
+      a = contact.getFixtureA().getBody().getUserData()
+      b = contact.getFixtureB().getBody().getUserData()
 
       if !moto.dead
         # Strawberries
         if Listeners.does_contact_moto_rider(a, b, 'strawberry')
-          strawberry = if a.name == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
+          strawberry = if a.name == 'strawberry' then contact.getFixtureA() else contact.getFixtureB()
 
-          entity = strawberry.GetBody().GetUserData().entity
+          entity = strawberry.getBody().getUserData().entity
           if entity.display
             entity.display = false
             #createjs.Sound.play('PickUpStrawberry')
@@ -62,8 +60,6 @@ class Listeners
             moto = if a.name == 'moto' then a.moto else b.moto
           @kill_moto(moto)
 
-    @world.SetContactListener(listener)
-
   @does_contact_moto_rider: (a, b, obj) ->
     collision = Listeners.does_contact(a, b, obj, 'rider') || Listeners.does_contact(a, b, obj, 'moto')
     player    = a.type == 'player' || b.type == 'player'
@@ -97,11 +93,16 @@ class Listeners
 
       #createjs.Sound.play('Headcrash')
 
-      @world.DestroyJoint(moto.rider.ankle_joint)
-      @world.DestroyJoint(moto.rider.wrist_joint)
-      moto.rider.shoulder_joint.m_enableLimit = false
+      @world.destroyJoint(moto.rider.ankle_joint)
+      @world.destroyJoint(moto.rider.wrist_joint)
+      moto.rider.shoulder_joint.enableLimit(false)
 
-      moto.rider.knee_joint.m_lowerAngle  = moto.rider.knee_joint.m_lowerAngle  * 3
-      moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3
-      moto.rider.hip_joint.m_lowerAngle   = moto.rider.hip_joint.m_lowerAngle   * 3
+      knee_joint = moto.rider.knee_joint
+      knee_joint.setLimits(knee_joint.getLowerLimit() * 3, knee_joint.getUpperLimit())
+
+      elbow_joint = moto.rider.elbow_joint
+      elbow_joint.setLimits(elbow_joint.getLowerLimit(), elbow_joint.getUpperLimit() * 3)
+
+      hip_joint = moto.rider.hip_joint
+      hip_joint.setLimits(hip_joint.getLowerLimit() * 3, hip_joint.getUpperLimit())
 

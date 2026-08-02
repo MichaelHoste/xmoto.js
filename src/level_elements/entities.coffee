@@ -1,3 +1,6 @@
+Circle = planck.Circle
+AABB   = planck.AABB
+
 class Entities
 
   constructor: (level) ->
@@ -135,27 +138,18 @@ class Entities
           y: entity.position.y
 
   create_entity_physics: (entity, name) ->
-    # Create fixture
-    fixDef = new Box2D.Dynamics.b2FixtureDef()
-    fixDef.shape = new b2CircleShape(entity.size.r)
-    fixDef.isSensor = true
+    shape = new Circle(entity.size.r)
 
-    # Create body
-    bodyDef = new b2BodyDef()
+    body = @world.createBody({
+      type:     'static'
+      position: {x: entity.position.x, y: entity.position.y}
+      userData: {
+        name:   name
+        entity: entity
+      }
+    })
 
-    # Assign body position
-    bodyDef.position.x = entity.position.x
-    bodyDef.position.y = entity.position.y
-
-    bodyDef.userData =
-      name:   name
-      entity: entity
-
-    bodyDef.type = b2Body.b2_staticBody
-
-    # Assign fixture to body and add body to 2D world
-    body = @world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
+    body.createFixture(shape, {isSensor: true})
 
     body
 
@@ -263,14 +257,14 @@ class Entities
       xs.push(rotated.x)
       ys.push(rotated.y)
 
-    aabb = new Box2D.Collision.b2AABB()
-    aabb.lowerBound.Set(Math.min(xs...), Math.min(ys...))
-    aabb.upperBound.Set(Math.max(xs...), Math.max(ys...))
+    aabb = new AABB()
+    aabb.lowerBound.set(Math.min(xs...), Math.min(ys...))
+    aabb.upperBound.set(Math.max(xs...), Math.max(ys...))
 
     return aabb
 
   visible: (entity) ->
-    entity.display && entity.aabb.TestOverlap(@level.camera.aabb)
+    entity.display && AABB.testOverlap(entity.aabb, @level.camera.aabb)
 
   frame_name: (entity, frame_number) ->
     "#{entity.file_base}#{(frame_number/100.0).toFixed(2).toString().substring(2)}.#{entity.file_extension}"

@@ -1,12 +1,6 @@
-b2Vec2              = Box2D.Common.Math.b2Vec2
-b2BodyDef           = Box2D.Dynamics.b2BodyDef
-b2Body              = Box2D.Dynamics.b2Body
-b2FixtureDef        = Box2D.Dynamics.b2FixtureDef
-b2Fixture           = Box2D.Dynamics.b2Fixture
-b2PolygonShape      = Box2D.Collision.Shapes.b2PolygonShape
-b2CircleShape       = Box2D.Collision.Shapes.b2CircleShape
-b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef
-b2RevoluteJointDef  = Box2D.Dynamics.Joints.b2RevoluteJointDef
+Circle        = planck.Circle
+Polygon       = planck.Polygon
+RevoluteJoint = planck.RevoluteJoint
 
 class Rider
 
@@ -19,12 +13,12 @@ class Rider
     @ghost  = moto.ghost
 
   destroy: ->
-    @world.DestroyBody(@head)
-    @world.DestroyBody(@torso)
-    @world.DestroyBody(@lower_leg)
-    @world.DestroyBody(@upper_leg)
-    @world.DestroyBody(@lower_arm)
-    @world.DestroyBody(@upper_arm)
+    @world.destroyBody(@head)
+    @world.destroyBody(@torso)
+    @world.destroyBody(@lower_leg)
+    @world.destroyBody(@upper_leg)
+    @world.destroyBody(@lower_arm)
+    @world.destroyBody(@upper_arm)
 
     @level.layers.static_level.removeChild(@head_sprite)
     @level.layers.static_level.removeChild(@torso_sprite)
@@ -77,83 +71,69 @@ class Rider
       @level.layers.static_level.addChild(@["#{part}_sprite"])
 
   position: ->
-    @moto.body.GetPosition()
+    @moto.body.getPosition()
 
   eject: ->
     if !@moto.dead
       @level.listeners.kill_moto(@moto)
 
       force_vector          = { x: 150.0 * @moto.mirror, y: 0 }
-      eject_angle           = @mirror * @moto.body.GetAngle() + Math.PI/4.0
+      eject_angle           = @mirror * @moto.body.getAngle() + Math.PI/4.0
       adjusted_force_vector = Math2D.rotate_point(force_vector, eject_angle, {x: 0, y: 0})
-      @torso.ApplyForce(adjusted_force_vector, @torso.GetWorldCenter())
+      @torso.applyForce(adjusted_force_vector, @torso.getWorldCenter())
 
   create_head: ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
+    shape = new Circle(Constants.head.radius)
 
-    fixDef.shape       =  new b2CircleShape(Constants.head.radius)
-    fixDef.density     =  Constants.head.density
-    fixDef.restitution =  Constants.head.restitution
-    fixDef.friction    =  Constants.head.friction
-    fixDef.isSensor    = !Constants.head.collisions
-    fixDef.filter.groupIndex = -1
+    body = @world.createBody({
+      type:     'dynamic'
+      position: {
+        x: @player_start.x + @mirror * Constants.head.position.x
+        y: @player_start.y +           Constants.head.position.y
+      }
+      userData: {
+        name:  'rider'
+        type:  if @ghost then 'ghost' else 'player'
+        part:  'head'
+        rider: this
+      }
+    })
 
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = @player_start.x + @mirror * Constants.head.position.x
-    bodyDef.position.y = @player_start.y +           Constants.head.position.y
-
-    bodyDef.userData =
-      name:  'rider'
-      type:  if @ghost then 'ghost' else 'player'
-      part:  'head'
-      rider: this
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    ## Assign fixture to body and add body to 2D world
-    body = @world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
+    body.createFixture(shape, {
+      density:          Constants.head.density
+      restitution:      Constants.head.restitution
+      friction:         Constants.head.friction
+      isSensor:         !Constants.head.collisions
+      filterGroupIndex: -1
+    })
 
     body
 
   create_part: (part_constants, name) ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
+    shape = new Polygon(Physics.create_shape(part_constants.vertices, @mirror == -1))
 
-    fixDef.shape       =  new b2PolygonShape()
-    fixDef.density     =  part_constants.density
-    fixDef.restitution =  part_constants.restitution
-    fixDef.friction    =  part_constants.friction
-    fixDef.isSensor    = !part_constants.collisions
-    fixDef.filter.groupIndex = -1
+    body = @world.createBody({
+      type:     'dynamic'
+      position: {
+        x: @player_start.x + @mirror * part_constants.position.x
+        y: @player_start.y +           part_constants.position.y
+      }
+      angle:    @mirror * part_constants.angle
+      userData: {
+        name:  'rider'
+        type:  if @ghost then 'ghost' else 'player'
+        part:  name
+        rider: this
+      }
+    })
 
-    Physics.create_shape(fixDef, part_constants.vertices, @mirror == -1)
-
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = @player_start.x + @mirror * part_constants.position.x
-    bodyDef.position.y = @player_start.y +           part_constants.position.y
-
-    # Assign body angle
-    bodyDef.angle = @mirror * part_constants.angle
-
-    bodyDef.userData =
-      name:  'rider'
-      type:  if @ghost then 'ghost' else 'player'
-      part:  name
-      rider: this
-
-    bodyDef.type = b2Body.b2_dynamicBody
-
-    # Assign fixture to body and add body to 2D world
-    body = @world.CreateBody(bodyDef)
-    body.CreateFixture(fixDef)
+    body.createFixture(shape, {
+      density:          part_constants.density
+      restitution:      part_constants.restitution
+      friction:         part_constants.friction
+      isSensor:         !part_constants.collisions
+      filterGroupIndex: -1
+    })
 
     body
 
@@ -167,28 +147,26 @@ class Rider
     joint.enableLimit    = true
 
   create_neck_joint: ->
-    position = @head.GetWorldCenter()
+    position = @head.getWorldCenter()
     axe =
       x: position.x
       y: position.y
 
-    jointDef = new b2RevoluteJointDef()
-    jointDef.Initialize(@head, @torso, axe)
-    @world.CreateJoint(jointDef)
+    @world.createJoint(new RevoluteJoint({}, @head, @torso, axe))
 
   create_joint: (joint_constants, part1, part2, invert_joint=false) ->
-    position = part1.GetWorldCenter()
+    position = part1.getWorldCenter()
     axe =
       x: position.x + @mirror * joint_constants.axe_position.x
       y: position.y +           joint_constants.axe_position.y
 
-    jointDef = new b2RevoluteJointDef()
-    if invert_joint
-      jointDef.Initialize(part2, part1, axe)
-    else
-      jointDef.Initialize(part1, part2, axe)
+    jointDef = {}
     @set_joint_commons(jointDef)
-    @world.CreateJoint(jointDef)
+
+    if invert_joint
+      @world.createJoint(new RevoluteJoint(jointDef, part2, part1, axe))
+    else
+      @world.createJoint(new RevoluteJoint(jointDef, part1, part2, axe))
 
   update: (visible) ->
     if !Constants.debug_physics
@@ -203,8 +181,8 @@ class Rider
     sprite.visible = visible
 
     if visible
-      position = part.GetPosition()
-      angle    = part.GetAngle()
+      position = part.getPosition()
+      angle    = part.getAngle()
 
       sprite.x        =  position.x
       sprite.y        = -position.y
