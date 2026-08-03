@@ -239,9 +239,6 @@
     Constants.biker_force = 11.00; // Force of biker when he rotates the moto
 
     
-    // FRAMERATE
-    Constants.fps = 60.0;
-
     // REPLAYS
     Constants.replay_key_step = 60; // Key step every x steps during replay (to beat non-deterministic behaviour)
 
@@ -270,8 +267,8 @@
       },
       vertices: [
         {
-          x: 0.4,
-          y: -0.3
+          x: 0.40,
+          y: -0.30
         },
         {
           x: 0.50,
@@ -283,7 +280,7 @@
         },
         {
           x: -0.35,
-          y: -0.3
+          y: -0.30
         }
       ],
       collisions: true,
@@ -445,16 +442,16 @@
       angle: -Math.PI / 6.0,
       vertices: [
         {
-          x: 0.2,
+          x: 0.20,
           y: -0.33
         },
         {
-          x: 0.2,
+          x: 0.20,
           y: -0.27
         },
         {
           x: 0.00,
-          y: -0.2
+          y: -0.20
         },
         {
           x: 0.02,
@@ -589,8 +586,8 @@
     // MOTO JOINTS
     Constants.left_suspension = {
       angle: {
-        x: 0,
-        y: 1
+        x: 0.0,
+        y: 1.0
       },
       lower_translation: -0.03,
       upper_translation: 0.20,
@@ -601,7 +598,7 @@
     Constants.right_suspension = {
       angle: {
         x: -0.2,
-        y: 1
+        y: 1.0
       },
       lower_translation: -0.01,
       upper_translation: 0.20,
@@ -897,12 +894,12 @@
     }
 
     init_timer() {
-      return this.start_time = new Date().getTime(); // in ms
+      return this.start_time = performance.now(); // in ms
     }
 
     update_timer() {
       var cents, elapsed, minutes, new_time, seconds, text;
-      new_time = new Date().getTime() - this.start_time;
+      new_time = performance.now() - this.start_time;
       elapsed = Math.floor(new_time / 10);
       minutes = Math.floor(elapsed / 6000);
       seconds = Math.floor(elapsed / 100) % 60;
@@ -1038,7 +1035,8 @@
     }
 
     init() {
-      // Add listeners for end of level
+      // List of events here: https://piqnt.com/planck.js/docs/api/classes/World.html#on
+      // https://piqnt.com/planck.js/docs/contacts.html#contact-events
       return this.world.on('begin-contact', (contact) => {
         var a, b, entity, moto, strawberry;
         moto = this.active_moto();
@@ -1106,7 +1104,7 @@
     }
 
     kill_moto(moto) {
-      var elbow_joint, hip_joint, knee_joint;
+      var elbow_joint, hip_joint, knee_joint, shoulder_joint;
       if (!moto.dead) {
         moto.dead = true;
         // Cause the game to "hard" crash because reactivation of collisions when in the middle of it
@@ -1120,18 +1118,17 @@
         //@level.moto.right_axle.GetFixtureList().SetSensor(false)
 
         //createjs.Sound.play('Headcrash')
-        moto.rider.shoulder_joint.enableLimit(false);
+        shoulder_joint = moto.rider.shoulder_joint;
         knee_joint = moto.rider.knee_joint;
-        knee_joint.setLimits(knee_joint.getLowerLimit() * 3, knee_joint.getUpperLimit());
         elbow_joint = moto.rider.elbow_joint;
-        elbow_joint.setLimits(elbow_joint.getLowerLimit(), elbow_joint.getUpperLimit() * 3);
         hip_joint = moto.rider.hip_joint;
+        shoulder_joint.enableLimit(false);
+        knee_joint.setLimits(knee_joint.getLowerLimit() * 3, knee_joint.getUpperLimit());
+        elbow_joint.setLimits(elbow_joint.getLowerLimit(), elbow_joint.getUpperLimit() * 3);
         hip_joint.setLimits(hip_joint.getLowerLimit() * 3, hip_joint.getUpperLimit());
         // kill_moto is called from the 'begin-contact' listener while the world
         // is mid-step (locked), where world.destroyJoint() silently no-ops (see
-        // planck's World#isLocked guard) — queueUpdate() defers it to run right
-        // after the step unlocks. It also runs immediately when kill_moto is
-        // called from elsewhere (e.g. Rider#eject, triggered by a keypress).
+        // planck's World#isLocked guard)
         return this.world.queueUpdate(() => {
           this.world.destroyJoint(moto.rider.ankle_joint);
           return this.world.destroyJoint(moto.rider.wrist_joint);
@@ -1283,17 +1280,26 @@
           x: 0,
           y: -Constants.gravity
         });
+        // Define physics (not directly correlated to FPS!)
+        // --
+        // For better physics, use 120 steps/s, it will make the moto more stable (but less fun?).
+        // Don't try to increase iterations, more steps will have far more effect
+        // --
+        // For smoother motion in 120FPS screens, it's possible to interpolate positions using the remaining accumulator
+        this.step_ms = 1000 / 60; // Fixed at 60 steps/s of physics (in ms), whatever the FPS loop
+        this.velocity_iterations = 10; // Default 8, a bit more was needed for less wobbly moto
+        this.position_iterations = 5; // Default 3, a bit more was needed for less wobbly moto
+        
+        // Debug canvas to validate physics shapes/joints (?debug=true&debug_physics=true)
         this.debug_ctx = level.debug_ctx;
-        this.debug_ctx.lineWidth = 0.03; // thickness of debug draw lines
+        this.debug_ctx.lineWidth = 0.03; // thickness of draw lines
         
         // Double default precision between wheel and ground (to avoid seing space between them)
         Settings.linearSlop = 0.0025;
-        this.world;
       }
 
       init() {
-        this.last_step = new Date().getTime();
-        this.step = 1000.0 / Constants.fps;
+        this.last_step_ms = performance.now();
         return this.steps = 0;
       }
 
@@ -1329,37 +1335,33 @@
       }
 
       update() {
-        var e, loops, results;
-        loops = 0;
-        results = [];
-        while ((new Date()).getTime() - this.last_step > this.step && loops < this.MAX_STEPS_PER_UPDATE) {
-          loops += 1;
-          this.steps = this.steps + 1;
-          this.last_step += this.step;
+        var delta_ms;
+        while (performance.now() - this.last_step_ms > this.step_ms) {
+          this.steps += 1;
+          this.last_step_ms += this.step_ms;
           this.level.moto.move();
           this.level.ghosts.move();
           this.level.replay.add_step();
           this.level.camera.move();
-          try {
-            this.world.step(1.0 / Constants.fps, 10, 10);
-          } catch (error) {
-            e = error;
-            console.error(`XMoto warning: ${e.message}`);
-          }
+          // Cf. top of file and https://piqnt.com/planck.js/docs/world/simulation.html#simulating-the-world
+          this.world.step(this.step_ms / 1000, this.velocity_iterations, this.position_iterations);
           this.level.input.space = false; // Space can't stay pressed (used for `.move` and `.add_step`)
           if (this.level.need_to_restart) {
             this.restart();
-            results.push(this.level.need_to_restart = false);
-          } else {
-            results.push(void 0);
+            this.level.need_to_restart = false;
           }
         }
-        return results;
+        // For Gaffer's fixed timestep with interpolations:
+        delta_ms = performance.now() - this.last_step_ms; // \ Leftover time not yet consumed by a full physics step (alpha is between 0.0 and 1.0)
+        return this.alpha = delta_ms / this.step_ms; // | Could be used in moto.update() and rider.update() to adjust the position/angle of sprite
       }
 
+      // | based on previous and current physics data (without updating the physics object!)
+      // / It would allow the game to go through 120fps with only 60 physics steps
       create_polygon(vertices, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) {
         var body, shape;
-        shape = new Polygon(Physics.create_shape(vertices));
+        vertices = Physics.create_shape(vertices);
+        shape = new Polygon(vertices);
         body = this.world.createBody({
           type: 'static',
           position: {
@@ -1383,12 +1385,11 @@
         if (!block.vertices.length) {
           return;
         }
-        // Some levels contain consecutive (near-)duplicate vertices, which would
-        // produce a zero-length edge and fail Chain's assertion.
+        // Some levels contain consecutive (near-)duplicate vertices, we remove them
         vertices = Physics.dedupe_vertices(block.vertices);
         // One closed Chain for the whole block outline. Chain automatically wires
-        // up ghost vertices between adjacent segments, which suppresses spurious
-        // internal-edge collisions that a set of disconnected segments would cause.
+        // up ghost vertices between adjacent segments, which suppresses edge collisions
+        // that a set of disconnected segments would cause.
         shape = new Chain(vertices, true);
         body = this.world.createBody({
           type: 'static',
@@ -1410,7 +1411,7 @@
 
       // Remove consecutive (cyclic) vertices that are too close (or the same).
       // It will avoid zero-length edges that would crash Chain's construction.
-      static dedupe_vertices(vertices, distance = 1e-9) {
+      static dedupe_vertices(vertices, distance = Settings.linearSlop) {
         var deduped, l, len, previous, too_close, vertex;
         too_close = function(a, b, distance) {
           var dx, dy;
@@ -1438,30 +1439,20 @@
         return deduped;
       }
 
-      // Dedupes and optionally mirrors (X-flip + winding reversal) a set of
-      // vertices, returning plain {x,y} points ready for `new Polygon(...)`.
+      // Dedupes and optionally mirrors (X-flip + winding reversal) a set of vertices
+      // Currently used for moto parts and limits
       static create_shape(vertices, mirror = false) {
-        var l, len, len1, m, result, vertex;
         vertices = Physics.dedupe_vertices(vertices);
-        result = [];
-        if (mirror === false) {
-          for (l = 0, len = vertices.length; l < len; l++) {
-            vertex = vertices[l];
-            result.push({
-              x: vertex.x,
-              y: vertex.y
-            });
-          }
-        } else {
-          for (m = 0, len1 = vertices.length; m < len1; m++) {
-            vertex = vertices[m];
-            result.unshift({
+        if (mirror) {
+          return vertices.map(function(vertex) {
+            return {
               x: -vertex.x,
               y: vertex.y
-            });
-          }
+            };
+          });
+        } else {
+          return vertices;
         }
-        return result;
       }
 
       draw_debug() {
@@ -1485,7 +1476,17 @@
 
       draw_debug_body(body, ctx) {
         var color, fixture, results;
-        color = !body.isActive() ? this.BODY_COLORS.inactive : body.getType() === 'static' ? this.BODY_COLORS.static : body.getType() === 'kinematic' ? this.BODY_COLORS.kinematic : !body.isAwake() ? this.BODY_COLORS.sleeping : this.BODY_COLORS.awake;
+        if (!body.isActive()) {
+          color = this.BODY_COLORS.inactive;
+        } else if (body.getType() === 'static') {
+          color = this.BODY_COLORS.static;
+        } else if (body.getType() === 'kinematic') {
+          color = this.BODY_COLORS.kinematic;
+        } else if (!body.isAwake()) {
+          color = this.BODY_COLORS.sleeping;
+        } else {
+          color = this.BODY_COLORS.awake;
+        }
         fixture = body.getFixtureList();
         results = [];
         while (fixture) {
@@ -1562,23 +1563,8 @@
 
     };
 
-    // Max physics steps to catch up on in a single update() call.
-    // Without this cap, a slow world.step() (huge level, slow device, tab
-    // backgrounded...) can make the catch-up loop fall further behind on every
-    // iteration than it recovers, freezing the browser tab forever ("spiral of
-    // death"). We cap it instead, but *without* dropping the remaining backlog:
-    // any leftover lag just carries over to the next update() call (next
-    // `requestAnimationFrame`), so a long stall (e.g. an unfocused tab) is fully
-    // caught up over a handful of frames instead of a) freezing the tab trying
-    // to catch up in one go, or b) silently losing steps (which would desync
-    // replays/ghosts from real elapsed time).
-    Physics.prototype.MAX_STEPS_PER_UPDATE = 20;
-
-    // Custom debug draw (planck has no bundled equivalent to Box2dWeb's
-    // b2DebugDraw/DrawDebugData — its testbed renderer is a separate,
-    // stage-js-based bundle not worth pulling in for this hidden debug canvas).
-    // Draws directly onto @debug_ctx, which the caller (Camera#update) has
-    // already translated/scaled to camera space in world (Y-up) coordinates.
+    // Custom debug draw (Planck.js has no b2DebugDraw/DrawDebugData like Box2Dweb)
+    // Draws directly onto @debug_ctx canvas
     Physics.prototype.BACKGROUND_COLOR = '#222229';
 
     Physics.prototype.FILL_ALPHA = 0.35;
@@ -2247,367 +2233,376 @@
 
   AABB = planck.AABB;
 
-  Entities = class Entities {
-    constructor(level) {
-      this.level = level;
-      this.assets = level.assets;
-      this.world = level.physics.world;
-      this.list = [];
-      this.player_start = {
-        x: 0,
-        y: 0
-      };
-      this.strawberries = [];
-      this.wreckers = [];
-    }
+  Entities = (function() {
+    var ANIMATION_SPEED_FACTOR;
 
-    parse(xml) {
-      var entity, l, len, len1, m, name, texture_name, theme_center_x, theme_center_y, theme_height, theme_sprite, theme_width, value, xml_entities, xml_entity, xml_param, xml_params;
-      xml_entities = $(xml).find('entity');
-// parse entity xml
-      for (l = 0, len = xml_entities.length; l < len; l++) {
-        xml_entity = xml_entities[l];
-        entity = {
-          id: $(xml_entity).attr('id'),
-          typeid: $(xml_entity).attr('typeid'),
-          size: {
-            r: parseFloat($(xml_entity).find('size').attr('r')),
-            z: parseInt($(xml_entity).find('size').attr('z')) || void 0,
-            width: (function() {
-              var attr;
-              attr = $(xml_entity).find('size').attr('width');
-              if (attr != null) {
-                return parseFloat(attr);
-              } else {
-                return void 0; // integer or undefined if no attribute (will come from theme)
-              }
-            })(),
-            height: (function() {
-              var attr;
-              attr = $(xml_entity).find('size').attr('height');
-              if (attr != null) {
-                return parseFloat(attr);
-              } else {
-                return void 0; // integer or undefined if no attribute (will come from theme)
-              }
-            })()
-          },
-          position: {
-            x: parseFloat($(xml_entity).find('position').attr('x')),
-            y: parseFloat($(xml_entity).find('position').attr('y')),
-            angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0,
-            reversed: $(xml_entity).find('position').attr('reversed') === 'true'
-          },
-          center: {
-            x: void 0, // can only come from theme
-            y: void 0 // can only come from theme
-          },
-          params: {}
+    class Entities {
+      constructor(level) {
+        this.level = level;
+        this.assets = level.assets;
+        this.world = level.physics.world;
+        this.list = [];
+        this.player_start = {
+          x: 0,
+          y: 0
         };
-        // parse params tags
-        xml_params = $(xml_entity).find('param');
-        for (m = 0, len1 = xml_params.length; m < len1; m++) {
-          xml_param = xml_params[m];
-          name = $(xml_param).attr('name');
-          value = $(xml_param).attr('value');
-          entity.params[name] = value;
-        }
-        // find correct z (z can be in <size z="?"> or in <param name="z" value="?">)
-        entity['z'] = entity.size.z || parseInt(entity.params.z) || 0;
-        // Get default values for sprite from theme
-        texture_name = this.entity_texture_name(entity);
-        if (texture_name) {
-          theme_sprite = this.assets.theme.sprite_params(texture_name);
-          if (theme_sprite) {
-            entity.file = theme_sprite.file;
-            entity.file_base = theme_sprite.file_base;
-            entity.file_extension = theme_sprite.file_extension;
-            entity.delay = theme_sprite.delay;
-            entity.frames_count = theme_sprite.frames_count;
-            entity.blendmode = theme_sprite.blendmode;
-            entity.display = true; // if an entity has a texture, it needs to be displayed
-            
-            // Default theme values if not defined in XML
-            theme_width = theme_sprite.size.width || 1.0;
-            theme_height = theme_sprite.size.height || 1.0;
-            theme_center_x = theme_sprite.center.x || 0.5;
-            theme_center_y = theme_sprite.center.y || 0.5;
-            // - When the level overrides width/height, we keep the sprite centered on the
-            //   sprite's original centerX/centerY by shifting the center by half the size delta.
-            // - If level doesn't overrides width/height, we simply use theme values
-            if (entity.size.width) {
-              entity.center.x = theme_center_x + (entity.size.width - theme_width) / 2;
-            } else {
-              entity.size.width = theme_width;
-              entity.center.x = theme_center_x;
-            }
-            if (entity.size.height) {
-              entity.center.y = theme_center_y + (entity.size.height - theme_height) / 2;
-            } else {
-              entity.size.height = theme_height;
-              entity.center.y = theme_center_y;
-            }
-            entity.aabb = this.compute_aabb(entity);
-          } else {
-            console.error(`XMoto warning: texture file \"${texture_name}\" was not found in the theme and is ignored.`);
-          }
-        }
-        this.list.push(entity);
+        this.strawberries = [];
+        this.wreckers = [];
       }
-      // order by z-index ASC
-      this.list.sort(function(a, b) {
-        if (a.z > b.z) {
-          return 1;
-        }
-        if (a.z < b.z) {
-          return -1;
-        }
-        return 0;
-      });
-      return this;
-    }
 
-    load_assets() {
-      var entity, i, l, len, ref, results;
-      ref = this.list;
-      results = [];
-      for (l = 0, len = ref.length; l < len; l++) {
-        entity = ref[l];
-        if (entity.display) {
-          if (entity.frames_count === 0) {
-            results.push(this.assets.anims.push(entity.file));
-          } else {
-            results.push((function() {
-              var m, ref1, results1;
-              results1 = [];
-              for (i = m = 0, ref1 = entity.frames_count - 1; (0 <= ref1 ? m <= ref1 : m >= ref1); i = 0 <= ref1 ? ++m : --m) {
-                results1.push(this.assets.anims.push(this.frame_name(entity, i)));
+      parse(xml) {
+        var entity, l, len, len1, m, name, texture_name, theme_center_x, theme_center_y, theme_height, theme_sprite, theme_width, value, xml_entities, xml_entity, xml_param, xml_params;
+        xml_entities = $(xml).find('entity');
+// parse entity xml
+        for (l = 0, len = xml_entities.length; l < len; l++) {
+          xml_entity = xml_entities[l];
+          entity = {
+            id: $(xml_entity).attr('id'),
+            typeid: $(xml_entity).attr('typeid'),
+            size: {
+              r: parseFloat($(xml_entity).find('size').attr('r')),
+              z: parseInt($(xml_entity).find('size').attr('z')) || void 0,
+              width: (function() {
+                var attr;
+                attr = $(xml_entity).find('size').attr('width');
+                if (attr != null) {
+                  return parseFloat(attr);
+                } else {
+                  return void 0; // integer or undefined if no attribute (will come from theme)
+                }
+              })(),
+              height: (function() {
+                var attr;
+                attr = $(xml_entity).find('size').attr('height');
+                if (attr != null) {
+                  return parseFloat(attr);
+                } else {
+                  return void 0; // integer or undefined if no attribute (will come from theme)
+                }
+              })()
+            },
+            position: {
+              x: parseFloat($(xml_entity).find('position').attr('x')),
+              y: parseFloat($(xml_entity).find('position').attr('y')),
+              angle: parseFloat($(xml_entity).find('position').attr('angle')) || 0,
+              reversed: $(xml_entity).find('position').attr('reversed') === 'true'
+            },
+            center: {
+              x: void 0, // can only come from theme
+              y: void 0 // can only come from theme
+            },
+            params: {}
+          };
+          // parse params tags
+          xml_params = $(xml_entity).find('param');
+          for (m = 0, len1 = xml_params.length; m < len1; m++) {
+            xml_param = xml_params[m];
+            name = $(xml_param).attr('name');
+            value = $(xml_param).attr('value');
+            entity.params[name] = value;
+          }
+          // find correct z (z can be in <size z="?"> or in <param name="z" value="?">)
+          entity['z'] = entity.size.z || parseInt(entity.params.z) || 0;
+          // Get default values for sprite from theme
+          texture_name = this.entity_texture_name(entity);
+          if (texture_name) {
+            theme_sprite = this.assets.theme.sprite_params(texture_name);
+            if (theme_sprite) {
+              entity.file = theme_sprite.file;
+              entity.file_base = theme_sprite.file_base;
+              entity.file_extension = theme_sprite.file_extension;
+              entity.delay = theme_sprite.delay;
+              entity.frames_count = theme_sprite.frames_count;
+              entity.blendmode = theme_sprite.blendmode;
+              entity.display = true; // if an entity has a texture, it needs to be displayed
+              
+              // Default theme values if not defined in XML
+              theme_width = theme_sprite.size.width || 1.0;
+              theme_height = theme_sprite.size.height || 1.0;
+              theme_center_x = theme_sprite.center.x || 0.5;
+              theme_center_y = theme_sprite.center.y || 0.5;
+              // - When the level overrides width/height, we keep the sprite centered on the
+              //   sprite's original centerX/centerY by shifting the center by half the size delta.
+              // - If level doesn't overrides width/height, we simply use theme values
+              if (entity.size.width) {
+                entity.center.x = theme_center_x + (entity.size.width - theme_width) / 2;
+              } else {
+                entity.size.width = theme_width;
+                entity.center.x = theme_center_x;
               }
-              return results1;
-            }).call(this));
+              if (entity.size.height) {
+                entity.center.y = theme_center_y + (entity.size.height - theme_height) / 2;
+              } else {
+                entity.size.height = theme_height;
+                entity.center.y = theme_center_y;
+              }
+              entity.aabb = this.compute_aabb(entity);
+            } else {
+              console.error(`XMoto warning: texture file \"${texture_name}\" was not found in the theme and is ignored.`);
+            }
           }
-        } else {
-          results.push(void 0);
+          this.list.push(entity);
         }
+        // order by z-index ASC
+        this.list.sort(function(a, b) {
+          if (a.z > b.z) {
+            return 1;
+          }
+          if (a.z < b.z) {
+            return -1;
+          }
+          return 0;
+        });
+        return this;
       }
-      return results;
-    }
 
-    init() {
-      this.init_physics();
-      this.init_graphics();
-      return this.init_culling_debug();
-    }
+      load_assets() {
+        var entity, i, l, len, ref, results;
+        ref = this.list;
+        results = [];
+        for (l = 0, len = ref.length; l < len; l++) {
+          entity = ref[l];
+          if (entity.display) {
+            if (entity.frames_count === 0) {
+              results.push(this.assets.anims.push(entity.file));
+            } else {
+              results.push((function() {
+                var m, ref1, results1;
+                results1 = [];
+                for (i = m = 0, ref1 = entity.frames_count - 1; (0 <= ref1 ? m <= ref1 : m >= ref1); i = 0 <= ref1 ? ++m : --m) {
+                  results1.push(this.assets.anims.push(this.frame_name(entity, i)));
+                }
+                return results1;
+              }).call(this));
+            }
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      }
 
-    init_physics() {
-      var entity, l, len, ref, results;
-      ref = this.list;
-      results = [];
-      for (l = 0, len = ref.length; l < len; l++) {
-        entity = ref[l];
-        // End of level
-        if (entity.typeid === 'EndOfLevel') {
-          this.create_entity_physics(entity, 'end_of_level');
-          results.push(this.end_of_level = entity);
-        // Strawberries
-        } else if (entity.typeid === 'Strawberry') {
-          this.create_entity_physics(entity, 'strawberry');
-          results.push(this.strawberries.push(entity));
-        // Wreckers
-        } else if (entity.typeid === 'Wrecker') {
-          this.create_entity_physics(entity, 'wrecker');
-          results.push(this.wreckers.push(entity));
-        // Player start
-        } else if (entity.typeid === 'PlayerStart') {
-          results.push(this.player_start = {
+      init() {
+        this.init_physics();
+        this.init_graphics();
+        return this.init_culling_debug();
+      }
+
+      init_physics() {
+        var entity, l, len, ref, results;
+        ref = this.list;
+        results = [];
+        for (l = 0, len = ref.length; l < len; l++) {
+          entity = ref[l];
+          // End of level
+          if (entity.typeid === 'EndOfLevel') {
+            this.create_entity_physics(entity, 'end_of_level');
+            results.push(this.end_of_level = entity);
+          // Strawberries
+          } else if (entity.typeid === 'Strawberry') {
+            this.create_entity_physics(entity, 'strawberry');
+            results.push(this.strawberries.push(entity));
+          // Wreckers
+          } else if (entity.typeid === 'Wrecker') {
+            this.create_entity_physics(entity, 'wrecker');
+            results.push(this.wreckers.push(entity));
+          // Player start
+          } else if (entity.typeid === 'PlayerStart') {
+            results.push(this.player_start = {
+              x: entity.position.x,
+              y: entity.position.y
+            });
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      }
+
+      create_entity_physics(entity, name) {
+        var body, shape;
+        shape = new Circle(entity.size.r);
+        body = this.world.createBody({
+          type: 'static',
+          position: {
             x: entity.position.x,
             y: entity.position.y
-          });
-        } else {
-          results.push(void 0);
+          },
+          userData: {
+            name: name,
+            entity: entity
+          }
+        });
+        body.createFixture(shape, {
+          isSensor: true
+        });
+        return body;
+      }
+
+      init_graphics() {
+        var entity, l, len, ref, results;
+        ref = this.list;
+        results = [];
+        for (l = 0, len = ref.length; l < len; l++) {
+          entity = ref[l];
+          if (entity.z === 0) {
+            results.push(this.init_sprite(entity, this.level.layers.static_level));
+          } else if (entity.z < 0) {
+            results.push(this.init_sprite(entity, this.level.layers.static_background));
+          } else if (entity.z > 0) {
+            results.push(this.init_sprite(entity, this.level.layers.static_foreground));
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      }
+
+      init_sprite(entity, container) {
+        var i, l, ref, sprite, textures;
+        if (entity.frames_count) {
+          textures = [];
+          for (i = l = 0, ref = entity.frames_count - 1; (0 <= ref ? l <= ref : l >= ref); i = 0 <= ref ? ++l : --l) {
+            textures.push(PIXI.Texture.from(this.assets.get_url(this.frame_name(entity, i))));
+          }
+          sprite = new PIXI.AnimatedSprite(textures);
+          sprite.animationSpeed = (1.0 / entity.delay) / 100 * ANIMATION_SPEED_FACTOR;
+          sprite.play();
+        } else if (entity.file) {
+          sprite = PIXI.Sprite.from(this.assets.get_url(entity.file));
+        }
+        if (sprite) {
+          sprite.width = entity.size.width;
+          sprite.height = entity.size.height;
+          sprite.anchor.x = entity.center.x / entity.size.width;
+          sprite.anchor.y = 1 - (entity.center.y / entity.size.height);
+          sprite.x = entity.position.x;
+          sprite.y = -entity.position.y;
+          sprite.rotation = -entity.position.angle;
+          sprite.name = entity.params.name || entity.typeid;
+          sprite.blendMode = entity.blendmode;
+          if (entity.position.reversed) {
+            sprite.scale.x *= -1;
+          }
+          entity.graphics = sprite; // keep reference to the sprite
+          return container.addChild(sprite);
         }
       }
-      return results;
-    }
 
-    create_entity_physics(entity, name) {
-      var body, shape;
-      shape = new Circle(entity.size.r);
-      body = this.world.createBody({
-        type: 'static',
-        position: {
-          x: entity.position.x,
-          y: entity.position.y
-        },
-        userData: {
-          name: name,
-          entity: entity
-        }
-      });
-      body.createFixture(shape, {
-        isSensor: true
-      });
-      return body;
-    }
-
-    init_graphics() {
-      var entity, l, len, ref, results;
-      ref = this.list;
-      results = [];
-      for (l = 0, len = ref.length; l < len; l++) {
-        entity = ref[l];
-        if (entity.z === 0) {
-          results.push(this.init_sprite(entity, this.level.layers.static_level));
-        } else if (entity.z < 0) {
-          results.push(this.init_sprite(entity, this.level.layers.static_background));
-        } else if (entity.z > 0) {
-          results.push(this.init_sprite(entity, this.level.layers.static_foreground));
-        } else {
-          results.push(void 0);
+      init_culling_debug() {
+        if (Constants.debug_culling) {
+          this.culling_debug = new PIXI.Graphics();
+          this.culling_debug.label = 'culling (entities)';
+          return this.level.layers.translate_layer.addChild(this.culling_debug);
         }
       }
-      return results;
-    }
 
-    init_sprite(entity, container) {
-      var i, l, ref, sprite, textures;
-      if (entity.frames_count) {
-        textures = [];
-        for (i = l = 0, ref = entity.frames_count - 1; (0 <= ref ? l <= ref : l >= ref); i = 0 <= ref ? ++l : --l) {
-          textures.push(PIXI.Texture.from(this.assets.get_url(this.frame_name(entity, i))));
+      update(entity) {
+        var l, len, ref;
+        if (!Constants.debug_physics) {
+          ref = this.list;
+          for (l = 0, len = ref.length; l < len; l++) {
+            entity = ref[l];
+            if (entity.graphics) {
+              entity.graphics.visible = this.visible(entity);
+            }
+          }
         }
-        sprite = new PIXI.AnimatedSprite(textures);
-        sprite.animationSpeed = (1.0 / entity.delay) / Constants.fps;
-        sprite.play();
-      } else if (entity.file) {
-        sprite = PIXI.Sprite.from(this.assets.get_url(entity.file));
-      }
-      if (sprite) {
-        sprite.width = entity.size.width;
-        sprite.height = entity.size.height;
-        sprite.anchor.x = entity.center.x / entity.size.width;
-        sprite.anchor.y = 1 - (entity.center.y / entity.size.height);
-        sprite.x = entity.position.x;
-        sprite.y = -entity.position.y;
-        sprite.rotation = -entity.position.angle;
-        sprite.name = entity.params.name || entity.typeid;
-        sprite.blendMode = entity.blendmode;
-        if (entity.position.reversed) {
-          sprite.scale.x *= -1;
+        if (Constants.debug_culling) {
+          return this.draw_debug_culling();
         }
-        entity.graphics = sprite; // keep reference to the sprite
-        return container.addChild(sprite);
       }
-    }
 
-    init_culling_debug() {
-      if (Constants.debug_culling) {
-        this.culling_debug = new PIXI.Graphics();
-        this.culling_debug.label = 'culling (entities)';
-        return this.level.layers.translate_layer.addChild(this.culling_debug);
-      }
-    }
-
-    update(entity) {
-      var l, len, ref;
-      if (!Constants.debug_physics) {
+      draw_debug_culling() {
+        var entity, l, len, line_width, ref;
+        this.culling_debug.clear();
         ref = this.list;
         for (l = 0, len = ref.length; l < len; l++) {
           entity = ref[l];
-          if (entity.graphics) {
-            entity.graphics.visible = this.visible(entity);
+          if (entity.aabb && entity.graphics.visible) {
+            this.culling_debug.rect(entity.aabb.lowerBound.x, -entity.aabb.upperBound.y, entity.aabb.upperBound.x - entity.aabb.lowerBound.x, entity.aabb.upperBound.y - entity.aabb.lowerBound.y);
           }
         }
+        line_width = 0.04 * Constants.default_scale.x / this.level.camera.scale.x;
+        return this.culling_debug.stroke({
+          width: line_width,
+          color: 0x78C7C7,
+          alpha: 0.7
+        });
       }
-      if (Constants.debug_culling) {
-        return this.draw_debug_culling();
-      }
-    }
 
-    draw_debug_culling() {
-      var entity, l, len, line_width, ref;
-      this.culling_debug.clear();
-      ref = this.list;
-      for (l = 0, len = ref.length; l < len; l++) {
-        entity = ref[l];
-        if (entity.aabb && entity.graphics.visible) {
-          this.culling_debug.rect(entity.aabb.lowerBound.x, -entity.aabb.upperBound.y, entity.aabb.upperBound.x - entity.aabb.lowerBound.x, entity.aabb.upperBound.y - entity.aabb.lowerBound.y);
+      entity_texture_name(entity) {
+        var name, ref;
+        if (entity.typeid === 'Sprite') {
+          name = entity.params.name;
+        } else if (entity.typeid === 'EndOfLevel') { // hard-coded entity
+          name = 'Flower';
+        } else if ((ref = entity.typeid) === 'Strawberry' || ref === 'Wrecker') { // hard-coded entities
+          name = entity.typeid;
         }
-      }
-      line_width = 0.04 * Constants.default_scale.x / this.level.camera.scale.x;
-      return this.culling_debug.stroke({
-        width: line_width,
-        color: 0x78C7C7,
-        alpha: 0.7
-      });
-    }
-
-    entity_texture_name(entity) {
-      var name, ref;
-      if (entity.typeid === 'Sprite') {
-        name = entity.params.name;
-      } else if (entity.typeid === 'EndOfLevel') { // hard-coded entity
-        name = 'Flower';
-      } else if ((ref = entity.typeid) === 'Strawberry' || ref === 'Wrecker') { // hard-coded entities
-        name = entity.typeid;
-      }
-      // theme_replacements in XML
-      if (this.level.replacements.sprites[name]) {
-        name = this.level.replacements.sprites[name];
-      }
-      return name;
-    }
-
-    compute_aabb(entity) {
-      var aabb, bottom, corner, corners, l, left, len, right, rotated, top, xs, ys;
-      // limits relative to anchor
-      left = -entity.center.x;
-      right = left + entity.size.width;
-      bottom = -entity.center.y;
-      top = bottom + entity.size.height;
-      corners = [
-        {
-          x: left,
-          y: bottom
-        },
-        {
-          x: right,
-          y: bottom
-        },
-        {
-          x: right,
-          y: top
-        },
-        {
-          x: left,
-          y: top
+        // theme_replacements in XML
+        if (this.level.replacements.sprites[name]) {
+          name = this.level.replacements.sprites[name];
         }
-      ];
-      // We always rotate the 4 corners by the entity.position.angle (usually 0!)
-      // with entity.position as anchor
-      xs = [];
-      ys = [];
-      for (l = 0, len = corners.length; l < len; l++) {
-        corner = corners[l];
-        rotated = Math2D.rotate_point(corner, entity.position.angle, entity.position);
-        xs.push(rotated.x);
-        ys.push(rotated.y);
+        return name;
       }
-      aabb = new AABB();
-      aabb.lowerBound.set(Math.min(...xs), Math.min(...ys));
-      aabb.upperBound.set(Math.max(...xs), Math.max(...ys));
-      return aabb;
-    }
 
-    visible(entity) {
-      return entity.display && AABB.testOverlap(entity.aabb, this.level.camera.aabb);
-    }
+      compute_aabb(entity) {
+        var aabb, bottom, corner, corners, l, left, len, right, rotated, top, xs, ys;
+        // limits relative to anchor
+        left = -entity.center.x;
+        right = left + entity.size.width;
+        bottom = -entity.center.y;
+        top = bottom + entity.size.height;
+        corners = [
+          {
+            x: left,
+            y: bottom
+          },
+          {
+            x: right,
+            y: bottom
+          },
+          {
+            x: right,
+            y: top
+          },
+          {
+            x: left,
+            y: top
+          }
+        ];
+        // We always rotate the 4 corners by the entity.position.angle (usually 0!)
+        // with entity.position as anchor
+        xs = [];
+        ys = [];
+        for (l = 0, len = corners.length; l < len; l++) {
+          corner = corners[l];
+          rotated = Math2D.rotate_point(corner, entity.position.angle, entity.position);
+          xs.push(rotated.x);
+          ys.push(rotated.y);
+        }
+        aabb = new AABB();
+        aabb.lowerBound.set(Math.min(...xs), Math.min(...ys));
+        aabb.upperBound.set(Math.max(...xs), Math.max(...ys));
+        return aabb;
+      }
 
-    frame_name(entity, frame_number) {
-      return `${entity.file_base}${(frame_number / 100.0).toFixed(2).toString().substring(2)}.${entity.file_extension}`;
-    }
+      visible(entity) {
+        return entity.display && AABB.testOverlap(entity.aabb, this.level.camera.aabb);
+      }
 
-  };
+      frame_name(entity, frame_number) {
+        return `${entity.file_base}${(frame_number / 100.0).toFixed(2).toString().substring(2)}.${entity.file_extension}`;
+      }
+
+    };
+
+    ANIMATION_SPEED_FACTOR = 1.6; // To make it smoother than original
+
+    return Entities;
+
+  }).call(this);
 
   Infos = class Infos {
     constructor(level) {
@@ -3746,10 +3741,10 @@
       if (!input.up && !input.down) {
         // Engine brake
         v = this.left_wheel.getAngularVelocity();
-        this.left_wheel.applyTorque((Math.abs(v) >= 0.2 ? -v / 10 : 0));
+        this.left_wheel.applyTorque(Math.abs(v) >= 0.2 ? -v / 10 : 0);
         // Friction on right wheel
         v = this.right_wheel.getAngularVelocity();
-        this.right_wheel.applyTorque((Math.abs(v) >= 0.2 ? -v / 100 : 0));
+        this.right_wheel.applyTorque(Math.abs(v) >= 0.2 ? -v / 100 : 0);
       }
       // Left wheel suspension
       back_force = Constants.left_suspension.back_force;
@@ -3781,10 +3776,10 @@
     }
 
     // Detection of drifting
-    //rotation_speed = -(moto.left_wheel.getAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
-    //linear_speed   = moto.left_wheel.getLinearVelocity().x/10
-    //if linear_speed > 0 and rotation_speed > 1.5*linear_speed
-    //  @level.particles.create()
+    // rotation_speed = -(@left_wheel.getAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
+    // linear_speed   = @left_wheel.getLinearVelocity().x/10
+    // if linear_speed > 0 and rotation_speed > 1.5*linear_speed
+    //   @level.particles.create()
     wheeling(force) {
       var force_leg, force_torso, moto_angle;
       moto_angle = this.mirror * this.body.getAngle();
@@ -3816,8 +3811,9 @@
     }
 
     create_body() {
-      var body, shape;
-      shape = new Polygon(Physics.create_shape(Constants.body.vertices, this.mirror === -1));
+      var body, shape, vertices;
+      vertices = Physics.create_shape(Constants.body.vertices, this.mirror === -1);
+      shape = new Polygon(vertices);
       body = this.world.createBody({
         type: 'dynamic',
         position: {
@@ -3866,8 +3862,9 @@
     }
 
     create_axle(part_constants) {
-      var body, shape;
-      shape = new Polygon(Physics.create_shape(part_constants.vertices, this.mirror === -1));
+      var body, shape, vertices;
+      vertices = Physics.create_shape(part_constants.vertices, this.mirror === -1);
+      shape = new Polygon(vertices);
       body = this.world.createBody({
         type: 'dynamic',
         position: {
@@ -3891,23 +3888,32 @@
     }
 
     create_revolute_joint(axle, wheel) {
-      return this.world.createJoint(new RevoluteJoint({}, axle, wheel, wheel.getWorldCenter()));
+      var joint, opts;
+      // TODO? https://piqnt.com/planck.js/docs/api/interfaces/RevoluteJointOpt.html#interface-revolutejointopt
+      opts = {};
+      //maxMotorTorque: 10 # The maximum motor torque used to achieve the desired motor speed
+      //motorSpeed:      0 # The desired motor speed. Usually in radians per second.
+      //enableMotor: true  # A flag to enable the joint motor.
+      joint = new RevoluteJoint(opts, axle, wheel, wheel.getWorldCenter());
+      return this.world.createJoint(joint);
     }
 
     create_prismatic_joint(axle, part_constants) {
-      var angle, axis;
+      var angle, axis, joint, opts;
       angle = part_constants.angle;
       axis = {
         x: this.mirror * angle.x,
         y: angle.y
       };
-      return this.world.createJoint(new PrismaticJoint({
+      opts = {
         enableLimit: true,
         lowerTranslation: part_constants.lower_translation,
         upperTranslation: part_constants.upper_translation,
         enableMotor: true,
         collideConnected: false
-      }, this.body, axle, axle.getWorldCenter(), axis));
+      };
+      joint = new PrismaticJoint(opts, this.body, axle, axle.getWorldCenter(), axis);
+      return this.world.createJoint(joint);
     }
 
     update() {
@@ -4065,33 +4071,31 @@
         filterGroupIndex: -1
       });
       particle.applyForce({
-        x: -1,
-        y: -1
+        x: -1.0,
+        y: -1.0
       }, particle.getWorldCenter());
       return this.list.push(particle);
     }
 
-    update() {
-      var ctx, l, len, particle, position, ref, results;
-      ctx = this.level.ctx;
-      ref = this.list;
-      results = [];
-      for (l = 0, len = ref.length; l < len; l++) {
-        particle = ref[l];
-        position = particle.getPosition();
-        ctx.save();
-        ctx.translate(position.x, position.y);
-        ctx.beginPath();
-        ctx.arc(0, 0, 0.04, 0, 2 * Math.PI);
-        ctx.fill();
-        results.push(ctx.restore());
-      }
-      return results;
-    }
+    update() {}
 
   };
 
-  // Sere here for replay informations :
+  // ctx = @level.ctx
+
+    // for particle in @list
+  //   position = particle.getPosition()
+
+    //   ctx.save()
+  //   ctx.translate(position.x, position.y)
+
+    //   ctx.beginPath()
+  //   ctx.arc(0, 0, 0.04, 0, 2*Math.PI)
+  //   ctx.fill()
+
+    //   ctx.restore()
+
+    // Sere here for replay informations :
   // https://github.com/MichaelHoste/xmoto.js/issues/8
   Replay = class Replay {
     constructor(level) {
@@ -4394,8 +4398,9 @@
     }
 
     create_part(part_constants, name) {
-      var body, shape;
-      shape = new Polygon(Physics.create_shape(part_constants.vertices, this.mirror === -1));
+      var body, shape, vertices;
+      vertices = Physics.create_shape(part_constants.vertices, this.mirror === -1);
+      shape = new Polygon(vertices);
       body = this.world.createBody({
         type: 'dynamic',
         position: {
@@ -4420,41 +4425,36 @@
       return body;
     }
 
-    set_joint_commons(joint) {
-      if (this.mirror === 1) {
-        joint.lowerAngle = -Math.PI / 15;
-        joint.upperAngle = Math.PI / 108;
-      } else if (this.mirror === -1) {
-        joint.lowerAngle = -Math.PI / 108;
-        joint.upperAngle = Math.PI / 15;
-      }
-      return joint.enableLimit = true;
-    }
-
     create_neck_joint() {
-      var axe, position;
+      var axe, joint, opts, position;
       position = this.head.getWorldCenter();
       axe = {
         x: position.x,
         y: position.y
       };
-      return this.world.createJoint(new RevoluteJoint({}, this.head, this.torso, axe));
+      opts = {};
+      joint = new RevoluteJoint(opts, this.head, this.torso, axe);
+      return this.world.createJoint(joint);
     }
 
     create_joint(joint_constants, part1, part2, invert_joint = false) {
-      var axe, jointDef, position;
+      var axe, joint, opts, position;
       position = part1.getWorldCenter();
       axe = {
         x: position.x + this.mirror * joint_constants.axe_position.x,
         y: position.y + joint_constants.axe_position.y
       };
-      jointDef = {};
-      this.set_joint_commons(jointDef);
+      opts = {
+        enableLimit: true,
+        lowerAngle: this.mirror === 1 ? -Math.PI / 15 : -Math.PI / 108,
+        upperAngle: this.mirror === 1 ? Math.PI / 108 : Math.PI / 15
+      };
       if (invert_joint) {
-        return this.world.createJoint(new RevoluteJoint(jointDef, part2, part1, axe));
+        joint = new RevoluteJoint(opts, part2, part1, axe);
       } else {
-        return this.world.createJoint(new RevoluteJoint(jointDef, part1, part2, axe));
+        joint = new RevoluteJoint(opts, part1, part2, axe);
       }
+      return this.world.createJoint(joint);
     }
 
     update(visible) {

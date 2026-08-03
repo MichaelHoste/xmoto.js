@@ -1,30 +1,43 @@
-World  = planck.World
-Vec2   = planck.Vec2
-AABB   = planck.AABB
-Chain  = planck.Chain
-Circle = planck.Circle
-Polygon = planck.Polygon
+World    = planck.World
+Vec2     = planck.Vec2
+AABB     = planck.AABB
+Chain    = planck.Chain
+Circle   = planck.Circle
+Polygon  = planck.Polygon
 Settings = planck.Settings
 
 class Physics
 
   constructor: (level) ->
-    @level     = level
-    @options   = level.options
-    @camera    = level.camera
-    @world     = new World({x: 0, y: -Constants.gravity})
+    @level   = level
+    @options = level.options
+    @camera  = level.camera
+
+    @world = new World(
+      x:  0,
+      y: -Constants.gravity
+    )
+
+    # Define physics (not directly correlated to FPS!)
+    # --
+    # For better physics, use 120 steps/s, it will make the moto more stable (but less fun?).
+    # Don't try to increase iterations, more steps will have far more effect
+    # --
+    # For smoother motion in 120FPS screens, it's possible to interpolate positions using the remaining accumulator
+    @step_ms             = 1000 / 60 # Fixed at 60 steps/s of physics (in ms), whatever the FPS loop
+    @velocity_iterations = 10        # Default 8, a bit more was needed for less wobbly moto
+    @position_iterations = 5         # Default 3, a bit more was needed for less wobbly moto
+
+    # Debug canvas to validate physics shapes/joints (?debug=true&debug_physics=true)
     @debug_ctx = level.debug_ctx
-    @debug_ctx.lineWidth = 0.03 # thickness of debug draw lines
+    @debug_ctx.lineWidth = 0.03 # thickness of draw lines
 
     # Double default precision between wheel and ground (to avoid seing space between them)
     Settings.linearSlop = 0.0025
 
-    @world
-
   init: ->
-    @last_step = new Date().getTime()
-    @step      = 1000.0/Constants.fps
-    @steps     = 0
+    @last_step_ms = performance.now()
+    @steps        = 0
 
   restart: ->
     replay       = @level.replay
@@ -54,34 +67,18 @@ class Physics
       @level.ghosts.player = new Ghost(@level, replay.clone())
       @level.ghosts.player.init()
 
-  # Max physics steps to catch up on in a single update() call.
-  # Without this cap, a slow world.step() (huge level, slow device, tab
-  # backgrounded...) can make the catch-up loop fall further behind on every
-  # iteration than it recovers, freezing the browser tab forever ("spiral of
-  # death"). We cap it instead, but *without* dropping the remaining backlog:
-  # any leftover lag just carries over to the next update() call (next
-  # `requestAnimationFrame`), so a long stall (e.g. an unfocused tab) is fully
-  # caught up over a handful of frames instead of a) freezing the tab trying
-  # to catch up in one go, or b) silently losing steps (which would desync
-  # replays/ghosts from real elapsed time).
-  MAX_STEPS_PER_UPDATE: 20
-
   update: ->
-    loops = 0
-    while (new Date()).getTime() - @last_step > @step and loops < @MAX_STEPS_PER_UPDATE
-      loops += 1
-      @steps = @steps + 1
-      @last_step += @step
+    while performance.now() - @last_step_ms > @step_ms
+      @steps        += 1
+      @last_step_ms += @step_ms
 
       @level.moto.move()
       @level.ghosts.move()
       @level.replay.add_step()
       @level.camera.move()
 
-      try
-        @world.step(1.0/Constants.fps, 10, 10)
-      catch e
-        console.error("XMoto warning: #{e.message}")
+      # Cf. top of file and https://piqnt.com/planck.js/docs/world/simulation.html#simulating-the-world
+      @world.step(@step_ms/1000, @velocity_iterations, @position_iterations)
 
       @level.input.space = false # Space can't stay pressed (used for `.move` and `.add_step`)
 
@@ -89,50 +86,62 @@ class Physics
         @restart()
         @level.need_to_restart = false
 
+    # For Gaffer's fixed timestep with interpolations:
+    delta_ms = performance.now() - @last_step_ms # \ Leftover time not yet consumed by a full physics step (alpha is between 0.0 and 1.0)
+    @alpha   = delta_ms / @step_ms               # | Could be used in moto.update() and rider.update() to adjust the position/angle of sprite
+                                                 # | based on previous and current physics data (without updating the physics object!)
+                                                 # / It would allow the game to go through 120fps with only 60 physics steps
+
   create_polygon: (vertices, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
-    shape = new Polygon(Physics.create_shape(vertices))
+    vertices = Physics.create_shape(vertices)
+    shape    = new Polygon(vertices)
 
-    body = @world.createBody({
-      type:     'static'
-      position: {x: 0, y: 0}
-      userData: {name: name}
-    })
+    body = @world.createBody(
+      type: 'static'
+      position:
+        x: 0
+        y: 0
+      userData:
+        name: name
+    )
 
-    body.createFixture(shape, {
+    body.createFixture(shape,
       density:          density
       restitution:      restitution
       friction:         friction
       filterGroupIndex: group_index
-    })
+    )
 
   create_lines: (block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
     return if !block.vertices.length
 
-    # Some levels contain consecutive (near-)duplicate vertices, which would
-    # produce a zero-length edge and fail Chain's assertion.
+    # Some levels contain consecutive (near-)duplicate vertices, we remove them
     vertices = Physics.dedupe_vertices(block.vertices)
 
     # One closed Chain for the whole block outline. Chain automatically wires
-    # up ghost vertices between adjacent segments, which suppresses spurious
-    # internal-edge collisions that a set of disconnected segments would cause.
+    # up ghost vertices between adjacent segments, which suppresses edge collisions
+    # that a set of disconnected segments would cause.
     shape = new Chain(vertices, true)
 
-    body = @world.createBody({
-      type:     'static'
-      position: {x: block.position.x, y: block.position.y}
-      userData: {name: name}
-    })
+    body = @world.createBody(
+      type: 'static'
+      position:
+        x: block.position.x
+        y: block.position.y
+      userData:
+        name: name
+    )
 
-    body.createFixture(shape, {
+    body.createFixture(shape,
       density:          density
       restitution:      restitution
       friction:         friction
       filterGroupIndex: group_index
-    })
+    )
 
   # Remove consecutive (cyclic) vertices that are too close (or the same).
   # It will avoid zero-length edges that would crash Chain's construction.
-  @dedupe_vertices: (vertices, distance = 1e-9) ->
+  @dedupe_vertices: (vertices, distance = Settings.linearSlop) ->
     too_close = (a, b, distance) ->
       dx = a.x - b.x
       dy = a.y - b.y
@@ -155,34 +164,26 @@ class Physics
 
     deduped
 
-  # Dedupes and optionally mirrors (X-flip + winding reversal) a set of
-  # vertices, returning plain {x,y} points ready for `new Polygon(...)`.
+  # Dedupes and optionally mirrors (X-flip + winding reversal) a set of vertices
+  # Currently used for moto parts and limits
   @create_shape: (vertices, mirror = false) ->
     vertices = Physics.dedupe_vertices(vertices)
-    result   = []
 
-    if mirror == false
-      for vertex in vertices
-        result.push({x: vertex.x, y: vertex.y})
+    if mirror
+      vertices.map((vertex) -> { x: -vertex.x, y: vertex.y })
     else
-      for vertex in vertices
-        result.unshift({x: -vertex.x, y: vertex.y})
+      vertices
 
-    result
-
-  # Custom debug draw (planck has no bundled equivalent to Box2dWeb's
-  # b2DebugDraw/DrawDebugData — its testbed renderer is a separate,
-  # stage-js-based bundle not worth pulling in for this hidden debug canvas).
-  # Draws directly onto @debug_ctx, which the caller (Camera#update) has
-  # already translated/scaled to camera space in world (Y-up) coordinates.
+  # Custom debug draw (Planck.js has no b2DebugDraw/DrawDebugData like Box2Dweb)
+  # Draws directly onto @debug_ctx canvas
   BACKGROUND_COLOR: '#222229'
   FILL_ALPHA: 0.35
   BODY_COLORS:
-    inactive:        '127,127,76'
-    static:          '127,229,127'
-    kinematic:       '127,127,229'
-    sleeping:        '153,153,153'
-    awake:           '229,178,178'
+    inactive:  '127,127,76'
+    static:    '127,229,127'
+    kinematic: '127,127,229'
+    sleeping:  '153,153,153'
+    awake:     '229,178,178'
   JOINT_COLOR: '127,204,204'
 
   draw_debug: ->
@@ -191,24 +192,31 @@ class Physics
     ctx.fillRect(-1e6, -1e6, 2e6, 2e6)
 
     body = @world.getBodyList()
+
     while body
       @draw_debug_body(body, ctx)
       body = body.getNext()
 
     joint = @world.getJointList()
+
     while joint
       @draw_debug_joint(joint, ctx)
       joint = joint.getNext()
 
   draw_debug_body: (body, ctx) ->
-    color =
-      if      !body.isActive()          then @BODY_COLORS.inactive
-      else if body.getType() == 'static'    then @BODY_COLORS.static
-      else if body.getType() == 'kinematic' then @BODY_COLORS.kinematic
-      else if !body.isAwake()           then @BODY_COLORS.sleeping
-      else                                    @BODY_COLORS.awake
+    if !body.isActive()
+      color = @BODY_COLORS.inactive
+    else if body.getType() == 'static'
+      color = @BODY_COLORS.static
+    else if body.getType() == 'kinematic'
+      color = @BODY_COLORS.kinematic
+    else if !body.isAwake()
+      color = @BODY_COLORS.sleeping
+    else
+      color = @BODY_COLORS.awake
 
     fixture = body.getFixtureList()
+
     while fixture
       @draw_debug_shape(fixture.getShape(), body, color, ctx)
       fixture = fixture.getNext()

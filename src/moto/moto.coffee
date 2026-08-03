@@ -126,11 +126,11 @@ class Moto
     if !input.up && !input.down
       # Engine brake
       v = @left_wheel.getAngularVelocity()
-      @left_wheel.applyTorque((if Math.abs(v) >= 0.2 then -v/10 else 0))
+      @left_wheel.applyTorque(if Math.abs(v) >= 0.2 then -v/10 else 0)
 
       # Friction on right wheel
       v = @right_wheel.getAngularVelocity()
-      @right_wheel.applyTorque((if Math.abs(v) >= 0.2 then -v/100 else 0))
+      @right_wheel.applyTorque(if Math.abs(v) >= 0.2 then -v/100 else 0)
 
     # Left wheel suspension
     back_force = Constants.left_suspension.back_force
@@ -163,10 +163,10 @@ class Moto
       @left_wheel.setAngularVelocity(-Constants.max_moto_speed)
 
     # Detection of drifting
-    #rotation_speed = -(moto.left_wheel.getAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
-    #linear_speed   = moto.left_wheel.getLinearVelocity().x/10
-    #if linear_speed > 0 and rotation_speed > 1.5*linear_speed
-    #  @level.particles.create()
+    # rotation_speed = -(@left_wheel.getAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
+    # linear_speed   = @left_wheel.getLinearVelocity().x/10
+    # if linear_speed > 0 and rotation_speed > 1.5*linear_speed
+    #   @level.particles.create()
 
   wheeling: (force) ->
     moto_angle = @mirror * @body.getAngle()
@@ -186,97 +186,107 @@ class Moto
       MotoFlipService.execute(this)
 
   create_body: ->
-    shape = new Polygon(Physics.create_shape(Constants.body.vertices, @mirror == -1))
+    vertices = Physics.create_shape(Constants.body.vertices, @mirror == -1)
+    shape    = new Polygon(vertices)
 
-    body = @world.createBody({
-      type:     'dynamic'
-      position: {
+    body = @world.createBody(
+      type: 'dynamic'
+      position:
         x: @player_start.x + @mirror * Constants.body.position.x
         y: @player_start.y +           Constants.body.position.y
-      }
-      userData: {
+      userData:
         name: 'moto'
         type: if @ghost then 'ghost' else 'player'
         moto: this
-      }
-    })
+    )
 
-    body.createFixture(shape, {
+    body.createFixture(shape,
       density:          Constants.body.density
       restitution:      Constants.body.restitution
       friction:         Constants.body.friction
       isSensor:         !Constants.body.collisions
       filterGroupIndex: -1
-    })
+    )
 
     body
 
   create_wheel: (part_constants) ->
     shape = new Circle(part_constants.radius)
 
-    wheel = @world.createBody({
-      type:     'dynamic'
-      position: {
+    wheel = @world.createBody(
+      type: 'dynamic'
+      position:
         x: @player_start.x + @mirror * part_constants.position.x
         y: @player_start.y +           part_constants.position.y
-      }
-      userData: {
+      userData:
         name: 'moto'
         type: if @ghost then 'ghost' else 'player'
         moto: this
-      }
-    })
+    )
 
-    wheel.createFixture(shape, {
+    wheel.createFixture(shape,
       density:          part_constants.density
       restitution:      part_constants.restitution
       friction:         part_constants.friction
       isSensor:         !part_constants.collisions
       filterGroupIndex: -1
-    })
+    )
 
     wheel
 
   create_axle: (part_constants) ->
-    shape = new Polygon(Physics.create_shape(part_constants.vertices, @mirror == -1))
+    vertices = Physics.create_shape(part_constants.vertices, @mirror == -1)
+    shape    = new Polygon(vertices)
 
-    body = @world.createBody({
-      type:     'dynamic'
-      position: {
+    body = @world.createBody(
+      type: 'dynamic'
+      position:
         x: @player_start.x + @mirror * part_constants.position.x
         y: @player_start.y +           part_constants.position.y
-      }
-      userData: {
+      userData:
         name: 'moto'
         type: if @ghost then 'ghost' else 'player'
         moto: this
-      }
-    })
+    )
 
-    body.createFixture(shape, {
+    body.createFixture(shape,
       density:          part_constants.density
       restitution:      part_constants.restitution
       friction:         part_constants.friction
       isSensor:         !part_constants.collisions
       filterGroupIndex: -1
-    })
+    )
 
     body
 
   create_revolute_joint: (axle, wheel) ->
-    @world.createJoint(new RevoluteJoint({}, axle, wheel, wheel.getWorldCenter()))
+    # TODO? https://piqnt.com/planck.js/docs/api/interfaces/RevoluteJointOpt.html#interface-revolutejointopt
+    opts = {}
+      #maxMotorTorque: 10 # The maximum motor torque used to achieve the desired motor speed
+      #motorSpeed:      0 # The desired motor speed. Usually in radians per second.
+      #enableMotor: true  # A flag to enable the joint motor.
+
+    joint = new RevoluteJoint(opts, axle, wheel, wheel.getWorldCenter())
+
+    @world.createJoint(joint)
 
   create_prismatic_joint: (axle, part_constants) ->
     angle = part_constants.angle
-    axis  = {x: @mirror * angle.x, y: angle.y}
 
-    @world.createJoint(new PrismaticJoint({
+    axis  =
+      x: @mirror * angle.x
+      y: angle.y
+
+    opts =
       enableLimit:      true
       lowerTranslation: part_constants.lower_translation
       upperTranslation: part_constants.upper_translation
       enableMotor:      true
       collideConnected: false
-    }, @body, axle, axle.getWorldCenter(), axis))
+
+    joint = new PrismaticJoint(opts, @body, axle, axle.getWorldCenter(), axis)
+
+    @world.createJoint(joint)
 
   update: ->
     @aabb = @compute_aabb()

@@ -85,88 +85,86 @@ class Rider
   create_head: ->
     shape = new Circle(Constants.head.radius)
 
-    body = @world.createBody({
-      type:     'dynamic'
-      position: {
+    body = @world.createBody(
+      type: 'dynamic'
+      position:
         x: @player_start.x + @mirror * Constants.head.position.x
         y: @player_start.y +           Constants.head.position.y
-      }
-      userData: {
+      userData:
         name:  'rider'
         type:  if @ghost then 'ghost' else 'player'
         part:  'head'
         rider: this
-      }
-    })
+    )
 
-    body.createFixture(shape, {
+    body.createFixture(shape,
       density:          Constants.head.density
       restitution:      Constants.head.restitution
       friction:         Constants.head.friction
       isSensor:         !Constants.head.collisions
       filterGroupIndex: -1
-    })
+    )
 
     body
 
   create_part: (part_constants, name) ->
-    shape = new Polygon(Physics.create_shape(part_constants.vertices, @mirror == -1))
+    vertices = Physics.create_shape(part_constants.vertices, @mirror == -1)
+    shape    = new Polygon(vertices)
 
-    body = @world.createBody({
-      type:     'dynamic'
-      position: {
+    body = @world.createBody(
+      type: 'dynamic'
+      position:
         x: @player_start.x + @mirror * part_constants.position.x
         y: @player_start.y +           part_constants.position.y
-      }
-      angle:    @mirror * part_constants.angle
-      userData: {
+      angle: @mirror * part_constants.angle
+      userData:
         name:  'rider'
         type:  if @ghost then 'ghost' else 'player'
         part:  name
         rider: this
-      }
-    })
+    )
 
-    body.createFixture(shape, {
+    body.createFixture(shape,
       density:          part_constants.density
       restitution:      part_constants.restitution
       friction:         part_constants.friction
       isSensor:         !part_constants.collisions
       filterGroupIndex: -1
-    })
+    )
 
     body
 
-  set_joint_commons: (joint) ->
-    if @mirror == 1
-      joint.lowerAngle     = - Math.PI/15
-      joint.upperAngle     =   Math.PI/108
-    else if @mirror == -1
-      joint.lowerAngle     = - Math.PI/108
-      joint.upperAngle     =   Math.PI/15
-    joint.enableLimit    = true
-
   create_neck_joint: ->
     position = @head.getWorldCenter()
+
     axe =
       x: position.x
       y: position.y
 
-    @world.createJoint(new RevoluteJoint({}, @head, @torso, axe))
+    opts = {}
+
+    joint = new RevoluteJoint(opts, @head, @torso, axe)
+
+    @world.createJoint(joint)
 
   create_joint: (joint_constants, part1, part2, invert_joint=false) ->
     position = part1.getWorldCenter()
+
     axe =
       x: position.x + @mirror * joint_constants.axe_position.x
       y: position.y +           joint_constants.axe_position.y
 
-    jointDef = {}
-    @set_joint_commons(jointDef)
+    opts =
+      enableLimit: true
+      lowerAngle:  if @mirror == 1 then -Math.PI/15  else -Math.PI/108
+      upperAngle:  if @mirror == 1 then  Math.PI/108 else  Math.PI/15
 
     if invert_joint
-      @world.createJoint(new RevoluteJoint(jointDef, part2, part1, axe))
+      joint = new RevoluteJoint(opts, part2, part1, axe)
     else
-      @world.createJoint(new RevoluteJoint(jointDef, part1, part2, axe))
+      joint = new RevoluteJoint(opts, part1, part2, axe)
+
+    @world.createJoint(joint)
 
   update: (visible) ->
     if !Constants.debug_physics

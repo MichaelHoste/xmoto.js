@@ -11,40 +11,38 @@ class Particles
   create: ->
     shape = new Circle(0.04)
 
-    particle = @world.createBody({
-      type:     'dynamic'
-      position: {
+    particle = @world.createBody(
+      type: 'dynamic'
+      position:
         x: @level.moto.left_wheel.getPosition().x
         y: @level.moto.left_wheel.getPosition().y - Constants.left_wheel.radius
-      }
-      userData: {
+      userData:
         name: 'particle'
-      }
-    })
+    )
 
-    particle.createFixture(shape, {
+    particle.createFixture(shape,
       density:          1.0
       restitution:      0.5
       friction:         1.0
       isSensor:         false
       filterGroupIndex: -1
-    })
+    )
 
-    particle.applyForce({x: -1, y: -1}, particle.getWorldCenter())
+    particle.applyForce({x: -1.0, y: -1.0}, particle.getWorldCenter())
 
     @list.push(particle)
 
   update: ->
-    ctx = @level.ctx
+    # ctx = @level.ctx
 
-    for particle in @list
-      position = particle.getPosition()
+    # for particle in @list
+    #   position = particle.getPosition()
 
-      ctx.save()
-      ctx.translate(position.x, position.y)
+    #   ctx.save()
+    #   ctx.translate(position.x, position.y)
 
-      ctx.beginPath()
-      ctx.arc(0, 0, 0.04, 0, 2*Math.PI)
-      ctx.fill()
+    #   ctx.beginPath()
+    #   ctx.arc(0, 0, 0.04, 0, 2*Math.PI)
+    #   ctx.fill()
 
-      ctx.restore()
+    #   ctx.restore()

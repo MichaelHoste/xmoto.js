@@ -12,8 +12,9 @@ class Listeners
       @level.ghosts.player.moto
 
   init: ->
-    # Add listeners for end of level
-    @world.on 'begin-contact', (contact) =>
+    # List of events here: https://piqnt.com/planck.js/docs/api/classes/World.html#on
+    # https://piqnt.com/planck.js/docs/contacts.html#contact-events
+    @world.on('begin-contact', (contact) =>
       moto = @active_moto()
 
       a = contact.getFixtureA().getBody().getUserData()
@@ -59,6 +60,7 @@ class Listeners
           else
             moto = if a.name == 'moto' then a.moto else b.moto
           @kill_moto(moto)
+    )
 
   @does_contact_moto_rider: (a, b, obj) ->
     collision = Listeners.does_contact(a, b, obj, 'rider') || Listeners.does_contact(a, b, obj, 'moto')
@@ -93,22 +95,31 @@ class Listeners
 
       #createjs.Sound.play('Headcrash')
 
-      moto.rider.shoulder_joint.enableLimit(false)
+      shoulder_joint = moto.rider.shoulder_joint
+      knee_joint     = moto.rider.knee_joint
+      elbow_joint    = moto.rider.elbow_joint
+      hip_joint      = moto.rider.hip_joint
 
-      knee_joint = moto.rider.knee_joint
-      knee_joint.setLimits(knee_joint.getLowerLimit() * 3, knee_joint.getUpperLimit())
+      shoulder_joint.enableLimit(false)
 
-      elbow_joint = moto.rider.elbow_joint
-      elbow_joint.setLimits(elbow_joint.getLowerLimit(), elbow_joint.getUpperLimit() * 3)
+      knee_joint.setLimits(
+        knee_joint.getLowerLimit() * 3,
+        knee_joint.getUpperLimit()
+      )
 
-      hip_joint = moto.rider.hip_joint
-      hip_joint.setLimits(hip_joint.getLowerLimit() * 3, hip_joint.getUpperLimit())
+      elbow_joint.setLimits(
+        elbow_joint.getLowerLimit(),
+        elbow_joint.getUpperLimit() * 3
+      )
+
+      hip_joint.setLimits(
+        hip_joint.getLowerLimit() * 3,
+        hip_joint.getUpperLimit()
+      )
 
       # kill_moto is called from the 'begin-contact' listener while the world
       # is mid-step (locked), where world.destroyJoint() silently no-ops (see
-      # planck's World#isLocked guard) — queueUpdate() defers it to run right
-      # after the step unlocks. It also runs immediately when kill_moto is
-      # called from elsewhere (e.g. Rider#eject, triggered by a keypress).
+      # planck's World#isLocked guard)
       @world.queueUpdate =>
         @world.destroyJoint(moto.rider.ankle_joint)
         @world.destroyJoint(moto.rider.wrist_joint)

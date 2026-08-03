@@ -15,10 +15,6 @@ class Constants
   @moto_acceleration =  9.00 # Acceleration of moto
   @biker_force       = 11.00 # Force of biker when he rotates the moto
 
-  # FRAMERATE
-
-  @fps = 60.0
-
   # REPLAYS
 
   @replay_key_step = 60          # Key step every x steps during replay (to beat non-deterministic behaviour)
@@ -43,10 +39,10 @@ class Constants
       x: 0.0
       y: 1.0
     vertices: [
-      {x: 0.4, y: -0.3}
-      {x: 0.50, y: 0.40}
-      {x: -0.75, y: 0.16}
-      {x: -0.35, y: -0.3}
+      { x:  0.40, y: -0.30 }
+      { x:  0.50, y:  0.40 }
+      { x: -0.75, y:  0.16 }
+      { x: -0.35, y: -0.30 }
     ]
     collisions: true
     texture:       'playerbikerbody.png'
@@ -87,10 +83,10 @@ class Constants
       x: 0.0
       y: 1.0
     vertices: [
-      {x: -0.10, y: -0.30}
-      {x: -0.25, y: -0.30}
-      {x: -0.80, y: -0.58}
-      {x: -0.65, y: -0.58}
+      { x: -0.10, y: -0.30 }
+      { x: -0.25, y: -0.30 }
+      { x: -0.80, y: -0.58 }
+      { x: -0.65, y: -0.58 }
     ]
     collisions: true
     texture:       'rear1.png'
@@ -104,10 +100,10 @@ class Constants
       x: 0.0
       y: 1.0
     vertices: [
-      {x: 0.58, y: -0.02}
-      {x: 0.48, y: -0.02}
-      {x: 0.66, y: -0.58}
-      {x: 0.76, y: -0.58}
+      { x: 0.58, y: -0.02 }
+      { x: 0.48, y: -0.02 }
+      { x: 0.66, y: -0.58 }
+      { x: 0.76, y: -0.58 }
     ]
     collisions: true
     texture:       'front1.png'
@@ -134,10 +130,10 @@ class Constants
       y:  1.89
     angle: -Math.PI/30.0
     vertices: [
-      {x: 0.10, y: -0.55}
-      {x: 0.13, y: 0.15}
-      {x: -0.20, y: 0.22}
-      {x: -0.18, y: -0.55}
+      { x:  0.10, y: -0.55 }
+      { x:  0.13, y:  0.15 }
+      { x: -0.20, y:  0.22 }
+      { x: -0.18, y: -0.55 }
     ]
     collisions: true
     texture:       'playertorso.png'
@@ -155,12 +151,12 @@ class Constants
       y: 0.90
     angle: -Math.PI/6.0
     vertices: [
-      {x: 0.2, y: -0.33}
-      {x: 0.2, y: -0.27}
-      {x: 0.00, y: -0.2}
-      {x: 0.02, y: 0.33}
-      {x: -0.17, y: 0.33}
-      {x: -0.14, y: -0.33}
+      { x:  0.20, y: -0.33 }
+      { x:  0.20, y: -0.27 }
+      { x:  0.00, y: -0.20 }
+      { x:  0.02, y:  0.33 }
+      { x: -0.17, y:  0.33 }
+      { x: -0.14, y: -0.33 }
     ]
     collisions: true
     texture:       'playerlowerleg.png'
@@ -178,10 +174,10 @@ class Constants
       y:  1.27
     angle: -Math.PI/11.0
     vertices: [
-      {x: 0.4, y: -0.14}
-      {x: 0.4, y: 0.07}
-      {x: -0.4, y: 0.14}
-      {x: -0.4, y: -0.08}
+      { x:  0.4, y: -0.14 }
+      { x:  0.4, y:  0.07 }
+      { x: -0.4, y:  0.14 }
+      { x: -0.4, y: -0.08 }
     ]
     collisions: true
     texture:       'playerupperleg.png'
@@ -199,10 +195,10 @@ class Constants
       y: 1.54
     angle: -Math.PI/10.0
     vertices: [
-      {x: 0.28, y: -0.07}
-      {x: 0.28, y: 0.04}
-      {x: -0.30, y: 0.07}
-      {x: -0.30, y: -0.06}
+      { x:  0.28, y: -0.07 }
+      { x:  0.28, y:  0.04 }
+      { x: -0.30, y:  0.07 }
+      { x: -0.30, y: -0.06 }
     ]
     collisions: true
     texture:       'playerlowerarm.png'
@@ -220,10 +216,10 @@ class Constants
       y:  1.85
     angle: Math.PI/10.0
     vertices: [
-      {x: 0.09, y: -0.29}
-      {x: 0.09, y: 0.22}
-      {x: -0.11, y: 0.26}
-      {x: -0.10, y: -0.29}
+      { x:  0.09, y: -0.29 }
+      { x:  0.09, y:  0.22 }
+      { x: -0.11, y:  0.26 }
+      { x: -0.10, y: -0.29 }
     ]
     collisions: true
     texture:       'playerupperarm.png'
@@ -235,14 +231,18 @@ class Constants
   # MOTO JOINTS
 
   @left_suspension =
-    angle: {x: 0, y: 1}
+    angle:
+      x: 0.0,
+      y: 1.0
     lower_translation: -0.03
     upper_translation:  0.20
     back_force:         3.00
     rigidity:           8.00
 
   @right_suspension =
-    angle: {x: -0.2, y: 1}
+    angle:
+      x: -0.2
+      y:  1.0
     lower_translation: -0.01
     upper_translation:  0.20
     back_force:         3.00

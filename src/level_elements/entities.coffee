@@ -3,6 +3,8 @@ AABB   = planck.AABB
 
 class Entities
 
+  ANIMATION_SPEED_FACTOR = 1.6 # To make it smoother than original
+
   constructor: (level) ->
     @level        = level
     @assets       = level.assets
@@ -140,16 +142,17 @@ class Entities
   create_entity_physics: (entity, name) ->
     shape = new Circle(entity.size.r)
 
-    body = @world.createBody({
-      type:     'static'
-      position: {x: entity.position.x, y: entity.position.y}
-      userData: {
+    body = @world.createBody(
+      type: 'static'
+      position:
+        x: entity.position.x
+        y: entity.position.y
+      userData:
         name:   name
         entity: entity
-      }
-    })
+    )
 
-    body.createFixture(shape, {isSensor: true})
+    body.createFixture(shape, isSensor: true)
 
     body
 
@@ -169,7 +172,7 @@ class Entities
         textures.push(PIXI.Texture.from(@assets.get_url(@frame_name(entity, i))))
 
       sprite = new PIXI.AnimatedSprite(textures)
-      sprite.animationSpeed = (1.0 / entity.delay) / Constants.fps
+      sprite.animationSpeed = (1.0 / entity.delay) / 100 * ANIMATION_SPEED_FACTOR
       sprite.play()
     else if entity.file
       sprite = PIXI.Sprite.from(@assets.get_url(entity.file))
