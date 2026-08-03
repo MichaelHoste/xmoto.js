@@ -12,21 +12,20 @@ class Listeners
       @level.ghosts.player.moto
 
   init: ->
-    # Add listeners for end of level
-    listener = new Box2D.Dynamics.b2ContactListener
-
-    listener.BeginContact = (contact) =>
+    # List of events here: https://piqnt.com/planck.js/docs/api/classes/World.html#on
+    # https://piqnt.com/planck.js/docs/contacts.html#contact-events
+    @world.on('begin-contact', (contact) =>
       moto = @active_moto()
 
-      a = contact.GetFixtureA().GetBody().GetUserData()
-      b = contact.GetFixtureB().GetBody().GetUserData()
+      a = contact.getFixtureA().getBody().getUserData()
+      b = contact.getFixtureB().getBody().getUserData()
 
       if !moto.dead
         # Strawberries
         if Listeners.does_contact_moto_rider(a, b, 'strawberry')
-          strawberry = if a.name == 'strawberry' then contact.GetFixtureA() else contact.GetFixtureB()
+          strawberry = if a.name == 'strawberry' then contact.getFixtureA() else contact.getFixtureB()
 
-          entity = strawberry.GetBody().GetUserData().entity
+          entity = strawberry.getBody().getUserData().entity
           if entity.display
             entity.display = false
             #createjs.Sound.play('PickUpStrawberry')
@@ -61,8 +60,7 @@ class Listeners
           else
             moto = if a.name == 'moto' then a.moto else b.moto
           @kill_moto(moto)
-
-    @world.SetContactListener(listener)
+    )
 
   @does_contact_moto_rider: (a, b, obj) ->
     collision = Listeners.does_contact(a, b, obj, 'rider') || Listeners.does_contact(a, b, obj, 'moto')
@@ -97,11 +95,32 @@ class Listeners
 
       #createjs.Sound.play('Headcrash')
 
-      @world.DestroyJoint(moto.rider.ankle_joint)
-      @world.DestroyJoint(moto.rider.wrist_joint)
-      moto.rider.shoulder_joint.m_enableLimit = false
+      shoulder_joint = moto.rider.shoulder_joint
+      knee_joint     = moto.rider.knee_joint
+      elbow_joint    = moto.rider.elbow_joint
+      hip_joint      = moto.rider.hip_joint
 
-      moto.rider.knee_joint.m_lowerAngle  = moto.rider.knee_joint.m_lowerAngle  * 3
-      moto.rider.elbow_joint.m_upperAngle = moto.rider.elbow_joint.m_upperAngle * 3
-      moto.rider.hip_joint.m_lowerAngle   = moto.rider.hip_joint.m_lowerAngle   * 3
+      shoulder_joint.enableLimit(false)
+
+      knee_joint.setLimits(
+        knee_joint.getLowerLimit() * 3,
+        knee_joint.getUpperLimit()
+      )
+
+      elbow_joint.setLimits(
+        elbow_joint.getLowerLimit(),
+        elbow_joint.getUpperLimit() * 3
+      )
+
+      hip_joint.setLimits(
+        hip_joint.getLowerLimit() * 3,
+        hip_joint.getUpperLimit()
+      )
+
+      # kill_moto is called from the 'begin-contact' listener while the world
+      # is mid-step (locked), where world.destroyJoint() silently no-ops (see
+      # planck's World#isLocked guard)
+      @world.queueUpdate =>
+        @world.destroyJoint(moto.rider.ankle_joint)
+        @world.destroyJoint(moto.rider.wrist_joint)
 

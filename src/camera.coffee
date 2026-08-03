@@ -1,3 +1,5 @@
+AABB = planck.AABB
+
 class Camera
 
   constructor: (level) ->
@@ -14,7 +16,7 @@ class Camera
       x: 0
       y: 0
 
-    @aabb = new Box2D.Collision.b2AABB()
+    @aabb = new AABB()
 
   init: ->
     if Constants.manual_scale
@@ -36,9 +38,9 @@ class Camera
 
   move: ->
     if Constants.automatic_scale
-      velocity = @active_object().GetLinearVelocity()
+      velocity = @active_object().getLinearVelocity()
 
-      speed = Math2D.distance_between_points(new b2Vec2(0, 0), velocity)
+      speed = Math2D.distance_between_points({x: 0, y: 0}, velocity)
       @scale.x = @scale.x * 0.995 + (Constants.default_scale.x / (1.0 + speed/7.5)) * 0.005
       @scale.y = @scale.y * 0.995 + (Constants.default_scale.y / (1.0 + speed/7.5)) * 0.005
 
@@ -57,7 +59,7 @@ class Camera
       ctx.scale(@scale.x, @scale.y)                      # Scale (zoom)
       ctx.translate(-@target().x, -@target().y)          # Camera on moto
 
-      @level.physics.world.DrawDebugData()
+      @level.physics.draw_debug()
 
       ctx.restore()
     else
@@ -114,9 +116,9 @@ class Camera
         hw = half_w * aabb_factor
         hh = half_h * aabb_factor
 
-        parallax.camera_aabb ?= new Box2D.Collision.b2AABB()
-        parallax.camera_aabb.lowerBound.Set(cx - hw, cy - hh)
-        parallax.camera_aabb.upperBound.Set(cx + hw, cy + hh)
+        parallax.camera_aabb ?= new AABB()
+        parallax.camera_aabb.lowerBound.set(cx - hw, cy - hh)
+        parallax.camera_aabb.upperBound.set(cx + hw, cy + hh)
 
       # Opaque culling to see where sprites are "filtered out"
       if Constants.debug_culling
@@ -133,7 +135,7 @@ class Camera
   # must be something with x and y values
   target: ->
     options  = @level.options
-    position = @active_object().GetPosition()
+    position = @active_object().getPosition()
 
     adjusted_position =
       x: position.x + @translate.x
@@ -185,5 +187,5 @@ class Camera
     half_w = size_x / 2
     half_h = size_y / 2
 
-    @aabb.lowerBound.Set(t.x - half_w, t.y - half_h)
-    @aabb.upperBound.Set(t.x + half_w, t.y + half_h)
+    @aabb.lowerBound.set(t.x - half_w, t.y - half_h)
+    @aabb.upperBound.set(t.x + half_w, t.y + half_h)

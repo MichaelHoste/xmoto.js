@@ -1,53 +1,43 @@
-b2World         = Box2D.Dynamics.b2World
-b2Vec2          = Box2D.Common.Math.b2Vec2
-b2AABB          = Box2D.Collision.b2AABB
-b2BodyDef       = Box2D.Dynamics.b2BodyDef
-b2Body          = Box2D.Dynamics.b2Body
-b2FixtureDef    = Box2D.Dynamics.b2FixtureDef
-b2Fixture       = Box2D.Dynamics.b2Fixture
-b2MassData      = Box2D.Collision.Shapes.b2MassData
-b2PolygonShape  = Box2D.Collision.Shapes.b2PolygonShape
-b2CircleShape   = Box2D.Collision.Shapes.b2CircleShape
-b2EdgeShape     = Box2D.Collision.Shapes.b2EdgeShape
-b2EdgeChainDef  = Box2D.Collision.Shapes.b2EdgeChainDef
-b2DebugDraw     = Box2D.Dynamics.b2DebugDraw
-b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
-b2Settings      = Box2D.Common.b2Settings
+World    = planck.World
+Vec2     = planck.Vec2
+AABB     = planck.AABB
+Chain    = planck.Chain
+Circle   = planck.Circle
+Polygon  = planck.Polygon
+Settings = planck.Settings
 
 class Physics
 
   constructor: (level) ->
-    @level     = level
-    @options   = level.options
-    @camera    = level.camera
-    @world     = new b2World(new b2Vec2(0, -Constants.gravity), true) # gravity vector, and doSleep
+    @level   = level
+    @options = level.options
+    @camera  = level.camera
+
+    @world = new World(
+      x:  0,
+      y: -Constants.gravity
+    )
+
+    # Define physics (not directly correlated to FPS!)
+    # --
+    # For better physics, use 120 steps/s, it will make the moto more stable (but less fun?).
+    # Don't try to increase iterations, more steps will have far more effect
+    # --
+    # For smoother motion in 120FPS screens, it's possible to interpolate positions using the remaining accumulator
+    @step_ms             = 1000 / 60 # Fixed at 60 steps/s of physics (in ms), whatever the FPS loop
+    @velocity_iterations = 10        # Default 8, a bit more was needed for less wobbly moto
+    @position_iterations = 5         # Default 3, a bit more was needed for less wobbly moto
+
+    # Debug canvas to validate physics shapes/joints (?debug=true&debug_physics=true)
     @debug_ctx = level.debug_ctx
+    @debug_ctx.lineWidth = 0.03 # thickness of draw lines
 
     # Double default precision between wheel and ground (to avoid seing space between them)
-    b2Settings.b2_linearSlop = 0.0025
-
-    # Box2D throws a bare string (`throw "Assertion Failed"`) on internal assertion failures.
-    # It was hiding the full error stack, making it difficult to debug
-    b2Settings.b2Assert = (condition) ->
-      throw new Error("Box2D assertion failed") unless condition
-
-    # Debug initialization
-    debugDraw = new b2DebugDraw()
-    debugDraw.SetSprite(@debug_ctx)                # context
-    @debug_ctx.lineWidth = 0.03                    # thickness of line (debugDraw.SetLineThickness doesn't work)
-    debugDraw.SetFillAlpha(0.5)                    # transparency
-    debugDraw.m_sprite.graphics.clear = -> return; # Don't allow box2D to (badly) clear the canvas
-
-    # Assign debug to world
-    debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit)
-    @world.SetDebugDraw(debugDraw)
-
-    @world
+    Settings.linearSlop = 0.0025
 
   init: ->
-    @last_step = new Date().getTime()
-    @step      = 1000.0/Constants.fps
-    @steps     = 0
+    @last_step_ms = performance.now()
+    @steps        = 0
 
   restart: ->
     replay       = @level.replay
@@ -78,94 +68,80 @@ class Physics
       @level.ghosts.player.init()
 
   update: ->
-    while (new Date()).getTime() - @last_step > @step
-      @steps = @steps + 1
-      @last_step += @step
+    while performance.now() - @last_step_ms > @step_ms
+      @steps        += 1
+      @last_step_ms += @step_ms
 
       @level.moto.move()
       @level.ghosts.move()
       @level.replay.add_step()
       @level.camera.move()
-      @world.Step(1.0/Constants.fps, 10, 10)
-      @world.ClearForces()
+
+      # Cf. top of file and https://piqnt.com/planck.js/docs/world/simulation.html#simulating-the-world
+      @world.step(@step_ms/1000, @velocity_iterations, @position_iterations)
+
       @level.input.space = false # Space can't stay pressed (used for `.move` and `.add_step`)
 
       if @level.need_to_restart
         @restart()
         @level.need_to_restart = false
 
+    # For Gaffer's fixed timestep with interpolations:
+    delta_ms = performance.now() - @last_step_ms # \ Leftover time not yet consumed by a full physics step (alpha is between 0.0 and 1.0)
+    @alpha   = delta_ms / @step_ms               # | Could be used in moto.update() and rider.update() to adjust the position/angle of sprite
+                                                 # | based on previous and current physics data (without updating the physics object!)
+                                                 # / It would allow the game to go through 120fps with only 60 physics steps
+
   create_polygon: (vertices, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
-    # Create fixture
-    fixDef = new b2FixtureDef()
+    vertices = Physics.create_shape(vertices)
+    shape    = new Polygon(vertices)
 
-    fixDef.shape             = new b2PolygonShape()
-    fixDef.density           = density
-    fixDef.restitution       = restitution
-    fixDef.friction          = friction
-    fixDef.filter.groupIndex = group_index
+    body = @world.createBody(
+      type: 'static'
+      position:
+        x: 0
+        y: 0
+      userData:
+        name: name
+    )
 
-    # Create polygon
-    Physics.create_shape(fixDef, vertices)
-
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = 0
-    bodyDef.position.y = 0
-
-    bodyDef.userData =
-      name: name
-
-    bodyDef.type = b2Body.b2_staticBody
-
-    # Assign fixture to body and add body to 2D world
-    @world.CreateBody(bodyDef).CreateFixture(fixDef)
+    body.createFixture(shape,
+      density:          density
+      restitution:      restitution
+      friction:         friction
+      filterGroupIndex: group_index
+    )
 
   create_lines: (block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
     return if !block.vertices.length
 
-    # Create body
-    bodyDef = new b2BodyDef()
-
-    # Assign body position
-    bodyDef.position.x = block.position.x
-    bodyDef.position.y = block.position.y
-
-    bodyDef.userData =
-      name: name
-
-    bodyDef.type = b2Body.b2_staticBody
-
-    # add body to the world
-    body = @world.CreateBody(bodyDef)
-
-    # Some levels contain consecutive (near-)duplicate vertices, which would
-    # produce a zero-length edge and crash Box2D's assertion.
+    # Some levels contain consecutive (near-)duplicate vertices, we remove them
     vertices = Physics.dedupe_vertices(block.vertices)
 
-    # assign each couple of vertices to a line
-    for vertex, i in vertices
-      # Create fixture
-      fixDef = new b2FixtureDef()
+    # One closed Chain for the whole block outline. Chain automatically wires
+    # up ghost vertices between adjacent segments, which suppresses edge collisions
+    # that a set of disconnected segments would cause.
+    shape = new Chain(vertices, true)
 
-      fixDef.shape             = new b2PolygonShape()
-      fixDef.density           = density
-      fixDef.restitution       = restitution
-      fixDef.friction          = friction
-      fixDef.filter.groupIndex = group_index
+    body = @world.createBody(
+      type: 'static'
+      position:
+        x: block.position.x
+        y: block.position.y
+      userData:
+        name: name
+    )
 
-      # Create line (from polygon because box2Dweb cannot do otherwise)
-      vertex1 = vertex
-      vertex2 = if i == vertices.length-1 then vertices[0] else vertices[i+1]
-      fixDef.shape.SetAsArray([new b2Vec2(vertex1.x, vertex1.y), new b2Vec2(vertex2.x, vertex2.y)], 2)
-
-      # Assign fixture (line) to body
-      body.CreateFixture(fixDef)
+    body.createFixture(shape,
+      density:          density
+      restitution:      restitution
+      friction:         friction
+      filterGroupIndex: group_index
+    )
 
   # Remove consecutive (cyclic) vertices that are too close (or the same).
-  # It will avoid zero-length Box2D edges that would crash SetAsArray().
-  @dedupe_vertices: (vertices, distance = 1e-9) ->
+  # It will avoid zero-length edges that would crash Chain's construction.
+  @dedupe_vertices: (vertices, distance = Settings.linearSlop) ->
     too_close = (a, b, distance) ->
       dx = a.x - b.x
       dy = a.y - b.y
@@ -188,15 +164,108 @@ class Physics
 
     deduped
 
-  @create_shape: (fix_def, vertices, mirror = false) ->
-    vertices   = Physics.dedupe_vertices(vertices)
-    b2vertices = []
+  # Dedupes and optionally mirrors (X-flip + winding reversal) a set of vertices
+  # Currently used for moto parts and limits
+  @create_shape: (vertices, mirror = false) ->
+    vertices = Physics.dedupe_vertices(vertices)
 
-    if mirror == false
-      for vertex in vertices
-        b2vertices.push(new b2Vec2(vertex.x, vertex.y))
+    if mirror
+      vertices.map((vertex) -> { x: -vertex.x, y: vertex.y })
     else
-      for vertex in vertices
-        b2vertices.unshift(new b2Vec2(-vertex.x, vertex.y))
+      vertices
 
-    fix_def.shape.SetAsArray(b2vertices)
+  # Custom debug draw (Planck.js has no b2DebugDraw/DrawDebugData like Box2Dweb)
+  # Draws directly onto @debug_ctx canvas
+  BACKGROUND_COLOR: '#222229'
+  FILL_ALPHA: 0.35
+  BODY_COLORS:
+    inactive:  '127,127,76'
+    static:    '127,229,127'
+    kinematic: '127,127,229'
+    sleeping:  '153,153,153'
+    awake:     '229,178,178'
+  JOINT_COLOR: '127,204,204'
+
+  draw_debug: ->
+    ctx = @debug_ctx
+    ctx.fillStyle = @BACKGROUND_COLOR
+    ctx.fillRect(-1e6, -1e6, 2e6, 2e6)
+
+    body = @world.getBodyList()
+
+    while body
+      @draw_debug_body(body, ctx)
+      body = body.getNext()
+
+    joint = @world.getJointList()
+
+    while joint
+      @draw_debug_joint(joint, ctx)
+      joint = joint.getNext()
+
+  draw_debug_body: (body, ctx) ->
+    if !body.isActive()
+      color = @BODY_COLORS.inactive
+    else if body.getType() == 'static'
+      color = @BODY_COLORS.static
+    else if body.getType() == 'kinematic'
+      color = @BODY_COLORS.kinematic
+    else if !body.isAwake()
+      color = @BODY_COLORS.sleeping
+    else
+      color = @BODY_COLORS.awake
+
+    fixture = body.getFixtureList()
+
+    while fixture
+      @draw_debug_shape(fixture.getShape(), body, color, ctx)
+      fixture = fixture.getNext()
+
+  draw_debug_shape: (shape, body, color, ctx) ->
+    switch shape.getType()
+      when 'circle'
+        center = body.getWorldPoint(shape.m_p)
+        ctx.beginPath()
+        ctx.fillStyle   = "rgba(#{color},#{@FILL_ALPHA})"
+        ctx.strokeStyle = "rgba(#{color},1)"
+        ctx.arc(center.x, center.y, shape.m_radius, 0, 2*Math.PI)
+        ctx.closePath()
+        ctx.fill()
+        ctx.stroke()
+      when 'polygon'
+        @draw_debug_polyline(shape.m_vertices.map((v) -> body.getWorldPoint(v)), true, color, ctx)
+      when 'chain'
+        @draw_debug_polyline(shape.m_vertices.map((v) -> body.getWorldPoint(v)), shape.isLoop(), color, ctx)
+
+  draw_debug_polyline: (points, close, color, ctx) ->
+    return if !points.length
+
+    ctx.beginPath()
+    ctx.fillStyle   = "rgba(#{color},#{@FILL_ALPHA})"
+    ctx.strokeStyle = "rgba(#{color},1)"
+    ctx.moveTo(points[0].x, points[0].y)
+    ctx.lineTo(point.x, point.y) for point in points[1..]
+    ctx.closePath() if close
+    ctx.fill() if close
+    ctx.stroke()
+
+  draw_debug_joint: (joint, ctx) ->
+    anchor_a = joint.getAnchorA()
+    anchor_b = joint.getAnchorB()
+
+    ctx.strokeStyle = "rgba(#{@JOINT_COLOR},1)"
+
+    ctx.beginPath()
+    ctx.moveTo(joint.getBodyA().getPosition().x, joint.getBodyA().getPosition().y)
+    ctx.lineTo(anchor_a.x, anchor_a.y)
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(anchor_a.x, anchor_a.y)
+    ctx.lineTo(anchor_b.x, anchor_b.y)
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(anchor_b.x, anchor_b.y)
+    ctx.lineTo(joint.getBodyB().getPosition().x, joint.getBodyB().getPosition().y)
+    ctx.stroke()

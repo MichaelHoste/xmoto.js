@@ -4,8 +4,7 @@ XMoto.js
 [DEMO](http://js.xmoto.io)
 
 This project is a HTML5 Port of [XMoto](http://xmoto.tuxfamily.org/) using
-[CoffeeScript](http://coffeescript.org), [PixiJS](http://www.pixijs.com)
-and [Box2DWeb](https://code.google.com/p/box2dweb/).
+[CoffeeScript](http://coffeescript.org), [PixiJS 8.18.1](http://www.pixijs.com) and [Planck.js 1.5](https://piqnt.com/planck.js/).
 
 [![Image](http://js.xmoto.io/image.jpg)](http://js.xmoto.io)
 
@@ -132,8 +131,8 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 * Make the game playable on mobile (4 buttons or device rotation or volume buttons?)
 * Adjust a bit the camera (player more on the borders of the camera, less zoom)
 * Sounds with PixiJS Sound and play on the left/right depending on position
+* Manage 120fps on compatible screens? Make physics 120 steps/s and adapt replays?
 * Adjust the height of the driver (less bumpy!? Height of sprite? Compare values?)
-* Use [Planck.js](https://piqnt.com/planck.js/) version of Box2D (or matter-js) instead of old Box2D 2.1a.3 that was cross-compiled from ActionScript 3?
 * Parse maps from https://github.com/bjorn/tiled ?
 * Create alternative box2D physics using DIV elements on screen to make the moto moves on websites.
 * use color on image to create mesh of collisions: https://github.com/Tamersoul/magic-wand-js

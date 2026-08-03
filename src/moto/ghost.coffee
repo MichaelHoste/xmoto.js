@@ -41,13 +41,13 @@ class Ghost
     @moto.update()
 
   set_part_position: (entity, part, key_step) ->
-    entity[part].SetPosition(
+    entity[part].setPosition(
       x: key_step[part].position.x
       y: key_step[part].position.y
     )
-    entity[part].SetAngle(key_step[part].angle)
-    entity[part].SetLinearVelocity(
+    entity[part].setAngle(key_step[part].angle)
+    entity[part].setLinearVelocity(
       x: key_step[part].linear_velocity.x
       y: key_step[part].linear_velocity.y
     )
-    entity[part].GetAngularVelocity(key_step[part].angular_velocity)
+    entity[part].getAngularVelocity(key_step[part].angular_velocity)

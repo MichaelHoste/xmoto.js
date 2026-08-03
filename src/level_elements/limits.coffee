@@ -1,3 +1,5 @@
+AABB = planck.AABB
+
 class Limits
 
   constructor: (level) ->
@@ -161,12 +163,12 @@ class Limits
     @culling_debug.stroke(width: line_width, color: 0xC778C7, alpha: 0.7)
 
   visible: (wall) ->
-    wall.aabb.TestOverlap(@level.camera.aabb)
+    AABB.testOverlap(wall.aabb, @level.camera.aabb)
 
   compute_aabb: (wall) ->
-    aabb = new Box2D.Collision.b2AABB()
-    aabb.lowerBound.Set(wall.left,  wall.bottom)
-    aabb.upperBound.Set(wall.right, wall.top)
+    aabb = new AABB()
+    aabb.lowerBound.set(wall.left,  wall.bottom)
+    aabb.upperBound.set(wall.right, wall.top)
 
     return aabb
 

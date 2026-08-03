@@ -118,11 +118,11 @@ class Replay
 
   physics_values: (object) ->
     position:
-      x:              object.GetPosition().x
-      y:              object.GetPosition().y
-    angle:            object.GetAngle()
+      x:              object.getPosition().x
+      y:              object.getPosition().y
+    angle:            object.getAngle()
     linear_velocity:
-      x:              object.GetLinearVelocity().x
-      y:              object.GetLinearVelocity().y
-    angular_velocity: object.GetAngularVelocity()
+      x:              object.getLinearVelocity().x
+      y:              object.getLinearVelocity().y
+    angular_velocity: object.getAngularVelocity()
 

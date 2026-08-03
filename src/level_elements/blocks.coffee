@@ -1,3 +1,5 @@
+AABB = planck.AABB
+
 class Blocks
 
   constructor: (level) ->
@@ -228,17 +230,17 @@ class Blocks
   visible: (block) ->
     if block.position.islayer && block.position.layerid != undefined
       parallax_layer = @level.layers.list[block.position.layerid]
-      block.aabb.TestOverlap(parallax_layer.camera_aabb)
+      AABB.testOverlap(block.aabb, parallax_layer.camera_aabb)
     else
-      block.aabb.TestOverlap(@level.camera.aabb)
+      AABB.testOverlap(block.aabb, @level.camera.aabb)
 
   compute_aabb: (block) ->
     x_positions = block.vertices.map((v) -> v.absolute_x)
     y_positions = block.vertices.map((v) -> v.absolute_y)
 
-    aabb = new Box2D.Collision.b2AABB()
-    aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
-    aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
+    aabb = new AABB()
+    aabb.lowerBound.set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
+    aabb.upperBound.set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
 
     return aabb
 

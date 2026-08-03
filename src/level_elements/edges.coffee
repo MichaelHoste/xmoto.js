@@ -3,6 +3,8 @@
 # -> MeshGeometry with uvs for texture position
 # -> 1 GPU call for full edge
 
+AABB = planck.AABB
+
 class Edges
 
   constructor: (level, block, xml_block) ->
@@ -191,16 +193,16 @@ class Edges
   visible: (polygon) ->
     if @block.position.islayer && @block.position.layerid != undefined
       parallax_layer = @level.layers.list[@block.position.layerid]
-      polygon.aabb.TestOverlap(parallax_layer.camera_aabb)
+      AABB.testOverlap(polygon.aabb, parallax_layer.camera_aabb)
     else
-      polygon.aabb.TestOverlap(@level.camera.aabb)
+      AABB.testOverlap(polygon.aabb, @level.camera.aabb)
 
   compute_aabb: (polygon) ->
     x_positions = polygon.vertices.map((v) -> v.x)
     y_positions = polygon.vertices.map((v) -> v.y)
 
-    aabb = new Box2D.Collision.b2AABB()
-    aabb.lowerBound.Set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
-    aabb.upperBound.Set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
+    aabb = new AABB()
+    aabb.lowerBound.set(Math.min.apply(null, x_positions), Math.min.apply(null, y_positions))
+    aabb.upperBound.set(Math.max.apply(null, x_positions), Math.max.apply(null, y_positions))
 
     return aabb
