@@ -225,12 +225,21 @@ class Physics
     switch shape.getType()
       when 'circle'
         center = body.getWorldPoint(shape.m_p)
+        edge   = body.getWorldPoint({x: shape.m_p.x + shape.m_radius, y: shape.m_p.y})
+
         ctx.beginPath()
         ctx.fillStyle   = "rgba(#{color},#{@FILL_ALPHA})"
         ctx.strokeStyle = "rgba(#{color},1)"
         ctx.arc(center.x, center.y, shape.m_radius, 0, 2*Math.PI)
         ctx.closePath()
         ctx.fill()
+        ctx.stroke()
+
+        # Spoke from center to edge along the body's local +x axis, so it
+        # visibly sweeps around as the body (e.g. a wheel) rotates.
+        ctx.beginPath()
+        ctx.moveTo(center.x, center.y)
+        ctx.lineTo(edge.x, edge.y)
         ctx.stroke()
       when 'polygon'
         @draw_debug_polyline(shape.m_vertices.map((v) -> body.getWorldPoint(v)), true, color, ctx)

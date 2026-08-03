@@ -1497,16 +1497,26 @@
       }
 
       draw_debug_shape(shape, body, color, ctx) {
-        var center;
+        var center, edge;
         switch (shape.getType()) {
           case 'circle':
             center = body.getWorldPoint(shape.m_p);
+            edge = body.getWorldPoint({
+              x: shape.m_p.x + shape.m_radius,
+              y: shape.m_p.y
+            });
             ctx.beginPath();
             ctx.fillStyle = `rgba(${color},${this.FILL_ALPHA})`;
             ctx.strokeStyle = `rgba(${color},1)`;
             ctx.arc(center.x, center.y, shape.m_radius, 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fill();
+            ctx.stroke();
+            // Spoke from center to edge along the body's local +x axis, so it
+            // visibly sweeps around as the body (e.g. a wheel) rotates.
+            ctx.beginPath();
+            ctx.moveTo(center.x, center.y);
+            ctx.lineTo(edge.x, edge.y);
             return ctx.stroke();
           case 'polygon':
             return this.draw_debug_polyline(shape.m_vertices.map(function(v) {
