@@ -19,6 +19,8 @@ class PhysicsDrawingService
     @ctx   = ctx
     @world = world
 
+    @ctx.lineWidth = 0.03 # thickness of draw lines
+
   draw: ->
     @ctx.fillStyle = BACKGROUND_COLOR
     @ctx.fillRect(-1e6, -1e6, 2e6, 2e6)

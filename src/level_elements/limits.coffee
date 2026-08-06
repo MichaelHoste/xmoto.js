@@ -76,7 +76,7 @@ class Limits
         { x: wall.right, y: wall.bottom }
         { x: wall.right, y: wall.top    }
       ]
-      @level.physics.create_polygon(vertices, 'ground', ground.density, ground.restitution, ground.friction)
+      @level.physics.create_polygons_collisions(vertices, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_graphics: ->
     @textures = (PIXI.Texture.from(@assets.get_url(name)) for name in @texture_names)

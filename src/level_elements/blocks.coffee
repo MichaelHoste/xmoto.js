@@ -96,7 +96,7 @@ class Blocks
 
     for block in @blocks
       if !block.no_collision
-        @level.physics.create_lines(block, 'ground', ground.density, ground.restitution, ground.friction)
+        @level.physics.create_chains_collisions(block, 'ground', ground.density, ground.restitution, ground.friction)
 
   init_graphics: ->
     now = performance.now()

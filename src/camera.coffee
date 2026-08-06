@@ -51,7 +51,7 @@ class Camera
 
   update: ->
     if Constants.debug_physics
-      ctx = @level.physics.debug_ctx
+      ctx = @level.debug_ctx
 
       ctx.save()
 

@@ -7,7 +7,7 @@ class Level
     @show_loading()
 
     # Context
-    @debug_ctx   = $('#xmoto-debug')[0].getContext('2d')
+    @debug_ctx   = $('#xmoto-debug')[0].getContext('2d') # Debug canvas to validate physics shapes/joints (?debug=true&debug_physics=true)
     @stage       = new PIXI.Container()
     @stage.label = @options.container # id of div
 
