@@ -24,6 +24,12 @@ class Physics
                           # It creates physics bugs (like in l1187 when going left).
                           # We fix the (rare) bugs by splitting the chains at the sharp angles, and avoid looping.
 
+  DEFAULT_FIXTURE_OPTS =
+    density:          1.0
+    restitution:      0.5
+    friction:         1.0
+    filterGroupIndex: -2
+
   constructor: (level) ->
     @level   = level
     @options = level.options
@@ -104,36 +110,39 @@ class Physics
   # Shape is entirely filled. Any convex point will be removed by Planck!
   # TODO HERE: decomp.decomp(pairs) then loop and create several sub-polygons
   # => https://piqnt.com/planck.js/docs/shape/polygon.html
-  create_polygons_collisions: (vertices, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
-    shape = new Polygon(vertices)
+  create_polygons_collisions: (position, vertices, name, opts = {}) ->
+    vertices = Physics.optimize_vertices(vertices)
+    return if vertices.length < 3
 
     body = @world.createBody(
       type: 'static'
       position:
-        x: 0
-        y: 0
+        x: position.x
+        y: position.y
       userData:
         name: name
     )
 
+    shape = new Polygon(vertices)
+
     body.createFixture(shape,
-      density:          density
-      restitution:      restitution
-      friction:         friction
-      filterGroupIndex: group_index
+      density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
+      restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
+      friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
+      filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
     )
 
   # Create collisions using very thin rectangles following the edges, top-aligned on vertices.
   # Shape is hollow, collisions are possible from both ways
-  create_rectangles_collisions: (block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
-    vertices = Physics.optimize_vertices(block.vertices)
-    return if !block.vertices.length
+  create_rectangles_collisions: (position, vertices, name, opts = {}) ->
+    vertices = Physics.optimize_vertices(vertices)
+    return if !vertices.length
 
     body = @world.createBody(
       type: 'static'
       position:
-        x: block.position.x
-        y: block.position.y
+        x: position.x
+        y: position.y
       userData:
         name: name
     )
@@ -163,24 +172,24 @@ class Physics
       ])
 
       body.createFixture(shape,
-        density:          density
-        restitution:      restitution
-        friction:         friction
-        filterGroupIndex: group_index
+        density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
+        restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
+        friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
+        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
       )
 
   # Create collisions using individual Edges (without ghost vertices). May create ghost collisions
   # Shape is hollow, collisions are possible from both ways
   # => https://piqnt.com/planck.js/docs/shape/edge.html
-  create_edges_collisions: (block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) ->
-    vertices = Physics.optimize_vertices(block.vertices)
-    return if !block.vertices.length
+  create_edges_collisions: (position, vertices, name, opts = {}) ->
+    vertices = Physics.optimize_vertices(vertices)
+    return if !vertices.length
 
     body = @world.createBody(
       type: 'static'
       position:
-        x: block.position.x
-        y: block.position.y
+        x: position.x
+        y: position.y
       userData:
         name: name
     )
@@ -192,24 +201,24 @@ class Physics
       shape = planck.Edge(planck.Vec2(vertex1.x, vertex1.y), planck.Vec2(vertex2.x, vertex2.y))
 
       body.createFixture(shape,
-        density:          density
-        restitution:      restitution
-        friction:         friction
-        filterGroupIndex: group_index
+        density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
+        restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
+        friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
+        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
       )
 
   # Create collisions using Chains to avoid ghost collisions. If sharp angles, split the chains to avoid collision bug
   # Shape is hollow, collisions are possible from both ways
   # => https://piqnt.com/planck.js/docs/shape/edge.html
-  create_chains_collisions: (block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2, sharp_angle_rad = CHAIN_SHARP_ANGLE * Math.PI / 180) ->
-    vertices = Physics.optimize_vertices(block.vertices)
+  create_chains_collisions: (position, vertices, name, opts = {}) ->
+    vertices = Physics.optimize_vertices(vertices)
     return if vertices.length < 3
 
     body = @world.createBody(
       type: 'static'
       position:
-        x: block.position.x
-        y: block.position.y
+        x: position.x
+        y: position.y
       userData:
         name: name
     )
@@ -217,16 +226,16 @@ class Physics
     # Fix issues where very long, sharp edges may produce collision bug (cf. level 1187).
     # We detect those sharp angles and split the loop into separate non-looped Chains.
     # (these chains will appear without solid color in debug mode)
-    chains = @split_at_sharp_folds(vertices, sharp_angle_rad)
+    chains = @split_at_sharp_folds(vertices, CHAIN_SHARP_ANGLE * Math.PI / 180)
 
     for chain in chains
       shape = new Chain(chain.vertices, chain.is_loop)
 
       body.createFixture(shape,
-        density:          density
-        restitution:      restitution
-        friction:         friction
-        filterGroupIndex: group_index
+        density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
+        restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
+        friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
+        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
       )
 
   # Splits a closed vertex loop into Chains, breaking it open at any vertex where the outline folds back close to 180°.

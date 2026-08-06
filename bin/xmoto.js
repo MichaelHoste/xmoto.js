@@ -1269,11 +1269,9 @@
   Settings = planck.Settings;
 
   Physics = (function() {
-    var CHAIN_SHARP_ANGLE, POSITION_ITERATIONS, RECTANGLE_THICKNESS, STEPS_PER_SEC, VELOCITY_ITERATIONS;
+    var CHAIN_SHARP_ANGLE, DEFAULT_FIXTURE_OPTS, POSITION_ITERATIONS, RECTANGLE_THICKNESS, STEPS_PER_SEC, VELOCITY_ITERATIONS;
 
     class Physics {
-      // It creates physics bugs (like in l1187 when going left).
-      // We fix the (rare) bugs by splitting the chains at the sharp angles, and avoid looping.
       constructor(level) {
         this.level = level;
         this.options = level.options;
@@ -1357,40 +1355,44 @@
       // Shape is entirely filled. Any convex point will be removed by Planck!
       // TODO HERE: decomp.decomp(pairs) then loop and create several sub-polygons
       // => https://piqnt.com/planck.js/docs/shape/polygon.html
-      create_polygons_collisions(vertices, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) {
-        var body, shape;
-        shape = new Polygon(vertices);
-        body = this.world.createBody({
-          type: 'static',
-          position: {
-            x: 0,
-            y: 0
-          },
-          userData: {
-            name: name
-          }
-        });
-        return body.createFixture(shape, {
-          density: density,
-          restitution: restitution,
-          friction: friction,
-          filterGroupIndex: group_index
-        });
-      }
-
-      // Create collisions using very thin rectangles following the edges, top-aligned on vertices.
-      // Shape is hollow, collisions are possible from both ways
-      create_rectangles_collisions(block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) {
-        var body, dx, dy, i, l, len, length, offsetX, offsetY, px, py, results, shape, v1, v2, vertex, vertices;
-        vertices = Physics.optimize_vertices(block.vertices);
-        if (!block.vertices.length) {
+      create_polygons_collisions(position, vertices, name, opts = {}) {
+        var body, ref, ref1, ref2, ref3, shape;
+        vertices = Physics.optimize_vertices(vertices);
+        if (vertices.length < 3) {
           return;
         }
         body = this.world.createBody({
           type: 'static',
           position: {
-            x: block.position.x,
-            y: block.position.y
+            x: position.x,
+            y: position.y
+          },
+          userData: {
+            name: name
+          }
+        });
+        shape = new Polygon(vertices);
+        return body.createFixture(shape, {
+          density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE_OPTS.density,
+          restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE_OPTS.restitution,
+          friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE_OPTS.friction,
+          filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE_OPTS.group_index
+        });
+      }
+
+      // Create collisions using very thin rectangles following the edges, top-aligned on vertices.
+      // Shape is hollow, collisions are possible from both ways
+      create_rectangles_collisions(position, vertices, name, opts = {}) {
+        var body, dx, dy, i, l, len, length, offsetX, offsetY, px, py, ref, ref1, ref2, ref3, results, shape, v1, v2, vertex;
+        vertices = Physics.optimize_vertices(vertices);
+        if (!vertices.length) {
+          return;
+        }
+        body = this.world.createBody({
+          type: 'static',
+          position: {
+            x: position.x,
+            y: position.y
           },
           userData: {
             name: name
@@ -1422,10 +1424,10 @@
             v1.y + offsetY) // Bottom-left
           ]);
           results.push(body.createFixture(shape, {
-            density: density,
-            restitution: restitution,
-            friction: friction,
-            filterGroupIndex: group_index
+            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE_OPTS.density,
+            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE_OPTS.restitution,
+            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE_OPTS.friction,
+            filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE_OPTS.group_index
           }));
         }
         return results;
@@ -1434,17 +1436,17 @@
       // Create collisions using individual Edges (without ghost vertices). May create ghost collisions
       // Shape is hollow, collisions are possible from both ways
       // => https://piqnt.com/planck.js/docs/shape/edge.html
-      create_edges_collisions(block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2) {
-        var body, i, l, len, results, shape, vertex, vertex1, vertex2, vertices;
-        vertices = Physics.optimize_vertices(block.vertices);
-        if (!block.vertices.length) {
+      create_edges_collisions(position, vertices, name, opts = {}) {
+        var body, i, l, len, ref, ref1, ref2, ref3, results, shape, vertex, vertex1, vertex2;
+        vertices = Physics.optimize_vertices(vertices);
+        if (!vertices.length) {
           return;
         }
         body = this.world.createBody({
           type: 'static',
           position: {
-            x: block.position.x,
-            y: block.position.y
+            x: position.x,
+            y: position.y
           },
           userData: {
             name: name
@@ -1457,10 +1459,10 @@
           vertex2 = i === vertices.length - 1 ? vertices[0] : vertices[i + 1];
           shape = planck.Edge(planck.Vec2(vertex1.x, vertex1.y), planck.Vec2(vertex2.x, vertex2.y));
           results.push(body.createFixture(shape, {
-            density: density,
-            restitution: restitution,
-            friction: friction,
-            filterGroupIndex: group_index
+            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE_OPTS.density,
+            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE_OPTS.restitution,
+            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE_OPTS.friction,
+            filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE_OPTS.group_index
           }));
         }
         return results;
@@ -1469,17 +1471,17 @@
       // Create collisions using Chains to avoid ghost collisions. If sharp angles, split the chains to avoid collision bug
       // Shape is hollow, collisions are possible from both ways
       // => https://piqnt.com/planck.js/docs/shape/edge.html
-      create_chains_collisions(block, name, density = 1.0, restitution = 0.5, friction = 1.0, group_index = -2, sharp_angle_rad = CHAIN_SHARP_ANGLE * Math.PI / 180) {
-        var body, chain, chains, l, len, results, shape, vertices;
-        vertices = Physics.optimize_vertices(block.vertices);
+      create_chains_collisions(position, vertices, name, opts = {}) {
+        var body, chain, chains, l, len, ref, ref1, ref2, ref3, results, shape;
+        vertices = Physics.optimize_vertices(vertices);
         if (vertices.length < 3) {
           return;
         }
         body = this.world.createBody({
           type: 'static',
           position: {
-            x: block.position.x,
-            y: block.position.y
+            x: position.x,
+            y: position.y
           },
           userData: {
             name: name
@@ -1488,16 +1490,16 @@
         // Fix issues where very long, sharp edges may produce collision bug (cf. level 1187).
         // We detect those sharp angles and split the loop into separate non-looped Chains.
         // (these chains will appear without solid color in debug mode)
-        chains = this.split_at_sharp_folds(vertices, sharp_angle_rad);
+        chains = this.split_at_sharp_folds(vertices, CHAIN_SHARP_ANGLE * Math.PI / 180);
         results = [];
         for (l = 0, len = chains.length; l < len; l++) {
           chain = chains[l];
           shape = new Chain(chain.vertices, chain.is_loop);
           results.push(body.createFixture(shape, {
-            density: density,
-            restitution: restitution,
-            friction: friction,
-            filterGroupIndex: group_index
+            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE_OPTS.density,
+            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE_OPTS.restitution,
+            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE_OPTS.friction,
+            filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE_OPTS.group_index
           }));
         }
         return results;
@@ -1686,6 +1688,15 @@
 
     CHAIN_SHARP_ANGLE = 170; // A turn this close to a full 180° reversal means the outline is folding on itself rather than curving.
 
+    // It creates physics bugs (like in l1187 when going left).
+    // We fix the (rare) bugs by splitting the chains at the sharp angles, and avoid looping.
+    DEFAULT_FIXTURE_OPTS = {
+      density: 1.0,
+      restitution: 0.5,
+      friction: 1.0,
+      filterGroupIndex: -2
+    };
+
     return Physics;
 
   }).call(this);
@@ -1819,7 +1830,15 @@
       for (l = 0, len = ref.length; l < len; l++) {
         block = ref[l];
         if (!block.no_collision) {
-          results.push(this.level.physics.create_chains_collisions(block, 'ground', ground.density, ground.restitution, ground.friction));
+          // create_polygons_collisions
+          // create_rectangles_collisions
+          // create_edges_collisions
+          // create_chains_collisions
+          results.push(this.level.physics.create_chains_collisions(block.position, block.vertices, 'ground', {
+            density: ground.density,
+            restitution: ground.restitution,
+            friction: ground.friction
+          }));
         } else {
           results.push(void 0);
         }
@@ -3001,7 +3020,14 @@
             y: wall.top
           }
         ];
-        results.push(this.level.physics.create_polygons_collisions(vertices, 'ground', ground.density, ground.restitution, ground.friction));
+        results.push(this.level.physics.create_polygons_collisions({
+          x: 0,
+          y: 0
+        }, vertices, 'ground', {
+          density: ground.density,
+          restitution: ground.restitution,
+          friction: ground.friction
+        }));
       }
       return results;
     }
