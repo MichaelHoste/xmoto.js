@@ -59,7 +59,7 @@ class Camera
       ctx.scale(@scale.x, @scale.y)                      # Scale (zoom)
       ctx.translate(-@target().x, -@target().y)          # Camera on moto
 
-      @level.physics.draw_debug()
+      @level.physics.draw()
 
       ctx.restore()
     else

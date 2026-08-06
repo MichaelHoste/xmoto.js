@@ -139,6 +139,11 @@ class Physics
       filterGroupIndex: group_index
     )
 
+  # Draw physics representation in debug context
+  draw: ->
+    service = new PhysicsDrawingService(@debug_ctx, @world)
+    service.draw()
+
   # Remove consecutive (cyclic) vertices that are too close (or the same).
   # It will avoid zero-length edges that would crash Chain's construction.
   @dedupe_vertices: (vertices, distance = Settings.linearSlop) ->
@@ -173,108 +178,3 @@ class Physics
       vertices.map((vertex) -> { x: -vertex.x, y: vertex.y })
     else
       vertices
-
-  # Custom debug draw (Planck.js has no b2DebugDraw/DrawDebugData like Box2Dweb)
-  # Draws directly onto @debug_ctx canvas
-  BACKGROUND_COLOR: '#222229'
-  FILL_ALPHA: 0.35
-  BODY_COLORS:
-    inactive:  '127,127,76'
-    static:    '127,229,127'
-    kinematic: '127,127,229'
-    sleeping:  '153,153,153'
-    awake:     '229,178,178'
-  JOINT_COLOR: '127,204,204'
-
-  draw_debug: ->
-    ctx = @debug_ctx
-    ctx.fillStyle = @BACKGROUND_COLOR
-    ctx.fillRect(-1e6, -1e6, 2e6, 2e6)
-
-    body = @world.getBodyList()
-
-    while body
-      @draw_debug_body(body, ctx)
-      body = body.getNext()
-
-    joint = @world.getJointList()
-
-    while joint
-      @draw_debug_joint(joint, ctx)
-      joint = joint.getNext()
-
-  draw_debug_body: (body, ctx) ->
-    if !body.isActive()
-      color = @BODY_COLORS.inactive
-    else if body.getType() == 'static'
-      color = @BODY_COLORS.static
-    else if body.getType() == 'kinematic'
-      color = @BODY_COLORS.kinematic
-    else if !body.isAwake()
-      color = @BODY_COLORS.sleeping
-    else
-      color = @BODY_COLORS.awake
-
-    fixture = body.getFixtureList()
-
-    while fixture
-      @draw_debug_shape(fixture.getShape(), body, color, ctx)
-      fixture = fixture.getNext()
-
-  draw_debug_shape: (shape, body, color, ctx) ->
-    switch shape.getType()
-      when 'circle'
-        center = body.getWorldPoint(shape.m_p)
-        edge   = body.getWorldPoint({x: shape.m_p.x + shape.m_radius, y: shape.m_p.y})
-
-        ctx.beginPath()
-        ctx.fillStyle   = "rgba(#{color},#{@FILL_ALPHA})"
-        ctx.strokeStyle = "rgba(#{color},1)"
-        ctx.arc(center.x, center.y, shape.m_radius, 0, 2*Math.PI)
-        ctx.closePath()
-        ctx.fill()
-        ctx.stroke()
-
-        # Spoke from center to edge along the body's local +x axis, so it
-        # visibly sweeps around as the body (e.g. a wheel) rotates.
-        ctx.beginPath()
-        ctx.moveTo(center.x, center.y)
-        ctx.lineTo(edge.x, edge.y)
-        ctx.stroke()
-      when 'polygon'
-        @draw_debug_polyline(shape.m_vertices.map((v) -> body.getWorldPoint(v)), true, color, ctx)
-      when 'chain'
-        @draw_debug_polyline(shape.m_vertices.map((v) -> body.getWorldPoint(v)), shape.isLoop(), color, ctx)
-
-  draw_debug_polyline: (points, close, color, ctx) ->
-    return if !points.length
-
-    ctx.beginPath()
-    ctx.fillStyle   = "rgba(#{color},#{@FILL_ALPHA})"
-    ctx.strokeStyle = "rgba(#{color},1)"
-    ctx.moveTo(points[0].x, points[0].y)
-    ctx.lineTo(point.x, point.y) for point in points[1..]
-    ctx.closePath() if close
-    ctx.fill() if close
-    ctx.stroke()
-
-  draw_debug_joint: (joint, ctx) ->
-    anchor_a = joint.getAnchorA()
-    anchor_b = joint.getAnchorB()
-
-    ctx.strokeStyle = "rgba(#{@JOINT_COLOR},1)"
-
-    ctx.beginPath()
-    ctx.moveTo(joint.getBodyA().getPosition().x, joint.getBodyA().getPosition().y)
-    ctx.lineTo(anchor_a.x, anchor_a.y)
-    ctx.stroke()
-
-    ctx.beginPath()
-    ctx.moveTo(anchor_a.x, anchor_a.y)
-    ctx.lineTo(anchor_b.x, anchor_b.y)
-    ctx.stroke()
-
-    ctx.beginPath()
-    ctx.moveTo(anchor_b.x, anchor_b.y)
-    ctx.lineTo(joint.getBodyB().getPosition().x, joint.getBodyB().getPosition().y)
-    ctx.stroke()
