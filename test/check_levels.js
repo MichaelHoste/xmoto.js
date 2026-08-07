@@ -111,7 +111,7 @@ async function main() {
       if (!res.ok) {
         logLine(`  ✗ ${file}  —  ${res.error}`);
       } else if (res.warnings && res.warnings.length) {
-        logLine(`  ⚠ ${file}  —  ${res.warnings.join(' | ')}`);
+        logLine(`  ⚠ ${file}\n` + res.warnings.map((w) => `    - ${w}`).join('\n'));
       } else {
         renderProgress();
       }
