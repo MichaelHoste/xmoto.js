@@ -107,8 +107,8 @@ class Physics
     @physics_drawing_service.draw()
 
   # Create collisions using polygons.
-  # Shape is entirely filled. Any convex point will be removed by Planck!
-  # TODO HERE: decomp.decomp(pairs) then loop and create several sub-polygons
+  # Shape is entirely filled. Planck's Polygon silently takes the convex hull of whatever
+  # vertices it's given, so a concave outline must be split into convex sub-polygons first.
   # => https://piqnt.com/planck.js/docs/shape/polygon.html
   create_polygons_collisions: (position, vertices, name, opts = {}) ->
     vertices = Physics.optimize_vertices(vertices)
@@ -123,14 +123,15 @@ class Physics
         name: name
     )
 
-    shape = new Polygon(vertices)
+    for convex_vertices in Physics.decompose_to_convex(vertices)
+      shape = new Polygon(convex_vertices)
 
-    body.createFixture(shape,
-      density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
-      restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
-      friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
-      filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
-    )
+      body.createFixture(shape,
+        density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
+        restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
+        friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
+        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
+      )
 
   # Create collisions using very thin rectangles following the edges, top-aligned on vertices.
   # Shape is hollow, collisions are possible from both ways
@@ -256,7 +257,7 @@ class Physics
   @optimize_vertices: (vertices) ->
     vertices = Physics.remove_duplicate_vertices(vertices)
     vertices = Physics.remove_collinear_vertices(vertices)
-    vertices = Physics.check_intersect_vertices(vertices)  # Does not fix, only triggers warning
+    vertices = Physics.check_intersect_vertices(vertices) # Does not fix, only triggers warning
     vertices
 
   # Remove consecutive (cyclic) vertices that are too close (or the same).
@@ -292,6 +293,63 @@ class Physics
         console.warn("XMoto warning: #{vertices.length - pairs.length} collinear vertices have been removed.")
 
       return pairs.map((pair) -> { x: pair[0], y: pair[1] })
+
+  # Splits a simple (possibly concave) polygon into convex sub-polygons using poly-decomp's
+  # quickDecomp. It assumes CCW winding, hence the makeCCW call.
+  # --
+  # quickDecomp's recursion depth grows with a polygon's reflex-vertex count, and xmoto's
+  # blocky/pixel-art blocks can have thousands of vertices — far beyond poly-decomp's default
+  # cap of 100, which would otherwise silently return a partial (incomplete => missing
+  # collisions) result. Scale the cap to the polygon size instead. This relies on
+  # `optimize_vertices` having already removed (near-)duplicate points beforehand: those are
+  # the one case that makes quickDecomp spin without making any real progress, no matter how
+  # high the cap is set.
+  # quickDecomp assumes a simple (non-self-intersecting) polygon: on a self-intersecting one its
+  # behavior is undefined and it can return wrongly-wound/overlapping pieces. That's rare (some
+  # xmoto levels do have self-intersecting blocks) but a real failure, so unlike the advisory
+  # `check_intersect_vertices` warning used for the other collision types, bail out loudly here
+  # and skip decomposition entirely rather than hand quickDecomp something it can't handle.
+  # Not critical: the block just gets no polygon collision. Use create_chains_collisions,
+  # create_edges_collisions or create_rectangles_collisions instead if it needs one.
+  @decompose_to_convex: (vertices) ->
+    pairs = vertices.map((vertex) -> [vertex.x, vertex.y])
+
+    if !decomp.isSimple(pairs)
+      console.error("XMoto error: polygon intersects itself, can't be split into convex pieces for collisions. Skipping polygon collisions for this shape.")
+      return []
+
+    decomp.makeCCW(pairs)
+
+    max_level = Math.max(pairs.length, 100)
+
+    convex_polygons = decomp.quickDecomp(pairs, undefined, undefined, undefined, undefined, max_level)
+    sized_polygons  = convex_polygons.reduce(((all, polygon) -> all.concat(Physics.limit_polygon_size(polygon))), [])
+
+    sized_polygons.map (polygon) ->
+      polygon.map (pair) -> { x: pair[0], y: pair[1] }
+
+  # Splits a convex polygon into a fan of smaller convex polygons if it has more vertices than
+  # Planck.js supports (Settings.maxPolygonVertices). quickDecomp only guarantees convexity, not
+  # a vertex-count limit, so a convex-but-huge piece (e.g. a staircase approximating a diagonal
+  # slope — common in xmoto, and convex despite having many vertices) can come out oversized.
+  # That matters because Planck's PolygonShape._set only reads the *first*
+  # `maxPolygonVertices` vertices of whatever it's given and hulls just that prefix — it does
+  # NOT hull the whole input and truncate, it silently drops everything past that index.
+  # Fan-slicing from a shared hub vertex keeps every slice convex: any contiguous run of a
+  # convex polygon's vertices plus that hub is itself convex.
+  @limit_polygon_size: (polygon, max_vertices = Settings.maxPolygonVertices) ->
+    return [polygon] if polygon.length <= max_vertices
+
+    hub    = polygon[0]
+    pieces = []
+    i      = 1
+
+    while i < polygon.length - 1
+      end_i = Math.min(i + max_vertices - 2, polygon.length - 1)
+      pieces.push([hub].concat(polygon.slice(i, end_i + 1)))
+      i = end_i
+
+    pieces
 
   # Detect polygons where the vertices intersect themselves
   @check_intersect_vertices: (vertices) ->

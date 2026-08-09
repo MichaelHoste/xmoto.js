@@ -1352,11 +1352,11 @@
       }
 
       // Create collisions using polygons.
-      // Shape is entirely filled. Any convex point will be removed by Planck!
-      // TODO HERE: decomp.decomp(pairs) then loop and create several sub-polygons
+      // Shape is entirely filled. Planck's Polygon silently takes the convex hull of whatever
+      // vertices it's given, so a concave outline must be split into convex sub-polygons first.
       // => https://piqnt.com/planck.js/docs/shape/polygon.html
       create_polygons_collisions(position, vertices, name, opts = {}) {
-        var body, ref, ref1, ref2, ref3, shape;
+        var body, convex_vertices, l, len, ref, ref1, ref2, ref3, ref4, results, shape;
         vertices = Physics.optimize_vertices(vertices);
         if (vertices.length < 3) {
           return;
@@ -1371,13 +1371,19 @@
             name: name
           }
         });
-        shape = new Polygon(vertices);
-        return body.createFixture(shape, {
-          density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE_OPTS.density,
-          restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE_OPTS.restitution,
-          friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE_OPTS.friction,
-          filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE_OPTS.group_index
-        });
+        ref = Physics.decompose_to_convex(vertices);
+        results = [];
+        for (l = 0, len = ref.length; l < len; l++) {
+          convex_vertices = ref[l];
+          shape = new Polygon(convex_vertices);
+          results.push(body.createFixture(shape, {
+            density: (ref1 = opts.density) != null ? ref1 : DEFAULT_FIXTURE_OPTS.density,
+            restitution: (ref2 = opts.restitution) != null ? ref2 : DEFAULT_FIXTURE_OPTS.restitution,
+            friction: (ref3 = opts.friction) != null ? ref3 : DEFAULT_FIXTURE_OPTS.friction,
+            filterGroupIndex: (ref4 = opts.group_index) != null ? ref4 : DEFAULT_FIXTURE_OPTS.group_index
+          }));
+        }
+        return results;
       }
 
       // Create collisions using very thin rectangles following the edges, top-aligned on vertices.
@@ -1562,7 +1568,7 @@
           return vertices; // nothing was removed
         } else {
           if (pairs.length < 3) {
-            console.error(`XMoto warning: polygon degenerated from ${vertices.length} to ${pairs.length} vertex(es) after removing duplicates, and was ignored.`);
+            console.error(`XMoto error: polygon degenerated from ${vertices.length} to ${pairs.length} vertex(es) after removing duplicates, and was ignored.`);
           } else {
             console.warn(`XMoto warning: ${vertices.length - pairs.length} duplicate vertices have been removed.`);
           }
@@ -1587,7 +1593,7 @@
           return vertices; // nothing was removed
         } else {
           if (pairs.length < 3) {
-            console.error(`XMoto warning: polygon degenerated from ${vertices.length} to ${pairs.length} vertex(es) after removing collinear, and was ignored.`);
+            console.error(`XMoto error: polygon degenerated from ${vertices.length} to ${pairs.length} vertex(es) after removing collinear, and was ignored.`);
           } else {
             console.warn(`XMoto warning: ${vertices.length - pairs.length} collinear vertices have been removed.`);
           }
@@ -1598,6 +1604,73 @@
             };
           });
         }
+      }
+
+      // Splits a simple (possibly concave) polygon into convex sub-polygons using poly-decomp's
+      // quickDecomp. It assumes CCW winding, hence the makeCCW call.
+      // --
+      // quickDecomp's recursion depth grows with a polygon's reflex-vertex count, and xmoto's
+      // blocky/pixel-art blocks can have thousands of vertices — far beyond poly-decomp's default
+      // cap of 100, which would otherwise silently return a partial (incomplete => missing
+      // collisions) result. Scale the cap to the polygon size instead. This relies on
+      // `optimize_vertices` having already removed (near-)duplicate points beforehand: those are
+      // the one case that makes quickDecomp spin without making any real progress, no matter how
+      // high the cap is set.
+      // quickDecomp assumes a simple (non-self-intersecting) polygon: on a self-intersecting one its
+      // behavior is undefined and it can return wrongly-wound/overlapping pieces. That's rare (some
+      // xmoto levels do have self-intersecting blocks) but a real failure, so unlike the advisory
+      // `check_intersect_vertices` warning used for the other collision types, bail out loudly here
+      // and skip decomposition entirely rather than hand quickDecomp something it can't handle.
+      // Not critical: the block just gets no polygon collision. Use create_chains_collisions,
+      // create_edges_collisions or create_rectangles_collisions instead if it needs one.
+      static decompose_to_convex(vertices) {
+        var convex_polygons, max_level, pairs, sized_polygons;
+        pairs = vertices.map(function(vertex) {
+          return [vertex.x, vertex.y];
+        });
+        if (!decomp.isSimple(pairs)) {
+          console.error("XMoto error: polygon intersects itself, can't be split into convex pieces for collisions. Skipping polygon collisions for this shape.");
+          return [];
+        }
+        decomp.makeCCW(pairs);
+        max_level = Math.max(pairs.length, 100);
+        convex_polygons = decomp.quickDecomp(pairs, void 0, void 0, void 0, void 0, max_level);
+        sized_polygons = convex_polygons.reduce((function(all, polygon) {
+          return all.concat(Physics.limit_polygon_size(polygon));
+        }), []);
+        return sized_polygons.map(function(polygon) {
+          return polygon.map(function(pair) {
+            return {
+              x: pair[0],
+              y: pair[1]
+            };
+          });
+        });
+      }
+
+      // Splits a convex polygon into a fan of smaller convex polygons if it has more vertices than
+      // Planck.js supports (Settings.maxPolygonVertices). quickDecomp only guarantees convexity, not
+      // a vertex-count limit, so a convex-but-huge piece (e.g. a staircase approximating a diagonal
+      // slope — common in xmoto, and convex despite having many vertices) can come out oversized.
+      // That matters because Planck's PolygonShape._set only reads the *first*
+      // `maxPolygonVertices` vertices of whatever it's given and hulls just that prefix — it does
+      // NOT hull the whole input and truncate, it silently drops everything past that index.
+      // Fan-slicing from a shared hub vertex keeps every slice convex: any contiguous run of a
+      // convex polygon's vertices plus that hub is itself convex.
+      static limit_polygon_size(polygon, max_vertices = Settings.maxPolygonVertices) {
+        var end_i, hub, i, pieces;
+        if (polygon.length <= max_vertices) {
+          return [polygon];
+        }
+        hub = polygon[0];
+        pieces = [];
+        i = 1;
+        while (i < polygon.length - 1) {
+          end_i = Math.min(i + max_vertices - 2, polygon.length - 1);
+          pieces.push([hub].concat(polygon.slice(i, end_i + 1)));
+          i = end_i;
+        }
+        return pieces;
       }
 
       // Detect polygons where the vertices intersect themselves
@@ -1757,7 +1830,7 @@
         }
         texture_params = this.assets.theme.texture_params(block.usetexture.id);
         if (!texture_params) {
-          console.error(`XMoto warning: block texture \"${block.usetexture.id}\" was not found in the theme, falling back to dirt.`);
+          console.error(`XMoto error: block texture \"${block.usetexture.id}\" was not found in the theme, falling back to dirt.`);
           block.usetexture.id = 'dirt';
           texture_params = this.assets.theme.texture_params(block.usetexture.id);
         }
@@ -2464,7 +2537,7 @@
               }
               entity.aabb = this.compute_aabb(entity);
             } else {
-              console.error(`XMoto warning: texture file \"${texture_name}\" was not found in the theme and is ignored.`);
+              console.error(`XMoto error: texture file \"${texture_name}\" was not found in the theme and is ignored.`);
             }
           }
           this.list.push(entity);
@@ -2964,7 +3037,7 @@
       texture = this.level.infos.border || 'dirt';
       texture_params = this.assets.theme.texture_params(texture);
       if (!texture_params) {
-        console.error(`XMoto warning: border texture \"${texture}\" was not found in the theme, falling back to dirt.`);
+        console.error(`XMoto error: border texture \"${texture}\" was not found in the theme, falling back to dirt.`);
         texture = 'dirt';
         texture_params = this.assets.theme.texture_params(texture);
       }
@@ -3265,7 +3338,7 @@
         // (1) For sky
         sky_params = this.assets.theme.texture_params(this.name);
         if (!sky_params) {
-          console.error(`XMoto warning: sky texture \"${this.name}\" was not found in the theme, falling back to sky1.`);
+          console.error(`XMoto error: sky texture \"${this.name}\" was not found in the theme, falling back to sky1.`);
           this.name = 'sky1';
           sky_params = this.assets.theme.texture_params(this.name);
         }
@@ -3279,7 +3352,7 @@
         // (2) For drifted sky
         drifted_sky_params = this.assets.theme.texture_params(this.blend_name);
         if (!drifted_sky_params) {
-          console.error(`XMoto warning: sky blend texture \"${this.blend_name}\" was not found in the theme, falling back to sky1.`);
+          console.error(`XMoto error: sky blend texture \"${this.blend_name}\" was not found in the theme, falling back to sky1.`);
           this.blend_name = 'sky1';
           drifted_sky_params = this.assets.theme.texture_params(this.blend_name);
         }
@@ -4833,7 +4906,7 @@
               return body.getWorldPoint(v);
             }), false, color);
           default:
-            return console.error(`XMoto warning: shapes of type \"${shape.getType()}\" cannot be rendered on the debug canvas for physics.`);
+            return console.error(`XMoto error: shapes of type \"${shape.getType()}\" cannot be rendered on the debug canvas for physics.`);
         }
       }
 
