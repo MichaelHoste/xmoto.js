@@ -30,6 +30,15 @@ class Physics
     friction:         1.0
     filterGroupIndex: -2
 
+  # Strategies available for `decompose_to_convex` (see comment there for tradeoffs)
+  DECOMPOSE_STRATEGIES =
+    QUICK_DECOMP:      'quick_decomp'      # poly-decomp's quickDecomp (Mark Penner): fast, non-optimal number of polygons.
+    DECOMP:            'decomp'            # poly-decomp's decomp (Mark Penner): optimal number of polygons. O(N^4) so exponentially slow for big polygons.
+    CONVEX_PARTITION:  'convex_partition'  # poly-partition-js's convexPartition (Hertel-Mehlhorn): near-optimal pieces, O(n log n).
+    BAYAZIT:           'bayazit'           # Mark Bayazit's algorithm (ported from Cocos): only strategy that tolerates self-intersecting polygons, but doesn't scale to big polygons
+
+  DEFAULT_DECOMPOSE_STRATEGY = 'convex_partition'
+
   constructor: (level) ->
     @level   = level
     @options = level.options
@@ -294,36 +303,73 @@ class Physics
 
       return pairs.map((pair) -> { x: pair[0], y: pair[1] })
 
-  # Splits a simple (possibly concave) polygon into convex sub-polygons using poly-decomp's
-  # quickDecomp. It assumes CCW winding, hence the makeCCW call.
+  # Splits a simple (possibly concave) polygon into convex sub-polygons.
+  # Use `strategy` option select the underlying algorithm (see DECOMPOSE_STRATEGIES):
   # --
-  # quickDecomp's recursion depth grows with a polygon's reflex-vertex count, and xmoto's
-  # blocky/pixel-art blocks can have thousands of vertices — far beyond poly-decomp's default
-  # cap of 100, which would otherwise silently return a partial (incomplete => missing
-  # collisions) result. Scale the cap to the polygon size instead. This relies on
-  # `optimize_vertices` having already removed (near-)duplicate points beforehand: those are
-  # the one case that makes quickDecomp spin without making any real progress, no matter how
-  # high the cap is set.
-  # quickDecomp assumes a simple (non-self-intersecting) polygon: on a self-intersecting one its
-  # behavior is undefined and it can return wrongly-wound/overlapping pieces. That's rare (some
-  # xmoto levels do have self-intersecting blocks) but a real failure, so unlike the advisory
-  # `check_intersect_vertices` warning used for the other collision types, bail out loudly here
-  # and skip decomposition entirely rather than hand quickDecomp something it can't handle.
-  # Not critical: the block just gets no polygon collision. Use create_chains_collisions,
+  # - quick_decomp (default): poly-decomp's quickDecomp. Its recursion depth grows with a
+  #   polygon's reflex-vertex count, and xmoto's blocky/pixel-art blocks can have thousands of
+  #   vertices — far beyond poly-decomp's default cap of 100, which would otherwise silently
+  #   return a partial (incomplete => missing collisions) result. Scale the cap to the polygon
+  #   size instead. This relies on `optimize_vertices` having already removed (near-)duplicate
+  #   points beforehand: those are the one case that makes quickDecomp spin without making any
+  #   real progress, no matter how high the cap is set.
+  # - decomp: poly-decomp's exact decomp. Produces the optimal (fewest) convex pieces, but its
+  #   cost grows with reflex-vertex count too (no cap to tune it with), so it's only a good fit
+  #   for smaller/simpler shapes.
+  # - convex_partition: poly-partition-js's convexPartition (Hertel-Mehlhorn). Ear-clipping based,
+  #   O(n log n) with no recursion cap to tune, so it doesn't share quickDecomp's blowup risk on
+  #   many-vertex polygons. Piece count is usually close to optimal, just not guaranteed minimal.
+  # - bayazit: Mark Bayazit's algorithm (see bayazit_decomposition.coffee). The odd one out: it
+  #   doesn't require a simple polygon, so it's the only strategy that can produce a (still
+  #   approximate) decomposition of a self-intersecting block instead of refusing it outright.
+  #   Recursion cost scales with the reflex-vertex count, so it doesn't scale to xmoto's
+  #   thousands-of-vertex blocky staircases the way quick_decomp/convex_partition do.
+  # --
+  # The other three strategies assume a simple (non-self-intersecting) polygon: on a self-
+  # intersecting one their behavior is undefined and they can return wrongly-wound/overlapping
+  # pieces. That's rare (some xmoto levels do have self-intersecting blocks) but a real failure,
+  # so unlike the advisory `check_intersect_vertices` warning used for the other collision types,
+  # bail out loudly here and skip decomposition entirely rather than hand them something they
+  # can't handle — use the `bayazit` strategy instead if that block needs a polygon collision.
+  # Not critical otherwise: the block just gets no polygon collision. Use create_chains_collisions,
   # create_edges_collisions or create_rectangles_collisions instead if it needs one.
-  @decompose_to_convex: (vertices) ->
+  @decompose_to_convex: (vertices, strategy = DEFAULT_DECOMPOSE_STRATEGY) ->
+    if !_.values(DECOMPOSE_STRATEGIES).includes(strategy)
+      throw new Error("XMoto error: unknown decompose_to_convex strategy '#{strategy}'") # hard failure!
+
     pairs = vertices.map((vertex) -> [vertex.x, vertex.y])
 
-    if !decomp.isSimple(pairs)
-      console.error("XMoto error: polygon intersects itself, can't be split into convex pieces for collisions. Skipping polygon collisions for this shape.")
-      return []
+    # Bayazit is the one strategy that tolerates a self-intersecting polygon, so it's the one
+    # exempt from this bail-out (and from makeCCW, which it doesn't need: it does its own CCW
+    # forcing on `vertices` directly, not on `pairs`).
+    if !decomp.isSimple(pairs) && strategy != DECOMPOSE_STRATEGIES.BAYAZIT
+      console.error("XMoto error: polygon intersects itself, can't be split with \"#{strategy}\" strategy into convex pieces for collisions. Fallback to \"#{DECOMPOSE_STRATEGIES.BAYAZIT}\" strategy.")
+      strategy = DECOMPOSE_STRATEGIES.BAYAZIT
 
     decomp.makeCCW(pairs)
 
-    max_level = Math.max(pairs.length, 100)
+    convex_polygons = switch strategy
+      when DECOMPOSE_STRATEGIES.QUICK_DECOMP
+        max_level = Math.max(pairs.length, 100)
+        decomp.quickDecomp(pairs, undefined, undefined, undefined, undefined, max_level)
+      when DECOMPOSE_STRATEGIES.DECOMP
+        decomp.decomp(pairs)
+      when DECOMPOSE_STRATEGIES.CONVEX_PARTITION
+        polygon = pairs.map((pair) -> { x: pair[0], y: pair[1] })
+        PolyPartition.convexPartition(polygon, true).map (convex_polygon) -> # true = already CCW, skip its ordering check
+          convex_polygon.map (vertex) -> [vertex.x, vertex.y]
+      when DECOMPOSE_STRATEGIES.BAYAZIT
+        partitioned = BayazitDecomposition.decompose(vertices)
+        degenerate  = (polygon for polygon in partitioned when polygon.length < 3).length
 
-    convex_polygons = decomp.quickDecomp(pairs, undefined, undefined, undefined, undefined, max_level)
-    sized_polygons  = convex_polygons.reduce(((all, polygon) -> all.concat(Physics.limit_polygon_size(polygon))), [])
+        if degenerate > 0
+          console.warn("XMoto warning: bayazit decomposition produced #{degenerate} degenerate (< 3 vertices) piece(s) on a self-intersecting polygon, they were dropped.")
+
+        partitioned
+          .filter((polygon) -> polygon.length >= 3)
+          .map((polygon) -> polygon.map((vertex) -> [vertex.x, vertex.y]))
+
+    sized_polygons = convex_polygons.reduce(((all, polygon) -> all.concat(Physics.limit_polygon_size(polygon))), [])
 
     sized_polygons.map (polygon) ->
       polygon.map (pair) -> { x: pair[0], y: pair[1] }
