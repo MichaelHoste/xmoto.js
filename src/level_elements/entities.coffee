@@ -89,7 +89,7 @@ class Entities
 
           entity.aabb = @compute_aabb(entity)
         else
-          console.error("XMoto warning: texture file \"#{texture_name}\" was not found in the theme and is ignored.")
+          console.error("XMoto error: texture file \"#{texture_name}\" was not found in the theme and is ignored.")
 
       @list.push(entity)
 

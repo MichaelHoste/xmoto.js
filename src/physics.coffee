@@ -270,7 +270,7 @@ class Physics
       return vertices # nothing was removed
     else
       if pairs.length < 3
-        console.error("XMoto warning: polygon degenerated from #{vertices.length} to #{pairs.length} vertex(es) after removing duplicates, and was ignored.")
+        console.error("XMoto error: polygon degenerated from #{vertices.length} to #{pairs.length} vertex(es) after removing duplicates, and was ignored.")
       else
         console.warn("XMoto warning: #{vertices.length - pairs.length} duplicate vertices have been removed.")
 
@@ -287,7 +287,7 @@ class Physics
       return vertices # nothing was removed
     else
       if pairs.length < 3
-        console.error("XMoto warning: polygon degenerated from #{vertices.length} to #{pairs.length} vertex(es) after removing collinear, and was ignored.")
+        console.error("XMoto error: polygon degenerated from #{vertices.length} to #{pairs.length} vertex(es) after removing collinear, and was ignored.")
       else
         console.warn("XMoto warning: #{vertices.length - pairs.length} collinear vertices have been removed.")
 

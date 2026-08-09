@@ -46,7 +46,7 @@ class Sky
     sky_params = @assets.theme.texture_params(@name)
 
     if !sky_params
-      console.error("XMoto warning: sky texture \"#{@name}\" was not found in the theme, falling back to sky1.")
+      console.error("XMoto error: sky texture \"#{@name}\" was not found in the theme, falling back to sky1.")
       @name      = 'sky1'
       sky_params = @assets.theme.texture_params(@name)
 
@@ -61,7 +61,7 @@ class Sky
     drifted_sky_params = @assets.theme.texture_params(@blend_name)
 
     if !drifted_sky_params
-      console.error("XMoto warning: sky blend texture \"#{@blend_name}\" was not found in the theme, falling back to sky1.")
+      console.error("XMoto error: sky blend texture \"#{@blend_name}\" was not found in the theme, falling back to sky1.")
       @blend_name         = 'sky1'
       drifted_sky_params = @assets.theme.texture_params(@blend_name)
 

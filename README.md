@@ -119,8 +119,11 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
-* Merger niveau et assets du dernier build de xmoto pour voir si ça fonctionne (et tester autres themes)
-* Reset assets to original assets (no more number/capitalization issues) + orignal theme xml
+* This game has nice wheels physics (+sound) https://robertw.itch.io/meltdown-escape 
+* Level with full collisions and scripts : http://localhost:3001/?level=4365&debug=true&debug_physics=true
+* Adjust the camera a bit (player more on the borders of the camera, less zoom)
+* Sounds with PixiJS Sound and play on the left/right depending on position
+* Test other themes (where are assets?)
 * Manage checkpoints
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Notes_on_Checkpoints
 * Shouldn't `assets.get_url(texture_name)` be `assets.get_url(texture_file)`?
@@ -128,9 +131,8 @@ Please visit his personal website for other cool projects: https://jamesfator.co
   => performance.now(), Date.now() or Ticker? (see PR)
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Others_tips_to_make_levels
 * Create selector of levels by name
+* Should we trigger a small acceleration bump/sound/particles each time up is triggerd?
 * Make the game playable on mobile (4 buttons or device rotation or volume buttons?)
-* Adjust a bit the camera (player more on the borders of the camera, less zoom)
-* Sounds with PixiJS Sound and play on the left/right depending on position
 * Manage 120fps on compatible screens by interpolating positions using Gaffer's fixed timestep: https://gafferongames.com/post/fix_your_timestep/
 * Good inspiration to draft Blocks in editor: https://schteppe.github.io/poly-decomp.js or https://poly-decomp-es.vercel.app/
 * Adjust the height of the driver (less bumpy!? Height of sprite? Compare values?)

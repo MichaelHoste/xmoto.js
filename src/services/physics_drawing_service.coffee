@@ -83,7 +83,7 @@ class PhysicsDrawingService
         vertices = [shape.m_vertex1, shape.m_vertex2]
         @draw_polyline(vertices.map((v) -> body.getWorldPoint(v)), false, color)
       else
-        console.error("XMoto warning: shapes of type \"#{shape.getType()}\" cannot be rendered on the debug canvas for physics.")
+        console.error("XMoto error: shapes of type \"#{shape.getType()}\" cannot be rendered on the debug canvas for physics.")
 
   draw_polyline: (points, close, color) ->
     return if !points.length

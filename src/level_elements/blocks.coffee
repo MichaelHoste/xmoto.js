@@ -44,7 +44,7 @@ class Blocks
       texture_params = @assets.theme.texture_params(block.usetexture.id)
 
       if !texture_params
-        console.error("XMoto warning: block texture \"#{block.usetexture.id}\" was not found in the theme, falling back to dirt.")
+        console.error("XMoto error: block texture \"#{block.usetexture.id}\" was not found in the theme, falling back to dirt.")
         block.usetexture.id = 'dirt'
         texture_params      = @assets.theme.texture_params(block.usetexture.id)
 
