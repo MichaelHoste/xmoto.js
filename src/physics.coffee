@@ -24,7 +24,7 @@ class Physics
                           # It creates physics bugs (like in l1187 when going left).
                           # We fix the (rare) bugs by splitting the chains at the sharp angles, and avoid looping.
 
-  DEFAULT_FIXTURE_OPTS =
+  DEFAULT_FIXTURE =
     density:          1.0
     restitution:      0.5
     friction:         1.0
@@ -37,7 +37,7 @@ class Physics
     CONVEX_PARTITION:  'convex_partition'  # poly-partition-js's convexPartition (Hertel-Mehlhorn): near-optimal pieces, O(n log n).
     BAYAZIT:           'bayazit'           # Mark Bayazit's algorithm (ported from Cocos): only strategy that tolerates self-intersecting polygons, but doesn't scale to big polygons
 
-  DEFAULT_DECOMPOSE_STRATEGY = 'convex_partition'
+  DEFAULT_DECOMPOSE_STRATEGY = 'quick_decomp'
 
   constructor: (level) ->
     @level   = level
@@ -136,10 +136,10 @@ class Physics
       shape = new Polygon(convex_vertices)
 
       body.createFixture(shape,
-        density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
-        restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
-        friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
-        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
+        density:          opts.density     ? DEFAULT_FIXTURE.density
+        restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
+        friction:         opts.friction    ? DEFAULT_FIXTURE.friction
+        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
       )
 
   # Create collisions using very thin rectangles following the edges, top-aligned on vertices.
@@ -182,10 +182,10 @@ class Physics
       ])
 
       body.createFixture(shape,
-        density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
-        restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
-        friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
-        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
+        density:          opts.density     ? DEFAULT_FIXTURE.density
+        restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
+        friction:         opts.friction    ? DEFAULT_FIXTURE.friction
+        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
       )
 
   # Create collisions using individual Edges (without ghost vertices). May create ghost collisions
@@ -211,10 +211,10 @@ class Physics
       shape = planck.Edge(planck.Vec2(vertex1.x, vertex1.y), planck.Vec2(vertex2.x, vertex2.y))
 
       body.createFixture(shape,
-        density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
-        restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
-        friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
-        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
+        density:          opts.density     ? DEFAULT_FIXTURE.density
+        restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
+        friction:         opts.friction    ? DEFAULT_FIXTURE.friction
+        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
       )
 
   # Create collisions using Chains to avoid ghost collisions. If sharp angles, split the chains to avoid collision bug
@@ -242,10 +242,10 @@ class Physics
       shape = new Chain(chain.vertices, chain.is_loop)
 
       body.createFixture(shape,
-        density:          opts.density     ? DEFAULT_FIXTURE_OPTS.density
-        restitution:      opts.restitution ? DEFAULT_FIXTURE_OPTS.restitution
-        friction:         opts.friction    ? DEFAULT_FIXTURE_OPTS.friction
-        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE_OPTS.group_index
+        density:          opts.density     ? DEFAULT_FIXTURE.density
+        restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
+        friction:         opts.friction    ? DEFAULT_FIXTURE.friction
+        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
       )
 
   # Splits a closed vertex loop into Chains, breaking it open at any vertex where the outline folds back close to 180°.
@@ -371,6 +371,21 @@ class Physics
 
     sized_polygons = convex_polygons.reduce(((all, polygon) -> all.concat(Physics.limit_polygon_size(polygon))), [])
 
+    # Sanity-check the decomposition's own output. A well-behaved strategy should never produce
+    # any of these on a polygon it claims to have successfully split, so this is a diagnostic on
+    # the algorithm/strategy itself, not on the level content (unlike the isSimple bail-out
+    # above). Collinear leftovers are deliberately not checked here: they're a common, harmless
+    # byproduct of every strategy (near-180° convex corners), not a real defect.
+    for polygon in sized_polygons
+      if polygon.length > Settings.maxPolygonVertices
+        console.error("XMoto error: decompose_to_convex (#{strategy}) produced a piece with #{polygon.length} > #{Settings.maxPolygonVertices} vertices.")
+      if !Physics.is_convex(polygon)
+        console.error("XMoto error: decompose_to_convex (#{strategy}) produced a concave piece.")
+      if !decomp.isSimple(polygon)
+        console.error("XMoto error: decompose_to_convex (#{strategy}) produced a self-intersecting piece.")
+      if Physics.has_duplicate_points(polygon)
+        console.error("XMoto error: decompose_to_convex (#{strategy}) produced a piece with duplicate vertices.")
+
     sized_polygons.map (polygon) ->
       polygon.map (pair) -> { x: pair[0], y: pair[1] }
 
@@ -396,6 +411,39 @@ class Physics
       i = end_i
 
     pieces
+
+  # Whether all turns go the same way (all left or all right). Near-zero cross products
+  # (collinear-ish turns) don't break convexity on their own. Expects `[x, y]` pairs.
+  # cf. https://www.geeksforgeeks.org/dsa/check-if-given-polygon-is-a-convex-polygon-or-not
+  @is_convex: (pairs, epsilon = 1e-9) ->
+    n = pairs.length
+    return false if n < 3
+
+    sign = 0
+
+    for i in [0...n]
+      [ax, ay] = pairs[i]
+      [bx, b_y] = pairs[(i + 1) % n]
+      [cx, cy] = pairs[(i + 2) % n]
+
+      cross = (bx - ax) * (cy - b_y) - (b_y - ay) * (cx - bx)
+      continue if Math.abs(cross) < epsilon
+
+      current_sign = if cross > 0 then 1 else -1
+
+      if sign == 0
+        sign = current_sign
+      else if current_sign != sign
+        return false
+
+    true
+
+  # Whether any (near-)duplicate points remain, reusing poly-decomp's own definition of
+  # "duplicate" (see remove_duplicate_vertices) on a throwaway copy. Expects `[x, y]` pairs.
+  @has_duplicate_points: (pairs, distance = Settings.linearSlop) ->
+    copy = pairs.map((pair) -> pair.slice())
+    decomp.removeDuplicatePoints(copy, distance)
+    copy.length != pairs.length
 
   # Detect polygons where the vertices intersect themselves
   @check_intersect_vertices: (vertices) ->

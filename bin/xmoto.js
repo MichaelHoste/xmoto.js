@@ -1269,7 +1269,7 @@
   Settings = planck.Settings;
 
   Physics = (function() {
-    var CHAIN_SHARP_ANGLE, DECOMPOSE_STRATEGIES, DEFAULT_DECOMPOSE_STRATEGY, DEFAULT_FIXTURE_OPTS, POSITION_ITERATIONS, RECTANGLE_THICKNESS, STEPS_PER_SEC, VELOCITY_ITERATIONS;
+    var CHAIN_SHARP_ANGLE, DECOMPOSE_STRATEGIES, DEFAULT_DECOMPOSE_STRATEGY, DEFAULT_FIXTURE, POSITION_ITERATIONS, RECTANGLE_THICKNESS, STEPS_PER_SEC, VELOCITY_ITERATIONS;
 
     class Physics {
       constructor(level) {
@@ -1377,10 +1377,10 @@
           convex_vertices = ref[l];
           shape = new Polygon(convex_vertices);
           results.push(body.createFixture(shape, {
-            density: (ref1 = opts.density) != null ? ref1 : DEFAULT_FIXTURE_OPTS.density,
-            restitution: (ref2 = opts.restitution) != null ? ref2 : DEFAULT_FIXTURE_OPTS.restitution,
-            friction: (ref3 = opts.friction) != null ? ref3 : DEFAULT_FIXTURE_OPTS.friction,
-            filterGroupIndex: (ref4 = opts.group_index) != null ? ref4 : DEFAULT_FIXTURE_OPTS.group_index
+            density: (ref1 = opts.density) != null ? ref1 : DEFAULT_FIXTURE.density,
+            restitution: (ref2 = opts.restitution) != null ? ref2 : DEFAULT_FIXTURE.restitution,
+            friction: (ref3 = opts.friction) != null ? ref3 : DEFAULT_FIXTURE.friction,
+            filterGroupIndex: (ref4 = opts.group_index) != null ? ref4 : DEFAULT_FIXTURE.group_index
           }));
         }
         return results;
@@ -1430,10 +1430,10 @@
             v1.y + offsetY) // Bottom-left
           ]);
           results.push(body.createFixture(shape, {
-            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE_OPTS.density,
-            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE_OPTS.restitution,
-            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE_OPTS.friction,
-            filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE_OPTS.group_index
+            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE.density,
+            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE.restitution,
+            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE.friction,
+            filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE.group_index
           }));
         }
         return results;
@@ -1465,10 +1465,10 @@
           vertex2 = i === vertices.length - 1 ? vertices[0] : vertices[i + 1];
           shape = planck.Edge(planck.Vec2(vertex1.x, vertex1.y), planck.Vec2(vertex2.x, vertex2.y));
           results.push(body.createFixture(shape, {
-            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE_OPTS.density,
-            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE_OPTS.restitution,
-            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE_OPTS.friction,
-            filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE_OPTS.group_index
+            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE.density,
+            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE.restitution,
+            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE.friction,
+            filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE.group_index
           }));
         }
         return results;
@@ -1502,10 +1502,10 @@
           chain = chains[l];
           shape = new Chain(chain.vertices, chain.is_loop);
           results.push(body.createFixture(shape, {
-            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE_OPTS.density,
-            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE_OPTS.restitution,
-            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE_OPTS.friction,
-            filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE_OPTS.group_index
+            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE.density,
+            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE.restitution,
+            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE.friction,
+            filterGroupIndex: (ref3 = opts.group_index) != null ? ref3 : DEFAULT_FIXTURE.group_index
           }));
         }
         return results;
@@ -1637,7 +1637,7 @@
       // Not critical otherwise: the block just gets no polygon collision. Use create_chains_collisions,
       // create_edges_collisions or create_rectangles_collisions instead if it needs one.
       static decompose_to_convex(vertices, strategy = DEFAULT_DECOMPOSE_STRATEGY) {
-        var convex_polygons, degenerate, max_level, pairs, partitioned, polygon, sized_polygons;
+        var convex_polygons, degenerate, l, len, max_level, pairs, partitioned, polygon, sized_polygons;
         if (!_.values(DECOMPOSE_STRATEGIES).includes(strategy)) {
           throw new Error(`XMoto error: unknown decompose_to_convex strategy '${strategy}'`);
         }
@@ -1696,6 +1696,26 @@
         sized_polygons = convex_polygons.reduce((function(all, polygon) {
           return all.concat(Physics.limit_polygon_size(polygon));
         }), []);
+// Sanity-check the decomposition's own output. A well-behaved strategy should never produce
+// any of these on a polygon it claims to have successfully split, so this is a diagnostic on
+// the algorithm/strategy itself, not on the level content (unlike the isSimple bail-out
+// above). Collinear leftovers are deliberately not checked here: they're a common, harmless
+// byproduct of every strategy (near-180° convex corners), not a real defect.
+        for (l = 0, len = sized_polygons.length; l < len; l++) {
+          polygon = sized_polygons[l];
+          if (polygon.length > Settings.maxPolygonVertices) {
+            console.error(`XMoto error: decompose_to_convex (${strategy}) produced a piece with ${polygon.length} > ${Settings.maxPolygonVertices} vertices.`);
+          }
+          if (!Physics.is_convex(polygon)) {
+            console.error(`XMoto error: decompose_to_convex (${strategy}) produced a concave piece.`);
+          }
+          if (!decomp.isSimple(polygon)) {
+            console.error(`XMoto error: decompose_to_convex (${strategy}) produced a self-intersecting piece.`);
+          }
+          if (Physics.has_duplicate_points(polygon)) {
+            console.error(`XMoto error: decompose_to_convex (${strategy}) produced a piece with duplicate vertices.`);
+          }
+        }
         return sized_polygons.map(function(polygon) {
           return polygon.map(function(pair) {
             return {
@@ -1729,6 +1749,45 @@
           i = end_i;
         }
         return pieces;
+      }
+
+      // Whether all turns go the same way (all left or all right). Near-zero cross products
+      // (collinear-ish turns) don't break convexity on their own. Expects `[x, y]` pairs.
+      // cf. https://www.geeksforgeeks.org/dsa/check-if-given-polygon-is-a-convex-polygon-or-not
+      static is_convex(pairs, epsilon = 1e-9) {
+        var ax, ay, b_y, bx, cross, current_sign, cx, cy, i, l, n, ref, sign;
+        n = pairs.length;
+        if (n < 3) {
+          return false;
+        }
+        sign = 0;
+        for (i = l = 0, ref = n; (0 <= ref ? l < ref : l > ref); i = 0 <= ref ? ++l : --l) {
+          [ax, ay] = pairs[i];
+          [bx, b_y] = pairs[(i + 1) % n];
+          [cx, cy] = pairs[(i + 2) % n];
+          cross = (bx - ax) * (cy - b_y) - (b_y - ay) * (cx - bx);
+          if (Math.abs(cross) < epsilon) {
+            continue;
+          }
+          current_sign = cross > 0 ? 1 : -1;
+          if (sign === 0) {
+            sign = current_sign;
+          } else if (current_sign !== sign) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      // Whether any (near-)duplicate points remain, reusing poly-decomp's own definition of
+      // "duplicate" (see remove_duplicate_vertices) on a throwaway copy. Expects `[x, y]` pairs.
+      static has_duplicate_points(pairs, distance = Settings.linearSlop) {
+        var copy;
+        copy = pairs.map(function(pair) {
+          return pair.slice();
+        });
+        decomp.removeDuplicatePoints(copy, distance);
+        return copy.length !== pairs.length;
       }
 
       // Detect polygons where the vertices intersect themselves
@@ -1821,7 +1880,7 @@
 
     // It creates physics bugs (like in l1187 when going left).
     // We fix the (rare) bugs by splitting the chains at the sharp angles, and avoid looping.
-    DEFAULT_FIXTURE_OPTS = {
+    DEFAULT_FIXTURE = {
       density: 1.0,
       restitution: 0.5,
       friction: 1.0,
@@ -1836,7 +1895,7 @@
       BAYAZIT: 'bayazit' // Mark Bayazit's algorithm (ported from Cocos): only strategy that tolerates self-intersecting polygons, but doesn't scale to big polygons
     };
 
-    DEFAULT_DECOMPOSE_STRATEGY = 'convex_partition';
+    DEFAULT_DECOMPOSE_STRATEGY = 'quick_decomp';
 
     return Physics;
 
