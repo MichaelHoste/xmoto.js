@@ -1,7 +1,3 @@
-Circle        = planck.Circle
-Polygon       = planck.Polygon
-RevoluteJoint = planck.RevoluteJoint
-
 class Rider
 
   constructor: (level, moto) ->
@@ -83,7 +79,7 @@ class Rider
       @torso.applyForce(adjusted_force_vector, @torso.getWorldCenter())
 
   create_head: ->
-    shape = new Circle(Constants.head.radius)
+    shape = new planck.Circle(Constants.head.radius)
 
     body = @world.createBody(
       type: 'dynamic'
@@ -109,7 +105,7 @@ class Rider
 
   create_part: (part_constants, name) ->
     vertices = Physics.create_shape(part_constants.vertices, @mirror == -1)
-    shape    = new Polygon(vertices)
+    shape    = new planck.Polygon(vertices)
 
     body = @world.createBody(
       type: 'dynamic'
@@ -143,7 +139,7 @@ class Rider
 
     opts = {}
 
-    joint = new RevoluteJoint(opts, @head, @torso, axe)
+    joint = new planck.RevoluteJoint(opts, @head, @torso, axe)
 
     @world.createJoint(joint)
 
@@ -160,9 +156,9 @@ class Rider
       upperAngle:  if @mirror == 1 then  Math.PI/108 else  Math.PI/15
 
     if invert_joint
-      joint = new RevoluteJoint(opts, part2, part1, axe)
+      joint = new planck.RevoluteJoint(opts, part2, part1, axe)
     else
-      joint = new RevoluteJoint(opts, part1, part2, axe)
+      joint = new planck.RevoluteJoint(opts, part1, part2, axe)
 
     @world.createJoint(joint)
 

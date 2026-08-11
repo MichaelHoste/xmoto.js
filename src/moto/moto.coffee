@@ -1,8 +1,4 @@
-Circle         = planck.Circle
-Polygon        = planck.Polygon
-PrismaticJoint = planck.PrismaticJoint
-RevoluteJoint  = planck.RevoluteJoint
-AABB           = planck.AABB
+AABB = planck.AABB
 
 class Moto
 
@@ -187,7 +183,7 @@ class Moto
 
   create_body: ->
     vertices = Physics.create_shape(Constants.body.vertices, @mirror == -1)
-    shape    = new Polygon(vertices)
+    shape    = new planck.Polygon(vertices)
 
     body = @world.createBody(
       type: 'dynamic'
@@ -211,7 +207,7 @@ class Moto
     body
 
   create_wheel: (part_constants) ->
-    shape = new Circle(part_constants.radius)
+    shape = new planck.Circle(part_constants.radius)
 
     wheel = @world.createBody(
       type: 'dynamic'
@@ -236,7 +232,7 @@ class Moto
 
   create_axle: (part_constants) ->
     vertices = Physics.create_shape(part_constants.vertices, @mirror == -1)
-    shape    = new Polygon(vertices)
+    shape    = new planck.Polygon(vertices)
 
     body = @world.createBody(
       type: 'dynamic'
@@ -266,7 +262,7 @@ class Moto
       #motorSpeed:      0 # The desired motor speed. Usually in radians per second.
       #enableMotor: true  # A flag to enable the joint motor.
 
-    joint = new RevoluteJoint(opts, axle, wheel, wheel.getWorldCenter())
+    joint = new planck.RevoluteJoint(opts, axle, wheel, wheel.getWorldCenter())
 
     @world.createJoint(joint)
 
@@ -284,7 +280,7 @@ class Moto
       enableMotor:      true
       collideConnected: false
 
-    joint = new PrismaticJoint(opts, @body, axle, axle.getWorldCenter(), axis)
+    joint = new planck.PrismaticJoint(opts, @body, axle, axle.getWorldCenter(), axis)
 
     @world.createJoint(joint)
 

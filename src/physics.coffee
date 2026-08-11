@@ -1,9 +1,5 @@
-World    = planck.World
-Vec2     = planck.Vec2
-Chain    = planck.Chain
-Circle   = planck.Circle
-Polygon  = planck.Polygon
 Settings = planck.Settings
+Vec2     = planck.Vec2
 
 class Physics
 
@@ -30,23 +26,14 @@ class Physics
     friction:         1.0
     filterGroupIndex: -2
 
-  # Strategies available for `decompose_to_convex` (see comment there for tradeoffs)
-  DECOMPOSE_STRATEGIES =
-    QUICK_DECOMP:      'quick_decomp'      # poly-decomp's quickDecomp (Mark Penner): fast, non-optimal number of polygons.
-    DECOMP:            'decomp'            # poly-decomp's decomp (Mark Penner): optimal number of polygons. O(N^4) so exponentially slow for big polygons.
-    CONVEX_PARTITION:  'convex_partition'  # poly-partition-js's convexPartition (Hertel-Mehlhorn): near-optimal pieces, O(n log n).
-    BAYAZIT:           'bayazit'           # Mark Bayazit's algorithm (ported from Cocos): only strategy that tolerates self-intersecting polygons, but doesn't scale to big polygons
-
-  DEFAULT_DECOMPOSE_STRATEGY = 'quick_decomp'
-
   constructor: (level) ->
     @level   = level
     @options = level.options
     @camera  = level.camera
 
-    Settings.linearSlop = 0.0025 # Force Planck.js double default precision between wheel and ground (to avoid seing space between them)
+    planck.Settings.linearSlop = 0.0025 # Force Planck.js double default precision between wheel and ground (to avoid seing space between them)
 
-    @world = new World(
+    @world = new planck.World(
       x:  0,
       y: -Constants.gravity
     )
@@ -120,8 +107,12 @@ class Physics
   # vertices it's given, so a concave outline must be split into convex sub-polygons first.
   # => https://piqnt.com/planck.js/docs/shape/polygon.html
   create_polygons_collisions: (position, vertices, name, opts = {}) ->
-    vertices = Physics.optimize_vertices(vertices)
-    return if vertices.length < 3
+    polygon = new Polygon(vertices)
+    polygon.optimize() # remove duplicate/collinear
+
+    if polygon.length() < 3
+      console.error("XMoto error: can't create polygons collision with less than 3 vertices.")
+      return
 
     body = @world.createBody(
       type: 'static'
@@ -132,21 +123,26 @@ class Physics
         name: name
     )
 
-    for convex_vertices in Physics.decompose_to_convex(vertices)
-      shape = new Polygon(convex_vertices)
+    for convex_polygon in polygon.decompose()
+      for sub_polygon in convex_polygon.split() # default max vertices is 12
+        shape = new planck.Polygon(sub_polygon.vertices)
 
-      body.createFixture(shape,
-        density:          opts.density     ? DEFAULT_FIXTURE.density
-        restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
-        friction:         opts.friction    ? DEFAULT_FIXTURE.friction
-        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
-      )
+        body.createFixture(shape,
+          density:          opts.density     ? DEFAULT_FIXTURE.density
+          restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
+          friction:         opts.friction    ? DEFAULT_FIXTURE.friction
+          filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
+        )
 
   # Create collisions using very thin rectangles following the edges, top-aligned on vertices.
   # Shape is hollow, collisions are possible from both ways
   create_rectangles_collisions: (position, vertices, name, opts = {}) ->
-    vertices = Physics.optimize_vertices(vertices)
-    return if !vertices.length
+    polygon = new Polygon(vertices)
+    polygon.optimize() # remove duplicate/collinear
+
+    if polygon.length() < 3
+      console.error("XMoto error: can't create rectangles collision with less than 3 vertices.")
+      return
 
     body = @world.createBody(
       type: 'static'
@@ -156,6 +152,8 @@ class Physics
       userData:
         name: name
     )
+
+    vertices = polygon.vertices
 
     for vertex, i in vertices
       v1 = vertex
@@ -174,11 +172,11 @@ class Physics
       offsetY = -dx / length * RECTANGLE_THICKNESS
 
       # Create line using an Polygon shape of minimal thickness
-      shape = new Polygon([
-        planck.Vec2(v1.x, v1.y)                     # Top-left
-        planck.Vec2(v2.x, v2.y)                     # Top-right
-        planck.Vec2(v2.x + offsetX, v2.y + offsetY) # Bottom-right
-        planck.Vec2(v1.x + offsetX, v1.y + offsetY) # Bottom-left
+      shape = new planck.Polygon([
+        Vec2(v1.x, v1.y)                     # Top-left
+        Vec2(v2.x, v2.y)                     # Top-right
+        Vec2(v2.x + offsetX, v2.y + offsetY) # Bottom-right
+        Vec2(v1.x + offsetX, v1.y + offsetY) # Bottom-left
       ])
 
       body.createFixture(shape,
@@ -192,8 +190,12 @@ class Physics
   # Shape is hollow, collisions are possible from both ways
   # => https://piqnt.com/planck.js/docs/shape/edge.html
   create_edges_collisions: (position, vertices, name, opts = {}) ->
-    vertices = Physics.optimize_vertices(vertices)
-    return if !vertices.length
+    polygon = new Polygon(vertices)
+    polygon.optimize() # remove duplicate/collinear
+
+    if polygon.length() < 3
+      console.error("XMoto error: can't create edges collision with less than 3 vertices.")
+      return
 
     body = @world.createBody(
       type: 'static'
@@ -204,11 +206,13 @@ class Physics
         name: name
     )
 
+    vertices = polygon.vertices
+
     for vertex, i in vertices
       vertex1 = vertex
       vertex2 = if i == vertices.length - 1 then vertices[0] else vertices[i+1]
 
-      shape = planck.Edge(planck.Vec2(vertex1.x, vertex1.y), planck.Vec2(vertex2.x, vertex2.y))
+      shape = planck.Edge(Vec2(vertex1.x, vertex1.y), Vec2(vertex2.x, vertex2.y))
 
       body.createFixture(shape,
         density:          opts.density     ? DEFAULT_FIXTURE.density
@@ -221,8 +225,15 @@ class Physics
   # Shape is hollow, collisions are possible from both ways
   # => https://piqnt.com/planck.js/docs/shape/edge.html
   create_chains_collisions: (position, vertices, name, opts = {}) ->
-    vertices = Physics.optimize_vertices(vertices)
-    return if vertices.length < 3
+    polygon = new Polygon(vertices)
+    polygon.optimize() # remove duplicate/collinear
+
+    if polygon.length() < 3
+      console.error("XMoto error: can't create chains collision with less than 3 vertices.")
+      return
+
+    if polygon.self_intersect()
+      console.warn("XMoto warning: polygon intersects itself and chains collisions may be bugged (not officially supported).") # See here: https://piqnt.github.io/planck.js/docs/shape/chain.html
 
     body = @world.createBody(
       type: 'static'
@@ -236,10 +247,10 @@ class Physics
     # Fix issues where very long, sharp edges may produce collision bug (cf. level 1187).
     # We detect those sharp angles and split the loop into separate non-looped Chains.
     # (these chains will appear without solid color in debug mode)
-    chains = @split_at_sharp_folds(vertices, CHAIN_SHARP_ANGLE * Math.PI / 180)
+    chains = @split_at_sharp_folds(polygon.vertices, CHAIN_SHARP_ANGLE * Math.PI / 180)
 
     for chain in chains
-      shape = new Chain(chain.vertices, chain.is_loop)
+      shape = new planck.Chain(chain.vertices, chain.is_loop)
 
       body.createFixture(shape,
         density:          opts.density     ? DEFAULT_FIXTURE.density
@@ -249,7 +260,7 @@ class Physics
       )
 
   # Splits a closed vertex loop into Chains, breaking it open at any vertex where the outline folds back close to 180°.
-  # Returns a single `is_loop: true` segment (the vertices untouched) when there is nothing to fix.
+  # When there is nothing to fix, returns a single `is_loop: true` segment (the vertices untouched).
   split_at_sharp_folds: (vertices, sharp_angle_rad) ->
     n     = vertices.length
     folds = (i for i in [0...n] when Physics.sharp_fold(vertices, i, sharp_angle_rad))
@@ -260,199 +271,6 @@ class Physics
       for fold, k in folds
         next_fold = folds[(k + 1) % folds.length]
         { vertices: Physics.slice_cyclic(vertices, fold, next_fold), is_loop: false }
-
-  # Some levels contain consecutive (near-)duplicate vertices, which would
-  # produce a zero-length edge and crash Planck's assertion.
-  @optimize_vertices: (vertices) ->
-    vertices = Physics.remove_duplicate_vertices(vertices)
-    vertices = Physics.remove_collinear_vertices(vertices)
-    vertices = Physics.check_intersect_vertices(vertices) # Does not fix, only triggers warning
-    vertices
-
-  # Remove consecutive (cyclic) vertices that are too close (or the same).
-  # It will avoid zero-length edges that would crash Chain's construction.
-  @remove_duplicate_vertices: (vertices, distance = Settings.linearSlop) ->
-    pairs = vertices.map((vertex) -> [vertex.x, vertex.y])
-
-    decomp.removeDuplicatePoints(pairs, distance)
-
-    if vertices.length == pairs.length
-      return vertices # nothing was removed
-    else
-      if pairs.length < 3
-        console.error("XMoto error: polygon degenerated from #{vertices.length} to #{pairs.length} vertex(es) after removing duplicates, and was ignored.")
-      else
-        console.warn("XMoto warning: #{vertices.length - pairs.length} duplicate vertices have been removed.")
-
-      return pairs.map((pair) -> { x: pair[0], y: pair[1] })
-
-  # Removes collinear points in the polygon. This means that if three points are placed along the same line, the middle one will be removed.
-  # The angle_rad determines whether the points are collinear or not.
-  @remove_collinear_vertices: (vertices, angle_rad =  0.01) -> # 0.01 = ~0.5°
-    pairs = vertices.map((vertex) -> [vertex.x, vertex.y])
-
-    decomp.removeCollinearPoints(pairs, angle_rad)
-
-    if vertices.length == pairs.length
-      return vertices # nothing was removed
-    else
-      if pairs.length < 3
-        console.error("XMoto error: polygon degenerated from #{vertices.length} to #{pairs.length} vertex(es) after removing collinear, and was ignored.")
-      else
-        console.warn("XMoto warning: #{vertices.length - pairs.length} collinear vertices have been removed.")
-
-      return pairs.map((pair) -> { x: pair[0], y: pair[1] })
-
-  # Splits a simple (possibly concave) polygon into convex sub-polygons.
-  # Use `strategy` option select the underlying algorithm (see DECOMPOSE_STRATEGIES):
-  # --
-  # - quick_decomp (default): poly-decomp's quickDecomp. Its recursion depth grows with a
-  #   polygon's reflex-vertex count, and xmoto's blocky/pixel-art blocks can have thousands of
-  #   vertices — far beyond poly-decomp's default cap of 100, which would otherwise silently
-  #   return a partial (incomplete => missing collisions) result. Scale the cap to the polygon
-  #   size instead. This relies on `optimize_vertices` having already removed (near-)duplicate
-  #   points beforehand: those are the one case that makes quickDecomp spin without making any
-  #   real progress, no matter how high the cap is set.
-  # - decomp: poly-decomp's exact decomp. Produces the optimal (fewest) convex pieces, but its
-  #   cost grows with reflex-vertex count too (no cap to tune it with), so it's only a good fit
-  #   for smaller/simpler shapes.
-  # - convex_partition: poly-partition-js's convexPartition (Hertel-Mehlhorn). Ear-clipping based,
-  #   O(n log n) with no recursion cap to tune, so it doesn't share quickDecomp's blowup risk on
-  #   many-vertex polygons. Piece count is usually close to optimal, just not guaranteed minimal.
-  # - bayazit: Mark Bayazit's algorithm (see bayazit_decomposition.coffee). The odd one out: it
-  #   doesn't require a simple polygon, so it's the only strategy that can produce a (still
-  #   approximate) decomposition of a self-intersecting block instead of refusing it outright.
-  #   Recursion cost scales with the reflex-vertex count, so it doesn't scale to xmoto's
-  #   thousands-of-vertex blocky staircases the way quick_decomp/convex_partition do.
-  # --
-  # The other three strategies assume a simple (non-self-intersecting) polygon: on a self-
-  # intersecting one their behavior is undefined and they can return wrongly-wound/overlapping
-  # pieces. That's rare (some xmoto levels do have self-intersecting blocks) but a real failure,
-  # so unlike the advisory `check_intersect_vertices` warning used for the other collision types,
-  # bail out loudly here and skip decomposition entirely rather than hand them something they
-  # can't handle — use the `bayazit` strategy instead if that block needs a polygon collision.
-  # Not critical otherwise: the block just gets no polygon collision. Use create_chains_collisions,
-  # create_edges_collisions or create_rectangles_collisions instead if it needs one.
-  @decompose_to_convex: (vertices, strategy = DEFAULT_DECOMPOSE_STRATEGY) ->
-    if !_.values(DECOMPOSE_STRATEGIES).includes(strategy)
-      throw new Error("XMoto error: unknown decompose_to_convex strategy '#{strategy}'") # hard failure!
-
-    pairs = vertices.map((vertex) -> [vertex.x, vertex.y])
-
-    # Bayazit is the one strategy that tolerates a self-intersecting polygon, so it's the one
-    # exempt from this bail-out (and from makeCCW, which it doesn't need: it does its own CCW
-    # forcing on `vertices` directly, not on `pairs`).
-    if !decomp.isSimple(pairs) && strategy != DECOMPOSE_STRATEGIES.BAYAZIT
-      console.error("XMoto error: polygon intersects itself, can't be split with \"#{strategy}\" strategy into convex pieces for collisions. Fallback to \"#{DECOMPOSE_STRATEGIES.BAYAZIT}\" strategy.")
-      strategy = DECOMPOSE_STRATEGIES.BAYAZIT
-
-    decomp.makeCCW(pairs)
-
-    convex_polygons = switch strategy
-      when DECOMPOSE_STRATEGIES.QUICK_DECOMP
-        max_level = Math.max(pairs.length, 100)
-        decomp.quickDecomp(pairs, undefined, undefined, undefined, undefined, max_level)
-      when DECOMPOSE_STRATEGIES.DECOMP
-        decomp.decomp(pairs)
-      when DECOMPOSE_STRATEGIES.CONVEX_PARTITION
-        polygon = pairs.map((pair) -> { x: pair[0], y: pair[1] })
-        PolyPartition.convexPartition(polygon, true).map (convex_polygon) -> # true = already CCW, skip its ordering check
-          convex_polygon.map (vertex) -> [vertex.x, vertex.y]
-      when DECOMPOSE_STRATEGIES.BAYAZIT
-        partitioned = BayazitDecomposition.decompose(vertices)
-        degenerate  = (polygon for polygon in partitioned when polygon.length < 3).length
-
-        if degenerate > 0
-          console.warn("XMoto warning: bayazit decomposition produced #{degenerate} degenerate (< 3 vertices) piece(s) on a self-intersecting polygon, they were dropped.")
-
-        partitioned
-          .filter((polygon) -> polygon.length >= 3)
-          .map((polygon) -> polygon.map((vertex) -> [vertex.x, vertex.y]))
-
-    sized_polygons = convex_polygons.reduce(((all, polygon) -> all.concat(Physics.limit_polygon_size(polygon))), [])
-
-    # Sanity-check the decomposition's own output. A well-behaved strategy should never produce
-    # any of these on a polygon it claims to have successfully split, so this is a diagnostic on
-    # the algorithm/strategy itself, not on the level content (unlike the isSimple bail-out
-    # above). Collinear leftovers are deliberately not checked here: they're a common, harmless
-    # byproduct of every strategy (near-180° convex corners), not a real defect.
-    for polygon in sized_polygons
-      if polygon.length > Settings.maxPolygonVertices
-        console.error("XMoto error: decompose_to_convex (#{strategy}) produced a piece with #{polygon.length} > #{Settings.maxPolygonVertices} vertices.")
-      if !Physics.is_convex(polygon)
-        console.error("XMoto error: decompose_to_convex (#{strategy}) produced a concave piece.")
-      if !decomp.isSimple(polygon)
-        console.error("XMoto error: decompose_to_convex (#{strategy}) produced a self-intersecting piece.")
-      if Physics.has_duplicate_points(polygon)
-        console.error("XMoto error: decompose_to_convex (#{strategy}) produced a piece with duplicate vertices.")
-
-    sized_polygons.map (polygon) ->
-      polygon.map (pair) -> { x: pair[0], y: pair[1] }
-
-  # Splits a convex polygon into a fan of smaller convex polygons if it has more vertices than
-  # Planck.js supports (Settings.maxPolygonVertices). quickDecomp only guarantees convexity, not
-  # a vertex-count limit, so a convex-but-huge piece (e.g. a staircase approximating a diagonal
-  # slope — common in xmoto, and convex despite having many vertices) can come out oversized.
-  # That matters because Planck's PolygonShape._set only reads the *first*
-  # `maxPolygonVertices` vertices of whatever it's given and hulls just that prefix — it does
-  # NOT hull the whole input and truncate, it silently drops everything past that index.
-  # Fan-slicing from a shared hub vertex keeps every slice convex: any contiguous run of a
-  # convex polygon's vertices plus that hub is itself convex.
-  @limit_polygon_size: (polygon, max_vertices = Settings.maxPolygonVertices) ->
-    return [polygon] if polygon.length <= max_vertices
-
-    hub    = polygon[0]
-    pieces = []
-    i      = 1
-
-    while i < polygon.length - 1
-      end_i = Math.min(i + max_vertices - 2, polygon.length - 1)
-      pieces.push([hub].concat(polygon.slice(i, end_i + 1)))
-      i = end_i
-
-    pieces
-
-  # Whether all turns go the same way (all left or all right). Near-zero cross products
-  # (collinear-ish turns) don't break convexity on their own. Expects `[x, y]` pairs.
-  # cf. https://www.geeksforgeeks.org/dsa/check-if-given-polygon-is-a-convex-polygon-or-not
-  @is_convex: (pairs, epsilon = 1e-9) ->
-    n = pairs.length
-    return false if n < 3
-
-    sign = 0
-
-    for i in [0...n]
-      [ax, ay] = pairs[i]
-      [bx, b_y] = pairs[(i + 1) % n]
-      [cx, cy] = pairs[(i + 2) % n]
-
-      cross = (bx - ax) * (cy - b_y) - (b_y - ay) * (cx - bx)
-      continue if Math.abs(cross) < epsilon
-
-      current_sign = if cross > 0 then 1 else -1
-
-      if sign == 0
-        sign = current_sign
-      else if current_sign != sign
-        return false
-
-    true
-
-  # Whether any (near-)duplicate points remain, reusing poly-decomp's own definition of
-  # "duplicate" (see remove_duplicate_vertices) on a throwaway copy. Expects `[x, y]` pairs.
-  @has_duplicate_points: (pairs, distance = Settings.linearSlop) ->
-    copy = pairs.map((pair) -> pair.slice())
-    decomp.removeDuplicatePoints(copy, distance)
-    copy.length != pairs.length
-
-  # Detect polygons where the vertices intersect themselves
-  @check_intersect_vertices: (vertices) ->
-    pairs = vertices.map((vertex) -> [vertex.x, vertex.y])
-
-    if !decomp.isSimple(pairs)
-      console.warn("XMoto warning: polygon intersects itself and collisions may be bugged (not officially supported).") # See here: https://piqnt.github.io/planck.js/docs/shape/chain.html
-
-    vertices
 
   @sharp_fold: (vertices, i, sharp_angle_rad) ->
     Math.abs(Physics.turn_angle(vertices, i)) > sharp_angle_rad
@@ -485,9 +303,11 @@ class Physics
   # Dedupes and optionally mirrors a set of vertices.
   # Currently used for moto parts and limits
   @create_shape: (vertices, mirror = false) ->
-    vertices = Physics.optimize_vertices(vertices)
+    polygon = new Polygon(vertices)
+    polygon.optimize() # remove duplicate/collinear
+    return if polygon.length() < 3
 
     if mirror
-      vertices.map((vertex) -> { x: -vertex.x, y: vertex.y })
+      polygon.vertices.map((vertex) -> { x: -vertex.x, y: vertex.y })
     else
-      vertices
+      polygon.vertices
