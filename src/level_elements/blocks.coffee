@@ -65,10 +65,17 @@ class Blocks
 
         block.vertices.push(vertex)
 
-      block.edges = new Edges(@level, block, xml_block)
-      block.edges.parse()
+      # Only keep Blocks of more than 3 vertices (and create edges)
+      if block.vertices.length >= 3
+        block.edges = new Edges(@level, block, xml_block)
+        block.edges.parse()
 
-      @blocks.push(block)
+        @blocks.push(block)
+      else
+        if block.vertices.length == 0
+          console.warn("XMoto warning: block #{block.id} was ignored because it has no vertices.")
+        else
+          console.error("XMoto error: block #{block.id} was ignored because it has only #{block.vertices.length} vertices.")
 
     @blocks.sort(@sort_blocks_by_texture)
 
@@ -96,7 +103,7 @@ class Blocks
 
     for block in @blocks
       if !block.no_collision
-
+        # create_chains_collisions / create_rectangles_collisions / create_edges_collisions / create_polygons_collisions
         @level.physics.create_chains_collisions(block.position, block.vertices, 'ground', {
           density:     ground.density,
           restitution: ground.restitution
