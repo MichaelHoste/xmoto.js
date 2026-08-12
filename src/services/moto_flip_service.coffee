@@ -1,4 +1,4 @@
-# The only goal of this class is to flip the moto :
+# The only goal of this class is to flip the moto:
 #
 # Each parameter of each element of the moto is saved, then a flipped moto
 # is created and the parameters are assigned so that the velocity the same
@@ -8,7 +8,6 @@
 
 class MotoFlipService
 
-  @execute: (moto) ->
     body =
       position: moto.body.getPosition()
       angle:    moto.body.getAngle()
@@ -76,6 +75,7 @@ class MotoFlipService
       angular:  moto.rider.upper_arm.getAngularVelocity()
 
     moto.mirror = moto.rider.mirror = -moto.mirror
+  @run: (moto) ->
     moto.destroy()
     moto.init()
 

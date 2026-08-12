@@ -178,8 +178,8 @@ class Moto
     @rider.lower_leg.applyForce(force_leg, @rider.lower_leg.getWorldCenter())
 
   flip: ->
-    if not @dead
-      MotoFlipService.execute(this)
+    if !@dead
+      MotoFlipService.run(this)
 
   create_body: ->
     position =
