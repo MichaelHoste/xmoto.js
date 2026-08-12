@@ -1361,6 +1361,7 @@
             x: position.x,
             y: position.y
           },
+          angle: angle,
           userData: user_data
         });
         ref = polygon.decompose();
@@ -1401,6 +1402,7 @@
             x: position.x,
             y: position.y
           },
+          angle: angle,
           userData: user_data
         });
         vertices = polygon.vertices;
@@ -1458,6 +1460,7 @@
             x: position.x,
             y: position.y
           },
+          angle: angle,
           userData: user_data
         });
         vertices = polygon.vertices;
@@ -1499,6 +1502,7 @@
             x: position.x,
             y: position.y
           },
+          angle: angle,
           userData: user_data
         });
         // Fix issues where very long, sharp edges may produce collision bug (cf. level 1187).
@@ -4422,14 +4426,15 @@
       if (!this.moto.dead) {
         this.level.listeners.kill_moto(this.moto);
         force_vector = {
-          x: 150.0 * this.moto.mirror,
+          x: 200.0,
           y: 0
         };
-        eject_angle = this.mirror * this.moto.body.getAngle() + Math.PI / 4.0;
+        eject_angle = this.moto.body.getAngle() + Math.PI / 4.0; // 45 degrees
         adjusted_force_vector = Math2D.rotate_point(force_vector, eject_angle, {
           x: 0,
           y: 0
         });
+        adjusted_force_vector.x *= this.mirror;
         return this.torso.applyForce(adjusted_force_vector, this.torso.getWorldCenter());
       }
     }

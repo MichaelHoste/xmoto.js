@@ -122,6 +122,7 @@ class Physics
       position:
         x: position.x
         y: position.y
+      angle: angle
       userData: user_data
     )
 
@@ -156,6 +157,7 @@ class Physics
       position:
         x: position.x
         y: position.y
+      angle: angle
       userData: user_data
     )
 
@@ -213,6 +215,7 @@ class Physics
       position:
         x: position.x
         y: position.y
+      angle: angle
       userData: user_data
     )
 
@@ -255,6 +258,7 @@ class Physics
       position:
         x: position.x
         y: position.y
+      angle: angle
       userData: user_data
     )
 
