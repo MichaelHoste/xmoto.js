@@ -77,7 +77,10 @@ class Limits
         { x: wall.right, y: wall.top    }
       ]
 
-      @level.physics.create_polygons_collisions({ x: 0, y: 0 }, vertices, 'ground', {
+      user_data =
+        name: 'ground'
+
+      @level.physics.create_polygons_collisions(vertices, { x: 0, y: 0 }, 0, 'static', user_data, {
         density:     ground.density,
         restitution: ground.restitution,
         friction:    ground.friction

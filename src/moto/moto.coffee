@@ -182,29 +182,24 @@ class Moto
       MotoFlipService.execute(this)
 
   create_body: ->
-    vertices = Physics.create_shape(Constants.body.vertices, @mirror == -1)
-    shape    = new planck.Polygon(vertices)
+    position =
+      x: @player_start.x + @mirror * Constants.body.position.x
+      y: @player_start.y +           Constants.body.position.y
 
-    body = @world.createBody(
-      type: 'dynamic'
-      position:
-        x: @player_start.x + @mirror * Constants.body.position.x
-        y: @player_start.y +           Constants.body.position.y
-      userData:
-        name: 'moto'
-        type: if @ghost then 'ghost' else 'player'
-        moto: this
-    )
+    vertices = Constants.body.vertices.map((vertex) => { x: @mirror * vertex.x, y: vertex.y })
 
-    body.createFixture(shape,
-      density:          Constants.body.density
-      restitution:      Constants.body.restitution
-      friction:         Constants.body.friction
-      isSensor:         !Constants.body.collisions
-      filterGroupIndex: -1
-    )
+    user_data =
+      name: 'moto'
+      type: if @ghost then 'ghost' else 'player'
+      moto: this
 
-    body
+    @level.physics.create_polygons_collisions(vertices, position, 0, 'dynamic', user_data, {
+      density:            Constants.body.density
+      restitution:        Constants.body.restitution
+      friction:           Constants.body.friction
+      is_sensor:          !Constants.body.collisions
+      filter_group_index: -1 # parts of moto/rider don't collide with themselves
+    })
 
   create_wheel: (part_constants) ->
     shape = new planck.Circle(part_constants.radius)
@@ -231,29 +226,24 @@ class Moto
     wheel
 
   create_axle: (part_constants) ->
-    vertices = Physics.create_shape(part_constants.vertices, @mirror == -1)
-    shape    = new planck.Polygon(vertices)
+    position =
+      x: @player_start.x + @mirror * part_constants.position.x
+      y: @player_start.y +           part_constants.position.y
 
-    body = @world.createBody(
-      type: 'dynamic'
-      position:
-        x: @player_start.x + @mirror * part_constants.position.x
-        y: @player_start.y +           part_constants.position.y
-      userData:
-        name: 'moto'
-        type: if @ghost then 'ghost' else 'player'
-        moto: this
-    )
+    vertices = part_constants.vertices.map((vertex) => { x: @mirror * vertex.x, y: vertex.y })
 
-    body.createFixture(shape,
-      density:          part_constants.density
-      restitution:      part_constants.restitution
-      friction:         part_constants.friction
-      isSensor:         !part_constants.collisions
-      filterGroupIndex: -1
-    )
+    user_data =
+      name: 'moto'
+      type: if @ghost then 'ghost' else 'player'
+      moto: this
 
-    body
+    @level.physics.create_polygons_collisions(vertices, position, 0, 'dynamic', user_data, {
+      density:            part_constants.density
+      restitution:        part_constants.restitution
+      friction:           part_constants.friction
+      is_sensor:          !part_constants.collisions
+      filter_group_index: -1 # parts of moto/rider don't collide with themselves
+    })
 
   create_revolute_joint: (axle, wheel) ->
     # TODO? https://piqnt.com/planck.js/docs/api/interfaces/RevoluteJointOpt.html#interface-revolutejointopt

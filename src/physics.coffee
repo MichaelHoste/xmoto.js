@@ -21,10 +21,13 @@ class Physics
                           # We fix the (rare) bugs by splitting the chains at the sharp angles, and avoid looping.
 
   DEFAULT_FIXTURE =
-    density:          1.0
-    restitution:      0.5
-    friction:         1.0
-    filterGroupIndex: -2
+    density:              1.0
+    restitution:          0.5
+    friction:             1.0
+    is_sensor:            false # collisions by default (true has no collisions)
+    filter_group_index:   0
+    filter_category_bits: 0x0001
+    filter_mask_bits:     0xFFFF
 
   constructor: (level) ->
     @level   = level
@@ -102,11 +105,11 @@ class Physics
   draw: ->
     @physics_drawing_service.draw()
 
-  # Create collisions using polygons.
+  # Create collisions using polygons, type should be in [static, kinematic, dynamic]
   # Shape is entirely filled. Planck's Polygon silently takes the convex hull of whatever
   # vertices it's given, so a concave outline must be split into convex sub-polygons first.
   # => https://piqnt.com/planck.js/docs/shape/polygon.html
-  create_polygons_collisions: (position, vertices, name, opts = {}) ->
+  create_polygons_collisions: (vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) ->
     polygon = new Polygon(vertices)
     polygon.optimize() # remove duplicate/collinear
 
@@ -115,12 +118,11 @@ class Physics
       return
 
     body = @world.createBody(
-      type: 'static'
+      type: type
       position:
         x: position.x
         y: position.y
-      userData:
-        name: name
+      userData: user_data
     )
 
     for convex_polygon in polygon.decompose()
@@ -128,15 +130,20 @@ class Physics
         shape = new planck.Polygon(sub_polygon.vertices)
 
         body.createFixture(shape,
-          density:          opts.density     ? DEFAULT_FIXTURE.density
-          restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
-          friction:         opts.friction    ? DEFAULT_FIXTURE.friction
-          filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
+          density:            opts.density              ? DEFAULT_FIXTURE.density
+          restitution:        opts.restitution          ? DEFAULT_FIXTURE.restitution
+          friction:           opts.friction             ? DEFAULT_FIXTURE.friction
+          isSensor:           opts.is_sensor            ? DEFAULT_FIXTURE.is_sensor
+          filterGroupIndex:   opts.filter_group_index   ? DEFAULT_FIXTURE.filter_group_index
+          filterCategoryBits: opts.filter_category_bits ? DEFAULT_FIXTURE.filter_category_bits
+          filterMaskBits:     opts.filter_mask_bits     ? DEFAULT_FIXTURE.filter_mask_bits
         )
+
+    body
 
   # Create collisions using very thin rectangles following the edges, top-aligned on vertices.
   # Shape is hollow, collisions are possible from both ways
-  create_rectangles_collisions: (position, vertices, name, opts = {}) ->
+  create_rectangles_collisions: (vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) ->
     polygon = new Polygon(vertices)
     polygon.optimize() # remove duplicate/collinear
 
@@ -149,8 +156,7 @@ class Physics
       position:
         x: position.x
         y: position.y
-      userData:
-        name: name
+      userData: user_data
     )
 
     vertices = polygon.vertices
@@ -180,16 +186,21 @@ class Physics
       ])
 
       body.createFixture(shape,
-        density:          opts.density     ? DEFAULT_FIXTURE.density
-        restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
-        friction:         opts.friction    ? DEFAULT_FIXTURE.friction
-        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
+        density:            opts.density              ? DEFAULT_FIXTURE.density
+        restitution:        opts.restitution          ? DEFAULT_FIXTURE.restitution
+        friction:           opts.friction             ? DEFAULT_FIXTURE.friction
+        isSensor:           opts.is_sensor            ? DEFAULT_FIXTURE.is_sensor
+        filterGroupIndex:   opts.filter_group_index   ? DEFAULT_FIXTURE.filter_group_index
+        filterCategoryBits: opts.filter_category_bits ? DEFAULT_FIXTURE.filter_category_bits
+        filterMaskBits:     opts.filter_mask_bits     ? DEFAULT_FIXTURE.filter_mask_bits
       )
+
+    body
 
   # Create collisions using individual Edges (without ghost vertices). May create ghost collisions
   # Shape is hollow, collisions are possible from both ways
   # => https://piqnt.com/planck.js/docs/shape/edge.html
-  create_edges_collisions: (position, vertices, name, opts = {}) ->
+  create_edges_collisions: (vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) ->
     polygon = new Polygon(vertices)
     polygon.optimize() # remove duplicate/collinear
 
@@ -202,8 +213,7 @@ class Physics
       position:
         x: position.x
         y: position.y
-      userData:
-        name: name
+      userData: user_data
     )
 
     vertices = polygon.vertices
@@ -215,16 +225,21 @@ class Physics
       shape = planck.Edge(Vec2(vertex1.x, vertex1.y), Vec2(vertex2.x, vertex2.y))
 
       body.createFixture(shape,
-        density:          opts.density     ? DEFAULT_FIXTURE.density
-        restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
-        friction:         opts.friction    ? DEFAULT_FIXTURE.friction
-        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
+        density:            opts.density              ? DEFAULT_FIXTURE.density
+        restitution:        opts.restitution          ? DEFAULT_FIXTURE.restitution
+        friction:           opts.friction             ? DEFAULT_FIXTURE.friction
+        isSensor:           opts.is_sensor            ? DEFAULT_FIXTURE.is_sensor
+        filterGroupIndex:   opts.filter_group_index   ? DEFAULT_FIXTURE.filter_group_index
+        filterCategoryBits: opts.filter_category_bits ? DEFAULT_FIXTURE.filter_category_bits
+        filterMaskBits:     opts.filter_mask_bits     ? DEFAULT_FIXTURE.filter_mask_bits
       )
+
+    body
 
   # Create collisions using Chains to avoid ghost collisions. If sharp angles, split the chains to avoid collision bug
   # Shape is hollow, collisions are possible from both ways
   # => https://piqnt.com/planck.js/docs/shape/edge.html
-  create_chains_collisions: (position, vertices, name, opts = {}) ->
+  create_chains_collisions: (vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) ->
     polygon = new Polygon(vertices)
     polygon.optimize() # remove duplicate/collinear
 
@@ -240,8 +255,7 @@ class Physics
       position:
         x: position.x
         y: position.y
-      userData:
-        name: name
+      userData: user_data
     )
 
     # Fix issues where very long, sharp edges may produce collision bug (cf. level 1187).
@@ -253,11 +267,16 @@ class Physics
       shape = new planck.Chain(chain.vertices, chain.is_loop)
 
       body.createFixture(shape,
-        density:          opts.density     ? DEFAULT_FIXTURE.density
-        restitution:      opts.restitution ? DEFAULT_FIXTURE.restitution
-        friction:         opts.friction    ? DEFAULT_FIXTURE.friction
-        filterGroupIndex: opts.group_index ? DEFAULT_FIXTURE.group_index
+        density:            opts.density              ? DEFAULT_FIXTURE.density
+        restitution:        opts.restitution          ? DEFAULT_FIXTURE.restitution
+        friction:           opts.friction             ? DEFAULT_FIXTURE.friction
+        isSensor:           opts.is_sensor            ? DEFAULT_FIXTURE.is_sensor
+        filterGroupIndex:   opts.filter_group_index   ? DEFAULT_FIXTURE.filter_group_index
+        filterCategoryBits: opts.filter_category_bits ? DEFAULT_FIXTURE.filter_category_bits
+        filterMaskBits:     opts.filter_mask_bits     ? DEFAULT_FIXTURE.filter_mask_bits
       )
+
+    body
 
   # Splits a closed vertex loop into Chains, breaking it open at any vertex where the outline folds back close to 180°.
   # When there is nothing to fix, returns a single `is_loop: true` segment (the vertices untouched).
@@ -299,15 +318,3 @@ class Physics
     steps = n if steps == 0
 
     (vertices[(from + step) % n] for step in [0..steps])
-
-  # Dedupes and optionally mirrors a set of vertices.
-  # Currently used for moto parts and limits
-  @create_shape: (vertices, mirror = false) ->
-    polygon = new Polygon(vertices)
-    polygon.optimize() # remove duplicate/collinear
-    return if polygon.length() < 3
-
-    if mirror
-      polygon.vertices.map((vertex) -> { x: -vertex.x, y: vertex.y })
-    else
-      polygon.vertices

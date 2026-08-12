@@ -103,8 +103,11 @@ class Blocks
 
     for block in @blocks
       if !block.no_collision
+        user_data =
+          name: 'ground'
+
         # create_chains_collisions / create_rectangles_collisions / create_edges_collisions / create_polygons_collisions
-        @level.physics.create_chains_collisions(block.position, block.vertices, 'ground', {
+        @level.physics.create_chains_collisions(block.vertices, block.position, 0, 'static', user_data, {
           density:     ground.density,
           restitution: ground.restitution
           friction:    ground.friction

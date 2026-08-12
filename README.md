@@ -119,8 +119,8 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
-* This game has nice wheels physics (+sound) https://robertw.itch.io/meltdown-escape 
-* Level with full collisions and scripts : http://localhost:3001/?level=4365&debug=true&debug_physics=true
+* Add way to create circle (no more isSensor fixture) + refactor fixtures in physics
+* Remove the "_collision" suffix
 * Adjust the camera a bit (player more on the borders of the camera, less zoom)
 * Sounds with PixiJS Sound and play on the left/right depending on position
 * Test other themes (where are assets?)
@@ -135,6 +135,7 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 * Make the game playable on mobile (4 buttons or device rotation or volume buttons?)
 * Manage 120fps on compatible screens by interpolating positions using Gaffer's fixed timestep: https://gafferongames.com/post/fix_your_timestep/
 * Good inspiration to draft Blocks in editor: https://schteppe.github.io/poly-decomp.js or https://poly-decomp-es.vercel.app/
+* This game has nice wheels physics (+sound) https://robertw.itch.io/meltdown-escape 
 * Adjust the height of the driver (less bumpy!? Height of sprite? Compare values?)
 * Create alternative box2D physics using DIV elements on screen to make the moto moves on websites.
 * Add specs for Physics methods (deduplicate etc.)

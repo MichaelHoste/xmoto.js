@@ -104,31 +104,26 @@ class Rider
     body
 
   create_part: (part_constants, name) ->
-    vertices = Physics.create_shape(part_constants.vertices, @mirror == -1)
-    shape    = new planck.Polygon(vertices)
+    position =
+      x: @player_start.x + @mirror * part_constants.position.x
+      y: @player_start.y +           part_constants.position.y
 
-    body = @world.createBody(
-      type: 'dynamic'
-      position:
-        x: @player_start.x + @mirror * part_constants.position.x
-        y: @player_start.y +           part_constants.position.y
-      angle: @mirror * part_constants.angle
-      userData:
-        name:  'rider'
-        type:  if @ghost then 'ghost' else 'player'
-        part:  name
-        rider: this
-    )
+    angle    = @mirror * part_constants.angle
+    vertices = part_constants.vertices.map((vertex) => { x: @mirror * vertex.x, y: vertex.y })
 
-    body.createFixture(shape,
-      density:          part_constants.density
-      restitution:      part_constants.restitution
-      friction:         part_constants.friction
-      isSensor:         !part_constants.collisions
-      filterGroupIndex: -1
-    )
+    user_data =
+      name:  'rider'
+      type:  if @ghost then 'ghost' else 'player'
+      part:  name
+      rider: this
 
-    body
+    @level.physics.create_polygons_collisions(vertices, position, angle, 'dynamic', user_data, {
+      density:            part_constants.density
+      restitution:        part_constants.restitution
+      friction:           part_constants.friction
+      is_sensor:          !part_constants.collisions
+      filter_group_index: -1 # parts of moto/rider don't collide with themselves
+    })
 
   create_neck_joint: ->
     position = @head.getWorldCenter()
