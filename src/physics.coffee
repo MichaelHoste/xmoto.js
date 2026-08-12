@@ -6,13 +6,13 @@ class Physics
   # Define physics (not directly correlated to FPS!)
   # --
   # More steps = more stable physics
-  # Don't try to increase iterations, more steps have far more effect.
+  # 100 steps/s like Trackmania, 0.01s precision for level time
   # --
   # Use Gaffer's fixed timestep: https://gafferongames.com/post/fix_your_timestep/
   # with @alpha (0 <= α <= 1) to interpolate graphics positions for smoother rendering at any FPS
   STEPS_PER_SEC       = 100 # Like Trackmania, ideal for round 0.01 increment of replay time
-  VELOCITY_ITERATIONS = 8   # Default 8
-  POSITION_ITERATIONS = 3   # Default 3
+  VELOCITY_ITERATIONS = 8   # Default 8 | => increasing may improve stability (less wobbly) but more stable physics objects could help too, with less computation
+  POSITION_ITERATIONS = 3   # Default 3 /
 
   RECTANGLE_THICKNESS = 0.01 # 1cm
 
@@ -153,7 +153,7 @@ class Physics
       return
 
     body = @world.createBody(
-      type: 'static'
+      type: type
       position:
         x: position.x
         y: position.y
@@ -211,7 +211,7 @@ class Physics
       return
 
     body = @world.createBody(
-      type: 'static'
+      type: type
       position:
         x: position.x
         y: position.y
@@ -254,7 +254,7 @@ class Physics
       console.warn("XMoto warning: polygon intersects itself and chains collisions may be bugged (not officially supported).") # See here: https://piqnt.github.io/planck.js/docs/shape/chain.html
 
     body = @world.createBody(
-      type: 'static'
+      type: type
       position:
         x: position.x
         y: position.y
