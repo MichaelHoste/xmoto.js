@@ -73,9 +73,11 @@ class Rider
     if !@moto.dead
       @level.listeners.kill_moto(@moto)
 
-      force_vector          = { x: 150.0 * @moto.mirror, y: 0 }
-      eject_angle           = @mirror * @moto.body.getAngle() + Math.PI/4.0
-      adjusted_force_vector = Math2D.rotate_point(force_vector, eject_angle, {x: 0, y: 0})
+      force_vector            = { x: 200.0, y: 0 }
+      eject_angle             = @moto.body.getAngle() + Math.PI/4.0 # 45 degrees
+      adjusted_force_vector   = Math2D.rotate_point(force_vector, eject_angle, { x: 0, y: 0 })
+      adjusted_force_vector.x *= @mirror
+
       @torso.applyForce(adjusted_force_vector, @torso.getWorldCenter())
 
   create_head: ->
