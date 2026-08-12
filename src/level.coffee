@@ -4,6 +4,8 @@ class Level
     @renderer = renderer
     @options  = options
 
+    window.level = @ # to get access through console
+
     @show_loading()
 
     # Context
