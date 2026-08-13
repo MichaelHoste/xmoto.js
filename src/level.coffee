@@ -185,6 +185,13 @@ class Level
       $(@options.container)[0].requestFullscreen()
 
   bind_fullscreen: ->
+    @bind_fullscreen_double_click()
+    @bind_fullscreen_change()
+
+  bind_fullscreen_double_click: ->
+    $(@options.container).on('dblclick', => @toggle_fullscreen())
+
+  bind_fullscreen_change: ->
     $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', =>
       debug_canvas = $('#xmoto-debug')[0]
 
