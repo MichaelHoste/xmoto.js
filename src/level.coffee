@@ -190,7 +190,7 @@ class Level
     @bind_fullscreen_change()
 
   bind_fullscreen_double_click: ->
-    $(@options.container).off('dbclick') # unbind if level changed to avoid binding several times
+    $(@options.container).off('dblclick') # unbind if level changed to avoid binding several times
                          .on('dblclick', => @toggle_fullscreen())
 
   bind_fullscreen_button: (container_selector, level) ->
@@ -205,7 +205,8 @@ class Level
     $(@options.container).find('.fullscreen-button').hide()
 
   bind_fullscreen_change: ->
-    $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', =>
+    $(document).off('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange') # unbind if level changed to avoid binding several times
+               .on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', =>
       debug_canvas = $('#xmoto-debug')[0]
 
       if document.fullscreenElement

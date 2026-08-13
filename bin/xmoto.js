@@ -980,7 +980,7 @@
     }
 
     bind_fullscreen_double_click() {
-      return $(this.options.container).off('dbclick').on('dblclick', () => { // unbind if level changed to avoid binding several times
+      return $(this.options.container).off('dblclick').on('dblclick', () => { // unbind if level changed to avoid binding several times
         return this.toggle_fullscreen();
       });
     }
@@ -1000,7 +1000,7 @@
     }
 
     bind_fullscreen_change() {
-      return $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', () => {
+      return $(document).off('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange').on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', () => { // unbind if level changed to avoid binding several times
         var debug_canvas, new_scale_x, new_scale_y, ratio;
         debug_canvas = $('#xmoto-debug')[0];
         if (document.fullscreenElement) {
