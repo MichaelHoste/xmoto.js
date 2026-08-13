@@ -1093,7 +1093,7 @@
               } else {
                 moto = a.name === 'moto' ? a.moto : b.moto;
               }
-              return this.trigger_restart(moto);
+              return this.trigger_ends_and_restart(moto);
             }
           // Fall of rider
           } else if (Constants.hooking === false && Listeners.does_contact(a, b, 'rider', 'ground') && a.part !== 'lower_leg' && b.part !== 'lower_leg') {
@@ -1126,7 +1126,7 @@
       return (a.name === obj1 && b.name === obj2) || (a.name === obj2 && b.name === obj1);
     }
 
-    trigger_restart(moto) {
+    trigger_ends_and_restart(moto) {
       PIXI.sound.play('EndOfLevel');
       if (moto.ghost) {
         return moto.dead = true;

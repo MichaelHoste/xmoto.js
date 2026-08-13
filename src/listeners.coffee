@@ -38,7 +38,7 @@ class Listeners
             else
               moto = if a.name == 'moto' then a.moto else b.moto
 
-            @trigger_restart(moto)
+            @trigger_ends_and_restart(moto)
 
         # Fall of rider
         else if Constants.hooking == false and
@@ -71,7 +71,7 @@ class Listeners
   @does_contact: (a, b, obj1, obj2) ->
     (a.name == obj1 && b.name == obj2) || (a.name == obj2 && b.name == obj1)
 
-  trigger_restart: (moto) ->
+  trigger_ends_and_restart: (moto) ->
     PIXI.sound.play('EndOfLevel')
 
     if moto.ghost
