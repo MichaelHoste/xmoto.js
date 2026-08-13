@@ -186,16 +186,31 @@ class Level
 
   bind_fullscreen: ->
     @bind_fullscreen_double_click()
+    @bind_fullscreen_button()
     @bind_fullscreen_change()
 
   bind_fullscreen_double_click: ->
-    $(@options.container).on('dblclick', => @toggle_fullscreen())
+    $(@options.container).off('dbclick') # unbind if level changed to avoid binding several times
+                         .on('dblclick', => @toggle_fullscreen())
+
+  bind_fullscreen_button: (container_selector, level) ->
+    $(@options.container).find('.fullscreen-button')
+                         .off('click') # unbind if level changed to avoid binding several times
+                         .on('click', => @toggle_fullscreen())
+
+  show_fullscreen_button: ->
+    $(@options.container).find('.fullscreen-button').show()
+
+  hide_fullscreen_button: ->
+    $(@options.container).find('.fullscreen-button').hide()
 
   bind_fullscreen_change: ->
     $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', =>
       debug_canvas = $('#xmoto-debug')[0]
 
       if document.fullscreenElement
+        @hide_fullscreen_button()
+
         @original_width   = @options.width
         @original_height  = @options.height
         @original_scale_x = Constants.default_scale.x
@@ -219,6 +234,8 @@ class Level
         @camera.scale.x = new_scale_x
         @camera.scale.y = new_scale_y
       else
+        @show_fullscreen_button()
+
         @renderer.resize(@original_width, @original_height)
         @options.width  = @original_width
         @options.height = @original_height

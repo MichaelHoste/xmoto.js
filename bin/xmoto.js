@@ -974,10 +974,37 @@
     }
 
     bind_fullscreen() {
+      this.bind_fullscreen_double_click();
+      this.bind_fullscreen_button();
+      return this.bind_fullscreen_change();
+    }
+
+    bind_fullscreen_double_click() {
+      return $(this.options.container).off('dbclick').on('dblclick', () => { // unbind if level changed to avoid binding several times
+        return this.toggle_fullscreen();
+      });
+    }
+
+    bind_fullscreen_button(container_selector, level) {
+      return $(this.options.container).find('.fullscreen-button').off('click').on('click', () => { // unbind if level changed to avoid binding several times
+        return this.toggle_fullscreen();
+      });
+    }
+
+    show_fullscreen_button() {
+      return $(this.options.container).find('.fullscreen-button').show();
+    }
+
+    hide_fullscreen_button() {
+      return $(this.options.container).find('.fullscreen-button').hide();
+    }
+
+    bind_fullscreen_change() {
       return $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', () => {
         var debug_canvas, new_scale_x, new_scale_y, ratio;
         debug_canvas = $('#xmoto-debug')[0];
         if (document.fullscreenElement) {
+          this.hide_fullscreen_button();
           this.original_width = this.options.width;
           this.original_height = this.options.height;
           this.original_scale_x = Constants.default_scale.x;
@@ -1000,6 +1027,7 @@
           this.camera.scale.x = new_scale_x;
           return this.camera.scale.y = new_scale_y;
         } else {
+          this.show_fullscreen_button();
           this.renderer.resize(this.original_width, this.original_height);
           this.options.width = this.original_width;
           this.options.height = this.original_height;
