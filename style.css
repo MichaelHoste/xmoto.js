@@ -162,22 +162,65 @@ body {
   margin-left: 100px;
 
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 19px;
+  font-size: 17px;
   color: #333;
 }
 
 #levels-block select {
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 19px;
-  vertical-align: 1px;
+  font-size: 17px;
 }
 
 #hint {
-  font-size: 14px;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   float: right;
   margin-right: 100px;
   margin-top: -21px;
+}
+
+#hint .hint-item {
+  display: flex;
+  align-items: center;
+  margin-left: 18px;
+}
+
+#hint .hint-item .key-cap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 4px;
+  margin-right: 1px;
+  background: linear-gradient(to bottom, #ffffff, #e2e2e2);
+  border: 1px solid #b8b8b8;
+  border-bottom: 2px solid #999999;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  color: #555555;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+#hint .hint-item .key-cap svg {
+  width: 13px;
+  height: 13px;
+}
+
+#hint .hint-item .key-cap-wide {
+  min-width: auto;
+  padding: 0 8px;
+}
+
+#hint .hint-item .hint-label {
+  margin-left: 4px;
+  font-size: 14px;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   color: #333;
 }

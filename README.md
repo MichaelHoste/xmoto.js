@@ -32,7 +32,7 @@ You can copy-paste the generated URL to keep the custom physics.
 
  * [Tractor](http://js.xmoto.io/?level=1010&debug=true&debug_physics=false&left_wheel.radius=0.55)
  * [Rodeo](http://js.xmoto.io/?level=1010&debug=true&debug_physics=false&ground.restitution=1.5&left_suspension.lower_translation=-0.5&left_suspension.upper_translation=0.5&left_suspension.back_force=6&left_suspension.rigidity=2&right_suspension.lower_translation=-0.5&right_suspension.upper_translation=0.5&right_suspension.back_force=6&right_suspension.rigidity=1)
- * [Ugly Mode](http://js.xmoto.io/?level=1010&debug=true&debug_physics=true)
+ * [Physics](http://js.xmoto.io/?level=1010&debug=true&debug_physics=true)
  * [Big Head](http://js.xmoto.io/?level=1010&debug=true&debug_physics=true&head.radius=0.7)
  * [Moon](http://js.xmoto.io/?level=1010&debug=true&debug_physics=false&gravity=5)
  * [Furious](http://js.xmoto.io/?level=1010&debug=true&debug_physics=false&moto_acceleration=40&biker_force=10&max_moto_speed=110&gravity=25&left_wheel.friction=10&ground.friction=3)
