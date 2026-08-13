@@ -4562,7 +4562,8 @@
 
       // RESULTS:
     // --------
-    // Good enough for working game. But when static flipping, we can see that the rider is wrongly placed (positions
+    // Good enough for working game. But when static flipping, we can see that the rider is wrongly placed.
+    // It will break the physics if flipping in fast rotation
     // ---
     // Use DEBUG=true and flip the moto to observe
     // ---
