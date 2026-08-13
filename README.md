@@ -123,8 +123,11 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 * Remove the "_collision" suffix
 * Adjust the camera a bit (player more on the borders of the camera, less zoom)
 * Sounds with PixiJS Sound and play on the left/right depending on position
+* Add grip (blocks)
 * Test other themes (where are assets?)
 * Manage checkpoints
+  * 7663 is an easy one to trigger
+  * Keep momentum ?
   * http://wiki.xmoto.tuxfamily.org/index.php?title=Notes_on_Checkpoints
 * Shouldn't `assets.get_url(texture_name)` be `assets.get_url(texture_file)`?
 * Attach texture_params directly to blocks, entities etc? Instead of adding the params one by one?

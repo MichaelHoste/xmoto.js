@@ -198,7 +198,7 @@ class Entities
       @culling_debug.label = 'culling (entities)'
       @level.layers.translate_layer.addChild(@culling_debug)
 
-  update: (entity) ->
+  update: ->
     if !Constants.debug_physics
       for entity in @list
         if entity.graphics

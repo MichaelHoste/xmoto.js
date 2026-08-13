@@ -7,6 +7,7 @@ class Theme
     @sprites  = {} # in /Anims/    folder
     @edges    = {} # in /Effects/  folder
     @textures = {} # in /Textures/ folder
+    @sounds   = {} # in /Sounds/   folder
 
     $.ajax({
       type:     "GET",
@@ -66,6 +67,14 @@ class Theme
         else
           @textures[name] = texture
 
+    xml_sounds = $(xml).find('sound')
+
+    for xml_sound in xml_sounds
+      name = $(xml_sound).attr('name').toLowerCase()
+
+      @sounds[name] =
+        file:  $(xml_sound).attr('file')
+
     @callback()
 
   sprite_params: (name) ->
@@ -77,3 +86,6 @@ class Theme
   # We always return the animated first
   texture_params: (name) ->
     @textures["animated_#{name.toLowerCase()}"] || @textures[name.toLowerCase()]
+
+  sound_params: (name) ->
+    @sounds[name.toLowerCase()]

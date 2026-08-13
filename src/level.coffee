@@ -35,6 +35,7 @@ class Level
     @limits       = new Limits(this)
     @script       = new Script(this)
     @entities     = new Entities(this)
+    @sounds       = new Sounds(this)
 
     # Replay: actual run of the player (not saved yet)
     @replay = new Replay(this)
@@ -65,11 +66,13 @@ class Level
     @limits      .parse(xml)
     @script      .parse(xml)
     @entities    .parse(xml)
+    @sounds      .parse(xml)
 
     @sky     .load_assets()
     @blocks  .load_assets()
     @limits  .load_assets()
     @entities.load_assets()
+    @sounds  .load_assets()
     @moto    .load_assets()
     @ghosts  .load_assets()
 
@@ -81,6 +84,7 @@ class Level
     @blocks   .init()
     @limits   .init()
     @entities .init()
+    @sounds   .init()
     @moto     .init()
     @ghosts   .init()
     @physics  .init()
@@ -104,6 +108,7 @@ class Level
     @layers   .update()
     @limits   .update()
     @entities .update()
+    @sounds   .update()
     @camera   .update()
     @blocks   .update()
     @moto     .update() if @options.playable

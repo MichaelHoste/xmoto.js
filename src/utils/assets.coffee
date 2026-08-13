@@ -6,8 +6,8 @@ class Assets
     @textures = [] # texture list
     @anims    = [] # anim list
     @effects  = [] # effect list (edge etc.)
+    @sounds   = [] # Sound effects needed on every level
     @moto     = [] # moto list
-    @sounds   = [] # Sounds
 
     @resources = {}
 
@@ -19,22 +19,27 @@ class Assets
     for item in @textures
       items.push(
         id:  item
-        src: "/data/Textures/Textures/#{item.toLowerCase()}"
+        src: "/data/Textures/Textures/#{item}"
       )
     for item in @anims
       items.push(
         id:  item
-        src: "/data/Textures/Anims/#{item.toLowerCase()}"
+        src: "/data/Textures/Anims/#{item}"
       )
     for item in @effects
       items.push(
         id:  item
-        src: "/data/Textures/Effects/#{item.toLowerCase()}"
+        src: "/data/Textures/Effects/#{item}"
+      )
+    for item in @sounds
+      items.push(
+        id: item,
+        src: "/data/Sounds/#{item}"
       )
     for item in @moto
       items.push(
         id:  item
-        src: "/data/Textures/Riders/#{item.toLowerCase()}"
+        src: "/data/Textures/Riders/#{item}"
       )
 
     items = _.uniqBy(items, 'id');

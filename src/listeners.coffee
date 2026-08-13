@@ -28,7 +28,7 @@ class Listeners
           entity = strawberry.getBody().getUserData().entity
           if entity.display
             entity.display = false
-            #createjs.Sound.play('PickUpStrawberry')
+            PIXI.sound.play('PickUpStrawberry')
 
         # End of level
         else if Listeners.does_contact_moto_rider(a, b, 'end_of_level') and not @level.need_to_restart
@@ -72,7 +72,8 @@ class Listeners
     (a.name == obj1 && b.name == obj2) || (a.name == obj2 && b.name == obj1)
 
   trigger_restart: (moto) ->
-    #createjs.Sound.play('EndOfLevel')
+    PIXI.sound.play('EndOfLevel')
+
     if moto.ghost
       moto.dead = true
     else
@@ -93,7 +94,7 @@ class Listeners
       #@level.moto.left_axle.GetFixtureList().SetSensor(false)
       #@level.moto.right_axle.GetFixtureList().SetSensor(false)
 
-      #createjs.Sound.play('Headcrash')
+      PIXI.sound.play('Headcrash')
 
       shoulder_joint = moto.rider.shoulder_joint
       knee_joint     = moto.rider.knee_joint
