@@ -8,7 +8,8 @@ class Sounds
     @level  = level
     @assets = level.assets
 
-    @list   = []
+    @engine = new EngineSound(level)
+    @list   = [] # list of loaded sounds
 
   parse: (xml) ->
     # Sounds available to all levels
@@ -37,10 +38,20 @@ class Sounds
       @assets.sounds.push(sound.file)
 
   init: ->
-    ;
+    @engine.init()
 
   update: ->
-    ;
+    @update_engine()
+
+  # Drives the procedural motor with the live rear-wheel speed and throttle (the "up" key).
+  update_engine: ->
+    moto        = @level.moto
+    rpm         = Math.abs(moto.left_wheel.getAngularVelocity())
+    rpm_norm    = Math.min(1, rpm / Constants.max_moto_speed)
+    throttle    = if moto.dead then 0 else (if @level.input.up then 1 else 0)
+
+    @engine.update(rpm_norm, throttle)
+
   # Relative "pan" value for the position relative to the screen
   #         -----------
   #         |         |
