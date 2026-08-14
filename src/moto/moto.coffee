@@ -181,6 +181,14 @@ class Moto
     if !@dead
       MotoFlipService.run(this)
 
+  sound_options: ->
+    position = @rider.torso.getPosition()
+
+    return {
+      filters: [@level.sounds.stereo_filter(position)]
+      volume:  @level.sounds.volume(position)
+    }
+
   create_body: ->
     position =
       x: @player_start.x + @mirror * Constants.body.position.x

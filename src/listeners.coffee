@@ -28,12 +28,12 @@ class Listeners
           entity = strawberry.getBody().getUserData().entity
           if entity.display
             entity.display = false
-            PIXI.sound.play('PickUpStrawberry')
+            Sounds.play('PickUpStrawberry', moto.sound_options())
 
         # End of level
         else if Listeners.does_contact_moto_rider(a, b, 'end_of_level') and not @level.need_to_restart
           if @level.got_strawberries()
-            if a.name == 'rider' || b.name == 'rider'
+            if a.name == 'rider' || b.name == 'rider'
               moto = if a.name == 'rider' then a.rider.moto else b.rider.moto
             else
               moto = if a.name == 'moto' then a.moto else b.moto
@@ -55,7 +55,7 @@ class Listeners
 
         # Wrecker contact
         else if Listeners.does_contact_moto_rider(a, b, 'wrecker')
-          if a.name == 'rider' || b.name == 'rider'
+          if a.name == 'rider' || b.name == 'rider'
             moto = if a.name == 'rider' then a.rider.moto else b.rider.moto
           else
             moto = if a.name == 'moto' then a.moto else b.moto
@@ -72,7 +72,7 @@ class Listeners
     (a.name == obj1 && b.name == obj2) || (a.name == obj2 && b.name == obj1)
 
   trigger_ends_and_restart: (moto) ->
-    PIXI.sound.play('EndOfLevel')
+    Sounds.play('EndOfLevel', moto.sound_options())
 
     if moto.ghost
       moto.dead = true
@@ -94,7 +94,7 @@ class Listeners
       #@level.moto.left_axle.GetFixtureList().SetSensor(false)
       #@level.moto.right_axle.GetFixtureList().SetSensor(false)
 
-      PIXI.sound.play('Headcrash')
+      Sounds.play('Headcrash', moto.sound_options())
 
       shoulder_joint = moto.rider.shoulder_joint
       knee_joint     = moto.rider.knee_joint
