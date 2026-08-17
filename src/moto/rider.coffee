@@ -81,29 +81,23 @@ class Rider
       @torso.applyForce(adjusted_force_vector, @torso.getWorldCenter())
 
   create_head: ->
-    shape = new planck.Circle(Constants.head.radius)
+    position =
+      x: @player_start.x + @mirror * Constants.head.position.x
+      y: @player_start.y +           Constants.head.position.y
 
-    body = @world.createBody(
-      type: 'dynamic'
-      position:
-        x: @player_start.x + @mirror * Constants.head.position.x
-        y: @player_start.y +           Constants.head.position.y
-      userData:
-        name:  'rider'
-        type:  if @ghost then 'ghost' else 'player'
-        part:  'head'
-        rider: this
-    )
+    user_data =
+      name:  'rider'
+      type:  if @ghost then 'ghost' else 'player'
+      part:  'head'
+      rider: this
 
-    body.createFixture(shape,
-      density:          Constants.head.density
-      restitution:      Constants.head.restitution
-      friction:         Constants.head.friction
-      isSensor:         !Constants.head.collisions
-      filterGroupIndex: -1
-    )
-
-    body
+    @level.physics.create_circle(Constants.head.radius, position, 0, 'dynamic', user_data, {
+      density:            Constants.head.density
+      restitution:        Constants.head.restitution
+      friction:           Constants.head.friction
+      is_sensor:          !Constants.head.collisions
+      filter_group_index: -1 # parts of moto/rider don't collide with themselves
+    })
 
   create_part: (part_constants, name) ->
     position =
@@ -119,7 +113,7 @@ class Rider
       part:  name
       rider: this
 
-    @level.physics.create_polygons_collisions(vertices, position, angle, 'dynamic', user_data, {
+    @level.physics.create_polygon(vertices, position, angle, 'dynamic', user_data, {
       density:            part_constants.density
       restitution:        part_constants.restitution
       friction:           part_constants.friction

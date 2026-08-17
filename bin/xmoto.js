@@ -1375,12 +1375,29 @@
         return this.physics_drawing_service.draw();
       }
 
-      // Create collisions using polygons, type should be in [static, kinematic, dynamic]
-      // Shape is entirely filled. Planck's Polygon silently takes the convex hull of whatever
-      // vertices it's given, so a concave outline must be split into convex sub-polygons first.
+      // Full circle that is entirely filled
+      create_circle(radius, position, angle = 0, type = 'static', user_data = {}, opts = {}) {
+        var body, circle;
+        circle = new planck.Circle(radius);
+        body = this.world.createBody({
+          type: type,
+          position: {
+            x: position.x,
+            y: position.y
+          },
+          userData: user_data
+        });
+        body.createFixture(circle, this.fixture_options(opts));
+        return body;
+      }
+
+      // Create collisions using decomposed convex polygons of maximum 12 vertices (SPLIT_MAX_VERTICES == Settings.MaxPolygonVertices).
+      // Shape is entirely filled, collisions are only possible from the outside
+      // Planck's Polygon silently takes the convex hull of whatever vertices it's given, so it must be decomposed first
       // => https://piqnt.com/planck.js/docs/shape/polygon.html
-      create_polygons_collisions(vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) {
-        var body, convex_polygon, l, len1, len2, m, polygon, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, shape, sub_polygon;
+      // type should be in: static, kinematic, dynamic
+      create_polygon(vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) {
+        var body, convex_polygon, l, len1, len2, m, polygon, ref, ref1, shape, sub_polygon;
         polygon = new Polygon(vertices);
         polygon.optimize(); // remove duplicate/collinear
         if (polygon.length() < 3) {
@@ -1400,19 +1417,11 @@
         for (l = 0, len1 = ref.length; l < len1; l++) {
           convex_polygon = ref[l];
           ref1 = convex_polygon.split();
-          // default max vertices is 12
+          // default max vertices is 12 (SPLIT_MAX_VERTICES)
           for (m = 0, len2 = ref1.length; m < len2; m++) {
             sub_polygon = ref1[m];
             shape = new planck.Polygon(sub_polygon.vertices);
-            body.createFixture(shape, {
-              density: (ref2 = opts.density) != null ? ref2 : DEFAULT_FIXTURE.density,
-              restitution: (ref3 = opts.restitution) != null ? ref3 : DEFAULT_FIXTURE.restitution,
-              friction: (ref4 = opts.friction) != null ? ref4 : DEFAULT_FIXTURE.friction,
-              isSensor: (ref5 = opts.is_sensor) != null ? ref5 : DEFAULT_FIXTURE.is_sensor,
-              filterGroupIndex: (ref6 = opts.filter_group_index) != null ? ref6 : DEFAULT_FIXTURE.filter_group_index,
-              filterCategoryBits: (ref7 = opts.filter_category_bits) != null ? ref7 : DEFAULT_FIXTURE.filter_category_bits,
-              filterMaskBits: (ref8 = opts.filter_mask_bits) != null ? ref8 : DEFAULT_FIXTURE.filter_mask_bits
-            });
+            body.createFixture(shape, this.fixture_options(opts));
           }
         }
         return body;
@@ -1420,8 +1429,8 @@
 
       // Create collisions using very thin rectangles following the edges, top-aligned on vertices.
       // Shape is hollow, collisions are possible from both ways
-      create_rectangles_collisions(vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) {
-        var body, dx, dy, i, l, len1, length, offsetX, offsetY, polygon, px, py, ref, ref1, ref2, ref3, ref4, ref5, ref6, shape, v1, v2, vertex;
+      create_polygon_with_rectangles(vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) {
+        var body, dx, dy, i, l, len1, length, offsetX, offsetY, polygon, px, py, shape, v1, v2, vertex;
         polygon = new Polygon(vertices);
         polygon.optimize(); // remove duplicate/collinear
         if (polygon.length() < 3) {
@@ -1462,15 +1471,7 @@
             Vec2(v1.x + offsetX,
             v1.y + offsetY) // Bottom-left
           ]);
-          body.createFixture(shape, {
-            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE.density,
-            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE.restitution,
-            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE.friction,
-            isSensor: (ref3 = opts.is_sensor) != null ? ref3 : DEFAULT_FIXTURE.is_sensor,
-            filterGroupIndex: (ref4 = opts.filter_group_index) != null ? ref4 : DEFAULT_FIXTURE.filter_group_index,
-            filterCategoryBits: (ref5 = opts.filter_category_bits) != null ? ref5 : DEFAULT_FIXTURE.filter_category_bits,
-            filterMaskBits: (ref6 = opts.filter_mask_bits) != null ? ref6 : DEFAULT_FIXTURE.filter_mask_bits
-          });
+          body.createFixture(shape, this.fixture_options(opts));
         }
         return body;
       }
@@ -1478,8 +1479,8 @@
       // Create collisions using individual Edges (without ghost vertices). May create ghost collisions
       // Shape is hollow, collisions are possible from both ways
       // => https://piqnt.com/planck.js/docs/shape/edge.html
-      create_edges_collisions(vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) {
-        var body, i, l, len1, polygon, ref, ref1, ref2, ref3, ref4, ref5, ref6, shape, vertex, vertex1, vertex2;
+      create_polygon_with_edges(vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) {
+        var body, i, l, len1, polygon, shape, vertex, vertex1, vertex2;
         polygon = new Polygon(vertices);
         polygon.optimize(); // remove duplicate/collinear
         if (polygon.length() < 3) {
@@ -1501,15 +1502,7 @@
           vertex1 = vertex;
           vertex2 = i === vertices.length - 1 ? vertices[0] : vertices[i + 1];
           shape = planck.Edge(Vec2(vertex1.x, vertex1.y), Vec2(vertex2.x, vertex2.y));
-          body.createFixture(shape, {
-            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE.density,
-            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE.restitution,
-            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE.friction,
-            isSensor: (ref3 = opts.is_sensor) != null ? ref3 : DEFAULT_FIXTURE.is_sensor,
-            filterGroupIndex: (ref4 = opts.filter_group_index) != null ? ref4 : DEFAULT_FIXTURE.filter_group_index,
-            filterCategoryBits: (ref5 = opts.filter_category_bits) != null ? ref5 : DEFAULT_FIXTURE.filter_category_bits,
-            filterMaskBits: (ref6 = opts.filter_mask_bits) != null ? ref6 : DEFAULT_FIXTURE.filter_mask_bits
-          });
+          body.createFixture(shape, this.fixture_options(opts));
         }
         return body;
       }
@@ -1517,8 +1510,8 @@
       // Create collisions using Chains to avoid ghost collisions. If sharp angles, split the chains to avoid collision bug
       // Shape is hollow, collisions are possible from both ways
       // => https://piqnt.com/planck.js/docs/shape/edge.html
-      create_chains_collisions(vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) {
-        var body, chain, chains, l, len1, polygon, ref, ref1, ref2, ref3, ref4, ref5, ref6, shape;
+      create_polygon_with_chains(vertices, position, angle = 0, type = 'static', user_data = {}, opts = {}) {
+        var body, chain, chains, l, len1, polygon, shape;
         polygon = new Polygon(vertices);
         polygon.optimize(); // remove duplicate/collinear
         if (polygon.length() < 3) {
@@ -1544,17 +1537,22 @@
         for (l = 0, len1 = chains.length; l < len1; l++) {
           chain = chains[l];
           shape = new planck.Chain(chain.vertices, chain.is_loop);
-          body.createFixture(shape, {
-            density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE.density,
-            restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE.restitution,
-            friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE.friction,
-            isSensor: (ref3 = opts.is_sensor) != null ? ref3 : DEFAULT_FIXTURE.is_sensor,
-            filterGroupIndex: (ref4 = opts.filter_group_index) != null ? ref4 : DEFAULT_FIXTURE.filter_group_index,
-            filterCategoryBits: (ref5 = opts.filter_category_bits) != null ? ref5 : DEFAULT_FIXTURE.filter_category_bits,
-            filterMaskBits: (ref6 = opts.filter_mask_bits) != null ? ref6 : DEFAULT_FIXTURE.filter_mask_bits
-          });
+          body.createFixture(shape, this.fixture_options(opts));
         }
         return body;
+      }
+
+      fixture_options(opts) {
+        var ref, ref1, ref2, ref3, ref4, ref5, ref6;
+        return {
+          density: (ref = opts.density) != null ? ref : DEFAULT_FIXTURE.density,
+          restitution: (ref1 = opts.restitution) != null ? ref1 : DEFAULT_FIXTURE.restitution,
+          friction: (ref2 = opts.friction) != null ? ref2 : DEFAULT_FIXTURE.friction,
+          isSensor: (ref3 = opts.is_sensor) != null ? ref3 : DEFAULT_FIXTURE.is_sensor,
+          filterGroupIndex: (ref4 = opts.filter_group_index) != null ? ref4 : DEFAULT_FIXTURE.filter_group_index,
+          filterCategoryBits: (ref5 = opts.filter_category_bits) != null ? ref5 : DEFAULT_FIXTURE.filter_category_bits,
+          filterMaskBits: (ref6 = opts.filter_mask_bits) != null ? ref6 : DEFAULT_FIXTURE.filter_mask_bits
+        };
       }
 
       // Splits a closed vertex loop into Chains, breaking it open at any vertex where the outline folds back close to 180°.
@@ -1810,8 +1808,8 @@
           user_data = {
             name: 'ground'
           };
-          // create_chains_collisions / create_rectangles_collisions / create_edges_collisions / create_polygons_collisions
-          results.push(this.level.physics.create_chains_collisions(block.vertices, block.position, 0, 'static', user_data, {
+          // create_polygon_with_chains / create_polygon_with_rectangles / create_polygon_with_edges / create_polygon
+          results.push(this.level.physics.create_polygon_with_chains(block.vertices, block.position, 0, 'static', user_data, {
             density: ground.density,
             restitution: ground.restitution,
             friction: ground.friction
@@ -2499,15 +2497,15 @@
           entity = ref[l];
           // End of level
           if (entity.typeid === 'EndOfLevel') {
-            this.create_entity_physics(entity, 'end_of_level');
+            this.init_entity_physics(entity, 'end_of_level');
             results.push(this.end_of_level = entity);
           // Strawberries
           } else if (entity.typeid === 'Strawberry') {
-            this.create_entity_physics(entity, 'strawberry');
+            this.init_entity_physics(entity, 'strawberry');
             results.push(this.strawberries.push(entity));
           // Wreckers
           } else if (entity.typeid === 'Wrecker') {
-            this.create_entity_physics(entity, 'wrecker');
+            this.init_entity_physics(entity, 'wrecker');
             results.push(this.wreckers.push(entity));
           // Player start
           } else if (entity.typeid === 'PlayerStart') {
@@ -2522,24 +2520,15 @@
         return results;
       }
 
-      create_entity_physics(entity, name) {
-        var body, shape;
-        shape = new Circle(entity.size.r);
-        body = this.world.createBody({
-          type: 'static',
-          position: {
-            x: entity.position.x,
-            y: entity.position.y
-          },
-          userData: {
-            name: name,
-            entity: entity
-          }
+      init_entity_physics(entity, name) {
+        var user_data;
+        user_data = {
+          name: name,
+          entity: entity
+        };
+        return this.level.physics.create_circle(entity.size.r, entity.position, 0, 'static', user_data, {
+          is_sensor: true
         });
-        body.createFixture(shape, {
-          isSensor: true
-        });
-        return body;
       }
 
       init_graphics() {
@@ -3000,7 +2989,7 @@
         user_data = {
           name: 'ground'
         };
-        results.push(this.level.physics.create_polygons_collisions(vertices, {
+        results.push(this.level.physics.create_polygon(vertices, {
           x: 0,
           y: 0
         }, 0, 'static', user_data, {
@@ -4009,7 +3998,7 @@
       }
     }
 
-    // Detection of drifting
+    // # Detection of drifting
     // rotation_speed = -(@left_wheel.getAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
     // linear_speed   = @left_wheel.getLinearVelocity().x/10
     // if linear_speed > 0 and rotation_speed > 1.5*linear_speed
@@ -4070,7 +4059,7 @@
         type: this.ghost ? 'ghost' : 'player',
         moto: this
       };
-      return this.level.physics.create_polygons_collisions(vertices, position, 0, 'dynamic', user_data, {
+      return this.level.physics.create_polygon(vertices, position, 0, 'dynamic', user_data, {
         density: Constants.body.density,
         restitution: Constants.body.restitution,
         friction: Constants.body.friction,
@@ -4080,28 +4069,23 @@
     }
 
     create_wheel(part_constants) {
-      var shape, wheel;
-      shape = new planck.Circle(part_constants.radius);
-      wheel = this.world.createBody({
-        type: 'dynamic',
-        position: {
-          x: this.player_start.x + this.mirror * part_constants.position.x,
-          y: this.player_start.y + part_constants.position.y
-        },
-        userData: {
-          name: 'moto',
-          type: this.ghost ? 'ghost' : 'player',
-          moto: this
-        }
+      var position, user_data;
+      position = {
+        x: this.player_start.x + this.mirror * part_constants.position.x,
+        y: this.player_start.y + part_constants.position.y
+      };
+      user_data = {
+        name: 'moto',
+        type: this.ghost ? 'ghost' : 'player',
+        moto: this
+      };
+      return this.level.physics.create_circle(part_constants.radius, position, 0, 'dynamic', user_data, {
+        density: Constants.body.density,
+        restitution: Constants.body.restitution,
+        friction: Constants.body.friction,
+        is_sensor: !Constants.body.collisions,
+        filter_group_index: -1 // parts of moto/rider don't collide with themselves
       });
-      wheel.createFixture(shape, {
-        density: part_constants.density,
-        restitution: part_constants.restitution,
-        friction: part_constants.friction,
-        isSensor: !part_constants.collisions,
-        filterGroupIndex: -1
-      });
-      return wheel;
     }
 
     create_axle(part_constants) {
@@ -4121,7 +4105,7 @@
         type: this.ghost ? 'ghost' : 'player',
         moto: this
       };
-      return this.level.physics.create_polygons_collisions(vertices, position, 0, 'dynamic', user_data, {
+      return this.level.physics.create_polygon(vertices, position, 0, 'dynamic', user_data, {
         density: part_constants.density,
         restitution: part_constants.restitution,
         friction: part_constants.friction,
@@ -4294,28 +4278,24 @@
     }
 
     create() {
-      var particle, shape;
-      shape = new Circle(0.04);
-      particle = this.world.createBody({
-        type: 'dynamic',
-        position: {
-          x: this.level.moto.left_wheel.getPosition().x,
-          y: this.level.moto.left_wheel.getPosition().y - Constants.left_wheel.radius
-        },
-        userData: {
-          name: 'particle'
-        }
-      });
-      particle.createFixture(shape, {
+      var particle, position, user_data;
+      position = {
+        x: this.level.moto.left_wheel.getPosition().x,
+        y: this.level.moto.left_wheel.getPosition().y - Constants.left_wheel.radius
+      };
+      user_data = {
+        name: 'particle'
+      };
+      particle = this.level.physics.create_circle(0.04, position, 0, 'dynamic', user_data, {
         density: 1.0,
         restitution: 0.5,
         friction: 1.0,
-        isSensor: false,
-        filterGroupIndex: -1
+        is_sensor: false,
+        filter_group_index: -1 // Don't collide with moto/rider or themselves
       });
       particle.applyForce({
         x: -1.0,
-        y: -1.0
+        y: 1.0
       }, particle.getWorldCenter());
       return this.list.push(particle);
     }
@@ -4324,21 +4304,7 @@
 
   };
 
-  // ctx = @level.ctx
-
-    // for particle in @list
-  //   position = particle.getPosition()
-
-    //   ctx.save()
-  //   ctx.translate(position.x, position.y)
-
-    //   ctx.beginPath()
-  //   ctx.arc(0, 0, 0.04, 0, 2*Math.PI)
-  //   ctx.fill()
-
-    //   ctx.restore()
-
-    // Sere here for replay informations :
+  // Sere here for replay informations :
   // https://github.com/MichaelHoste/xmoto.js/issues/8
   Replay = class Replay {
     constructor(level) {
@@ -4610,29 +4576,24 @@
     }
 
     create_head() {
-      var body, shape;
-      shape = new planck.Circle(Constants.head.radius);
-      body = this.world.createBody({
-        type: 'dynamic',
-        position: {
-          x: this.player_start.x + this.mirror * Constants.head.position.x,
-          y: this.player_start.y + Constants.head.position.y
-        },
-        userData: {
-          name: 'rider',
-          type: this.ghost ? 'ghost' : 'player',
-          part: 'head',
-          rider: this
-        }
-      });
-      body.createFixture(shape, {
+      var position, user_data;
+      position = {
+        x: this.player_start.x + this.mirror * Constants.head.position.x,
+        y: this.player_start.y + Constants.head.position.y
+      };
+      user_data = {
+        name: 'rider',
+        type: this.ghost ? 'ghost' : 'player',
+        part: 'head',
+        rider: this
+      };
+      return this.level.physics.create_circle(Constants.head.radius, position, 0, 'dynamic', user_data, {
         density: Constants.head.density,
         restitution: Constants.head.restitution,
         friction: Constants.head.friction,
-        isSensor: !Constants.head.collisions,
-        filterGroupIndex: -1
+        is_sensor: !Constants.head.collisions,
+        filter_group_index: -1 // parts of moto/rider don't collide with themselves
       });
-      return body;
     }
 
     create_part(part_constants, name) {
@@ -4654,7 +4615,7 @@
         part: name,
         rider: this
       };
-      return this.level.physics.create_polygons_collisions(vertices, position, angle, 'dynamic', user_data, {
+      return this.level.physics.create_polygon(vertices, position, angle, 'dynamic', user_data, {
         density: part_constants.density,
         restitution: part_constants.restitution,
         friction: part_constants.friction,

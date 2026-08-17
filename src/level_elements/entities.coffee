@@ -120,17 +120,17 @@ class Entities
     for entity in @list
       # End of level
       if entity.typeid == 'EndOfLevel'
-        @create_entity_physics(entity, 'end_of_level')
+        @init_entity_physics(entity, 'end_of_level')
         @end_of_level = entity
 
       # Strawberries
       else if entity.typeid == 'Strawberry'
-        @create_entity_physics(entity, 'strawberry')
+        @init_entity_physics(entity, 'strawberry')
         @strawberries.push(entity)
 
       # Wreckers
       else if entity.typeid == 'Wrecker'
-        @create_entity_physics(entity, 'wrecker')
+        @init_entity_physics(entity, 'wrecker')
         @wreckers.push(entity)
 
       # Player start
@@ -139,22 +139,14 @@ class Entities
           x: entity.position.x
           y: entity.position.y
 
-  create_entity_physics: (entity, name) ->
-    shape = new Circle(entity.size.r)
+  init_entity_physics: (entity, name) ->
+    user_data =
+      name:   name
+      entity: entity
 
-    body = @world.createBody(
-      type: 'static'
-      position:
-        x: entity.position.x
-        y: entity.position.y
-      userData:
-        name:   name
-        entity: entity
-    )
-
-    body.createFixture(shape, isSensor: true)
-
-    body
+    @level.physics.create_circle(entity.size.r, entity.position, 0, 'static', user_data, {
+      is_sensor: true
+    })
 
   init_graphics: ->
     for entity in @list

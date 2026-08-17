@@ -119,11 +119,11 @@ Please visit his personal website for other cool projects: https://jamesfator.co
 
 ## TODO
 
-* Add way to create circle (no more isSensor fixture) + refactor fixtures in physics
-* Remove the "_collision" suffix
 * Adjust the camera a bit (player more on the borders of the camera, less zoom)
-* Sounds with PixiJS Sound and play on the left/right depending on position
+* Improve moto sound (less high-piteched?)
+* Adjust Y position for stereo/volume? Needed?
 * Add grip (blocks)
+* Use WheelJoint instead of RevoluteJoint and PrismaticJoint?
 * Test other themes (where are assets?)
 * Manage checkpoints
   * 7663 is an easy one to trigger

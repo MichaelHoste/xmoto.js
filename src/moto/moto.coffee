@@ -158,7 +158,7 @@ class Moto
     else if @left_wheel.getAngularVelocity() < -Constants.max_moto_speed
       @left_wheel.setAngularVelocity(-Constants.max_moto_speed)
 
-    # Detection of drifting
+    # # Detection of drifting
     # rotation_speed = -(@left_wheel.getAngularVelocity()*Math.PI/180)*2*Math.PI*Constants.left_wheel.radius
     # linear_speed   = @left_wheel.getLinearVelocity().x/10
     # if linear_speed > 0 and rotation_speed > 1.5*linear_speed
@@ -201,7 +201,7 @@ class Moto
       type: if @ghost then 'ghost' else 'player'
       moto: this
 
-    @level.physics.create_polygons_collisions(vertices, position, 0, 'dynamic', user_data, {
+    @level.physics.create_polygon(vertices, position, 0, 'dynamic', user_data, {
       density:            Constants.body.density
       restitution:        Constants.body.restitution
       friction:           Constants.body.friction
@@ -210,28 +210,22 @@ class Moto
     })
 
   create_wheel: (part_constants) ->
-    shape = new planck.Circle(part_constants.radius)
+    position =
+      x: @player_start.x + @mirror * part_constants.position.x
+      y: @player_start.y +           part_constants.position.y
 
-    wheel = @world.createBody(
-      type: 'dynamic'
-      position:
-        x: @player_start.x + @mirror * part_constants.position.x
-        y: @player_start.y +           part_constants.position.y
-      userData:
-        name: 'moto'
-        type: if @ghost then 'ghost' else 'player'
-        moto: this
-    )
+    user_data =
+      name: 'moto'
+      type: if @ghost then 'ghost' else 'player'
+      moto: this
 
-    wheel.createFixture(shape,
-      density:          part_constants.density
-      restitution:      part_constants.restitution
-      friction:         part_constants.friction
-      isSensor:         !part_constants.collisions
-      filterGroupIndex: -1
-    )
-
-    wheel
+    @level.physics.create_circle(part_constants.radius, position, 0, 'dynamic', user_data, {
+      density:            Constants.body.density
+      restitution:        Constants.body.restitution
+      friction:           Constants.body.friction
+      is_sensor:          !Constants.body.collisions
+      filter_group_index: -1 # parts of moto/rider don't collide with themselves
+    })
 
   create_axle: (part_constants) ->
     position =
@@ -245,7 +239,7 @@ class Moto
       type: if @ghost then 'ghost' else 'player'
       moto: this
 
-    @level.physics.create_polygons_collisions(vertices, position, 0, 'dynamic', user_data, {
+    @level.physics.create_polygon(vertices, position, 0, 'dynamic', user_data, {
       density:            part_constants.density
       restitution:        part_constants.restitution
       friction:           part_constants.friction
