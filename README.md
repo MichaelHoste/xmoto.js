@@ -92,6 +92,23 @@ Use this link to compare screen 1/1 with original X-Moto (same zoom/resolution):
 ### Technical informations
 
  * Implementation of replays is described [here](https://github.com/MichaelHoste/xmoto.js/issues/8)
+ 
+## Project long-term vision
+
+Use XMoto port as starting point to create a 2D sandbox game:
+
+ * That is modular enough for most 2D physics game.
+ * With a level editor (1 click to switch between game and in-game editor).
+ * With accessible community levels (games?).
+
+Inspirations:
+
+ * [Algodoo](https://www.algodoo.com) - Physics sandbox
+ * [Dreams](https://www.playstation.com/fr-fr/games/dreams/) - Game, community and editor
+ * [Line Rider](https://www.linerider.com/) / [Free Rider](https://www.freeriderhd.com/) - Physics, community
+ * [Trackmania](https://store.steampowered.com/app/11020/TrackMania_Nations_Forever/) - Lightweight levels/replays + editor
+ * [Geometry Dash](https://store.steampowered.com/app/322170/Geometry_Dash/) for simplicity, community
+ * [Fancade](https://www.fancade.com/) for community, in-game editor
 
 ## COVID-XMoto
 
