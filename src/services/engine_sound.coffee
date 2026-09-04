@@ -7,7 +7,7 @@ class EngineSound
   #
   # The "up" key is the throttle: wheel speed alone never produces a
   # full-throttle character. When coasting (no throttle) at high RPM the tone
-  # is still high-pitched, but stays quiet and lean.
+  # stays low and quiet, with a bold idle floor.
   #
   # Built lazily and resumed after the first user gesture (autoplay-safe).
 
@@ -20,8 +20,8 @@ class EngineSound
     @throttle = 0 # smoothed 0..1
 
   idle_hz:     30  # fundamental at standstill (deep)
-  range_hz:   130  # fundamental sweep to redline (~160 Hz)
-  coast_vol: 0.13  # idle floor: audible engine ticking while rolling/stopped
+  range_hz:    95  # fundamental sweep to redline (~125 Hz)
+  coast_vol: 0.20  # idle floor: bold, audible ticking while rolling/stopped
   throttle_vol: 0.55 # volume under full throttle
 
   # A single shared AudioContext across every level/game, so we don't leak a
@@ -117,7 +117,7 @@ class EngineSound
       data[i] = Math.random() * 2 - 1
     buf
 
-  # Called every frame (from Sounds.update) with live inputs.
+  # Called once per frame (from Sounds.update) with live inputs.
   update: (rpm01, throttle01) ->
     ctx = @ctx
 
@@ -141,16 +141,17 @@ class EngineSound
 
     # Pitch follows wheel speed, but relaxing the throttle pulls the note back
     # down toward idle (like easing off). Full pitch needs throttle too.
-    effort  = 0.45 + 0.55 * thr
-    freq    = @idle_hz + @range_hz * rpm_eff * effort
+    effort = 0.45 + 0.55 * thr
+    freq   = @idle_hz + @range_hz * rpm_eff * effort
 
     idle = 1 - rpm_eff
 
     # Rough-idle wobble: uneven firing / lag at low RPM, evens out higher up
-    wobble = idle * (0.006 * Math.sin(now * TWO_PI * 7.3) +
-                     0.004 * Math.sin(now * TWO_PI * 13.1 + 1))
-    # Slow "chug" from the firing cadence, mostly at idle
-    chug   = idle * 0.03 * (0.5 + 0.5 * Math.sin(now * TWO_PI * 2.2))
+    # (deliberately slow: a lazy, loping idle)
+    wobble = idle * (0.006 * Math.sin(now * TWO_PI * 5.6) +
+                     0.004 * Math.sin(now * TWO_PI * 9.9 + 1))
+    # Slow "chug" from the firing cadence, mostly at idle (bold, slow pulse)
+    chug   = idle * 0.045 * (0.5 + 0.5 * Math.sin(now * TWO_PI * 1.5))
     # Load rumble under throttle (felt through the frame)
     rumble = thr * 0.015 * Math.sin(now * TWO_PI * 31)
 
@@ -166,17 +167,17 @@ class EngineSound
       voice.gain.gain.setTargetAtTime(g, now, 0.02)
 
     # Brightness is gated by throttle: muffled + low on lift-off, opens up
-    # under load. This keeps high speed from sounding shrill while coasting.
-    brightness = 0.4 + 0.6 * thr
+    # under load. This keeps the tone from sounding shrill while coasting.
+    brightness = 0.3 + 0.5 * thr
     @lowpass.frequency.setTargetAtTime(
       100 + (rpm_eff * 700 + thr * 200) * brightness, now, 0.03)
 
-    # Mechanical/exhaust texture: a little always (so it's not sterile),
-    # much more under load
+    # Mechanical/exhaust texture: a little (so the tone isn't sterile), more
+    # under load
     @noise_gain.gain.setTargetAtTime(0.03 + thr * 0.09 + idle * 0.02, now, 0.03)
     @noise_filter.frequency.setTargetAtTime(300 + rpm_eff * 900, now, 0.03)
 
-    # Master: quiet idle floor + throttle-driven load, with chug/rumble motion
+    # Master: bold idle floor + throttle-driven load, with chug/rumble motion
     volume  = @coast_vol + thr * (@throttle_vol - @coast_vol)
     volume += chug + rumble
     volume *= (1 + wobble * 0.6)
