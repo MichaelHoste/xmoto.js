@@ -3558,6 +3558,7 @@
 
       load_assets() {
         var l, len1, ref, results, sound;
+        this.assets.sounds.push('WilhelmScream.ogg'); // custom one for eject
         ref = this.list;
         results = [];
         for (l = 0, len1 = ref.length; l < len1; l++) {
@@ -4571,6 +4572,7 @@
           y: 0
         });
         adjusted_force_vector.x *= this.mirror;
+        Sounds.play('WilhelmScream', this.moto.sound_options());
         return this.torso.applyForce(adjusted_force_vector, this.torso.getWorldCenter());
       }
     }

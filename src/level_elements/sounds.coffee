@@ -34,6 +34,8 @@ class Sounds
       @list.push(theme_sound)
 
   load_assets: ->
+    @assets.sounds.push('WilhelmScream.ogg') # custom one for eject
+
     for sound in @list
       @assets.sounds.push(sound.file)
 

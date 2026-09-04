@@ -78,6 +78,8 @@ class Rider
       adjusted_force_vector   = Math2D.rotate_point(force_vector, eject_angle, { x: 0, y: 0 })
       adjusted_force_vector.x *= @mirror
 
+      Sounds.play('WilhelmScream', @moto.sound_options())
+
       @torso.applyForce(adjusted_force_vector, @torso.getWorldCenter())
 
   create_head: ->
