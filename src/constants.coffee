@@ -15,6 +15,27 @@ class Constants
   @moto_acceleration =  9.00 # Acceleration of moto
   @biker_force       = 11.00 # Force of biker when he rotates the moto
 
+  # ENGINE SOUND (procedural synthesis, see EngineSound class in sounds.coffee)
+  # Pitch follows the rear wheel rotation speed, "load" (volume/brightness/growl)
+  # follows the up key. All values can be overridden in debug mode:
+  # ?engine_sound.volume=0.5&engine_sound.max_frequency=220
+
+  @engine_sound =
+    enabled:            true
+    volume:             0.22  # master gain of the engine
+    min_frequency:      42.0  # fundamental frequency (Hz) at idle
+    max_frequency:     195.0  # fundamental frequency (Hz) at max wheel rotation + throttle
+    pitch_curve:        0.80  # exponent (<1 = pitch rises faster at low speed)
+    throttle_rev_bonus: 0.08  # extra revving when throttle is pressed (engine load)
+    coast_max_pitch:    0.90  # pitch cap when coasting (no throttle = engine brake, not full revs)
+    idle_wobble:       14.0   # random detune (cents) at idle for a "lumpy" idle feel
+    lowpass_base:      280.0  # lowpass cutoff (Hz) at idle
+    lowpass_pitch:    1700.0  # cutoff increase (Hz) with pitch
+    lowpass_load:     2600.0  # cutoff increase (Hz) at full throttle
+    drive_load:         2.50  # extra distortion drive at full throttle
+    noise_idle:         0.05  # exhaust/mechanical noise level at idle
+    noise_load:         0.40  # extra noise at full throttle
+
   # REPLAYS
 
   @replay_key_step = 60          # Key step every x steps during replay (to beat non-deterministic behaviour)
