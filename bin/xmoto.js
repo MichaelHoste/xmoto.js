@@ -1083,7 +1083,7 @@
             entity = strawberry.getBody().getUserData().entity;
             if (entity.display) {
               entity.display = false;
-              return PIXI.sound.play('PickUpStrawberry');
+              return Sounds.play('PickUpStrawberry', moto.sound_options());
             }
           // End of level
           } else if (Listeners.does_contact_moto_rider(a, b, 'end_of_level') && !this.level.need_to_restart) {
@@ -1127,7 +1127,7 @@
     }
 
     trigger_ends_and_restart(moto) {
-      PIXI.sound.play('EndOfLevel');
+      Sounds.play('EndOfLevel', moto.sound_options());
       if (moto.ghost) {
         return moto.dead = true;
       } else {
@@ -1149,7 +1149,7 @@
         //@level.moto.body.GetFixtureList().SetSensor(false)
         //@level.moto.left_axle.GetFixtureList().SetSensor(false)
         //@level.moto.right_axle.GetFixtureList().SetSensor(false)
-        PIXI.sound.play('Headcrash');
+        Sounds.play('Headcrash', moto.sound_options());
         shoulder_joint = moto.rider.shoulder_joint;
         knee_joint = moto.rider.knee_joint;
         elbow_joint = moto.rider.elbow_joint;
@@ -3530,55 +3530,119 @@
 
   }).call(this);
 
-  Sounds = class Sounds {
-    constructor(level) {
-      this.level = level;
-      this.assets = level.assets;
-      this.list = [];
-    }
+  Sounds = (function() {
+    var DB_FADE_RANGE, DB_TO_LINEAR, MAX_AUDIBLE_PAN;
 
-    parse(xml) {
-      var l, len, results, sound_name, sound_names, theme_sound;
-      // Sounds available to all levels
-      sound_names = ['EndOfLevel', 'Headcrash'];
-      // Only when strawberries (or equivalent) in the level
-      if ($(xml).find('entity[typeid="Strawberry"]').length) {
-        sound_names.push('PickUpStrawberry');
+    class Sounds {
+      constructor(level) {
+        this.level = level;
+        this.assets = level.assets;
+        this.list = [];
       }
-      // Only when checkpoint in the level
-      if ($(xml).find('entity[typeid="Checkpoint"]').length) {
-        sound_names.push('Checkpoint');
-      }
-      results = [];
-      for (l = 0, len = sound_names.length; l < len; l++) {
-        sound_name = sound_names[l];
-        // theme_replacements in level XML
-        if (this.level.replacements.sprites[name]) {
-          sound_name = this.level.replacements.sprites[name];
+
+      parse(xml) {
+        var l, len, results, sound_name, sound_names, theme_sound;
+        // Sounds available to all levels
+        sound_names = ['EndOfLevel', 'Headcrash'];
+        // Only when strawberries (or equivalent) in the level
+        if ($(xml).find('entity[typeid="Strawberry"]').length) {
+          sound_names.push('PickUpStrawberry');
         }
-        // get infos (file) from theme
-        theme_sound = this.assets.theme.sound_params(sound_name);
-        results.push(this.list.push(theme_sound));
+        // Only when checkpoint in the level
+        if ($(xml).find('entity[typeid="Checkpoint"]').length) {
+          sound_names.push('Checkpoint');
+        }
+        results = [];
+        for (l = 0, len = sound_names.length; l < len; l++) {
+          sound_name = sound_names[l];
+          // theme_replacements in level XML
+          if (this.level.replacements.sprites[name]) {
+            sound_name = this.level.replacements.sprites[name];
+          }
+          // get infos (file) from theme
+          theme_sound = this.assets.theme.sound_params(sound_name);
+          results.push(this.list.push(theme_sound));
+        }
+        return results;
       }
-      return results;
-    }
 
-    load_assets() {
-      var l, len, ref, results, sound;
-      ref = this.list;
-      results = [];
-      for (l = 0, len = ref.length; l < len; l++) {
-        sound = ref[l];
-        results.push(this.assets.sounds.push(sound.file));
+      load_assets() {
+        var l, len, ref, results, sound;
+        ref = this.list;
+        results = [];
+        for (l = 0, len = ref.length; l < len; l++) {
+          sound = ref[l];
+          results.push(this.assets.sounds.push(sound.file));
+        }
+        return results;
       }
-      return results;
-    }
 
-    init() {}
+      init() {}
 
-    update() {}
+      update() {}
 
-  };
+      // Relative "pan" value for the position relative to the screen
+      //         -----------
+      //         |         |
+      //         |         |
+      //         -----------
+      //  <1    -1 ....... 1    >=1
+      audio_pan(position) {
+        var camera, center, half_w;
+        camera = this.level.camera;
+        center = camera.target().x;
+        half_w = this.level.options.width / 2;
+        return (position.x - center) * camera.scale.x / half_w;
+      }
+
+      clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      db_to_linear(db) {
+        return Math.pow(10, -db / DB_TO_LINEAR);
+      }
+
+      stereo_filter(position) {
+        var pan;
+        pan = this.audio_pan(position);
+        pan = this.clamp(pan, -1, 1); // force in [-1...1] => 100% left on left screen border and above
+        //                   => 100% right on right screen border and above
+        return new PIXI.sound.filters.StereoFilter(pan);
+      }
+
+      volume(position) {
+        var distance_past_screen, fade_fraction, fade_zone_width, pan;
+        pan = this.audio_pan(position);
+        distance_past_screen = Math.max(0, Math.abs(pan) - 1); // Sounds on the screen (|pan| <= 1) get no attenuation.
+        fade_zone_width = MAX_AUDIBLE_PAN - 1; // Attenuation distance outside the screen
+        if (distance_past_screen >= fade_zone_width) { // too far, not audible
+          return 0;
+        }
+        fade_fraction = distance_past_screen / fade_zone_width;
+        fade_fraction = this.clamp(fade_fraction, 0, 1); // force in [0...1]
+        return this.db_to_linear(fade_fraction * DB_FADE_RANGE);
+      }
+
+      static play(name, options) {
+        var no_volume;
+        no_volume = (options.volume != null) && options.volume === 0;
+        if (!no_volume) {
+          return PIXI.sound.play(name, options);
+        }
+      }
+
+    };
+
+    MAX_AUDIBLE_PAN = 6; // After 6 "half-screen" (screen pan goes from -1 to 1), sound is no more audible
+
+    DB_FADE_RANGE = 60; // dB attenuation from full volume (0dB) down to silence (60dB = 0.001x volume)
+
+    DB_TO_LINEAR = 20; // standard dB -> linear amplitude divisor
+
+    return Sounds;
+
+  }).call(this);
 
   Ghost = class Ghost {
     constructor(level, replay, transparent = true) {
@@ -3963,6 +4027,15 @@
       if (!this.dead) {
         return MotoFlipService.run(this);
       }
+    }
+
+    sound_options() {
+      var position;
+      position = this.rider.torso.getPosition();
+      return {
+        filters: [this.level.sounds.stereo_filter(position)],
+        volume: this.level.sounds.volume(position)
+      };
     }
 
     create_body() {
